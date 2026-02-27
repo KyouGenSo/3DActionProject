@@ -706,6 +706,12 @@
     <FxCompile Include="resources\shaders\SkyBox.VS.hlsl">
       <Filter>Shader\3D</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\Decal.PS.hlsl">
+      <Filter>Shader\3D</Filter>
+    </FxCompile>
+    <FxCompile Include="resources\shaders\Decal.VS.hlsl">
+      <Filter>Shader\3D</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="resources\shaders\Random.hlsli">
@@ -724,6 +730,9 @@
       <Filter>Shader\2D</Filter>
     </None>
     <None Include="resources\shaders\SkyBox.hlsli">
+      <Filter>Shader\3D</Filter>
+    </None>
+    <None Include="resources\shaders\Decal.hlsli">
       <Filter>Shader\3D</Filter>
     </None>
   </ItemGroup>

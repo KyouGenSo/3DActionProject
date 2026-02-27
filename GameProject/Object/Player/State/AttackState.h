@@ -1,27 +1,7 @@
 #pragma once
-#include <numbers>
 #include <array>
 
 #include "PlayerState.h"
-
-/// <summary>
-/// 攻撃ブロックの回転軸
-/// </summary>
-enum class SwingAxis {
-    Horizontal, ///< 水平回転（XZ 平面）
-    Vertical    ///< 垂直回転（プレイヤー向き基準の YZ 平面）
-};
-
-/// <summary>
-/// コンボごとの攻撃データ
-/// </summary>
-struct ComboData {
-    float startAngle;      ///< 開始角度（ラジアン）
-    float swingAngle;      ///< 振り幅（ラジアン）
-    float swingDirection;  ///< 振り方向（+1.0f/-1.0f）
-    float attackDuration;  ///< 攻撃持続時間（秒）
-    SwingAxis axis;        ///< 回転軸（水平/垂直）
-};
 
 /// <summary>
 /// 攻撃状態クラス
@@ -35,6 +15,27 @@ class AttackState : public PlayerState
     //=========================================================================================
 private:
     static constexpr int kMaxComboCount = 4;  ///< 最大コンボ数
+
+private: // 構造体定義
+    /// <summary>
+    /// 攻撃ブロックの回転軸
+    /// </summary>
+    enum class SwingAxis {
+        Horizontal, ///< 水平回転（XZ 平面）
+        Vertical    ///< 垂直回転（プレイヤー向き基準の YZ 平面）
+    };
+
+    /// <summary>
+    /// コンボごとの攻撃データ
+    /// </summary>
+    struct ComboData {
+        float startAngle;      ///< 開始角度（ラジアン）
+        float swingAngle;      ///< 振り幅（ラジアン）
+        float swingDirection;  ///< 振り方向（+1.0f/-1.0f）
+        float attackDuration;  ///< 攻撃持続時間（秒）
+        float damage;          ///< ダメージ量
+        SwingAxis axis;        ///< 回転軸（水平/垂直）
+    };
 
 public:
     AttackState() : PlayerState("Attack") {}

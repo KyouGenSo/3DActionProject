@@ -7,8 +7,9 @@
 #include "CollisionManager.h"
 #include "Object3d.h"
 #include "GlobalVariables.h"
-#include <cmath>
+
 #include <format>
+#include <numbers>
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -40,6 +41,7 @@ void AttackState::LoadComboData()
         combos_[i].swingAngle = gv->GetValueFloat("AttackState", prefix + "SwingAngle");
         combos_[i].swingDirection = gv->GetValueFloat("AttackState", prefix + "SwingDirection");
         combos_[i].attackDuration = gv->GetValueFloat("AttackState", prefix + "AttackDuration");
+        combos_[i].damage = gv->GetValueFloat("AttackState", prefix + "Damage");
 
         int axisValue = gv->GetValueInt("AttackState", prefix + "Axis");
         combos_[i].axis = (axisValue == 0) ? SwingAxis::Horizontal : SwingAxis::Vertical;
@@ -74,11 +76,14 @@ void AttackState::InitializeComboAttack(Player* player)
     // TODO: アニメーション作成後に実装
     // player->GetModel()->PlayAnimation("Attack" + std::to_string(comboIndex_));
 
+    const ComboData& currentCombo = combos_[comboIndex_];
+
     // 攻撃範囲 Collider を有効化
     if (player->GetMeleeAttackCollider()) {
         player->GetMeleeAttackCollider()->SetActive(true);
         player->GetMeleeAttackCollider()->Reset();
         player->GetMeleeAttackCollider()->SetKnockbackEnabled(comboIndex_ == maxCombo_ - 1);
+        player->GetMeleeAttackCollider()->SetAttackDamage(currentCombo.damage);
     }
 
     // 攻撃ブロックを表示して初期位置設定
@@ -86,7 +91,6 @@ void AttackState::InitializeComboAttack(Player* player)
         player->SetAttackBlockVisible(true);
 
         // 現在のコンボの開始角度を設定
-        const ComboData& currentCombo = combos_[comboIndex_];
         blockAngle_ = currentCombo.startAngle;
 
         UpdateBlockPosition(player);
@@ -221,8 +225,8 @@ void AttackState::ProcessExecuteAttack(Player* player, float deltaTime)
     blockAngle_ += angularVelocity * deltaTime * currentCombo.swingDirection;
     UpdateBlockPosition(player);
 
-    // ダメージ判定（攻撃中は常に有効）
     if (player->GetMeleeAttackCollider()) {
+        // ダメージ判定（攻撃中は常に有効）
         player->GetMeleeAttackCollider()->Damage();
     }
 
@@ -372,6 +376,7 @@ void AttackState::DrawImGui(Player* player)
             currentCombo.swingAngle * 180.0f / std::numbers::pi_v<float>);
         ImGui::Text("Direction: %s", currentCombo.swingDirection > 0 ? "+" : "-");
         ImGui::Text("Duration: %.2f s", currentCombo.attackDuration);
+        ImGui::Text("Damage: %.1f", currentCombo.damage);
 
         // 攻撃進行バー
         if (phase_ == ExecuteAttack) {
@@ -436,6 +441,7 @@ void AttackState::DrawImGui(Player* player)
                 ImGui::Text("Dir: %s, Duration: %.2fs",
                     combo.swingDirection > 0 ? "+" : "-",
                     combo.attackDuration);
+                ImGui::Text("Damage: %.1f", combo.damage);
                 ImGui::TreePop();
             }
 

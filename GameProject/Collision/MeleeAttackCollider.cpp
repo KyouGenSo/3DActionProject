@@ -2,15 +2,11 @@
 #include "../Object/Player/Player.h"
 #include "../Object/Boss/Boss.h"
 #include "CollisionTypeIdDef.h"
-#include "GlobalVariables.h"
 
 using namespace Tako;
 
 MeleeAttackCollider::MeleeAttackCollider(Player* player)
     : player_(player) {
-    // GlobalVariables から値を取得
-    GlobalVariables* gv = GlobalVariables::GetInstance();
-    attackDamage_ = gv->GetValueFloat("MeleeAttack", "AttackDamage");
 
     SetTypeID(static_cast<uint32_t>(CollisionTypeId::PLAYER_ATTACK));
     SetActive(false);
@@ -45,7 +41,6 @@ void MeleeAttackCollider::OnCollisionStay(Collider* other) {
 }
 
 void MeleeAttackCollider::Reset() {
-    hitEnemies_.clear();
     detectedEnemy_ = nullptr;
 #ifdef _DEBUG
     collisionCount_ = 0;
@@ -55,8 +50,4 @@ void MeleeAttackCollider::Reset() {
 void MeleeAttackCollider::Damage()
 {
     canDamage = true;
-}
-
-bool MeleeAttackCollider::HasHitEnemy(uint32_t enemyId) const {
-    return hitEnemies_.find(enemyId) != hitEnemies_.end();
 }

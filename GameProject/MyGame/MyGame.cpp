@@ -1,4 +1,5 @@
 #include "MyGame.h"
+
 #include"Audio.h"
 #include"Input.h"
 #include "scene/SceneFactory.h"
@@ -12,6 +13,8 @@
 #include "GPUParticle.h"
 #include "SpriteBasic.h"
 #include "TransitionManager.h"
+
+#include <numbers>
 
 #ifdef _DEBUG
 #include "DebugUIManager.h"
@@ -224,9 +227,6 @@ void MyGame::RegisterPlayerVariables()
     gv->AddItem("Player", "AttackMoveRotationLerp", 0.3f);
     gv->AddItem("Player", "BossLookatLerp", 1.15f);
     gv->AddItem("Player", "AttackMoveSpeed", 50.0f);
-
-    gv->CreateGroup("MeleeAttack");
-    gv->AddItem("MeleeAttack", "AttackDamage", 10.0f);
 }
 
 void MyGame::RegisterBossVariables()
@@ -290,30 +290,34 @@ void MyGame::RegisterAttackStateVariables()
 
     // Combo0: 左振り（水平）
     gv->AddItem("AttackState", "Combo0_StartAngle", -1.5708f);
-    gv->AddItem("AttackState", "Combo0_SwingAngle", 3.14159f);
+    gv->AddItem("AttackState", "Combo0_SwingAngle", std::numbers::pi_v<float>);
     gv->AddItem("AttackState", "Combo0_SwingDirection", 1.0f);
     gv->AddItem("AttackState", "Combo0_AttackDuration", 0.15f);
+    gv->AddItem("AttackState", "Combo0_Damage", 5.0f);
     gv->AddItem("AttackState", "Combo0_Axis", 0);
 
     // Combo1: 右振り（水平）
     gv->AddItem("AttackState", "Combo1_StartAngle", 1.5708f);
-    gv->AddItem("AttackState", "Combo1_SwingAngle", 3.14159f);
+    gv->AddItem("AttackState", "Combo1_SwingAngle", std::numbers::pi_v<float>);
     gv->AddItem("AttackState", "Combo1_SwingDirection", -1.0f);
     gv->AddItem("AttackState", "Combo1_AttackDuration", 0.15f);
+    gv->AddItem("AttackState", "Combo1_Damage", 5.0f);
     gv->AddItem("AttackState", "Combo1_Axis", 0);
 
     // Combo2: 縦切り（垂直）
     gv->AddItem("AttackState", "Combo2_StartAngle", -1.5708f);
-    gv->AddItem("AttackState", "Combo2_SwingAngle", 3.14159f);
+    gv->AddItem("AttackState", "Combo2_SwingAngle", std::numbers::pi_v<float>);
     gv->AddItem("AttackState", "Combo2_SwingDirection", 1.0f);
     gv->AddItem("AttackState", "Combo2_AttackDuration", 0.2f);
+    gv->AddItem("AttackState", "Combo2_Damage", 5.0f);
     gv->AddItem("AttackState", "Combo2_Axis", 1);
 
     // Combo3: 大回転（水平360度）
     gv->AddItem("AttackState", "Combo3_StartAngle", 0.0f);
-    gv->AddItem("AttackState", "Combo3_SwingAngle", 6.28318f);
+    gv->AddItem("AttackState", "Combo3_SwingAngle", std::numbers::pi_v<float> * 2);
     gv->AddItem("AttackState", "Combo3_SwingDirection", -1.0f);
     gv->AddItem("AttackState", "Combo3_AttackDuration", 0.3f);
+    gv->AddItem("AttackState", "Combo3_Damage", 10.0f);
     gv->AddItem("AttackState", "Combo3_Axis", 0);
 }
 

@@ -1,10 +1,8 @@
 // Engine includes
 #include "GameScene.h"
 #include "WinApp.h"
-#include "ModelManager.h"
 #include "Object3dBasic.h"
 #include "SpriteBasic.h"
-#include "Sprite.h"
 #include "Input.h"
 #include "Draw2D.h"
 #include "FrameTimer.h"
@@ -16,7 +14,6 @@
 #include "ShadowRenderer.h"
 #include "CollisionManager.h"
 #include "GlobalVariables.h"
-#include "Vec3Func.h"
 #include "PostEffectManager.h"
 
 // Game includes
@@ -28,11 +25,10 @@
 #include "../Object/Projectile/BossBullet.h"
 #include "Object/Player/State/PlayerState.h"
 #include "Object/Player/State/PlayerStateMachine.h"
+#include "Common/GameConst.h"
 
 #include <algorithm>
 #include <cmath>
-
-#include "Common/GameConst.h"
 
 // Debug includes
 #ifdef _DEBUG

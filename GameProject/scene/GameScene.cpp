@@ -532,6 +532,10 @@ void GameScene::InitializeDebugOption()
     DebugUIManager::GetInstance()->RegisterGameObject("PauseMenu",
         [this]() { if (pauseMenu_) pauseMenu_->DrawImGui(); });
 
+    // デカールの DebugUI 登録
+    DebugUIManager::GetInstance()->RegisterGameObject("Decal",
+        [this]() { if (bossAttackDecal_) bossAttackDecal_->DrawImGui(); });
+
     DebugUIManager::GetInstance()->SetEmitterManager(emitterManager_.get());
 #endif
 }

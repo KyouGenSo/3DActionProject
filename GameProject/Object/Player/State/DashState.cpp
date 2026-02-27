@@ -16,6 +16,7 @@ void DashState::Enter(Player* player)
 	// player->GetModel()->PlayAnimation("Dash");
 
 	timer_ = 0.0f;
+	player->SetInvincible(true);
 }
 
 void DashState::Update(Player* player, float deltaTime)
@@ -52,6 +53,7 @@ void DashState::Update(Player* player, float deltaTime)
 
 void DashState::Exit(Player* player)
 {
+	player->SetInvincible(false);
 	timer_ = 0.0f;
 
 	// クールダウン開始

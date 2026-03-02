@@ -246,7 +246,7 @@ void BTBossAreaAttack::BeginAttackPhase(Boss* boss) {
     // Decal を白フラッシュに変更して非表示
     for (int i = 0; i < kQuadrantCount; ++i) {
         if (activeQuadrants_[i] && quadrantDecals_[i]) {
-            quadrantDecals_[i]->SetColor(Vector4(1.0f, 1.0f, 1.0f, 0.6f));
+            quadrantDecals_[i]->SetVisible(false);
         }
     }
 

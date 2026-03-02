@@ -12,7 +12,7 @@ BossAreaAttackCollider::BossAreaAttackCollider(Boss* boss)
 }
 
 void BossAreaAttackCollider::OnCollisionEnter(Collider* other) {
-    if (!other || hasHitPlayer_) return;
+    if (!other) return;
 
     uint32_t typeID = other->GetTypeID();
 
@@ -23,21 +23,10 @@ void BossAreaAttackCollider::OnCollisionEnter(Collider* other) {
         // パリィ判定
         if (player->IsParrying()) {
             player->OnParrySuccess();
-            hasHitPlayer_ = true;
             return;
         }
 
         // 通常ダメージ
         player->OnHit(damage_);
-        hasHitPlayer_ = true;
     }
-}
-
-void BossAreaAttackCollider::OnCollisionStay(Collider* other) {
-    // 継続ヒットは行わない（1回のみダメージ）
-    (void)other;
-}
-
-void BossAreaAttackCollider::Reset() {
-    hasHitPlayer_ = false;
 }

@@ -283,7 +283,6 @@ void BTBossAreaAttack::EndAttackPhase(Boss* boss) {
     for (int i = 0; i < kQuadrantCount; ++i) {
         if (quadrantColliders_[i]) {
             quadrantColliders_[i]->SetActive(false);
-            quadrantColliders_[i]->Reset();
         }
     }
 

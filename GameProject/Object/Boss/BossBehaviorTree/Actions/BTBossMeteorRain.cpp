@@ -45,7 +45,7 @@ BTNodeStatus BTBossMeteorRain::Execute(BTBlackboard* blackboard) {
 
     // Phase: Launch（弾発射演出）
     if (elapsedTime_ < launchEnd) {
-        // 着弾数と同じ数の弾を均等間隔で発射
+        // 上方向弾（impactCount_ 発、既存処理）
         float launchInterval = (impactCount_ > 0) ? launchDuration_ / static_cast<float>(impactCount_) : launchDuration_;
         int expectedLaunched = static_cast<int>(elapsedTime_ / launchInterval);
         expectedLaunched = std::min<int>(expectedLaunched, impactCount_);
@@ -54,13 +54,38 @@ BTNodeStatus BTBossMeteorRain::Execute(BTBlackboard* blackboard) {
             LaunchBullet(boss, bulletsLaunched_);
             bulletsLaunched_++;
         }
+
+        // 水平弾（horizontalBulletCount_ 発、独立タイミング）
+        if (horizontalBulletCount_ > 0) {
+            Vector3 bossPos = boss->GetTransform().translate;
+            float hInterval = launchDuration_ / static_cast<float>(horizontalBulletCount_);
+            int expectedH = std::min<int>(static_cast<int>(elapsedTime_ / hInterval), horizontalBulletCount_);
+            while (horizontalBulletsLaunched_ < expectedH) {
+                float angle = (2.0f * 3.14159265f / static_cast<float>(horizontalBulletCount_)) * static_cast<float>(horizontalBulletsLaunched_);
+                float vx = std::cos(angle) * horizontalSpeed_;
+                float vz = std::sin(angle) * horizontalSpeed_;
+                boss->RequestBulletSpawn(bossPos, Vector3(vx, 0.0f, vz));
+                horizontalBulletsLaunched_++;
+            }
+        }
     }
     // Phase: Warning（Decal予兆表示）
     else if (elapsedTime_ < warningEnd) {
-        // 残りの弾を全て発射（Launch フェーズで撃ちきれなかった場合の保険）
+        // 残りの上方向弾を全て発射（Launch フェーズで撃ちきれなかった場合の保険）
         while (bulletsLaunched_ < impactCount_) {
             LaunchBullet(boss, bulletsLaunched_);
             bulletsLaunched_++;
+        }
+        // 残りの水平弾を全て発射（Launch フェーズで撃ちきれなかった場合の保険）
+        if (horizontalBulletCount_ > 0) {
+            Vector3 bossPos = boss->GetTransform().translate;
+            while (horizontalBulletsLaunched_ < horizontalBulletCount_) {
+                float angle = (2.0f * 3.14159265f / static_cast<float>(horizontalBulletCount_)) * static_cast<float>(horizontalBulletsLaunched_);
+                float vx = std::cos(angle) * horizontalSpeed_;
+                float vz = std::sin(angle) * horizontalSpeed_;
+                boss->RequestBulletSpawn(bossPos, Vector3(vx, 0.0f, vz));
+                horizontalBulletsLaunched_++;
+            }
         }
         // Warning フェーズ開始時に Decal を表示（1回のみ）
         if (!decalsShown_) {
@@ -116,6 +141,7 @@ BTNodeStatus BTBossMeteorRain::Execute(BTBlackboard* blackboard) {
         enteredRecovery_ = false;
         decalsShown_ = false;
         bulletsLaunched_ = 0;
+        horizontalBulletsLaunched_ = 0;
         status_ = BTNodeStatus::Success;
         return BTNodeStatus::Success;
     }
@@ -135,6 +161,7 @@ void BTBossMeteorRain::Reset() {
     enteredRecovery_ = false;
     decalsShown_ = false;
     bulletsLaunched_ = 0;
+    horizontalBulletsLaunched_ = 0;
 }
 
 void BTBossMeteorRain::InitializeMeteorRain(Boss* boss) {
@@ -145,6 +172,7 @@ void BTBossMeteorRain::InitializeMeteorRain(Boss* boss) {
     enteredRecovery_ = false;
     decalsShown_ = false;
     bulletsLaunched_ = 0;
+    horizontalBulletsLaunched_ = 0;
 
     // 総時間を計算
     totalDuration_ = launchDuration_ + warningDuration_ + blinkDuration_ + impactDuration_ + recoveryTime_;
@@ -220,11 +248,9 @@ void BTBossMeteorRain::LaunchBullet(Boss* boss, int index) {
     Vector3 bossPos = boss->GetTransform().translate;
     RandomEngine* rng = RandomEngine::GetInstance();
 
-    // XZ方向に散らしてランダム感を出す
+    // 上方向に弾を発射（既存処理：yBoundaryMax_=50 を超えて自動消滅、ダメージなし）
     float spreadX = rng->GetFloat(-launchSpreadXZ_, launchSpreadXZ_);
     float spreadZ = rng->GetFloat(-launchSpreadXZ_, launchSpreadXZ_);
-
-    // 弾を上方向に発射（yBoundaryMax_=50 を超えて自動消滅、ダメージなし）
     boss->RequestBulletSpawn(bossPos, Vector3(spreadX, launchSpeed_, spreadZ));
 }
 
@@ -311,7 +337,9 @@ nlohmann::json BTBossMeteorRain::ExtractParameters() const {
         {"launchSpeed", launchSpeed_},
         {"launchSpreadXZ", launchSpreadXZ_},
         {"fallSpeed", fallSpeed_},
-        {"fallHeight", fallHeight_}
+        {"fallHeight", fallHeight_},
+        {"horizontalSpeed", horizontalSpeed_},
+        {"horizontalBulletCount", horizontalBulletCount_}
     };
 }
 
@@ -364,6 +392,12 @@ bool BTBossMeteorRain::DrawImGui() {
         changed = true;
     }
     if (ImGui::DragFloat("Fall Height##meteor", &fallHeight_, 1.0f, 5.0f, 100.0f)) {
+        changed = true;
+    }
+    if (ImGui::DragFloat("Horizontal Speed##meteor", &horizontalSpeed_, 1.0f, 5.0f, 100.0f)) {
+        changed = true;
+    }
+    if (ImGui::DragInt("Horizontal Bullet Count##meteor", &horizontalBulletCount_, 1, 1, 20)) {
         changed = true;
     }
 

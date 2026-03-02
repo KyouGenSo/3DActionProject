@@ -65,6 +65,10 @@ public:
     void SetLaunchSpeed(float speed) { launchSpeed_ = speed; }
     float GetLaunchSpreadXZ() const { return launchSpreadXZ_; }
     void SetLaunchSpreadXZ(float spread) { launchSpreadXZ_ = spread; }
+    float GetHorizontalSpeed() const { return horizontalSpeed_; }
+    void SetHorizontalSpeed(float speed) { horizontalSpeed_ = speed; }
+    int GetHorizontalBulletCount() const { return horizontalBulletCount_; }
+    void SetHorizontalBulletCount(int count) { horizontalBulletCount_ = count; }
     float GetFallSpeed() const { return fallSpeed_; }
     void SetFallSpeed(float speed) { fallSpeed_ = speed; }
     float GetFallHeight() const { return fallHeight_; }
@@ -116,6 +120,12 @@ public:
         }
         if (params.contains("fallHeight")) {
             fallHeight_ = params["fallHeight"];
+        }
+        if (params.contains("horizontalSpeed")) {
+            horizontalSpeed_ = params["horizontalSpeed"];
+        }
+        if (params.contains("horizontalBulletCount")) {
+            horizontalBulletCount_ = params["horizontalBulletCount"];
         }
     }
 
@@ -178,7 +188,7 @@ private:
     /// <summary>
     /// 着弾数の上限
     /// </summary>
-    static constexpr int kMaxImpacts = 10;
+    static constexpr int kMaxImpacts = 20;
 
     /// <summary>
     /// Decal の基本アルファ値
@@ -216,6 +226,8 @@ private:
     // === 弾発射パラメータ ===
     float launchSpeed_ = 30.0f;       ///< 弾の上方向速度
     float launchSpreadXZ_ = 5.0f;     ///< 発射時のXZ散らし量
+    float horizontalSpeed_ = 20.0f;   ///< 水平方向の弾速度
+    int horizontalBulletCount_ = 10;  ///< 水平方向の弾数
 
     // === 落下弾パラメータ ===
     float fallSpeed_ = 40.0f;         ///< 弾の落下速度
@@ -233,6 +245,7 @@ private:
     bool enteredRecovery_ = false;    ///< 硬直開始フラグ
     bool decalsShown_ = false;        ///< Decal表示済みフラグ
     int bulletsLaunched_ = 0;         ///< 発射済み弾数
+    int horizontalBulletsLaunched_ = 0; ///< 水平弾発射済みカウンター
 
     //=========================================================================================
     // 着弾管理（動的サイズ）

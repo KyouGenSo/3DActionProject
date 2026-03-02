@@ -15,7 +15,7 @@
 #include "CollisionManager.h"
 #include "GlobalVariables.h"
 #include "PostEffectManager.h"
-#include "DecalBasic.h"
+#include "DecalManager.h"
 
 // Game includes
 #include "../Collision/CollisionTypeIdDef.h"
@@ -126,6 +126,9 @@ void GameScene::Finalize()
 
     // CollisionManager のリセット
     CollisionManager::GetInstance()->Reset();
+
+    // デカールの登録をクリア
+    DecalManager::GetInstance()->ClearDecals();
 
     // PostEffec をクリア
     PostEffectManager::GetInstance()->ClearEffectChain();
@@ -256,6 +259,9 @@ void GameScene::Update()
         SceneManager::GetInstance()->ChangeScene("clear", "Fade", 0.3f);
     }
 
+    // デカールの一括更新
+    DecalManager::GetInstance()->UpdateAll();
+
     // 衝突判定の実行
     CollisionManager::GetInstance()->CheckAllCollisions();
 }
@@ -293,11 +299,7 @@ void GameScene::Draw()
     boss_->Draw();
 
     //-------------------デカールの描画-------------------//
-    DecalBasic::GetInstance()->BeginDraw();
-
-
-
-    DecalBasic::GetInstance()->EndDraw();
+    DecalManager::GetInstance()->DrawAll();
 
     //------------------前景 Sprite の描画------------------//
     // スプライト共通描画設定
@@ -306,6 +308,9 @@ void GameScene::Draw()
 
 
 #ifdef _DEBUG
+    // デカールのデバッグ描画
+    DecalManager::GetInstance()->DrawAllDebug();
+
     // コライダーのデバッグ描画
     CollisionManager::GetInstance()->DrawColliders();
 #endif

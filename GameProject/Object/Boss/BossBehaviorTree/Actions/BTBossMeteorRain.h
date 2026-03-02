@@ -2,6 +2,7 @@
 #include "../../../../BehaviorTree/Core/BTNode.h"
 #include "../../../../BehaviorTree/Core/BTBlackboard.h"
 #include "../../../../Collision/MeteorImpactCollider.h"
+#include "../../../../Effect/BulletSignEffect.h"
 #include "Decal.h"
 #include "Transform.h"
 #include "Vector3.h"
@@ -14,7 +15,7 @@ class Boss;
 /// <summary>
 /// ボスのメテオレイン攻撃アクションノード
 /// フェーズ2でボスが弾を上方向に発射し、フェーズ2エリア内のランダムな位置に着弾する
-/// Launch(弾発射演出) → Warning(Decal表示) → Blink(点滅警告) → Impact(着弾ダメージ) → Recovery(硬直)
+/// Charge(予備動作) → Launch(弾発射演出) → Warning(Decal表示) → Blink(点滅警告) → Impact(着弾ダメージ) → Recovery(硬直)
 /// </summary>
 class BTBossMeteorRain : public BTNode {
 public:
@@ -41,6 +42,8 @@ public:
     void Reset() override;
 
     // パラメータ取得・設定
+    float GetChargeTime() const { return chargeTime_; }
+    void SetChargeTime(float time) { chargeTime_ = time; }
     float GetLaunchDuration() const { return launchDuration_; }
     void SetLaunchDuration(float time) { launchDuration_ = time; }
     float GetWarningDuration() const { return warningDuration_; }
@@ -79,6 +82,9 @@ public:
     /// </summary>
     /// <param name="params">パラメータ JSON</param>
     void ApplyParameters(const nlohmann::json& params) override {
+        if (params.contains("chargeTime")) {
+            chargeTime_ = params["chargeTime"];
+        }
         if (params.contains("launchDuration")) {
             launchDuration_ = params["launchDuration"];
         }
@@ -210,6 +216,7 @@ private:
     //=========================================================================================
 
     // === 時間制御 ===
+    float chargeTime_ = 0.5f;         ///< 予備動作（チャージ）時間
     float launchDuration_ = 0.5f;     ///< 弾発射演出時間
     float warningDuration_ = 1.0f;    ///< Decal予兆表示時間
     float blinkDuration_ = 0.8f;      ///< Decal点滅警告時間
@@ -246,6 +253,7 @@ private:
     bool decalsShown_ = false;        ///< Decal表示済みフラグ
     int bulletsLaunched_ = 0;         ///< 発射済み弾数
     int horizontalBulletsLaunched_ = 0; ///< 水平弾発射済みカウンター
+    BulletSignEffect bulletSignEffect_;  ///< 予備動作エフェクト
 
     //=========================================================================================
     // 着弾管理（動的サイズ）

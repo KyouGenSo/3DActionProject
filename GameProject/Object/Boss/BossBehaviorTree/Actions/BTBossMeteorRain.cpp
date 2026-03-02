@@ -37,17 +37,30 @@ BTNodeStatus BTBossMeteorRain::Execute(BTBlackboard* blackboard) {
         isFirstExecute_ = false;
     }
 
-    // フェーズ管理: Launch → Warning → Blink → Impact → Recovery
-    float launchEnd = launchDuration_;
+    // フェーズ管理: Charge → Launch → Warning → Blink → Impact → Recovery
+    float chargeEnd = chargeTime_;
+    float launchEnd = chargeEnd + launchDuration_;
     float warningEnd = launchEnd + warningDuration_;
     float blinkEnd = warningEnd + blinkDuration_;
     float impactEnd = blinkEnd + impactDuration_;
 
+    // Phase: Charge（予備動作エフェクト）
+    if (elapsedTime_ < chargeEnd) {
+        bulletSignEffect_.Update(boss, deltaTime);
+    }
     // Phase: Launch（弾発射演出）
-    if (elapsedTime_ < launchEnd) {
+    else if (elapsedTime_ < launchEnd) {
+        // Charge 完了時にエフェクトを終了（1回のみ）
+        if (bulletSignEffect_.IsActive()) {
+            bulletSignEffect_.End(boss);
+        }
+
+        // Launch フェーズ内の経過時間（chargeEnd 基準）
+        float launchElapsed = elapsedTime_ - chargeEnd;
+
         // 上方向弾（impactCount_ 発、既存処理）
         float launchInterval = (impactCount_ > 0) ? launchDuration_ / static_cast<float>(impactCount_) : launchDuration_;
-        int expectedLaunched = static_cast<int>(elapsedTime_ / launchInterval);
+        int expectedLaunched = static_cast<int>(launchElapsed / launchInterval);
         expectedLaunched = std::min<int>(expectedLaunched, impactCount_);
 
         while (bulletsLaunched_ < expectedLaunched) {
@@ -59,7 +72,7 @@ BTNodeStatus BTBossMeteorRain::Execute(BTBlackboard* blackboard) {
         if (horizontalBulletCount_ > 0) {
             Vector3 bossPos = boss->GetTransform().translate;
             float hInterval = launchDuration_ / static_cast<float>(horizontalBulletCount_);
-            int expectedH = std::min<int>(static_cast<int>(elapsedTime_ / hInterval), horizontalBulletCount_);
+            int expectedH = std::min<int>(static_cast<int>(launchElapsed / hInterval), horizontalBulletCount_);
             while (horizontalBulletsLaunched_ < expectedH) {
                 float angle = (2.0f * 3.14159265f / static_cast<float>(horizontalBulletCount_)) * static_cast<float>(horizontalBulletsLaunched_);
                 float vx = std::cos(angle) * horizontalSpeed_;
@@ -174,8 +187,11 @@ void BTBossMeteorRain::InitializeMeteorRain(Boss* boss) {
     bulletsLaunched_ = 0;
     horizontalBulletsLaunched_ = 0;
 
-    // 総時間を計算
-    totalDuration_ = launchDuration_ + warningDuration_ + blinkDuration_ + impactDuration_ + recoveryTime_;
+    // 総時間を計算（Charge フェーズを含む）
+    totalDuration_ = chargeTime_ + launchDuration_ + warningDuration_ + blinkDuration_ + impactDuration_ + recoveryTime_;
+
+    // 予備動作エフェクト開始
+    bulletSignEffect_.Start(boss, chargeTime_);
 
     // 着弾数を決定
     RandomEngine* rng = RandomEngine::GetInstance();
@@ -324,6 +340,7 @@ void BTBossMeteorRain::Cleanup() {
 
 nlohmann::json BTBossMeteorRain::ExtractParameters() const {
     return {
+        {"chargeTime", chargeTime_},
         {"launchDuration", launchDuration_},
         {"warningDuration", warningDuration_},
         {"blinkDuration", blinkDuration_},
@@ -348,6 +365,9 @@ bool BTBossMeteorRain::DrawImGui() {
     bool changed = false;
 
     ImGui::SeparatorText("Phase Timing");
+    if (ImGui::DragFloat("Charge Time##meteor", &chargeTime_, 0.05f, 0.0f, 3.0f)) {
+        changed = true;
+    }
     if (ImGui::DragFloat("Launch Duration##meteor", &launchDuration_, 0.05f, 0.1f, 3.0f)) {
         changed = true;
     }

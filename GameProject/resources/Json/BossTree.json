@@ -279,11 +279,25 @@
       "sourcePinId": 20006,
       "targetNodeId": 10040,
       "targetPinId": 20056
+    },
+    {
+      "id": 30040,
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
+      "targetNodeId": 10041,
+      "targetPinId": 20057
+    },
+    {
+      "id": 30041,
+      "sourceNodeId": 10017,
+      "sourcePinId": 20027,
+      "targetNodeId": 10042,
+      "targetPinId": 20058
     }
   ],
   "metadata": {
-    "created": "2026-03-02T19:44:11",
-    "modified": "2026-03-02T19:44:11",
+    "created": "2026-03-02T20:33:31",
+    "modified": "2026-03-02T20:33:31",
     "name": "Boss Behavior Tree"
   },
   "nodes": [
@@ -301,7 +315,7 @@
       "displayName": "Dash",
       "id": 10001,
       "parameters": {
-        "dashDuration": 0.09653378278017044,
+        "dashDuration": 0.09981751441955566,
         "dashSpeed": 200.0
       },
       "position": {
@@ -851,6 +865,42 @@
         "y": 160.0
       },
       "type": "BTBossMeteorRain"
+    },
+    {
+      "displayName": "Slash Attack",
+      "id": 10041,
+      "parameters": {
+        "attackDuration": 0.30000001192092896,
+        "attackRadius": 40.0,
+        "blinkDuration": 0.800000011920929,
+        "blinkFrequency": 10.0,
+        "damage": 15.0,
+        "recoveryTime": 1.0,
+        "warningDuration": 1.0
+      },
+      "position": {
+        "x": 130.0,
+        "y": 120.0
+      },
+      "type": "BTBossSlashAttack"
+    },
+    {
+      "displayName": "Slash Attack",
+      "id": 10042,
+      "parameters": {
+        "attackDuration": 0.30000001192092896,
+        "attackRadius": 30.0,
+        "blinkDuration": 0.800000011920929,
+        "blinkFrequency": 10.0,
+        "damage": 15.0,
+        "recoveryTime": 0.800000011920929,
+        "warningDuration": 1.0
+      },
+      "position": {
+        "x": 160.0,
+        "y": 140.0
+      },
+      "type": "BTBossSlashAttack"
     }
   ],
   "version": "1.0"

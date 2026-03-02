@@ -412,6 +412,12 @@ public:
     /// <param name="emitterManager">EmitterManager のポインタ</param>
     void SetEmitterManager(Tako::EmitterManager* emitterManager) { emitterManager_ = emitterManager; }
 
+    /// <summary>
+    /// EmitterManager を取得
+    /// </summary>
+    /// <returns>EmitterManager のポインタ</returns>
+    Tako::EmitterManager* GetEmitterManager() const { return emitterManager_; }
+
 private:
     /// <summary>
     /// モデルとトランスフォームの初期化

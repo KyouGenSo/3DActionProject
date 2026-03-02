@@ -330,6 +330,12 @@
     <ClCompile Include="Object\Boss\State\BossStunnedState.cpp">
       <Filter>Object\Boss\State</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Collision\BossAreaAttackCollider.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collision\CollisionTypeIdDef.h">
@@ -595,6 +601,12 @@
     </ClInclude>
     <ClInclude Include="Object\Boss\State\BossStunnedState.h">
       <Filter>Object\Boss\State</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\BossAreaAttackCollider.h">
+      <Filter>Collision</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

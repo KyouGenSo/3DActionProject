@@ -15,6 +15,7 @@
 #include "../BossBehaviorTree/Actions/BTBossApproach.h"
 #include "../BossBehaviorTree/Actions/BTBossRetreat.h"
 #include "../BossBehaviorTree/Actions/BTBossBarrage.h"
+#include "../BossBehaviorTree/Actions/BTBossAreaAttack.h"
 #include "../BossBehaviorTree/Conditions/BTActionSelector.h"
 #include "../BossBehaviorTree/Conditions/BTBossPhaseCondition.h"
 #include "../BossBehaviorTree/Conditions/BTBossHPCondition.h"
@@ -61,6 +62,9 @@ BTNodePtr BossNodeFactory::CreateNode(const std::string& nodeType) {
     }
     else if (nodeType == "BTBossBarrage") {
         return std::make_shared<BTBossBarrage>();
+    }
+    else if (nodeType == "BTBossAreaAttack") {
+        return std::make_shared<BTBossAreaAttack>();
     }
     // Condition ノード
     else if (nodeType == "BTActionSelector") {
@@ -197,6 +201,13 @@ void BossNodeFactory::InitializeNodeTypes() {
             ImVec4(0.7f, 0.2f, 0.9f, 1.0f),  // 紫（弾幕攻撃）
             false
         },
+        {
+            "BTBossAreaAttack",
+            "Area Attack",
+            NodeCategory::Action,
+            ImVec4(0.9f, 0.1f, 0.1f, 1.0f),  // 赤（エリア攻撃）
+            false
+        },
 
         // ========== Condition ノード ==========
         {
@@ -282,6 +293,7 @@ std::string BossNodeFactory::GetNodeType(const BTNodePtr& node) {
     if (typeInfo == typeid(BTBossApproach)) return "BTBossApproach";
     if (typeInfo == typeid(BTBossRetreat)) return "BTBossRetreat";
     if (typeInfo == typeid(BTBossBarrage)) return "BTBossBarrage";
+    if (typeInfo == typeid(BTBossAreaAttack)) return "BTBossAreaAttack";
     if (typeInfo == typeid(BTActionSelector)) return "BTActionSelector";
     if (typeInfo == typeid(BTBossPhaseCondition)) return "BTBossPhaseCondition";
     if (typeInfo == typeid(BTBossHPCondition)) return "BTBossHPCondition";

@@ -243,7 +243,7 @@ void BTBossAreaAttack::UpdateBlinkingPhase(float phaseElapsed) {
 }
 
 void BTBossAreaAttack::BeginAttackPhase(Boss* boss) {
-    // Decal を白フラッシュに変更して非表示
+    // Decal を非表示
     for (int i = 0; i < kQuadrantCount; ++i) {
         if (activeQuadrants_[i] && quadrantDecals_[i]) {
             quadrantDecals_[i]->SetVisible(false);

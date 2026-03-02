@@ -76,6 +76,6 @@ private:
     // 調整可能パラメータ
     float rotationSpeedMin_ = -10.0f; ///< 回転速度の最小値
     float rotationSpeedMax_ = 10.0f; ///< 回転速度の最大値
-    float yBoundaryMin_ = -10.0f; ///< Y 座標の下限
+    float yBoundaryMin_ = 0.0f; ///< Y 座標の下限
     float yBoundaryMax_ = 50.0f; ///< Y 座標の上限
 };

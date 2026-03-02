@@ -336,6 +336,12 @@
     <ClCompile Include="Collision\BossAreaAttackCollider.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Collision\MeteorImpactCollider.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collision\CollisionTypeIdDef.h">
@@ -607,6 +613,12 @@
     </ClInclude>
     <ClInclude Include="Collision\BossAreaAttackCollider.h">
       <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\MeteorImpactCollider.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -115,6 +115,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="CameraSystem\CameraAnimationEditor\CameraAnimationHistory.cpp" />
     <ClCompile Include="CameraSystem\Controller\TopDownController.cpp" />
     <ClCompile Include="Collision\BossAreaAttackCollider.cpp" />
+    <ClCompile Include="Collision\MeteorImpactCollider.cpp" />
     <ClCompile Include="Collision\BossMeleeAttackCollider.cpp" />
     <ClCompile Include="Collision\PenetratingBossBulletCollider.cpp" />
     <ClCompile Include="Collision\PlayerBulletCollider.cpp" />
@@ -136,6 +137,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Object\Boss\Boss.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossBarrage.cpp" />
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.cpp" />
     <ClCompile Include="Object\Boss\BossPhaseManager.cpp" />
     <ClCompile Include="Object\Boss\State\BossStateMachine.cpp" />
@@ -216,6 +218,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="CameraSystem\Controller\ICameraController.h" />
     <ClInclude Include="CameraSystem\Controller\TopDownController.h" />
     <ClInclude Include="Collision\BossAreaAttackCollider.h" />
+    <ClInclude Include="Collision\MeteorImpactCollider.h" />
     <ClInclude Include="Collision\BossMeleeAttackCollider.h" />
     <ClInclude Include="Collision\CollisionTypeIdDef.h" />
     <ClInclude Include="Collision\PenetratingBossBulletCollider.h" />
@@ -240,6 +243,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Object\Boss\Boss.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossBarrage.h" />
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.h" />
     <ClInclude Include="Object\Boss\BossPhaseManager.h" />
     <ClInclude Include="Object\Boss\State\BossState.h" />

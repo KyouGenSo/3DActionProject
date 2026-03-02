@@ -101,32 +101,7 @@ public:
     bool DrawImGui() override;
 #endif
 
-private:
-    /// <summary>
-    /// 象限の数
-    /// </summary>
-    static constexpr int kQuadrantCount = 4;
-
-    /// <summary>
-    /// Decal の基本アルファ値
-    /// </summary>
-    static constexpr float kDecalBaseAlpha = 0.3f;
-
-    /// <summary>
-    /// 点滅アルファ値の最小値
-    /// </summary>
-    static constexpr float kBlinkAlphaMin = 0.15f;
-
-    /// <summary>
-    /// 点滅アルファ値の振幅
-    /// </summary>
-    static constexpr float kBlinkAlphaAmplitude = 0.55f;
-
-    /// <summary>
-    /// コライダーの Y 方向サイズ
-    /// </summary>
-    static constexpr float kColliderHeight = 10.0f;
-
+private: // プライベートメンバー関数
     /// <summary>
     /// 攻撃の初期化
     /// </summary>
@@ -173,6 +148,32 @@ private:
     /// </summary>
     /// <param name="boss">ボス</param>
     void EndAttackPhase(Boss* boss);
+
+private:
+    /// <summary>
+    /// 象限の数
+    /// </summary>
+    static constexpr int kQuadrantCount = 4;
+
+    /// <summary>
+    /// Decal の基本アルファ値
+    /// </summary>
+    static constexpr float kDecalBaseAlpha = 0.3f;
+
+    /// <summary>
+    /// 点滅アルファ値の最小値
+    /// </summary>
+    static constexpr float kBlinkAlphaMin = 0.15f;
+
+    /// <summary>
+    /// 点滅アルファ値の振幅
+    /// </summary>
+    static constexpr float kBlinkAlphaAmplitude = 0.55f;
+
+    /// <summary>
+    /// コライダーの Y 方向サイズ
+    /// </summary>
+    static constexpr float kColliderHeight = 10.0f;
 
     //=========================================================================================
     // パラメータ

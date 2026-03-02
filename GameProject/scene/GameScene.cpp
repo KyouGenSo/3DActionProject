@@ -322,6 +322,11 @@ void GameScene::Draw()
 #ifdef _DEBUG
     // コライダーのデバッグ描画
     CollisionManager::GetInstance()->DrawColliders();
+
+    // デカールのデバッグ描画
+    if (bossAttackDecal_) {
+        bossAttackDecal_->DrawDebug();
+    }
 #endif
 
 }

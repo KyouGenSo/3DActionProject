@@ -98,15 +98,6 @@ void GameScene::Initialize()
 
     // カメラアニメーション設定
     SetCameraAnimation();
-
-    // デカールの初期化（動作確認用 Circle デカール）
-    bossAttackDecal_ = std::make_unique<Decal>();
-    bossAttackDecal_->Initialize();
-    bossAttackDecal_->SetShape(DecalShape::Circle);
-    bossAttackDecal_->SetTranslate(Vector3(0.0f, 0.0f, 0.0f));
-    bossAttackDecal_->SetScale(Vector3(15.0f, 4.0f, 15.0f));
-    bossAttackDecal_->SetColor(Vector4(1.0f, 0.2f, 0.1f, 0.5f));
-    bossAttackDecal_->SetEdgeSoftness(0.05f);
 }
 
 void GameScene::Finalize()
@@ -265,11 +256,6 @@ void GameScene::Update()
         SceneManager::GetInstance()->ChangeScene("clear", "Fade", 0.3f);
     }
 
-    // デカールの更新
-    if (bossAttackDecal_) {
-        bossAttackDecal_->Update();
-    }
-
     // 衝突判定の実行
     CollisionManager::GetInstance()->CheckAllCollisions();
 }
@@ -308,9 +294,9 @@ void GameScene::Draw()
 
     //-------------------デカールの描画-------------------//
     DecalBasic::GetInstance()->BeginDraw();
-    if (bossAttackDecal_) {
-        bossAttackDecal_->Draw();
-    }
+
+
+
     DecalBasic::GetInstance()->EndDraw();
 
     //------------------前景 Sprite の描画------------------//
@@ -322,11 +308,6 @@ void GameScene::Draw()
 #ifdef _DEBUG
     // コライダーのデバッグ描画
     CollisionManager::GetInstance()->DrawColliders();
-
-    // デカールのデバッグ描画
-    if (bossAttackDecal_) {
-        bossAttackDecal_->DrawDebug();
-    }
 #endif
 
 }
@@ -536,10 +517,6 @@ void GameScene::InitializeDebugOption()
     // ポーズメニューの DebugUI 登録
     DebugUIManager::GetInstance()->RegisterGameObject("PauseMenu",
         [this]() { if (pauseMenu_) pauseMenu_->DrawImGui(); });
-
-    // デカールの DebugUI 登録
-    DebugUIManager::GetInstance()->RegisterGameObject("Decal",
-        [this]() { if (bossAttackDecal_) bossAttackDecal_->DrawImGui(); });
 
     DebugUIManager::GetInstance()->SetEmitterManager(emitterManager_.get());
 #endif

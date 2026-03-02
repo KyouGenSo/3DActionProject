@@ -22,11 +22,11 @@
 
 // Tako namespace の前方宣言
 namespace Tako {
-class Object3d;
-class EmitterManager;
-class Sprite;
-class BoneTracker;
-enum class DecalShape;
+    class Object3d;
+    class EmitterManager;
+    class Sprite;
+    class BoneTracker;
+    enum class DecalShape;
 }
 
 // GameProject 前方宣言
@@ -141,6 +141,11 @@ public: // メンバ関数
     /// </summary>
     void SetCameraAnimation();
 
+    /// <summary>
+    /// ポーズメニューの更新処理
+    /// </summary>
+    void UpdatePause();
+
 private: // メンバ変数
 
     std::unique_ptr<Tako::SkyBox> skyBox_;                      // スカイボックス（環境マップ）
@@ -184,12 +189,4 @@ private: // メンバ変数
     std::unique_ptr<ControllerUI> controllerUI_;                     // コントローラー UI 表示
     std::unique_ptr<PauseMenu> pauseMenu_;                           // ポーズメニュー
     bool isPaused_ = false;                                          // ポーズ中フラグ
-
-    // デカール
-    std::unique_ptr<Tako::Decal> bossAttackDecal_;              // ボス攻撃範囲デカール
-
-    /// <summary>
-    /// ポーズメニューの更新処理
-    /// </summary>
-    void UpdatePause();
 };

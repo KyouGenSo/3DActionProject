@@ -259,9 +259,6 @@ void GameScene::Update()
         SceneManager::GetInstance()->ChangeScene("clear", "Fade", 0.3f);
     }
 
-    // デカールの一括更新
-    DecalManager::GetInstance()->UpdateAll();
-
     // 衝突判定の実行
     CollisionManager::GetInstance()->CheckAllCollisions();
 }
@@ -298,9 +295,6 @@ void GameScene::Draw()
     player_->Draw();
     boss_->Draw();
 
-    //-------------------デカールの描画-------------------//
-    DecalManager::GetInstance()->DrawAll();
-
     //------------------前景 Sprite の描画------------------//
     // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
@@ -308,9 +302,6 @@ void GameScene::Draw()
 
 
 #ifdef _DEBUG
-    // デカールのデバッグ描画
-    DecalManager::GetInstance()->DrawAllDebug();
-
     // コライダーのデバッグ描画
     CollisionManager::GetInstance()->DrawColliders();
 #endif

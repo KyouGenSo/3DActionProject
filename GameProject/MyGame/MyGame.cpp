@@ -30,15 +30,6 @@ void MyGame::Initialize()
 
     TakoFramework::Initialize();
 
-#pragma region 汎用機能初期化-------------------------------------------------------------------------------------------------------------------
-    // 入力クラスの初期化
-    Input::GetInstance()->Initialize(winApp_);
-
-    // オーディオの初期化
-    Audio::GetInstance()->Initialize("resources/Sound/");
-
-#pragma endregion
-
     // シーンの初期化
     sceneFactory_ = std::make_unique<SceneFactory>();
     SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
@@ -52,126 +43,27 @@ void MyGame::Initialize()
 
     // GlobalVariables の Json ファイル読み込み
     GlobalVariables::GetInstance()->LoadFiles();
-
-    // SpriteBasic のリサイズコールバック関数登録
-    spriteBasicOnresizeId_ = winApp_->RegisterOnResizeFunc(std::bind(&SpriteBasic::OnResize, SpriteBasic::GetInstance(), std::placeholders::_1));
-
-    // GPU パーティクルの初期化
-    GPUParticle::GetInstance()->Initialize(dx12_.get(), defaultCamera_.get());
 }
 
 void MyGame::Finalize()
 {
-    winApp_->UnregisterOnResizeFunc(spriteBasicOnresizeId_);
-
-    // GPU パーティクルの解放
-    GPUParticle::GetInstance()->Finalize();
-
-    // Audio の解放
-    Audio::GetInstance()->Finalize();
-
-    // 入力クラスの解放
-    Input::GetInstance()->SetVibration(0.0f, 0.0f, 0.0f);
-    Input::GetInstance()->Finalize();
-
     TakoFramework::Finalize();
 }
 
 void MyGame::Update()
 {
-    // カメラの更新
-    defaultCamera_->Update();
-
-    // 入力情報の更新
-    Input::GetInstance()->Update();
-
     // F11キーでフルスクリーン切り替え
     if (Input::GetInstance()->TriggerKey(DIK_F11)) {
         ToggleFullScreen();
     }
 
-    // GPU パーティクルの更新
-    GPUParticle::GetInstance()->Update();
-
     TakoFramework::Update();
 
-    //　サウンドの更新
-    Audio::GetInstance()->Update();
-
-    // ゲームパッドの状態をリフレッシュ
-    Input::GetInstance()->RefreshGamePadState();
 }
 
 void MyGame::Draw()
 {
-    /// ============================================= ///
-    /// ------------------シーン描画-------------------///
-    /// ============================================= ///
-
-    //ポストエフェクト適用対象のレンダーテクスチャを描画先に設定
-    dx12_->SetEffectRenderTexture();
-
-    // テクスチャ用の srv ヒープの設定
-    SrvManager::GetInstance()->BeginDraw();
-
-    SceneManager::GetInstance()->Draw();
-
-    GPUParticle::GetInstance()->Draw();
-
-    Draw2D::GetInstance()->Draw();
-
-    /// ===================================================== ///
-    /// ------------------ポストエフェクト描画-------------------///
-    /// ===================================================== ///
-
-      // ポストエフェクトの描画
-    PostEffectManager::GetInstance()->Draw();
-
-    /// ===================================================== ///
-    /// ------------ポストエフェクト非適用対象の描画---------------///
-    /// ===================================================== ///
-    // ポストエフェクト非適用対象のレンダーテクスチャを描画先に設定
-    dx12_->SetNonEffectRenderTexture();
-
-    // シーンの描画
-    SceneManager::GetInstance()->DrawWithoutEffect();
-
-    TransitionManager::GetInstance()->Draw();
-
-    Draw2D::GetInstance()->Reset();
-
-    /// ============================================= ///
-    /// ---------最終結果をスワップチェーンに描画---------///
-    /// ============================================= ///
-    bool isDrawToSwapChain = true;
-
-#ifdef _DEBUG
-    isDrawToSwapChain = !DebugUIManager::GetInstance()->IsWindowVisible("GameViewport");
-#endif
-
-    PostEffectManager::GetInstance()->DrawFinalResult(isDrawToSwapChain);
-
-
-    /// ========================================= ///
-    ///-------------------ImGui-------------------///
-    /// ========================================= ///
-#ifdef _DEBUG
-
-    imguiManager_->Begin();
-
     TakoFramework::Draw();
-
-    Draw2D::GetInstance()->ImGui();
-
-    imguiManager_->End();
-
-    //imgui の描画
-    imguiManager_->Draw();
-#endif
-
-
-    // 描画後の処理
-    dx12_->EndDraw();
 }
 
 void MyGame::RegisterGlobalVariables()
@@ -353,20 +245,10 @@ void MyGame::RegisterShootStateVariables()
 
 void MyGame::LoadTextures()
 {
-    LoadBasicTextures();
     LoadTitleTextures();
     LoadButtonTextures();
     LoadJoystickTextures();
     LoadActionIconTextures();
-}
-
-void MyGame::LoadBasicTextures()
-{
-    TextureManager* tm = TextureManager::GetInstance();
-    tm->LoadTexture("white.dds");
-    tm->LoadTexture("black.dds");
-    tm->LoadTexture("circle.dds");
-    tm->LoadTexture("my_skybox.dds");
 }
 
 void MyGame::LoadTitleTextures()

@@ -93,11 +93,6 @@ private: // プライベートメンバ関数
     void LoadTextures();
 
     /// <summary>
-    /// 基本テクスチャを読み込み
-    /// </summary>
-    void LoadBasicTextures();
-
-    /// <summary>
     /// タイトル画面用テクスチャを読み込み
     /// </summary>
     void LoadTitleTextures();
@@ -119,5 +114,5 @@ private: // プライベートメンバ関数
 
 private: // メンバ変数
 
-    uint32_t spriteBasicOnresizeId_ = 0;
+    
 };

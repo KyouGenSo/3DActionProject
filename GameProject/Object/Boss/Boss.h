@@ -273,12 +273,6 @@ public:
 
     //-----------------------------離脱（互換性スタブ）------------------------------//
     /// <summary>
-    /// 離脱フラグをクリア（BTBossRetreat 互換スタブ）
-    /// ステートマシン導入後は不要だが、AI 駆動の BTBossRetreat が呼ぶため残す
-    /// </summary>
-    void ClearRetreat() { /* ステートマシンが管理するため何もしない */ }
-
-    /// <summary>
     /// 座標変換情報を取得
     /// </summary>
     /// <returns>現在の座標変換情報の参照</returns>
@@ -336,7 +330,7 @@ public:
     /// 現在のフェーズを取得
     /// </summary>
     /// <returns>フェーズ番号</returns>
-    uint32_t GetPhase() const { return phaseManager_.GetPhase(); }
+    uint8_t GetPhase() const { return phaseManager_.GetPhase(); }
 
     /// <summary>
     /// 死亡状態を取得

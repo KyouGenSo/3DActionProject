@@ -81,19 +81,20 @@ private:
     /// </summary>
     /// <param name="boss">ボス</param>
     /// <param name="player">プレイヤー</param>
-    void InitializeRetreat(Boss* boss, Player* player);
+    void InitializeRetreat(const Player* player);
 
     /// <summary>
     /// 離脱移動の更新
     /// </summary>
     /// <param name="boss">ボス</param>
     /// <param name="deltaTime">経過時間</param>
-    void UpdateRetreatMovement(Boss* boss, float deltaTime);
+    void UpdateRetreatMovement(float deltaTime);
 
     /// <summary>
     /// エリア内に収まる位置を計算
     /// </summary>
     /// <param name="position">調整前の位置</param>
+    /// <param name="boss">ボスのポインター</param>
     /// <returns>エリア内に収まる位置</returns>
     Tako::Vector3 ClampToArea(const Tako::Vector3& position);
 
@@ -117,6 +118,9 @@ private:
     // メンバ変数
     //=========================================================================================
 private:
+    // ボスのポインター
+    Boss* boss_ = nullptr;             ///< ボスのポインター
+
     // パラメータ
     float retreatSpeed_ = 60.0f;       ///< 離脱速度
     float targetDistance_ = 55.0f;     ///< 目標距離（プレイヤーからの距離）

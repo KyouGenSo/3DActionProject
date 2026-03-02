@@ -44,14 +44,14 @@ void BossRetreatingState::Enter(Boss* boss)
 		float retreatDistance = targetDistance_ - currentDistance;
 		if (retreatDistance > 0.0f) {
 			// 壁回避: 最適な離脱方向を探索
-			Vector3 bestDirection = FindBestRetreatDirection(primaryDirection, retreatDistance);
+			Vector3 bestDirection = FindBestRetreatDirection(primaryDirection, retreatDistance, boss);
 
 			// プレイヤーを向いたまま
 			float angle = atan2f(-bestDirection.x, -bestDirection.z);
 			boss->SetRotate(Vector3(0.0f, angle, 0.0f));
 
 			targetPosition_ = startPosition_ + bestDirection * retreatDistance;
-			targetPosition_ = ClampToArea(targetPosition_);
+			targetPosition_ = ClampToArea(targetPosition_, boss);
 
 			// 実際の移動距離から所要時間を計算
 			Vector3 actualMove = targetPosition_ - startPosition_;
@@ -116,26 +116,40 @@ void BossRetreatingState::UpdateRetreatMovement(Boss* boss)
 	}
 }
 
-Vector3 BossRetreatingState::ClampToArea(const Vector3& position)
+Vector3 BossRetreatingState::ClampToArea(const Vector3& position, Boss* boss)
 {
-	Vector3 clampedPos = position;
+    Vector3 clampedPos = position;
 
-	clampedPos.x = std::clamp(clampedPos.x,
-		GameConst::kStageXMin + GameConst::kAreaMargin,
-		GameConst::kStageXMax - GameConst::kAreaMargin);
+    uint8_t phase = boss->GetPhase();
 
-	clampedPos.z = std::clamp(clampedPos.z,
-		GameConst::kStageZMin + GameConst::kAreaMargin,
-		GameConst::kStageZMax - GameConst::kAreaMargin);
+    float Xmin = GameConst::kStageXMin + GameConst::kAreaMargin;
+    float Xmax = GameConst::kStageXMax - GameConst::kAreaMargin;
+    float Zmin = GameConst::kStageZMin + GameConst::kAreaMargin;
+    float Zmax = GameConst::kStageZMax - GameConst::kAreaMargin;
 
-	clampedPos.y = position.y;
+    if (phase == 2) {
+        Xmin += GameConst::kBossPhase2AreaSize;
+        Xmax -= GameConst::kBossPhase2AreaSize;
+        Zmin += GameConst::kBossPhase2AreaSize;
+        Zmax -= GameConst::kBossPhase2AreaSize;
+    }
 
-	return clampedPos;
+    // GameConstants のステージ境界を使用
+    // X 座標の制限
+    clampedPos.x = std::clamp(clampedPos.x, Xmin, Xmax);
+
+    // Z 座標の制限
+    clampedPos.z = std::clamp(clampedPos.z, Zmin, Zmax);
+
+    // Y 座標は元の値を保持
+    clampedPos.y = position.y;
+
+    return clampedPos;
 }
 
-Vector3 BossRetreatingState::FindBestRetreatDirection(const Vector3& primaryDirection, float retreatDistance)
+Vector3 BossRetreatingState::FindBestRetreatDirection(const Vector3& primaryDirection, float retreatDistance, Boss* boss)
 {
-	float primaryScore = EvaluateDirection(primaryDirection, retreatDistance);
+	float primaryScore = EvaluateDirection(primaryDirection, retreatDistance, boss);
 
 	if (primaryScore >= kMinRetreatDistance) {
 		return primaryDirection;
@@ -162,7 +176,7 @@ Vector3 BossRetreatingState::FindBestRetreatDirection(const Vector3& primaryDire
 	} };
 
 	for (size_t i = 1; i < candidates.size(); ++i) {
-		candidates[i].score = EvaluateDirection(candidates[i].direction, retreatDistance);
+		candidates[i].score = EvaluateDirection(candidates[i].direction, retreatDistance, boss);
 	}
 
 	auto best = std::max_element(candidates.begin(), candidates.end(),
@@ -173,10 +187,10 @@ Vector3 BossRetreatingState::FindBestRetreatDirection(const Vector3& primaryDire
 	return best->direction;
 }
 
-float BossRetreatingState::EvaluateDirection(const Vector3& direction, float retreatDistance)
+float BossRetreatingState::EvaluateDirection(const Vector3& direction, float retreatDistance, Boss* boss)
 {
 	Vector3 targetPos = startPosition_ + direction * retreatDistance;
-	targetPos = ClampToArea(targetPos);
+	targetPos = ClampToArea(targetPos, boss);
 
 	Vector3 actualMove = targetPos - startPosition_;
 	actualMove.y = 0.0f;

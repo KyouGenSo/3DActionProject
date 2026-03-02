@@ -39,7 +39,7 @@ public:
     /// <summary>
     /// 現在のフェーズを取得
     /// </summary>
-    uint32_t GetPhase() const { return phase_; }
+    uint8_t GetPhase() const { return phase_; }
 
     /// <summary>
     /// フェーズを設定
@@ -88,7 +88,7 @@ public:
     float GetMaxHp() const { return maxHp_; }
 
 private:
-    uint32_t phase_ = 1;               ///< 現在のフェーズ（1 or 2）
+    uint8_t phase_ = 1;               ///< 現在のフェーズ（1 or 2）
     uint8_t life_ = 1;                 ///< ライフカウント
     bool isReadyToChangePhase_ = false;///< フェーズ変更準備完了フラグ
     bool isDead_ = false;              ///< 死亡フラグ

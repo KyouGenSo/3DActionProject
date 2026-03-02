@@ -27,17 +27,17 @@ private:
 	/// <summary>
 	/// エリア内に収まる位置を計算
 	/// </summary>
-	Tako::Vector3 ClampToArea(const Tako::Vector3& position);
+	Tako::Vector3 ClampToArea(const Tako::Vector3& position, Boss* boss);
 
 	/// <summary>
 	/// 最適な離脱方向を探索（壁回避）
 	/// </summary>
-	Tako::Vector3 FindBestRetreatDirection(const Tako::Vector3& primaryDirection, float retreatDistance);
+	Tako::Vector3 FindBestRetreatDirection(const Tako::Vector3& primaryDirection, float retreatDistance, Boss* boss);
 
 	/// <summary>
 	/// 指定方向での移動距離を評価
 	/// </summary>
-	float EvaluateDirection(const Tako::Vector3& direction, float retreatDistance);
+	float EvaluateDirection(const Tako::Vector3& direction, float retreatDistance, Boss* boss);
 
 	// 定数
 	static constexpr float kDirectionEpsilon = 0.01f;

@@ -88,7 +88,7 @@ void BTBossDash::InitializeDash(Boss* boss) {
     targetPosition_ = startPosition_ + dashDirection_ * dashDistance;
 
     // エリア内に収まるよう調整
-    targetPosition_ = ClampToArea(targetPosition_);
+    targetPosition_ = ClampToArea(targetPosition_, boss);
 
     // ダッシュ方向を再計算（エリア制限後）
     dashDirection_ = targetPosition_ - startPosition_;
@@ -126,15 +126,29 @@ void BTBossDash::UpdateDashMovement(Boss* boss, float deltaTime) {
     }
 }
 
-Vector3 BTBossDash::ClampToArea(const Vector3& position) {
+Vector3 BTBossDash::ClampToArea(const Vector3& position, const Boss* boss) {
     Vector3 clampedPos = position;
+
+    uint8_t phase = boss->GetPhase();
+
+    float Xmin = GameConst::kStageXMin + GameConst::kAreaMargin;
+    float Xmax = GameConst::kStageXMax - GameConst::kAreaMargin;
+    float Zmin = GameConst::kStageZMin + GameConst::kAreaMargin;
+    float Zmax = GameConst::kStageZMax - GameConst::kAreaMargin;
+
+    if (phase == 2) {
+        Xmin += GameConst::kBossPhase2AreaSize;
+        Xmax -= GameConst::kBossPhase2AreaSize;
+        Zmin += GameConst::kBossPhase2AreaSize;
+        Zmax -= GameConst::kBossPhase2AreaSize;
+    }
 
     // GameConstants のステージ境界を使用
     // X 座標の制限
-    clampedPos.x = std::clamp(clampedPos.x, GameConst::kStageXMin + GameConst::kAreaMargin, GameConst::kStageXMax - GameConst::kAreaMargin);
+    clampedPos.x = std::clamp(clampedPos.x, Xmin, Xmax);
 
     // Z 座標の制限
-    clampedPos.z = std::clamp(clampedPos.z, GameConst::kStageZMin + GameConst::kAreaMargin, GameConst::kStageZMax - GameConst::kAreaMargin);
+    clampedPos.z = std::clamp(clampedPos.z, Zmin, Zmax);
 
     // Y 座標は元の値を保持
     clampedPos.y = position.y;

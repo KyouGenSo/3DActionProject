@@ -20,8 +20,8 @@ BTBossRetreat::BTBossRetreat() {
 }
 
 BTNodeStatus BTBossRetreat::Execute(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
-    if (!boss) {
+    boss_ = blackboard->GetBoss();
+    if (!boss_) {
         status_ = BTNodeStatus::Failure;
         return BTNodeStatus::Failure;
     }
@@ -36,12 +36,11 @@ BTNodeStatus BTBossRetreat::Execute(BTBlackboard* blackboard) {
 
     // 初回実行時の初期化
     if (isFirstExecute_) {
-        InitializeRetreat(boss, player);
+        InitializeRetreat(player);
         isFirstExecute_ = false;
 
         // 既に目標距離以上離れている場合は即座に成功
         if (retreatDuration_ <= 0.0f) {
-            boss->ClearRetreat();  // 離脱フラグをクリア
             isFirstExecute_ = true;
             status_ = BTNodeStatus::Success;
             return BTNodeStatus::Success;
@@ -49,23 +48,20 @@ BTNodeStatus BTBossRetreat::Execute(BTBlackboard* blackboard) {
     }
 
     // 離脱移動の更新
-    UpdateRetreatMovement(boss, deltaTime);
+    UpdateRetreatMovement(deltaTime);
 
     // 経過時間を更新
     elapsedTime_ += deltaTime;
 
     // 終了判定（位置ベース）
-    Vector3 currentPos = boss->GetTransform().translate;
+    Vector3 currentPos = boss_->GetTransform().translate;
     Vector3 diff = currentPos - targetPosition_;
     diff.y = 0.0f;  // 水平距離のみ
     float distanceToTarget = diff.Length();
 
     if (distanceToTarget < kArrivalThreshold) {
         // 目標位置に到達
-        boss->SetTranslate(targetPosition_);
-
-        // 離脱フラグをクリア
-        boss->ClearRetreat();
+        boss_->SetTranslate(targetPosition_);
 
         // リセットして成功を返す
         isFirstExecute_ = true;
@@ -86,12 +82,12 @@ void BTBossRetreat::Reset() {
     retreatDuration_ = 0.0f;
 }
 
-void BTBossRetreat::InitializeRetreat(Boss* boss, Player* player) {
+void BTBossRetreat::InitializeRetreat(const Player* player) {
     // タイマーリセット
     elapsedTime_ = 0.0f;
 
     // 開始位置を記録
-    startPosition_ = boss->GetTransform().translate;
+    startPosition_ = boss_->GetTransform().translate;
 
     // プレイヤー位置を取得
     Vector3 playerPos = player->GetTransform().translate;
@@ -112,7 +108,7 @@ void BTBossRetreat::InitializeRetreat(Boss* boss, Player* player) {
 
             // プレイヤーを向いたまま（bestDirection の逆方向を向く）
             float angle = atan2f(-bestDirection.x, -bestDirection.z);
-            boss->SetRotate(Vector3(0.0f, angle, 0.0f));
+            boss_->SetRotate(Vector3(0.0f, angle, 0.0f));
 
             targetPosition_ = startPosition_ + bestDirection * retreatDistance;
             targetPosition_ = ClampToArea(targetPosition_);
@@ -136,7 +132,7 @@ void BTBossRetreat::InitializeRetreat(Boss* boss, Player* player) {
     }
 }
 
-void BTBossRetreat::UpdateRetreatMovement(Boss* boss, float deltaTime) {
+void BTBossRetreat::UpdateRetreatMovement(float deltaTime) {
     deltaTime; // 未使用警告抑制
 
     if (retreatDuration_ > 0.0f) {
@@ -150,19 +146,33 @@ void BTBossRetreat::UpdateRetreatMovement(Boss* boss, float deltaTime) {
         t = t * t * (kEasingCoeffA - kEasingCoeffB * t);
 
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);
-        boss->SetTranslate(newPosition);
+        boss_->SetTranslate(newPosition);
     }
 }
 
 Vector3 BTBossRetreat::ClampToArea(const Vector3& position) {
     Vector3 clampedPos = position;
 
+    uint8_t phase = boss_->GetPhase();
+
+    float Xmin = GameConst::kStageXMin + GameConst::kAreaMargin;
+    float Xmax = GameConst::kStageXMax - GameConst::kAreaMargin;
+    float Zmin = GameConst::kStageZMin + GameConst::kAreaMargin;
+    float Zmax = GameConst::kStageZMax - GameConst::kAreaMargin;
+
+    if (phase == 2) {
+        Xmin += GameConst::kBossPhase2AreaSize;
+        Xmax -= GameConst::kBossPhase2AreaSize;
+        Zmin += GameConst::kBossPhase2AreaSize;
+        Zmax -= GameConst::kBossPhase2AreaSize;
+    }
+
     // GameConstants のステージ境界を使用
     // X 座標の制限
-    clampedPos.x = std::clamp(clampedPos.x, GameConst::kStageXMin + GameConst::kAreaMargin, GameConst::kStageXMax - GameConst::kAreaMargin);
+    clampedPos.x = std::clamp(clampedPos.x, Xmin, Xmax);
 
     // Z 座標の制限
-    clampedPos.z = std::clamp(clampedPos.z, GameConst::kStageZMin + GameConst::kAreaMargin, GameConst::kStageZMax - GameConst::kAreaMargin);
+    clampedPos.z = std::clamp(clampedPos.z, Zmin, Zmax);
 
     // Y 座標は元の値を保持
     clampedPos.y = position.y;
@@ -192,12 +202,12 @@ Vector3 BTBossRetreat::FindBestRetreatDirection(const Vector3& primaryDirection,
         float score;
     };
 
-    std::array<DirectionCandidate, 4> candidates = {{
+    std::array<DirectionCandidate, 4> candidates = { {
         { primaryDirection, primaryScore },
         { Mat4x4::TransformNormal(rotLeft90, primaryDirection), 0.0f },   // 左90度
         { Mat4x4::TransformNormal(rotRight90, primaryDirection), 0.0f },  // 右90度
         { Mat4x4::TransformNormal(rot180, primaryDirection), 0.0f }       // 180度（逆方向）
-    }};
+    } };
 
     // 各方向のスコアを計算
     for (size_t i = 1; i < candidates.size(); ++i) {
@@ -205,10 +215,10 @@ Vector3 BTBossRetreat::FindBestRetreatDirection(const Vector3& primaryDirection,
     }
 
     // 最高スコアの方向を選択
-    auto best = std::max_element(candidates.begin(), candidates.end(),
-        [](const DirectionCandidate& a, const DirectionCandidate& b) {
-            return a.score < b.score;
-        });
+    auto best = std::ranges::max_element(candidates,
+                                         [](const DirectionCandidate& a, const DirectionCandidate& b) {
+                                             return a.score < b.score;
+                                         });
 
     return best->direction;
 }

@@ -167,7 +167,8 @@ nlohmann::json BTBossShoot::ExtractParameters() const {
         {"chargeTime", chargeTime_},
         {"recoveryTime", recoveryTime_},
         {"bulletSpeed", bulletSpeed_},
-        {"spreadAngle", spreadAngle_}
+        {"spreadAngle", spreadAngle_},
+        {"bulletCount",bulletCount_}
     };
 }
 

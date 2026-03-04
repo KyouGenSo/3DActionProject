@@ -240,64 +240,64 @@
     },
     {
       "id": 30034,
-      "sourceNodeId": 10010,
-      "sourcePinId": 20016,
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
       "targetNodeId": 10037,
       "targetPinId": 20053
     },
     {
       "id": 30035,
-      "sourceNodeId": 10008,
-      "sourcePinId": 20013,
-      "targetNodeId": 10038,
-      "targetPinId": 20054
-    },
-    {
-      "id": 30036,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
       "targetNodeId": 10025,
       "targetPinId": 20037
     },
     {
-      "id": 30037,
+      "id": 30036,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
       "targetNodeId": 10007,
       "targetPinId": 20010
     },
     {
+      "id": 30037,
+      "sourceNodeId": 10010,
+      "sourcePinId": 20016,
+      "targetNodeId": 10038,
+      "targetPinId": 20054
+    },
+    {
       "id": 30038,
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
+      "targetNodeId": 10040,
+      "targetPinId": 20056
+    },
+    {
+      "id": 30039,
+      "sourceNodeId": 10017,
+      "sourcePinId": 20027,
+      "targetNodeId": 10041,
+      "targetPinId": 20057
+    },
+    {
+      "id": 30040,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
       "targetNodeId": 10039,
       "targetPinId": 20055
     },
     {
-      "id": 30039,
-      "sourceNodeId": 10004,
-      "sourcePinId": 20006,
-      "targetNodeId": 10040,
-      "targetPinId": 20056
-    },
-    {
-      "id": 30040,
-      "sourceNodeId": 10008,
-      "sourcePinId": 20013,
-      "targetNodeId": 10041,
-      "targetPinId": 20057
-    },
-    {
       "id": 30041,
-      "sourceNodeId": 10017,
-      "sourcePinId": 20027,
+      "sourceNodeId": 10010,
+      "sourcePinId": 20016,
       "targetNodeId": 10042,
       "targetPinId": 20058
     }
   ],
   "metadata": {
-    "created": "2026-03-02T20:33:31",
-    "modified": "2026-03-02T20:33:31",
+    "created": "2026-03-04T15:37:39",
+    "modified": "2026-03-04T15:37:39",
     "name": "Boss Behavior Tree"
   },
   "nodes": [
@@ -315,7 +315,7 @@
       "displayName": "Dash",
       "id": 10001,
       "parameters": {
-        "dashDuration": 0.09981751441955566,
+        "dashDuration": 0.16464412212371826,
         "dashSpeed": 200.0
       },
       "position": {
@@ -410,6 +410,7 @@
       "displayName": "Shoot",
       "id": 10009,
       "parameters": {
+        "bulletCount": 3,
         "bulletSpeed": 200.0,
         "chargeTime": 0.44999998807907104,
         "recoveryTime": 1.0,
@@ -533,6 +534,7 @@
       "displayName": "Shoot",
       "id": 10019,
       "parameters": {
+        "bulletCount": 3,
         "bulletSpeed": 50.0,
         "chargeTime": 0.44999998807907104,
         "recoveryTime": 1.0,
@@ -687,9 +689,9 @@
         "blockRadius": 8.0,
         "blockScale": 0.5,
         "comboInterval": 0.15000000596046448,
-        "comboProbability": 0.5,
+        "comboProbability": 0.0,
         "prepareTime": 0.5,
-        "recoveryTime": 1.0,
+        "recoveryTime": 0.75,
         "rushDistance": 25.0,
         "stopDistance": 5.0,
         "swingAngle": 3.1415927410125732
@@ -728,9 +730,9 @@
         "blockRadius": 8.0,
         "blockScale": 0.5,
         "comboInterval": 0.15000000596046448,
-        "comboProbability": 0.5,
+        "comboProbability": 1.0,
         "prepareTime": 0.5,
-        "recoveryTime": 1.0,
+        "recoveryTime": 0.75,
         "rushDistance": 25.0,
         "stopDistance": 5.0,
         "swingAngle": 3.1415927410125732
@@ -786,21 +788,8 @@
       "type": "BTSequence"
     },
     {
-      "displayName": "Retreat",
-      "id": 10037,
-      "parameters": {
-        "retreatSpeed": 200.0,
-        "targetDistance": 30.0
-      },
-      "position": {
-        "x": 100.0,
-        "y": 100.0
-      },
-      "type": "BTBossRetreat"
-    },
-    {
       "displayName": "Barrage",
-      "id": 10038,
+      "id": 10037,
       "parameters": {
         "chargeTime": 0.800000011920929,
         "fireInterval": 0.019999999552965164,
@@ -821,7 +810,7 @@
     },
     {
       "displayName": "Area Attack",
-      "id": 10039,
+      "id": 10038,
       "parameters": {
         "attackDuration": 0.5,
         "blinkDuration": 0.6000000238418579,
@@ -829,8 +818,8 @@
         "damage": 15.0,
         "maxQuadrants": 3,
         "minQuadrants": 3,
-        "recoveryTime": 0.6000000238418579,
-        "warningDuration": 1.0
+        "recoveryTime": 0.800000011920929,
+        "warningDuration": 1.2000000476837158
       },
       "position": {
         "x": 130.0,
@@ -840,7 +829,7 @@
     },
     {
       "displayName": "Meteor Rain",
-      "id": 10040,
+      "id": 10039,
       "parameters": {
         "blinkDuration": 0.800000011920929,
         "blinkFrequency": 10.0,
@@ -868,7 +857,7 @@
     },
     {
       "displayName": "Slash Attack",
-      "id": 10041,
+      "id": 10040,
       "parameters": {
         "attackDuration": 0.30000001192092896,
         "attackRadius": 40.0,
@@ -886,7 +875,7 @@
     },
     {
       "displayName": "Slash Attack",
-      "id": 10042,
+      "id": 10041,
       "parameters": {
         "attackDuration": 0.30000001192092896,
         "attackRadius": 30.0,
@@ -901,6 +890,22 @@
         "y": 140.0
       },
       "type": "BTBossSlashAttack"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10042,
+      "parameters": {
+        "bulletCount": 5,
+        "bulletSpeed": 38.0,
+        "chargeTime": 0.800000011920929,
+        "recoveryTime": 0.8999999761581421,
+        "spreadAngle": 0.4363323152065277
+      },
+      "position": {
+        "x": 100.0,
+        "y": 100.0
+      },
+      "type": "BTBossShoot"
     }
   ],
   "version": "1.0"

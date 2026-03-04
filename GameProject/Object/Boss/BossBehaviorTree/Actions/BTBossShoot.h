@@ -40,15 +40,21 @@ public:
     /// </summary>
     void Reset() override;
 
-    // パラメータ取得・設定
-    float GetChargeTime() const { return chargeTime_; }
+    /// パラメータ取得・設定
+    [[nodiscard]] float GetChargeTime() const { return chargeTime_; }
     void SetChargeTime(float time) { chargeTime_ = time; }
-    float GetBulletSpeed() const { return bulletSpeed_; }
+
+    [[nodiscard]] float GetBulletSpeed() const { return bulletSpeed_; }
     void SetBulletSpeed(float speed) { bulletSpeed_ = speed; }
-    float GetSpreadAngle() const { return spreadAngle_; }
+
+    [[nodiscard]] float GetSpreadAngle() const { return spreadAngle_; }
     void SetSpreadAngle(float angle) { spreadAngle_ = angle; }
-    float GetRecoveryTime() const { return recoveryTime_; }
+
+    [[nodiscard]] float GetRecoveryTime() const { return recoveryTime_; }
     void SetRecoveryTime(float time) { recoveryTime_ = time; }
+
+    [[nodiscard]] int GetBulletCount() const { return bulletCount_; }
+    void SetBulletCount(int count) { bulletCount_ = count; }
 
     /// <summary>
     /// JSON からパラメータを適用
@@ -67,12 +73,15 @@ public:
         if (params.contains("recoveryTime")) {
             recoveryTime_ = params["recoveryTime"];
         }
+        if (params.contains("bulletCount")) {
+            bulletCount_ = params["bulletCount"];
+        }
     }
 
     /// <summary>
     /// パラメータを JSON として抽出
     /// </summary>
-    nlohmann::json ExtractParameters() const override;
+    [[nodiscard]] nlohmann::json ExtractParameters() const override;
 
 #ifdef _DEBUG
     /// <summary>

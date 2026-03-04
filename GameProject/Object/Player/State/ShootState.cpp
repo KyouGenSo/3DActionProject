@@ -3,7 +3,6 @@
 #include "../Player.h"
 #include "Input/InputHandler.h"
 #include "Camera.h"
-#include "Object/Boss/Boss.h"
 #include "Matrix4x4.h"
 #include "Mat4x4Func.h"
 #include "Vec3Func.h"
@@ -33,9 +32,8 @@ void ShootState::Update(Player* player, float deltaTime)
 	fireRate_ = gv->GetValueFloat("ShootState", "FireRate");
 	moveSpeedMultiplier_ = gv->GetValueFloat("ShootState", "MoveSpeedMultiplier");
 
-	// フェーズ2では射撃を無効化
-	Boss* boss = player->GetBoss();
-	if (boss && boss->GetPhase() == 2) {
+	// 射撃が無効化されている場合（フェーズ2など）
+	if (!player->IsShootingEnabled()) {
 		// 射撃せずに Idle/Move に戻る
 		PlayerStateMachine* stateMachine = player->GetStateMachine();
 		InputHandler* input = player->GetInputHandler();

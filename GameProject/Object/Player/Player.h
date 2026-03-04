@@ -163,6 +163,16 @@ public: // メンバ関数
     void SetBoss(Boss* target) { targetEnemy_ = target; }
 
     /// <summary>
+    /// 射撃の有効/無効を設定（Boss フェーズ変更時に呼ばれる）
+    /// </summary>
+    void SetShootingEnabled(bool enabled) { shootingEnabled_ = enabled; }
+
+    /// <summary>
+    /// 射撃が有効かどうかを取得
+    /// </summary>
+    bool IsShootingEnabled() const { return shootingEnabled_; }
+
+    /// <summary>
     /// カメラを設定
     /// </summary>
     /// <param name="camera">使用するカメラのポインタ</param>
@@ -366,12 +376,6 @@ public: // メンバ関数
     InputHandler* GetInputHandler() { return inputHandlerPtr_; };
 
     /// <summary>
-    /// ターゲットの Boss を取得
-    /// </summary>
-    /// <returns>Boss のポインタ（未設定なら nullptr）</returns>
-    Boss* GetBoss() const { return targetEnemy_; }
-
-    /// <summary>
     /// 攻撃最小距離を取得
     /// </summary>
     /// <returns>攻撃最小距離</returns>
@@ -466,6 +470,7 @@ private: // メンバ変数
 
     bool isInvincible_ = false;       ///< 無敵フラグ
     bool isPause_ = false;            ///< ポーズ中フラグ
+    bool shootingEnabled_ = true;     ///< 射撃有効フラグ（false でフェーズ2射撃無効化）
 
     // システム
     std::unique_ptr<PlayerStateMachine> stateMachine_;

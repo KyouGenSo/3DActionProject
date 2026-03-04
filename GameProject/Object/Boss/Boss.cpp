@@ -17,6 +17,7 @@
 #include "State/BossPhaseTransitionStunState.h"
 #include "State/BossDeadState.h"
 #include "../../CameraSystem/CameraManager.h"
+#include "../Player/Player.h"
 
 #ifdef _DEBUG
 #include "BossNodeEditor/BossNodeEditor.h"
@@ -169,6 +170,14 @@ void Boss::Update(float deltaTime)
     // 死亡判定 → Dead 状態へ遷移
     if (phaseManager_.IsDead() && stateMachine_->GetCurrentStateName() != "Dead") {
         stateMachine_->ChangeState("Dead");
+    }
+
+    // フェーズに応じてプレイヤーの射撃有効/無効を切り替え
+    if (phaseManager_.GetPhase() == 1) {
+        if (player_) { player_->SetShootingEnabled(true); }
+    }
+    else if (phaseManager_.GetPhase() == 2) {
+        if (player_) { player_->SetShootingEnabled(false); }
     }
 
     // ステートマシンが全てを駆動（Normal 内で BT が動く）

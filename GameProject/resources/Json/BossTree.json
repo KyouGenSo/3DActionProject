@@ -296,8 +296,8 @@
     }
   ],
   "metadata": {
-    "created": "2026-03-04T15:37:39",
-    "modified": "2026-03-04T15:37:39",
+    "created": "2026-03-04T17:46:01",
+    "modified": "2026-03-04T17:46:01",
     "name": "Boss Behavior Tree"
   },
   "nodes": [
@@ -315,7 +315,7 @@
       "displayName": "Dash",
       "id": 10001,
       "parameters": {
-        "dashDuration": 0.16464412212371826,
+        "dashDuration": 0.09870380163192749,
         "dashSpeed": 200.0
       },
       "position": {
@@ -840,12 +840,12 @@
         "horizontalBulletCount": 12,
         "horizontalSpeed": 35.0,
         "impactDuration": 0.30000001192092896,
-        "impactRadius": 6.5,
+        "impactRadius": 6.0,
         "launchDuration": 0.5,
         "launchSpeed": 60.0,
         "launchSpreadXZ": 5.0,
         "maxImpacts": 14,
-        "minImpacts": 14,
+        "minImpacts": 10,
         "recoveryTime": 0.8999999761581421,
         "warningDuration": 1.0
       },

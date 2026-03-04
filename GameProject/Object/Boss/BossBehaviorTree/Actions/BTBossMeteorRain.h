@@ -197,6 +197,11 @@ private:
     static constexpr int kMaxImpacts = 20;
 
     /// <summary>
+    /// 着弾位置の配置リトライ上限（リジェクションサンプリング）
+    /// </summary>
+    static constexpr int kMaxPlacementRetries = 30;
+
+    /// <summary>
     /// Decal の基本アルファ値
     /// </summary>
     static constexpr float kDecalBaseAlpha = 0.3f;

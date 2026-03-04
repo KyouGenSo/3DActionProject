@@ -253,10 +253,39 @@ void BTBossMeteorRain::GenerateImpactPositions(const Vector3& bossPos) {
     RandomEngine* rng = RandomEngine::GetInstance();
     float areaSize = GameConst::kBossPhase2AreaSize;
 
+    // 最小分離距離: 2つの着弾円が接する距離（直径分）
+    float minSeparation = 2.0f * impactRadius_;
+    float minSepSq = minSeparation * minSeparation;
+
     for (int i = 0; i < impactCount_; ++i) {
-        float x = bossPos.x + rng->GetFloat(-areaSize, areaSize);
-        float z = bossPos.z + rng->GetFloat(-areaSize, areaSize);
-        impactPositions_.push_back(Vector3(x, bossPos.y, z));
+        bool placed = false;
+
+        for (int retry = 0; retry < kMaxPlacementRetries; ++retry) {
+            float x = bossPos.x + rng->GetFloat(-areaSize, areaSize);
+            float z = bossPos.z + rng->GetFloat(-areaSize, areaSize);
+            Vector3 candidate(x, bossPos.y, z);
+
+            // 既存の着弾位置との距離チェック（二乗距離で比較、sqrt回避）
+            bool tooClose = false;
+            for (const auto& existing : impactPositions_) {
+                if (candidate.DistanceSquared(existing) < minSepSq) {
+                    tooClose = true;
+                    break;
+                }
+            }
+
+            if (!tooClose) {
+                impactPositions_.push_back(candidate);
+                placed = true;
+                break;
+            }
+        }
+
+        // リトライ上限内に配置できなかった場合、残りを中止
+        if (!placed) {
+            impactCount_ = static_cast<int>(impactPositions_.size());
+            break;
+        }
     }
 }
 

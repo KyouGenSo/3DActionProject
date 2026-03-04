@@ -35,7 +35,7 @@ BTNodeStatus BTBossIdle::Execute(BTBlackboard* blackboard) {
     }
 
     // プレイヤーの方向を向く
-    LookAtPlayer(boss, deltaTime);
+    LookAtPlayer(blackboard, deltaTime);
 
     // 経過時間を更新
     elapsedTime_ += deltaTime;
@@ -58,8 +58,9 @@ void BTBossIdle::Reset() {
     isFirstExecute_ = true;
 }
 
-void BTBossIdle::LookAtPlayer(Boss* boss, float deltaTime) {
-    Player* player = boss->GetPlayer();
+void BTBossIdle::LookAtPlayer(BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetBoss();
+    Player* player = blackboard->GetPlayer();
     if (!player) {
         return;
     }

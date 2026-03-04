@@ -31,7 +31,7 @@ BTNodeStatus BTBossRapidFire::Execute(BTBlackboard* blackboard) {
 
     // フェーズ1: チャージ中（プレイヤーに照準）
     if (elapsedTime_ < chargeTime_) {
-        AimAtPlayer(boss, deltaTime);
+        AimAtPlayer(blackboard, deltaTime);
         bulletSignEffect_.Update(boss, deltaTime);
     }
     // フェーズ2: 連続発射中（追尾しながら発射）
@@ -42,12 +42,12 @@ BTNodeStatus BTBossRapidFire::Execute(BTBlackboard* blackboard) {
         }
 
         // 発射中もプレイヤー方向を追尾
-        AimAtPlayer(boss, deltaTime);
+        AimAtPlayer(blackboard, deltaTime);
 
         // 発射間隔チェック
         timeSinceLastFire_ += deltaTime;
         if (timeSinceLastFire_ >= fireInterval_) {
-            FireBullet(boss);
+            FireBullet(blackboard);
             firedCount_++;
             timeSinceLastFire_ = 0.0f;
 
@@ -105,8 +105,9 @@ void BTBossRapidFire::InitializeRapidFire(Boss* boss) {
     bulletSignEffect_.Start(boss, chargeTime_);
 }
 
-void BTBossRapidFire::AimAtPlayer(Boss* boss, float deltaTime) {
-    Player* player = boss->GetPlayer();
+void BTBossRapidFire::AimAtPlayer(BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetBoss();
+    Player* player = blackboard->GetPlayer();
     if (!player) {
         return;
     }
@@ -123,12 +124,13 @@ void BTBossRapidFire::AimAtPlayer(Boss* boss, float deltaTime) {
     }
 }
 
-void BTBossRapidFire::FireBullet(Boss* boss) {
+void BTBossRapidFire::FireBullet(BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetBoss();
     // 発射位置（ボスの座標）
     Vector3 firePosition = boss->GetTransform().translate;
 
     // プレイヤーへの方向を計算
-    Vector3 direction = CalculateDirectionToPlayer(boss);
+    Vector3 direction = CalculateDirectionToPlayer(blackboard);
 
     // 弾の速度ベクトルを計算
     Vector3 bulletVelocity = direction * bulletSpeed_;
@@ -137,8 +139,9 @@ void BTBossRapidFire::FireBullet(Boss* boss) {
     boss->RequestBulletSpawn(firePosition, bulletVelocity);
 }
 
-Vector3 BTBossRapidFire::CalculateDirectionToPlayer(Boss* boss) {
-    Player* player = boss->GetPlayer();
+Vector3 BTBossRapidFire::CalculateDirectionToPlayer(BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetBoss();
+    Player* player = blackboard->GetPlayer();
     if (!player) {
         // プレイヤーがいない場合は前方向を返す
         return Vector3(0.0f, 0.0f, 1.0f);

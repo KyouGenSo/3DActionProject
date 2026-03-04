@@ -31,14 +31,14 @@ BTNodeStatus BTBossShoot::Execute(BTBlackboard* blackboard) {
 
     // プレイヤーの方向を向く（射撃準備中）
     if (elapsedTime_ < chargeTime_) {
-        AimAtPlayer(boss, deltaTime);
+        AimAtPlayer(blackboard, deltaTime);
         bulletSignEffect_.Update(boss, deltaTime);
     }
 
     // 弾を発射
     if (elapsedTime_ >= chargeTime_ && !hasFired_) {
         bulletSignEffect_.End(boss);
-        FireBullets(boss);
+        FireBullets(blackboard);
         hasFired_ = true;
         boss->EnterRecovery();  // 硬直フェーズ開始
     }
@@ -84,8 +84,9 @@ void BTBossShoot::InitializeShoot(Boss* boss) {
     bulletSignEffect_.Start(boss, chargeTime_);
 }
 
-void BTBossShoot::AimAtPlayer(Boss* boss, float deltaTime) {
-    Player* player = boss->GetPlayer();
+void BTBossShoot::AimAtPlayer(BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetBoss();
+    Player* player = blackboard->GetPlayer();
     if (!player) {
         return;
     }
@@ -102,8 +103,9 @@ void BTBossShoot::AimAtPlayer(Boss* boss, float deltaTime) {
     }
 }
 
-void BTBossShoot::FireBullets(Boss* boss) {
-    Player* player = boss->GetPlayer();
+void BTBossShoot::FireBullets(BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetBoss();
+    Player* player = blackboard->GetPlayer();
     if (!player) {
         return;
     }

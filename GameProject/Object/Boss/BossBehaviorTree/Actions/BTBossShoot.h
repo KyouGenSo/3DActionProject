@@ -102,13 +102,13 @@ private:
     /// </summary>
     /// <param name="boss">ボス</param>
     /// <param name="deltaTime">経過時間</param>
-    void AimAtPlayer(Boss* boss, float deltaTime);
+    void AimAtPlayer(BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 弾を発射
     /// </summary>
-    /// <param name="boss">ボス</param>
-    void FireBullets(Boss* boss);
+    /// <param name="blackboard">ブラックボード</param>
+    void FireBullets(BTBlackboard* blackboard);
 
     /// <summary>
     /// 弾の発射方向を計算

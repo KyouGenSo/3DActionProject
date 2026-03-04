@@ -110,14 +110,14 @@ private:
     /// 射撃パラメータの初期化
     /// </summary>
     /// <param name="boss">ボス</param>
-    void InitializeWideShoot(Boss* boss);
+    void InitializeWideShoot(BTBlackboard* blackboard);
 
     /// <summary>
     /// プレイヤーを狙う処理
     /// </summary>
-    /// <param name="boss">ボス</param>
+    /// <param name="blackboard">ブラックボード</param>
     /// <param name="deltaTime">経過時間</param>
-    void AimAtPlayer(Boss* boss, float deltaTime);
+    void AimAtPlayer(BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 弾を1発発射

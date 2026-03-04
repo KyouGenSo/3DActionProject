@@ -309,12 +309,6 @@ public:
     Tako::Vector3 GetScale() const { return transform_.scale; }
 
     /// <summary>
-    /// プレイヤーを取得
-    /// </summary>
-    /// <returns>プレイヤーのポインタ</returns>
-    Player* GetPlayer() const { return player_; }
-
-    /// <summary>
     /// HP を取得
     /// </summary>
     /// <returns>現在の HP 値</returns>

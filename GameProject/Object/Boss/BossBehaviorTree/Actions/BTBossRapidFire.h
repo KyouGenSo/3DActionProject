@@ -93,20 +93,20 @@ private:
     /// </summary>
     /// <param name="boss">ボス</param>
     /// <param name="deltaTime">経過時間</param>
-    void AimAtPlayer(Boss* boss, float deltaTime);
+    void AimAtPlayer(BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 弾を1発発射
     /// </summary>
-    /// <param name="boss">ボス</param>
-    void FireBullet(Boss* boss);
+    /// <param name="blackboard">ブラックボード</param>
+    void FireBullet(BTBlackboard* blackboard);
 
     /// <summary>
     /// プレイヤーへの方向を計算
     /// </summary>
-    /// <param name="boss">ボス</param>
+    /// <param name="blackboard">ブラックボード</param>
     /// <returns>プレイヤーへの正規化された方向ベクトル</returns>
-    Tako::Vector3 CalculateDirectionToPlayer(Boss* boss);
+    Tako::Vector3 CalculateDirectionToPlayer(BTBlackboard* blackboard);
 
     // 射撃前の準備時間
     float chargeTime_ = 0.9f;

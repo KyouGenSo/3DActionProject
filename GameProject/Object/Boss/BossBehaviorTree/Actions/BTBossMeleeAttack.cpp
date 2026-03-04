@@ -41,7 +41,7 @@ BTNodeStatus BTBossMeleeAttack::Execute(BTBlackboard* blackboard) {
     // フェーズに応じた処理
     switch (currentPhase_) {
     case MeleePhase::Prepare:
-        ProcessPreparePhase(boss, deltaTime);
+        ProcessPreparePhase(blackboard, deltaTime);
         // 準備時間終了で Execute フェーズへ
         if (phaseTimer_ >= prepareTime_) {
             currentPhase_ = MeleePhase::Execute;
@@ -55,12 +55,12 @@ BTNodeStatus BTBossMeleeAttack::Execute(BTBlackboard* blackboard) {
                 colliderActivated_ = true;
             }
             // 突進の初期化（Execute 開始時にプレイヤー位置を確定）
-            InitializeRush(boss);
+            InitializeRush(blackboard);
         }
         break;
 
     case MeleePhase::Execute:
-        ProcessExecutePhase(boss, deltaTime);
+        ProcessExecutePhase(blackboard, deltaTime);
         // 攻撃時間終了で次のフェーズへ
         if (phaseTimer_ >= attackDuration_) {
             // コライダーを無効化
@@ -85,7 +85,7 @@ BTNodeStatus BTBossMeleeAttack::Execute(BTBlackboard* blackboard) {
         break;
 
     case MeleePhase::Interval:
-        ProcessIntervalPhase(boss, deltaTime);
+        ProcessIntervalPhase(blackboard, deltaTime);
         // コンボ間隔終了で次の攻撃準備へ
         if (phaseTimer_ >= comboInterval_) {
             comboIndex_++;
@@ -185,8 +185,9 @@ void BTBossMeleeAttack::InitializeMeleeAttack(Boss* boss) {
     rushInitialized_ = false;
 }
 
-void BTBossMeleeAttack::AimAtPlayer(Boss* boss, float deltaTime) {
-    Player* player = boss->GetPlayer();
+void BTBossMeleeAttack::AimAtPlayer(BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetBoss();
+    Player* player = blackboard->GetPlayer();
     if (!player) {
         return;
     }
@@ -218,9 +219,10 @@ void BTBossMeleeAttack::AimAtPlayer(Boss* boss, float deltaTime) {
     }
 }
 
-void BTBossMeleeAttack::ProcessPreparePhase(Boss* boss, float deltaTime) {
+void BTBossMeleeAttack::ProcessPreparePhase(BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetBoss();
     // プレイヤーの方向を向く
-    AimAtPlayer(boss, deltaTime);
+    AimAtPlayer(blackboard, deltaTime);
 
     // ブロック位置を更新（振らない、開始位置に固定）
     UpdateBlockPosition(boss);
@@ -232,14 +234,15 @@ void BTBossMeleeAttack::ProcessPreparePhase(Boss* boss, float deltaTime) {
     }
 }
 
-void BTBossMeleeAttack::ProcessExecutePhase(Boss* boss, float deltaTime) {
+void BTBossMeleeAttack::ProcessExecutePhase(BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetBoss();
     // ヒット判定をチェック
     BossMeleeAttackCollider* collider = boss->GetMeleeAttackCollider();
     bool hasHit = collider && collider->HasHitPlayer();
 
     if (hasHit) {
         // ヒット時: プレイヤーと一定距離を保って停止
-        Player* player = boss->GetPlayer();
+        Player* player = blackboard->GetPlayer();
         if (player) {
             Vector3 playerPos = player->GetTransform().translate;
             Vector3 bossPos = boss->GetTransform().translate;
@@ -279,9 +282,9 @@ void BTBossMeleeAttack::ProcessRecoveryPhase(Boss* boss) {
     (void)boss;
 }
 
-void BTBossMeleeAttack::ProcessIntervalPhase(Boss* boss, float deltaTime) {
+void BTBossMeleeAttack::ProcessIntervalPhase(BTBlackboard* blackboard, float deltaTime) {
     // コンボ間隔中はプレイヤー方向を向き続ける
-    AimAtPlayer(boss, deltaTime);
+    AimAtPlayer(blackboard, deltaTime);
 }
 
 void BTBossMeleeAttack::InitializeSwingForCurrentCombo() {
@@ -308,11 +311,12 @@ Vector3 BTBossMeleeAttack::ClampToArea(const Vector3& position) {
     return clampedPos;
 }
 
-void BTBossMeleeAttack::InitializeRush(Boss* boss) {
+void BTBossMeleeAttack::InitializeRush(BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetBoss();
     rushInitialized_ = true;
     startPosition_ = boss->GetTransform().translate;
 
-    Player* player = boss->GetPlayer();
+    Player* player = blackboard->GetPlayer();
     if (player) {
         Vector3 playerPos = player->GetTransform().translate;
         Vector3 toPlayer = playerPos - startPosition_;

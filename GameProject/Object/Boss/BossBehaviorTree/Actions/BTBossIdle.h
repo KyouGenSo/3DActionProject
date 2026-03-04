@@ -77,7 +77,7 @@ private:
     /// </summary>
     /// <param name="boss">ボス</param>
     /// <param name="deltaTime">経過時間</param>
-    void LookAtPlayer(Boss* boss, float deltaTime);
+    void LookAtPlayer(BTBlackboard* blackboard, float deltaTime);
 
 
     // 待機時間（次の行動までの時間）

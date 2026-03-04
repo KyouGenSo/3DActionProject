@@ -136,21 +136,21 @@ private:
     /// </summary>
     /// <param name="boss">ボス</param>
     /// <param name="deltaTime">経過時間</param>
-    void AimAtPlayer(Boss* boss, float deltaTime);
+    void AimAtPlayer(BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 準備フェーズの処理
     /// </summary>
-    /// <param name="boss">ボス</param>
+    /// <param name="blackboard">ブラックボード</param>
     /// <param name="deltaTime">経過時間</param>
-    void ProcessPreparePhase(Boss* boss, float deltaTime);
+    void ProcessPreparePhase(BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 攻撃実行フェーズの処理
     /// </summary>
-    /// <param name="boss">ボス</param>
+    /// <param name="blackboard">ブラックボード</param>
     /// <param name="deltaTime">経過時間</param>
-    void ProcessExecutePhase(Boss* boss, float deltaTime);
+    void ProcessExecutePhase(BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 硬直フェーズの処理
@@ -161,9 +161,9 @@ private:
     /// <summary>
     /// コンボ間隔フェーズの処理
     /// </summary>
-    /// <param name="boss">ボス</param>
+    /// <param name="blackboard">ブラックボード</param>
     /// <param name="deltaTime">経過時間</param>
-    void ProcessIntervalPhase(Boss* boss, float deltaTime);
+    void ProcessIntervalPhase(BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 現在のコンボインデックスに応じた振り方向を初期化
@@ -187,7 +187,7 @@ private:
     /// 突進の初期化（Execute 開始時に呼ぶ）
     /// </summary>
     /// <param name="boss">ボス</param>
-    void InitializeRush(Boss* boss);
+    void InitializeRush(BTBlackboard* blackboard);
 
     //=========================================================================================
     // メンバ変数

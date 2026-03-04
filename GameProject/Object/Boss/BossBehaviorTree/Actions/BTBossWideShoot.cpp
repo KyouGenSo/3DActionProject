@@ -24,13 +24,13 @@ BTNodeStatus BTBossWideShoot::Execute(BTBlackboard* blackboard) {
 
     // 初回実行時の初期化
     if (isFirstExecute_) {
-        InitializeWideShoot(boss);
+        InitializeWideShoot(blackboard);
         isFirstExecute_ = false;
     }
 
     // チャージフェーズ：プレイヤーの方向を向く
     if (elapsedTime_ < chargeTime_) {
-        AimAtPlayer(boss, deltaTime);
+        AimAtPlayer(blackboard, deltaTime);
         bulletSignEffect_.Update(boss, deltaTime);
     }
     // 発射フェーズ
@@ -96,7 +96,8 @@ void BTBossWideShoot::Reset() {
     // 注意: Reset 時は boss 参照がないため、ExitRecovery()は呼べない
 }
 
-void BTBossWideShoot::InitializeWideShoot(Boss* boss) {
+void BTBossWideShoot::InitializeWideShoot(BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetBoss();
     // タイマーリセット
     elapsedTime_ = 0.0f;
     timeSinceLastFire_ = 0.0f;
@@ -117,7 +118,7 @@ void BTBossWideShoot::InitializeWideShoot(Boss* boss) {
     bulletSignEffect_.Start(boss, chargeTime_);
 
     // 基準方向を計算（プレイヤー方向）
-    Player* player = boss->GetPlayer();
+    Player* player = blackboard->GetPlayer();
     if (player) {
         Vector3 playerPos = player->GetTransform().translate;
         Vector3 bossPos = boss->GetTransform().translate;
@@ -131,8 +132,9 @@ void BTBossWideShoot::InitializeWideShoot(Boss* boss) {
     }
 }
 
-void BTBossWideShoot::AimAtPlayer(Boss* boss, float deltaTime) {
-    Player* player = boss->GetPlayer();
+void BTBossWideShoot::AimAtPlayer(BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetBoss();
+    Player* player = blackboard->GetPlayer();
     if (!player) {
         return;
     }

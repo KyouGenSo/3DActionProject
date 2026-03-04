@@ -105,8 +105,8 @@ private: // プライベートメンバー関数
     /// <summary>
     /// 攻撃の初期化
     /// </summary>
-    /// <param name="boss">ボス</param>
-    void InitializeAreaAttack(Boss* boss);
+    /// <param name="blackboard">ブラックボード</param>
+    void InitializeAreaAttack(BTBlackboard* blackboard);
 
     /// <summary>
     /// リソースのクリーンアップ
@@ -114,9 +114,17 @@ private: // プライベートメンバー関数
     void Cleanup();
 
     /// <summary>
-    /// ランダムに攻撃象限を選択
+    /// ランダムに攻撃象限を選択（プレイヤー象限を確定枠として含める）
     /// </summary>
-    void SelectRandomQuadrants();
+    /// <param name="blackboard">ブラックボード（プレイヤー位置の取得に使用）</param>
+    void SelectRandomQuadrants(BTBlackboard* blackboard);
+
+    /// <summary>
+    /// プレイヤーが存在する象限インデックスを取得
+    /// </summary>
+    /// <param name="blackboard">ブラックボード</param>
+    /// <returns>象限インデックス (0-3)</returns>
+    int GetPlayerQuadrant(BTBlackboard* blackboard) const;
 
     /// <summary>
     /// 象限の中心座標を計算

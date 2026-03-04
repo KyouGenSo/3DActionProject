@@ -34,7 +34,7 @@ BTNodeStatus BTBossAreaAttack::Execute(BTBlackboard* blackboard) {
 
     // 初回実行時の初期化
     if (isFirstExecute_) {
-        InitializeAreaAttack(boss);
+        InitializeAreaAttack(blackboard);
         isFirstExecute_ = false;
     }
 
@@ -108,7 +108,9 @@ void BTBossAreaAttack::Reset() {
     enteredRecovery_ = false;
 }
 
-void BTBossAreaAttack::InitializeAreaAttack(Boss* boss) {
+void BTBossAreaAttack::InitializeAreaAttack(BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetBoss();
+
     // タイマーリセット
     elapsedTime_ = 0.0f;
     hasBegunAttack_ = false;
@@ -118,8 +120,8 @@ void BTBossAreaAttack::InitializeAreaAttack(Boss* boss) {
     // 総時間を計算
     totalDuration_ = warningDuration_ + blinkDuration_ + attackDuration_ + recoveryTime_;
 
-    // ランダムに攻撃象限を選択
-    SelectRandomQuadrants();
+    // ランダムに攻撃象限を選択（プレイヤー象限を確定枠として含める）
+    SelectRandomQuadrants(blackboard);
 
     // ボスの位置を取得
     Vector3 bossPos = boss->GetTransform().translate;
@@ -189,7 +191,7 @@ void BTBossAreaAttack::Cleanup() {
     activeQuadrants_.fill(false);
 }
 
-void BTBossAreaAttack::SelectRandomQuadrants() {
+void BTBossAreaAttack::SelectRandomQuadrants(BTBlackboard* blackboard) {
     RandomEngine* rng = RandomEngine::GetInstance();
 
     // 攻撃する象限数を決定（minQuadrants_ ~ maxQuadrants_）
@@ -199,17 +201,45 @@ void BTBossAreaAttack::SelectRandomQuadrants() {
     // 全象限をリセット
     activeQuadrants_.fill(false);
 
-    // ランダムに選択
-    // シャッフルアルゴリズムで公平に選択
-    std::array<int, kQuadrantCount> indices = { 0, 1, 2, 3 };
-    for (int i = kQuadrantCount - 1; i > 0; --i) {
-        int j = rng->GetInt(0, i);
-        std::swap(indices[i], indices[j]);
-    }
+    // プレイヤー象限を確定枠として設定
+    int playerQuadrant = GetPlayerQuadrant(blackboard);
+    activeQuadrants_[playerQuadrant] = true;
 
-    for (int i = 0; i < count; ++i) {
-        activeQuadrants_[indices[i]] = true;
+    // 残り象限から (count - 1) 個を追加選択
+    if (count > 1) {
+        std::array<int, kQuadrantCount - 1> remaining;
+        int idx = 0;
+        for (int i = 0; i < kQuadrantCount; ++i) {
+            if (i != playerQuadrant) {
+                remaining[idx++] = i;
+            }
+        }
+
+        // Fisher-Yates シャッフル
+        for (int i = static_cast<int>(remaining.size()) - 1; i > 0; --i) {
+            int j = rng->GetInt(0, i);
+            std::swap(remaining[i], remaining[j]);
+        }
+
+        // 先頭から (count - 1) 個を有効化
+        for (int i = 0; i < count - 1; ++i) {
+            activeQuadrants_[remaining[i]] = true;
+        }
     }
+}
+
+int BTBossAreaAttack::GetPlayerQuadrant(BTBlackboard* blackboard) const {
+    Boss* boss = blackboard->GetBoss();
+    Player* player = blackboard->GetPlayer();
+    Vector3 bossPos = boss->GetTransform().translate;
+    Vector3 playerPos = player->GetTransform().translate;
+
+    // 象限マッピング（GetQuadrantCenterの符号ロジックの逆算）:
+    //   Q0(-X,-Z) Q1(+X,-Z)
+    //   Q2(-X,+Z) Q3(+X,+Z)
+    int xIndex = (playerPos.x >= bossPos.x) ? 1 : 0;
+    int zIndex = (playerPos.z >= bossPos.z) ? 1 : 0;
+    return zIndex * 2 + xIndex;
 }
 
 Vector3 BTBossAreaAttack::GetQuadrantCenter(int quadrantIndex, const Vector3& bossPos) const {

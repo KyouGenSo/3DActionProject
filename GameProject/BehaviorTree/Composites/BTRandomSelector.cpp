@@ -26,7 +26,8 @@ BTNodeStatus BTRandomSelector::Execute(BTBlackboard* blackboard) {
         BTNodeStatus childStatus = children_[idx]->Execute(blackboard);
 
         if (childStatus == BTNodeStatus::Success) {
-            needsShuffle_ = true;  // 次回はシャッフル
+            lastSuccessIdx_ = idx;  // 前回成功した子を記録（連続選択防止用）
+            needsShuffle_ = true;   // 次回はシャッフル
             status_ = BTNodeStatus::Success;
             return status_;
         }
@@ -61,5 +62,14 @@ void BTRandomSelector::ShuffleIndices() {
     for (size_t i = shuffledIndices_.size() - 1; i > 0; --i) {
         size_t j = static_cast<size_t>(rng->GetInt(0, static_cast<int>(i)));
         std::swap(shuffledIndices_[i], shuffledIndices_[j]);
+    }
+
+    // 前回成功した子が先頭に来た場合、別の位置にスワップして連続選択を防止
+    if (lastSuccessIdx_.has_value() && shuffledIndices_.size() > 1) {
+        if (shuffledIndices_[0] == lastSuccessIdx_.value()) {
+            size_t swapPos = static_cast<size_t>(
+                rng->GetInt(1, static_cast<int>(shuffledIndices_.size() - 1)));
+            std::swap(shuffledIndices_[0], shuffledIndices_[swapPos]);
+        }
     }
 }

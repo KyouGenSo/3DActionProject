@@ -2,6 +2,7 @@
 #include "../Core/BTComposite.h"
 #include "../Core/BTBlackboard.h"
 #include <vector>
+#include <optional>
 
 /// <summary>
 /// ランダムセレクターノード
@@ -47,5 +48,6 @@ private:
     // シャッフルが必要かどうか（新しい選択サイクル開始時に true）
     bool needsShuffle_ = true;
 
-
+    // 前回成功した子ノードのインデックス（連続選択防止用、Reset で保持）
+    std::optional<size_t> lastSuccessIdx_;
 };

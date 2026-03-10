@@ -341,6 +341,7 @@ nul
 # .ini files
 *.ini
 
+Docs/
 
 GameProject/imgui.ini
 

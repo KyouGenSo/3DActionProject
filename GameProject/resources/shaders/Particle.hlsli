@@ -1,6 +1,6 @@
 static const int kMaxParticles = 1000000;
 
-// ƒGƒ~ƒbƒ^[ƒ^ƒCƒv‚Ì’è‹`
+// ï¿½Gï¿½~ï¿½bï¿½^ï¿½[ï¿½^ï¿½Cï¿½vï¿½Ì’ï¿½`
 #define EMITTER_TYPE_SPHERE 0
 #define EMITTER_TYPE_BOX 1
 #define EMITTER_TYPE_TRIANGLE 2
@@ -14,70 +14,73 @@ struct VertexShaderOutput
 
 struct Particle
 {
-    float3 translate;
-    float3 scale;
-    float3 rotate;
-    float3 velocity;
-    float4 startColor;
-    float4 endColor;
-    float lifeTime;
-    float currentTime;
+    float3 translate;      // ç¾åœ¨ä½ç½®
+    float3 prevPosition;   // å‰ãƒ•ãƒ¬ãƒ¼ãƒ ä½ç½®ï¼ˆVerletç©åˆ†ç”¨ï¼‰
+    float3 scale;          // ã‚¹ã‚±ãƒ¼ãƒ«
+    float3 rotate;         // å›è»¢ï¼ˆã‚ªã‚¤ãƒ©ãƒ¼è§’ï¼‰
+    float3 velocity;       // é€Ÿåº¦ãƒ™ã‚¯ãƒˆãƒ«
+    float4 startColor;     // é–‹å§‹è‰²ï¼ˆRGBAï¼‰
+    float4 endColor;       // çµ‚äº†è‰²ï¼ˆRGBAï¼‰
+    float lifeTime;        // å¯¿å‘½ï¼ˆç§’ï¼‰
+    float currentTime;     // çµŒéæ™‚é–“ï¼ˆç§’ï¼‰
+    float mass;            // è³ªé‡ï¼ˆè¡çªå¿œç­”ç”¨ï¼‰
+    uint  cellIndex;       // ç©ºé–“ãƒãƒƒã‚·ãƒ¥ç”¨ã‚»ãƒ«ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹
 };
 
-// ƒGƒ~ƒbƒ^[‹¤’Ê\‘¢‘Ì
+// ï¿½Gï¿½~ï¿½bï¿½^ï¿½[ï¿½ï¿½ï¿½Ê\ï¿½ï¿½ï¿½ï¿½
 struct Emitter
 {
-    // Šî–{î•ñ
-    uint type;                // ƒGƒ~ƒbƒ^[ƒ^ƒCƒv
-    uint isActive;            // ƒAƒNƒeƒBƒuó‘Ôi1=—LŒøA0=–³Œøj
-    uint isEmit;              // Ëoƒtƒ‰ƒOi1=Ëo‚·‚éA0=Ëo‚µ‚È‚¢j
-    uint isNormalize;         // ³‹K‰»ƒtƒ‰ƒO
-    uint isRandomRotateZ; // Z²ƒ‰ƒ“ƒ_ƒ€‰ñ“]ƒtƒ‰ƒOi1=ƒ‰ƒ“ƒ_ƒ€A0=ŒÅ’è‰ñ“]j
-    uint emitterID;           // ƒGƒ~ƒbƒ^[ID
+    // ï¿½ï¿½{ï¿½ï¿½ï¿½
+    uint type;                // ï¿½Gï¿½~ï¿½bï¿½^ï¿½[ï¿½^ï¿½Cï¿½v
+    uint isActive;            // ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ï¿½Ôi1=ï¿½Lï¿½ï¿½ï¿½A0=ï¿½ï¿½ï¿½ï¿½ï¿½j
+    uint isEmit;              // ï¿½Ëoï¿½tï¿½ï¿½ï¿½Oï¿½i1=ï¿½Ëoï¿½ï¿½ï¿½ï¿½A0=ï¿½Ëoï¿½ï¿½ï¿½È‚ï¿½ï¿½j
+    uint isNormalize;         // ï¿½ï¿½ï¿½Kï¿½ï¿½ï¿½tï¿½ï¿½ï¿½O
+    uint isRandomRotateZ; // Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½]ï¿½tï¿½ï¿½ï¿½Oï¿½i1=ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½A0=ï¿½Å’ï¿½ï¿½]ï¿½j
+    uint emitterID;           // ï¿½Gï¿½~ï¿½bï¿½^ï¿½[ID
     
-    float3 position;          // ’†S/Šî€ˆÊ’u
-    float2 scaleRangeX;       // ƒp[ƒeƒBƒNƒ‹‚ÌXƒTƒCƒY”ÍˆÍiÅ¬AÅ‘åj
-    float2 scaleRangeY;       // ƒp[ƒeƒBƒNƒ‹‚ÌYƒTƒCƒY”ÍˆÍiÅ¬AÅ‘åj
-    float2 velRangeX;         // ƒp[ƒeƒBƒNƒ‹‚ÌX‘¬“x”ÍˆÍiÅ¬AÅ‘åj
-    float2 velRangeY;         // ƒp[ƒeƒBƒNƒ‹‚ÌY‘¬“x”ÍˆÍiÅ¬AÅ‘åj
-    float2 velRangeZ;         // ƒp[ƒeƒBƒNƒ‹‚ÌZ‘¬“x”ÍˆÍiÅ¬AÅ‘åj
-    float2 lifeTimeRange;     // ƒp[ƒeƒBƒNƒ‹‚Ìõ–½”ÍˆÍiÅ¬AÅ‘åj
-    float4 startColorTint;    // ƒp[ƒeƒBƒNƒ‹‚ÌŠJnFiRGBAj
-    float4 endColorTint;      // ƒp[ƒeƒBƒNƒ‹‚ÌI—¹FiRGBAj
+    float3 position;          // ï¿½ï¿½ï¿½S/ï¿½î€ï¿½Ê’u
+    float2 scaleRangeX;       // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ï¿½Xï¿½Tï¿½Cï¿½Yï¿½ÍˆÍiï¿½Åï¿½ï¿½Aï¿½Å‘ï¿½j
+    float2 scaleRangeY;       // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ï¿½Yï¿½Tï¿½Cï¿½Yï¿½ÍˆÍiï¿½Åï¿½ï¿½Aï¿½Å‘ï¿½j
+    float2 velRangeX;         // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½xï¿½ÍˆÍiï¿½Åï¿½ï¿½Aï¿½Å‘ï¿½j
+    float2 velRangeY;         // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ï¿½Yï¿½ï¿½ï¿½xï¿½ÍˆÍiï¿½Åï¿½ï¿½Aï¿½Å‘ï¿½j
+    float2 velRangeZ;         // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½xï¿½ÍˆÍiï¿½Åï¿½ï¿½Aï¿½Å‘ï¿½j
+    float2 lifeTimeRange;     // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ÍˆÍiï¿½Åï¿½ï¿½Aï¿½Å‘ï¿½j
+    float4 startColorTint;    // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ÌŠJï¿½nï¿½Fï¿½iRGBAï¿½j
+    float4 endColorTint;      // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ÌIï¿½ï¿½ï¿½Fï¿½iRGBAï¿½j
     
-    uint  count;              // 1‰ñ‚ÌËo‚Å¶¬‚·‚éƒp[ƒeƒBƒNƒ‹”
-    float frequency;          // Ëo•p“xi•bj
-    float frequencyTime;      // Œo‰ßŠÔƒJƒEƒ“ƒ^[
+    uint  count;              // 1ï¿½ï¿½ÌËoï¿½Åï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ï¿½
+    float frequency;          // ï¿½Ëoï¿½pï¿½xï¿½iï¿½bï¿½j
+    float frequencyTime;      // ï¿½oï¿½ßï¿½ï¿½ÔƒJï¿½Eï¿½ï¿½ï¿½^ï¿½[
 
-    uint isTemp;              // ˆê“I‚ÈƒGƒ~ƒbƒ^[‚©‚Ç‚¤‚©i1=ˆê“IA0=‰i‘±j
-    float emitterLifeTime;    // ƒGƒ~ƒbƒ^[‚Ìõ–½i•bj
-    float emitterCurrentTime; // ƒGƒ~ƒbƒ^[‚ÌŒo‰ßŠÔ
+    uint isTemp;              // ï¿½êï¿½Iï¿½ÈƒGï¿½~ï¿½bï¿½^ï¿½[ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½i1=ï¿½êï¿½Iï¿½A0=ï¿½iï¿½ï¿½ï¿½j
+    float emitterLifeTime;    // ï¿½Gï¿½~ï¿½bï¿½^ï¿½[ï¿½Ìï¿½ï¿½ï¿½ï¿½iï¿½bï¿½j
+    float emitterCurrentTime; // ï¿½Gï¿½~ï¿½bï¿½^ï¿½[ï¿½ÌŒoï¿½ßï¿½ï¿½ï¿½
 
-    // ‹…‘Ì—pƒpƒ‰ƒ[ƒ^
-    float radius;             // ‹…‘Ì‚Ì”¼Œa
+    // ï¿½ï¿½ï¿½Ì—pï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^
+    float radius;             // ï¿½ï¿½ï¿½Ì‚Ì”ï¿½ï¿½a
     
-    // ” Œ^—pƒpƒ‰ƒ[ƒ^
-    float3 boxSize;           // ” ‚Ì‘å‚«‚³i•A‚‚³A‰œs‚«j
-    float3 boxRotation;       // ” ‚Ì‰ñ“]iX,Y,Z²A“x”–@j
+    // ï¿½ï¿½ï¿½^ï¿½pï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^
+    float3 boxSize;           // ï¿½ï¿½ï¿½Ì‘å‚«ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½sï¿½ï¿½ï¿½j
+    float3 boxRotation;       // ï¿½ï¿½ï¿½Ì‰ï¿½]ï¿½iX,Y,Zï¿½ï¿½ï¿½Aï¿½xï¿½ï¿½ï¿½@ï¿½j
     
-    // OŠpŒ`—pƒpƒ‰ƒ[ƒ^
-    float3 triangleV1;        // OŠpŒ`‚Ì’¸“_1i‘Š‘ÎÀ•Wj
-    float3 triangleV2;        // OŠpŒ`‚Ì’¸“_2i‘Š‘ÎÀ•Wj
-    float3 triangleV3;        // OŠpŒ`‚Ì’¸“_3i‘Š‘ÎÀ•Wj
+    // ï¿½Oï¿½pï¿½`ï¿½pï¿½pï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½^
+    float3 triangleV1;        // ï¿½Oï¿½pï¿½`ï¿½Ì’ï¿½ï¿½_1ï¿½iï¿½ï¿½ï¿½Îï¿½ï¿½Wï¿½j
+    float3 triangleV2;        // ï¿½Oï¿½pï¿½`ï¿½Ì’ï¿½ï¿½_2ï¿½iï¿½ï¿½ï¿½Îï¿½ï¿½Wï¿½j
+    float3 triangleV3;        // ï¿½Oï¿½pï¿½`ï¿½Ì’ï¿½ï¿½_3ï¿½iï¿½ï¿½ï¿½Îï¿½ï¿½Wï¿½j
 };
 
-// ƒp[ƒtƒŒ[ƒ€î•ñ\‘¢‘Ì
+// ï¿½pï¿½[ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½
 struct PerFrame
 {
-    float time;                 // ŠÔ
-    float deltaTime;            // ƒfƒ‹ƒ^ƒ^ƒCƒ€
-    uint activeEmitterCount;    // ƒAƒNƒeƒBƒu‚ÈƒGƒ~ƒbƒ^[”
-    uint pad;                   // ƒpƒfƒBƒ“ƒO
+    float time;                 // ï¿½ï¿½ï¿½ï¿½
+    float deltaTime;            // ï¿½fï¿½ï¿½ï¿½^ï¿½^ï¿½Cï¿½ï¿½
+    uint activeEmitterCount;    // ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ÈƒGï¿½~ï¿½bï¿½^ï¿½[ï¿½ï¿½
+    uint pad;                   // ï¿½pï¿½fï¿½Bï¿½ï¿½ï¿½O
 };
 
-// PerViewî•ñ\‘¢‘Ì
+// PerViewï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½ï¿½
 struct PerView
 {
-    float4x4 viewProj;          // ƒrƒ…[ƒvƒƒWƒFƒNƒVƒ‡ƒ“s—ñ
-    float4x4 billboardMat;      // ƒrƒ‹ƒ{[ƒhs—ñ
+    float4x4 viewProj;          // ï¿½rï¿½ï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½Wï¿½Fï¿½Nï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½
+    float4x4 billboardMat;      // ï¿½rï¿½ï¿½ï¿½{ï¿½[ï¿½hï¿½sï¿½ï¿½
 };

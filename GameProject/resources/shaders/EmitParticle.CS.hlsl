@@ -1,81 +1,81 @@
 #include "Particle.hlsli"
 #include "Random.hlsli"
 
-// ‰ñ“]s—ñ‚ÌŒvZ
+// ï¿½ï¿½]ï¿½sï¿½ï¿½ÌŒvï¿½Z
 float3x3 CalculateRotationMatrix(float3 eulerAngles)
 {
-    // “x”‚©‚çƒ‰ƒWƒAƒ“‚É•ÏŠ·
+    // ï¿½xï¿½ï¿½ï¿½ï¿½ï¿½çƒ‰ï¿½Wï¿½Aï¿½ï¿½ï¿½É•ÏŠï¿½
     float3 rad = eulerAngles * (3.14159265f / 180.0f);
     
-    // X²‰ñ“]s—ñ
+    // Xï¿½ï¿½ï¿½ï¿½]ï¿½sï¿½ï¿½
     float3x3 rotX = float3x3(
         1.0f, 0.0f, 0.0f,
         0.0f, cos(rad.x), -sin(rad.x),
         0.0f, sin(rad.x), cos(rad.x)
     );
     
-    // Y²‰ñ“]s—ñ
+    // Yï¿½ï¿½ï¿½ï¿½]ï¿½sï¿½ï¿½
     float3x3 rotY = float3x3(
         cos(rad.y), 0.0f, sin(rad.y),
         0.0f, 1.0f, 0.0f,
         -sin(rad.y), 0.0f, cos(rad.y)
     );
     
-    // Z²‰ñ“]s—ñ
+    // Zï¿½ï¿½ï¿½ï¿½]ï¿½sï¿½ï¿½
     float3x3 rotZ = float3x3(
         cos(rad.z), -sin(rad.z), 0.0f,
         sin(rad.z), cos(rad.z), 0.0f,
         0.0f, 0.0f, 1.0f
     );
     
-    // s—ñ‚Ì‡¬iZ¨Y¨X‡j
+    // ï¿½sï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½iZï¿½ï¿½Yï¿½ï¿½Xï¿½ï¿½ï¿½j
     return mul(mul(rotZ, rotY), rotX);
 }
 
-// ‹…‘Ì“à‚Ìƒ‰ƒ“ƒ_ƒ€‚È“_‚ğ¶¬
+// ï¿½ï¿½ï¿½Ì“ï¿½ï¿½Ìƒï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“_ï¿½ğ¶ï¿½
 float3 GetRandomPointInSphere(RandomGenerator generator, float3 center, float radius)
 {
-    // •ûŒüƒxƒNƒgƒ‹‚Ì¶¬
+    // ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½Nï¿½gï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½
     float3 dir = generator.Generate3d() * 2.0f - 1.0f;
     float len = length(dir);
     
-    // ƒ[ƒœZ–h~
+    // ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Zï¿½hï¿½~
     if (len < 0.0001f)
     {
         dir = float3(0.0f, 1.0f, 0.0f);
         len = 1.0f;
     }
     
-    // ³‹K‰»
+    // ï¿½ï¿½ï¿½Kï¿½ï¿½
     dir /= len;
     
-    // ‹…‘Ì“à‚Ì‹Ïˆê•ª•z‚Ì‚½‚ß‚ÌƒXƒP[ƒŠƒ“ƒOi‘ÌÏ‚É”ä—áj
+    // ï¿½ï¿½ï¿½Ì“ï¿½ï¿½Ì‹Ïˆê•ªï¿½zï¿½Ì‚ï¿½ï¿½ß‚ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½iï¿½ÌÏ‚É”ï¿½ï¿½j
     float r = radius * pow(generator.Generate1d(), 1.0f / 3.0f);
     
     return center + dir * r;
 }
 
-// ” “à‚Ìƒ‰ƒ“ƒ_ƒ€‚È“_‚ğ¶¬
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“_ï¿½ğ¶ï¿½
 float3 GetRandomPointInBox(RandomGenerator generator, float3 center, float3 size, float3 rotation)
 {
-    // ƒ[ƒJƒ‹À•W“à‚Ìƒ‰ƒ“ƒ_ƒ€‚È“_
+    // ï¿½ï¿½ï¿½[ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½Ìƒï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“_
     float3 localPoint = (generator.Generate3d() - 0.5f) * size;
     
-    // ‰ñ“]s—ñ‚Ì“K—p
+    // ï¿½ï¿½]ï¿½sï¿½ï¿½Ì“Kï¿½p
     float3x3 rotMatrix = CalculateRotationMatrix(rotation);
     float3 rotatedPoint = mul(rotMatrix, localPoint);
     
     return center + rotatedPoint;
 }
 
-// OŠpŒ`ã‚Ìƒ‰ƒ“ƒ_ƒ€‚È“_‚ğ¶¬
+// ï¿½Oï¿½pï¿½`ï¿½ï¿½Ìƒï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“_ï¿½ğ¶ï¿½
 float3 GetRandomPointOnTriangle(RandomGenerator generator, float3 p0, float3 p1, float3 p2)
 {
-    // ƒoƒŠƒZƒ“ƒgƒŠƒbƒNÀ•W‚ğ—p‚¢‚½OŠpŒ`ã‚Ìƒ‰ƒ“ƒ_ƒ€‚È“_
+    // ï¿½oï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½gï¿½ï¿½ï¿½bï¿½Nï¿½ï¿½ï¿½Wï¿½ï¿½pï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½pï¿½`ï¿½ï¿½Ìƒï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È“_
     float r1 = generator.Generate1d();
     float r2 = generator.Generate1d();
     
-    // OŠpŒ`ã‚Ì‹Ïˆê•ª•z‚ğŠm•Û
+    // ï¿½Oï¿½pï¿½`ï¿½ï¿½Ì‹Ïˆê•ªï¿½zï¿½ï¿½ï¿½mï¿½ï¿½
     if (r1 + r2 > 1.0f)
     {
         r1 = 1.0f - r1;
@@ -89,60 +89,60 @@ float3 GetRandomPointOnTriangle(RandomGenerator generator, float3 p0, float3 p1,
     return a * p0 + b * p1 + c * p2;
 }
 
-RWStructuredBuffer<Particle> gParticles : register(u0); // ƒp[ƒeƒBƒNƒ‹ƒoƒbƒtƒ@
-RWStructuredBuffer<int> gFreeListIndex : register(u1);  // ƒtƒŠ[ƒŠƒXƒgƒCƒ“ƒfƒbƒNƒX
-RWStructuredBuffer<uint> gFreeList : register(u2);      // ƒtƒŠ[ƒŠƒXƒg
-StructuredBuffer<Emitter> gEmitters : register(t0);     // ƒGƒ~ƒbƒ^[ƒŠƒXƒg
+RWStructuredBuffer<Particle> gParticles : register(u0); // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½oï¿½bï¿½tï¿½@
+RWStructuredBuffer<int> gFreeListIndex : register(u1);  // ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Xï¿½gï¿½Cï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½X
+RWStructuredBuffer<uint> gFreeList : register(u2);      // ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Xï¿½g
+StructuredBuffer<Emitter> gEmitters : register(t0);     // ï¿½Gï¿½~ï¿½bï¿½^ï¿½[ï¿½ï¿½ï¿½Xï¿½g
 
-ConstantBuffer<PerFrame> gPerFrame : register(b0);      // ƒtƒŒ[ƒ€î•ñ
+ConstantBuffer<PerFrame> gPerFrame : register(b0);      // ï¿½tï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½
 
 [numthreads(16, 1, 1)]
 void main(uint3 DTid : SV_DispatchThreadID)
 {
-    // ƒGƒ~ƒbƒ^[‚ÌƒCƒ“ƒfƒbƒNƒXŒvZ
+    // ï¿½Gï¿½~ï¿½bï¿½^ï¿½[ï¿½ÌƒCï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½Xï¿½vï¿½Z
     uint emitterIndex = DTid.x;
     
-    // ”ÍˆÍƒ`ƒFƒbƒN
+    // ï¿½ÍˆÍƒ`ï¿½Fï¿½bï¿½N
     if (emitterIndex >= gPerFrame.activeEmitterCount)
     {
         return;
     }
     
-    // ‚±‚ÌƒGƒ~ƒbƒ^[‚ªƒAƒNƒeƒBƒu‚©ƒ`ƒFƒbƒN
+    // ï¿½ï¿½ï¿½ÌƒGï¿½~ï¿½bï¿½^ï¿½[ï¿½ï¿½ï¿½Aï¿½Nï¿½eï¿½Bï¿½uï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½N
     if (gEmitters[emitterIndex].isActive == 0)
     {
         return;
     }
     
-    // Ëoƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+    // ï¿½Ëoï¿½tï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚©ï¿½`ï¿½Fï¿½bï¿½N
     if (gEmitters[emitterIndex].isEmit == 0)
     {
         return;
     }
     
-    // —”¶¬Ší‚Ì‰Šú‰»
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½
     RandomGenerator generator;
-    // ƒV[ƒh’l¶¬ (ŠÔ{ƒGƒ~ƒbƒ^[ID{ƒXƒŒƒbƒhIDj
+    // ï¿½Vï¿½[ï¿½hï¿½lï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Ô{ï¿½Gï¿½~ï¿½bï¿½^ï¿½[IDï¿½{ï¿½Xï¿½ï¿½ï¿½bï¿½hIDï¿½j
     generator.seed = float3(
         DTid.x + gPerFrame.time * 0.1f,
         DTid.y + gPerFrame.time * 0.2f,
         gEmitters[emitterIndex].emitterID + gPerFrame.time * 0.3f
     );
     
-    // ‚±‚ÌƒGƒ~ƒbƒ^[‚©‚çw’è”‚Ìƒp[ƒeƒBƒNƒ‹‚ğËo
+    // ï¿½ï¿½ï¿½ÌƒGï¿½~ï¿½bï¿½^ï¿½[ï¿½ï¿½ï¿½ï¿½wï¿½è”ï¿½Ìƒpï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½Ëo
     for (uint particleIndex = 0; particleIndex < gEmitters[emitterIndex].count; ++particleIndex)
     {
-        // FreeList‚©‚ç‹ó‚«ƒp[ƒeƒBƒNƒ‹ƒXƒƒbƒg‚ğæ“¾
+        // FreeListï¿½ï¿½ï¿½ï¿½ó‚«ƒpï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½Xï¿½ï¿½ï¿½bï¿½gï¿½ï¿½ï¿½æ“¾
         int freeListIndex;
         InterlockedAdd(gFreeListIndex[0], -1, freeListIndex);
         
-        // —LŒø‚ÈƒCƒ“ƒfƒbƒNƒX‚©‚Â\•ª‚È‹ó‚«‚ª‚ ‚é‚©‚ğŠm”F
+        // ï¿½Lï¿½ï¿½ï¿½ÈƒCï¿½ï¿½ï¿½fï¿½bï¿½Nï¿½Xï¿½ï¿½ï¿½Â\ï¿½ï¿½ï¿½È‹ó‚«‚ï¿½ï¿½ï¿½ï¿½é‚©ï¿½ï¿½ï¿½mï¿½F
         if (freeListIndex >= 0 && freeListIndex < kMaxParticles && gFreeList[freeListIndex] < kMaxParticles)
         {
-            // FreeList‚©‚çÀÛ‚Ìƒp[ƒeƒBƒNƒ‹ID‚ğæ“¾
+            // FreeListï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û‚Ìƒpï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½IDï¿½ï¿½ï¿½æ“¾
             uint particleID = gFreeList[freeListIndex];
             
-            // ƒp[ƒeƒBƒNƒ‹‚ÌˆÊ’u‚ğŒˆ’èiƒGƒ~ƒbƒ^[Œ`ó‚É‰‚¶‚Äj
+            // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ÌˆÊ’uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½Gï¿½~ï¿½bï¿½^ï¿½[ï¿½`ï¿½ï¿½É‰ï¿½ï¿½ï¿½ï¿½Äj
             float3 particlePosition;
             
             switch (gEmitters[emitterIndex].type)
@@ -174,17 +174,17 @@ void main(uint3 DTid : SV_DispatchThreadID)
                     break;
                     
                 default:
-                    // ƒfƒtƒHƒ‹ƒg‚ÍƒGƒ~ƒbƒ^[‚Ì’†S
+                    // ï¿½fï¿½tï¿½Hï¿½ï¿½ï¿½gï¿½ÍƒGï¿½~ï¿½bï¿½^ï¿½[ï¿½Ì’ï¿½ï¿½S
                     particlePosition = gEmitters[emitterIndex].position;
                     break;
             }
             
-            // -----------------------------ƒp[ƒeƒBƒNƒ‹‚Ì‰Šú‰»----------------------------- //
+            // -----------------------------ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½Ìï¿½ï¿½ï¿½ï¿½ï¿½----------------------------- //
             
-            // ƒTƒCƒYİ’è---------------------------------------------------------------------------------
+            // ï¿½Tï¿½Cï¿½Yï¿½İ’ï¿½---------------------------------------------------------------------------------
             float3 particleScale;
             
-            // X²•ûŒü‚ÌƒXƒP[ƒ‹
+            // Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½
             if (any(gEmitters[emitterIndex].scaleRangeX != float2(0.0f, 0.0f)))
             {
                 particleScale.x = generator.Generate1d() * (gEmitters[emitterIndex].scaleRangeX.y - gEmitters[emitterIndex].scaleRangeX.x) + gEmitters[emitterIndex].scaleRangeX.x;
@@ -194,7 +194,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
                 particleScale.x = 1.0f;
             }
             
-            // Y²•ûŒü‚ÌƒXƒP[ƒ‹
+            // Yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½
             if (any(gEmitters[emitterIndex].scaleRangeY != float2(0.0f, 0.0f)))
             {
                 particleScale.y = generator.Generate1d() * (gEmitters[emitterIndex].scaleRangeY.y - gEmitters[emitterIndex].scaleRangeY.x) + gEmitters[emitterIndex].scaleRangeY.x;
@@ -204,34 +204,38 @@ void main(uint3 DTid : SV_DispatchThreadID)
                 particleScale.y = 1.0f;
             }
             
-            // Z²•ûŒü‚ÌƒXƒP[ƒ‹
+            // Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½
             particleScale.z = 1.0f;
             
-            // ƒp[ƒeƒBƒNƒ‹‚ÌƒXƒP[ƒ‹‚ğİ’è
+            // ï¿½pï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ÌƒXï¿½Pï¿½[ï¿½ï¿½ï¿½ï¿½İ’ï¿½
             gParticles[particleID].scale.x = particleScale.x;
             gParticles[particleID].scale.y = particleScale.y;
             
-            // ˆÊ’uİ’è---------------------------------------------------------------------------------
+            // ä½ç½®è¨­å®š---------------------------------------------------------------------------------
             gParticles[particleID].translate = particlePosition;
 
-        	// ‰ñ“]İ’è---------------------------------------------------------------------------------
+            // è³ªé‡ãƒ»ã‚»ãƒ«ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹è¨­å®š--------------------------------------------------------------
+            gParticles[particleID].mass = 1.0f;
+            gParticles[particleID].cellIndex = 0xFFFFFFFF; // æœªå‰²ã‚Šå½“ã¦
+
+        	// ï¿½ï¿½]ï¿½İ’ï¿½---------------------------------------------------------------------------------
             if (gEmitters[emitterIndex].isRandomRotateZ > 0)
             {
-                // ƒ‰ƒ“ƒ_ƒ€‰ñ“]ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚éê‡Aƒ‰ƒ“ƒ_ƒ€‚È‰ñ“]‚ğİ’è
-                gParticles[particleID].rotate.z = generator.Generate1d() * 360.0f; // Z²‰ñ“]
+                // ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½]ï¿½tï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ê‡ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È‰ï¿½]ï¿½ï¿½İ’ï¿½
+                gParticles[particleID].rotate.z = generator.Generate1d() * 360.0f; // Zï¿½ï¿½ï¿½ï¿½]
             }
             else
             {
-                gParticles[particleID].rotate.z = 0.0f; // Z²‰ñ“]‚È‚µ
+                gParticles[particleID].rotate.z = 0.0f; // Zï¿½ï¿½ï¿½ï¿½]ï¿½È‚ï¿½
             }
             
             
-            // ‘¬“xİ’è---------------------------------------------------------------------------------
+            // ï¿½ï¿½ï¿½xï¿½İ’ï¿½---------------------------------------------------------------------------------
             float3 particleVelocity;
 
             float3 randomVel = (generator.Generate3d() * 2.0f - 1.0f) * 0.1f;
 
-            // X²•ûŒü‚Ì‘¬“x
+            // Xï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½x
             if (any(gEmitters[emitterIndex].velRangeX != float2(0.0f, 0.0f)))
             {
                 particleVelocity.x = generator.Generate1d() * (gEmitters[emitterIndex].velRangeX.y - gEmitters[emitterIndex].velRangeX.x) + gEmitters[emitterIndex].velRangeX.x;
@@ -241,7 +245,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
                 particleVelocity.x = randomVel.x;
             }
 
-            // Y²•ûŒü‚Ì‘¬“x
+            // Yï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½x
             if (any(gEmitters[emitterIndex].velRangeY != float2(0.0f, 0.0f)))
             {
                 particleVelocity.y = generator.Generate1d() * (gEmitters[emitterIndex].velRangeY.y - gEmitters[emitterIndex].velRangeY.x) + gEmitters[emitterIndex].velRangeY.x;
@@ -251,7 +255,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
                 particleVelocity.y = randomVel.y;
             }
 
-            // Z²•ûŒü‚Ì‘¬“x
+            // Zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½x
             if (any(gEmitters[emitterIndex].velRangeZ != float2(0.0f, 0.0f)))
             {
                 particleVelocity.z = generator.Generate1d() * (gEmitters[emitterIndex].velRangeZ.y - gEmitters[emitterIndex].velRangeZ.x) + gEmitters[emitterIndex].velRangeZ.x;
@@ -262,32 +266,36 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
             }
 
-            // ³‹K‰»
+            // ï¿½ï¿½ï¿½Kï¿½ï¿½
             if (gEmitters[emitterIndex].isNormalize == 1)
             {
-                // ³‹K‰»ƒtƒ‰ƒO‚ª—§‚Á‚Ä‚¢‚éê‡A‘¬“x‚ğ³‹K‰»
+                // ï¿½ï¿½ï¿½Kï¿½ï¿½ï¿½tï¿½ï¿½ï¿½Oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ê‡ï¿½Aï¿½ï¿½ï¿½xï¿½ğ³‹Kï¿½ï¿½
                 particleVelocity = normalize(particleVelocity);
             }
 
-            // ƒp[ƒeƒBƒNƒ‹‚Ì‘¬“x‚ğİ’è
+            // ãƒ‘ãƒ¼ãƒ†ã‚£ã‚¯ãƒ«ã®é€Ÿåº¦ã‚’è¨­å®š
             gParticles[particleID].velocity.x = particleVelocity.x;
             gParticles[particleID].velocity.y = particleVelocity.y;
             gParticles[particleID].velocity.z = particleVelocity.z;
-            
-            
-            // õ–½İ’è---------------------------------------------------------------------------------
+
+            // å‰ãƒ•ãƒ¬ãƒ¼ãƒ ä½ç½®ã®åˆæœŸåŒ–ï¼ˆVerletç©åˆ†ç”¨ï¼‰
+            // prevPosition = translate - velocity ã§åˆé€Ÿã‚’ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰
+            gParticles[particleID].prevPosition = particlePosition - particleVelocity;
+
+
+            // å¯¿å‘½è¨­å®š---------------------------------------------------------------------------------
             if (any(gEmitters[emitterIndex].lifeTimeRange != float2(0.0f, 0.0f)))
             {
                 gParticles[particleID].lifeTime = generator.Generate1d() * (gEmitters[emitterIndex].lifeTimeRange.y - gEmitters[emitterIndex].lifeTimeRange.x) + gEmitters[emitterIndex].lifeTimeRange.x;
             }
             else
             {
-                gParticles[particleID].lifeTime = 1.0f + generator.Generate1d() * 0.5f; // 1.0`1.5•b
+                gParticles[particleID].lifeTime = 1.0f + generator.Generate1d() * 0.5f; // 1.0ï¿½`1.5ï¿½b
             }
             
             gParticles[particleID].currentTime = 0.0f;
             
-            // Fİ’è---------------------------------------------------------------------------------
+            // ï¿½Fï¿½İ’ï¿½---------------------------------------------------------------------------------
             gParticles[particleID].startColor.rgb = gEmitters[emitterIndex].startColorTint.rgb;
             gParticles[particleID].startColor.a = 1.0f;
 
@@ -297,7 +305,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
         }
         else
         {
-            // ‹ó‚«ƒp[ƒeƒBƒNƒ‹‚ª‘«‚è‚È‚¢ê‡‚Í–ß‚µ‚ÄI—¹
+            // ï¿½ó‚«ƒpï¿½[ï¿½eï¿½Bï¿½Nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½ï¿½ê‡ï¿½Í–ß‚ï¿½ï¿½ÄIï¿½ï¿½
             InterlockedAdd(gFreeListIndex[0], 1);
             break;
         }

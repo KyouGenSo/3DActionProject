@@ -712,6 +712,9 @@
     <FxCompile Include="resources\shaders\UpdateParticle.CS.hlsl">
       <Filter>Shader\Particle</Filter>
     </FxCompile>
+    <FxCompile Include="resources\shaders\IntegrateAll.CS.hlsl">
+      <Filter>Shader\Particle</Filter>
+    </FxCompile>
     <FxCompile Include="resources\shaders\GrayScale.PS.hlsl">
       <Filter>Shader\PostEffect</Filter>
     </FxCompile>
@@ -754,6 +757,12 @@
       <Filter>Shader\PostEffect</Filter>
     </None>
     <None Include="resources\shaders\Particle.hlsli">
+      <Filter>Shader\Particle</Filter>
+    </None>
+    <None Include="resources\shaders\ForceField.hlsli">
+      <Filter>Shader\Particle</Filter>
+    </None>
+    <None Include="resources\shaders\PhysicsParams.hlsli">
       <Filter>Shader\Particle</Filter>
     </None>
     <None Include="resources\shaders\Sprite.hlsli">

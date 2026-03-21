@@ -98,13 +98,13 @@
     <ClCompile Include="MyGame\MyGame.cpp">
       <Filter>MyGame</Filter>
     </ClCompile>
-    <ClCompile Include="scene\GameScene.cpp">
+    <ClCompile Include="Scene\GameScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\SceneFactory.cpp">
+    <ClCompile Include="Scene\SceneFactory.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="scene\TitleScene.cpp">
+    <ClCompile Include="Scene\TitleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp" />
@@ -144,7 +144,7 @@
     <ClCompile Include="Object\Boss\BossPhaseManager.cpp">
       <Filter>Object\Boss</Filter>
     </ClCompile>
-    <ClCompile Include="scene\ClearScene.cpp">
+    <ClCompile Include="Scene\ClearScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="CameraSystem\CameraDebugUI.cpp">
@@ -186,7 +186,7 @@
     <ClCompile Include="Collision\BossBulletCollider.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
-    <ClCompile Include="scene\OverScene.cpp">
+    <ClCompile Include="Scene\OverScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="BehaviorTree\Composites\BTSelector.cpp">
@@ -353,13 +353,13 @@
     <ClInclude Include="MyGame\MyGame.h">
       <Filter>MyGame</Filter>
     </ClInclude>
-    <ClInclude Include="scene\GameScene.h">
+    <ClInclude Include="Scene\GameScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\SceneFactory.h">
+    <ClInclude Include="Scene\SceneFactory.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="scene\TitleScene.h">
+    <ClInclude Include="Scene\TitleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Object\Player\State\IdleState.h">
@@ -398,7 +398,7 @@
     <ClInclude Include="Object\Boss\BossPhaseManager.h">
       <Filter>Object\Boss</Filter>
     </ClInclude>
-    <ClInclude Include="scene\ClearScene.h">
+    <ClInclude Include="Scene\ClearScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="CameraSystem\CameraConfig.h">
@@ -446,7 +446,7 @@
     <ClInclude Include="Collision\BossBulletCollider.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="scene\OverScene.h">
+    <ClInclude Include="Scene\OverScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="BehaviorTree\Composites\BTSelector.h">

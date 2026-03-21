@@ -39,265 +39,258 @@
       "id": 30005,
       "sourceNodeId": 10005,
       "sourcePinId": 20008,
-      "targetNodeId": 10012,
-      "targetPinId": 20018
+      "targetNodeId": 10011,
+      "targetPinId": 20017
     },
     {
       "id": 30006,
-      "sourceNodeId": 10012,
-      "sourcePinId": 20019,
-      "targetNodeId": 10014,
-      "targetPinId": 20022
+      "sourceNodeId": 10011,
+      "sourcePinId": 20018,
+      "targetNodeId": 10013,
+      "targetPinId": 20021
     },
     {
       "id": 30007,
-      "sourceNodeId": 10014,
-      "sourcePinId": 20023,
+      "sourceNodeId": 10013,
+      "sourcePinId": 20022,
+      "targetNodeId": 10014,
+      "targetPinId": 20023
+    },
+    {
+      "id": 30008,
+      "sourceNodeId": 10011,
+      "sourcePinId": 20018,
+      "targetNodeId": 10012,
+      "targetPinId": 20019
+    },
+    {
+      "id": 30009,
+      "sourceNodeId": 10012,
+      "sourcePinId": 20020,
       "targetNodeId": 10015,
       "targetPinId": 20024
     },
     {
-      "id": 30008,
+      "id": 30010,
       "sourceNodeId": 10012,
-      "sourcePinId": 20019,
-      "targetNodeId": 10013,
-      "targetPinId": 20020
-    },
-    {
-      "id": 30009,
-      "sourceNodeId": 10013,
-      "sourcePinId": 20021,
+      "sourcePinId": 20020,
       "targetNodeId": 10016,
       "targetPinId": 20025
     },
     {
-      "id": 30010,
-      "sourceNodeId": 10013,
-      "sourcePinId": 20021,
-      "targetNodeId": 10017,
-      "targetPinId": 20026
+      "id": 30011,
+      "sourceNodeId": 10021,
+      "sourcePinId": 20032,
+      "targetNodeId": 10019,
+      "targetPinId": 20029
     },
     {
-      "id": 30011,
-      "sourceNodeId": 10022,
-      "sourcePinId": 20033,
+      "id": 30012,
+      "sourceNodeId": 10021,
+      "sourcePinId": 20032,
       "targetNodeId": 10020,
       "targetPinId": 20030
     },
     {
-      "id": 30012,
-      "sourceNodeId": 10022,
-      "sourcePinId": 20033,
-      "targetNodeId": 10021,
-      "targetPinId": 20031
-    },
-    {
       "id": 30013,
-      "sourceNodeId": 10014,
-      "sourcePinId": 20023,
-      "targetNodeId": 10023,
-      "targetPinId": 20034
+      "sourceNodeId": 10013,
+      "sourcePinId": 20022,
+      "targetNodeId": 10022,
+      "targetPinId": 20033
     },
     {
       "id": 30014,
-      "sourceNodeId": 10017,
-      "sourcePinId": 20027,
-      "targetNodeId": 10024,
-      "targetPinId": 20036
+      "sourceNodeId": 10016,
+      "sourcePinId": 20026,
+      "targetNodeId": 10023,
+      "targetPinId": 20035
     },
     {
       "id": 30015,
-      "sourceNodeId": 10023,
-      "sourcePinId": 20035,
+      "sourceNodeId": 10022,
+      "sourcePinId": 20034,
       "targetNodeId": 10008,
       "targetPinId": 20012
     },
     {
       "id": 30016,
-      "sourceNodeId": 10017,
-      "sourcePinId": 20027,
-      "targetNodeId": 10027,
-      "targetPinId": 20040
+      "sourceNodeId": 10016,
+      "sourcePinId": 20026,
+      "targetNodeId": 10026,
+      "targetPinId": 20039
     },
     {
       "id": 30017,
-      "sourceNodeId": 10017,
-      "sourcePinId": 20027,
-      "targetNodeId": 10028,
-      "targetPinId": 20042
+      "sourceNodeId": 10016,
+      "sourcePinId": 20026,
+      "targetNodeId": 10027,
+      "targetPinId": 20041
     },
     {
       "id": 30018,
-      "sourceNodeId": 10027,
-      "sourcePinId": 20041,
-      "targetNodeId": 10030,
-      "targetPinId": 20045
-    },
-    {
-      "id": 30019,
-      "sourceNodeId": 10027,
-      "sourcePinId": 20041,
-      "targetNodeId": 10018,
-      "targetPinId": 20028
-    },
-    {
-      "id": 30020,
-      "sourceNodeId": 10028,
-      "sourcePinId": 20043,
+      "sourceNodeId": 10026,
+      "sourcePinId": 20040,
       "targetNodeId": 10029,
       "targetPinId": 20044
     },
     {
+      "id": 30019,
+      "sourceNodeId": 10026,
+      "sourcePinId": 20040,
+      "targetNodeId": 10017,
+      "targetPinId": 20027
+    },
+    {
+      "id": 30020,
+      "sourceNodeId": 10027,
+      "sourcePinId": 20042,
+      "targetNodeId": 10028,
+      "targetPinId": 20043
+    },
+    {
       "id": 30021,
-      "sourceNodeId": 10028,
-      "sourcePinId": 20043,
-      "targetNodeId": 10019,
-      "targetPinId": 20029
+      "sourceNodeId": 10027,
+      "sourcePinId": 20042,
+      "targetNodeId": 10018,
+      "targetPinId": 20028
     },
     {
       "id": 30022,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
-      "targetNodeId": 10031,
-      "targetPinId": 20046
+      "targetNodeId": 10030,
+      "targetPinId": 20045
     },
     {
       "id": 30023,
-      "sourceNodeId": 10010,
-      "sourcePinId": 20016,
-      "targetNodeId": 10011,
-      "targetPinId": 20017
-    },
-    {
-      "id": 30024,
-      "sourceNodeId": 10025,
-      "sourcePinId": 20038,
+      "sourceNodeId": 10024,
+      "sourcePinId": 20037,
       "targetNodeId": 10001,
       "targetPinId": 20002
     },
     {
+      "id": 30024,
+      "sourceNodeId": 10024,
+      "sourcePinId": 20037,
+      "targetNodeId": 10025,
+      "targetPinId": 20038
+    },
+    {
       "id": 30025,
-      "sourceNodeId": 10025,
-      "sourcePinId": 20038,
-      "targetNodeId": 10026,
-      "targetPinId": 20039
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
+      "targetNodeId": 10031,
+      "targetPinId": 20046
     },
     {
       "id": 30026,
-      "sourceNodeId": 10008,
-      "sourcePinId": 20013,
-      "targetNodeId": 10032,
-      "targetPinId": 20047
-    },
-    {
-      "id": 30027,
       "sourceNodeId": 10008,
       "sourcePinId": 20013,
       "targetNodeId": 10002,
       "targetPinId": 20003
     },
     {
-      "id": 30028,
+      "id": 30027,
       "sourceNodeId": 10008,
       "sourcePinId": 20013,
       "targetNodeId": 10009,
       "targetPinId": 20014
     },
     {
+      "id": 30028,
+      "sourceNodeId": 10022,
+      "sourcePinId": 20034,
+      "targetNodeId": 10021,
+      "targetPinId": 20031
+    },
+    {
       "id": 30029,
-      "sourceNodeId": 10023,
-      "sourcePinId": 20035,
-      "targetNodeId": 10022,
-      "targetPinId": 20032
+      "sourceNodeId": 10010,
+      "sourcePinId": 20016,
+      "targetNodeId": 10032,
+      "targetPinId": 20047
     },
     {
       "id": 30030,
-      "sourceNodeId": 10010,
-      "sourcePinId": 20016,
-      "targetNodeId": 10033,
-      "targetPinId": 20048
-    },
-    {
-      "id": 30031,
-      "sourceNodeId": 10036,
-      "sourcePinId": 20052,
-      "targetNodeId": 10035,
-      "targetPinId": 20050
-    },
-    {
-      "id": 30032,
-      "sourceNodeId": 10036,
-      "sourcePinId": 20052,
+      "sourceNodeId": 10035,
+      "sourcePinId": 20051,
       "targetNodeId": 10034,
       "targetPinId": 20049
     },
     {
+      "id": 30031,
+      "sourceNodeId": 10035,
+      "sourcePinId": 20051,
+      "targetNodeId": 10033,
+      "targetPinId": 20048
+    },
+    {
+      "id": 30032,
+      "sourceNodeId": 10016,
+      "sourcePinId": 20026,
+      "targetNodeId": 10035,
+      "targetPinId": 20050
+    },
+    {
       "id": 30033,
-      "sourceNodeId": 10017,
-      "sourcePinId": 20027,
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
       "targetNodeId": 10036,
-      "targetPinId": 20051
+      "targetPinId": 20052
     },
     {
       "id": 30034,
-      "sourceNodeId": 10008,
-      "sourcePinId": 20013,
-      "targetNodeId": 10037,
-      "targetPinId": 20053
+      "sourceNodeId": 10000,
+      "sourcePinId": 20001,
+      "targetNodeId": 10024,
+      "targetPinId": 20036
     },
     {
       "id": 30035,
-      "sourceNodeId": 10000,
-      "sourcePinId": 20001,
-      "targetNodeId": 10025,
-      "targetPinId": 20037
-    },
-    {
-      "id": 30036,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
       "targetNodeId": 10007,
       "targetPinId": 20010
     },
     {
+      "id": 30036,
+      "sourceNodeId": 10010,
+      "sourcePinId": 20016,
+      "targetNodeId": 10037,
+      "targetPinId": 20053
+    },
+    {
       "id": 30037,
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
+      "targetNodeId": 10039,
+      "targetPinId": 20055
+    },
+    {
+      "id": 30038,
+      "sourceNodeId": 10016,
+      "sourcePinId": 20026,
+      "targetNodeId": 10040,
+      "targetPinId": 20056
+    },
+    {
+      "id": 30039,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
       "targetNodeId": 10038,
       "targetPinId": 20054
     },
     {
-      "id": 30038,
-      "sourceNodeId": 10008,
-      "sourcePinId": 20013,
-      "targetNodeId": 10040,
-      "targetPinId": 20056
-    },
-    {
-      "id": 30039,
-      "sourceNodeId": 10017,
-      "sourcePinId": 20027,
-      "targetNodeId": 10041,
-      "targetPinId": 20057
-    },
-    {
       "id": 30040,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
-      "targetNodeId": 10039,
-      "targetPinId": 20055
-    },
-    {
-      "id": 30041,
-      "sourceNodeId": 10010,
-      "sourcePinId": 20016,
-      "targetNodeId": 10042,
-      "targetPinId": 20058
+      "targetNodeId": 10041,
+      "targetPinId": 20057
     }
   ],
   "metadata": {
-    "created": "2026-03-04T17:46:01",
-    "modified": "2026-03-04T17:46:01",
+    "created": "2026-03-17T23:17:37",
+    "modified": "2026-03-17T23:17:37",
     "name": "Boss Behavior Tree"
   },
   "nodes": [
@@ -315,7 +308,7 @@
       "displayName": "Dash",
       "id": 10001,
       "parameters": {
-        "dashDuration": 0.09870380163192749,
+        "dashDuration": 0.04895099252462387,
         "dashSpeed": 200.0
       },
       "position": {
@@ -433,24 +426,8 @@
       "type": "BTRandomSelector"
     },
     {
-      "displayName": "Rapid Fire",
-      "id": 10011,
-      "parameters": {
-        "bulletCount": 4,
-        "bulletSpeed": 50.0,
-        "chargeTime": 0.5,
-        "fireInterval": 0.30000001192092896,
-        "recoveryTime": 0.800000011920929
-      },
-      "position": {
-        "x": 130.0,
-        "y": 120.0
-      },
-      "type": "BTBossRapidFire"
-    },
-    {
       "displayName": "Distance Selector",
-      "id": 10012,
+      "id": 10011,
       "parameters": null,
       "position": {
         "x": 190.0,
@@ -460,7 +437,7 @@
     },
     {
       "displayName": "Close",
-      "id": 10013,
+      "id": 10012,
       "parameters": null,
       "position": {
         "x": 220.0,
@@ -470,7 +447,7 @@
     },
     {
       "displayName": "Far",
-      "id": 10014,
+      "id": 10013,
       "parameters": null,
       "position": {
         "x": 250.0,
@@ -480,7 +457,7 @@
     },
     {
       "displayName": "Far Condition",
-      "id": 10015,
+      "id": 10014,
       "parameters": {
         "maxDistance": 5000.0,
         "minDistance": 50.099998474121094
@@ -493,7 +470,7 @@
     },
     {
       "displayName": "Close Condition",
-      "id": 10016,
+      "id": 10015,
       "parameters": {
         "maxDistance": 50.0,
         "minDistance": 0.0
@@ -506,7 +483,7 @@
     },
     {
       "displayName": "Random Selector",
-      "id": 10017,
+      "id": 10016,
       "parameters": null,
       "position": {
         "x": 340.0,
@@ -516,7 +493,7 @@
     },
     {
       "displayName": "Rapid Fire",
-      "id": 10018,
+      "id": 10017,
       "parameters": {
         "bulletCount": 8,
         "bulletSpeed": 100.0,
@@ -532,7 +509,7 @@
     },
     {
       "displayName": "Shoot",
-      "id": 10019,
+      "id": 10018,
       "parameters": {
         "bulletCount": 3,
         "bulletSpeed": 50.0,
@@ -548,7 +525,7 @@
     },
     {
       "displayName": "Approach",
-      "id": 10020,
+      "id": 10019,
       "parameters": {
         "approachSpeed": 200.0,
         "targetDistance": 5.0
@@ -561,7 +538,7 @@
     },
     {
       "displayName": "Melee Attack",
-      "id": 10021,
+      "id": 10020,
       "parameters": {
         "attackDuration": 0.20000000298023224,
         "blockRadius": 8.0,
@@ -582,7 +559,7 @@
     },
     {
       "displayName": "MeleeSequence",
-      "id": 10022,
+      "id": 10021,
       "parameters": null,
       "position": {
         "x": 190.0,
@@ -592,7 +569,7 @@
     },
     {
       "displayName": "Random Selector",
-      "id": 10023,
+      "id": 10022,
       "parameters": null,
       "position": {
         "x": 220.0,
@@ -602,7 +579,7 @@
     },
     {
       "displayName": "Retreat",
-      "id": 10024,
+      "id": 10023,
       "parameters": {
         "retreatSpeed": 200.0,
         "targetDistance": 60.0
@@ -615,7 +592,7 @@
     },
     {
       "displayName": "Random Selector",
-      "id": 10025,
+      "id": 10024,
       "parameters": null,
       "position": {
         "x": 130.0,
@@ -625,7 +602,7 @@
     },
     {
       "displayName": "Idle",
-      "id": 10026,
+      "id": 10025,
       "parameters": {
         "idleDuration": 1.5
       },
@@ -637,7 +614,7 @@
     },
     {
       "displayName": "CloseRapidFireSequence",
-      "id": 10027,
+      "id": 10026,
       "parameters": null,
       "position": {
         "x": 190.0,
@@ -647,7 +624,7 @@
     },
     {
       "displayName": "CloseShootSequence",
-      "id": 10028,
+      "id": 10027,
       "parameters": null,
       "position": {
         "x": 220.0,
@@ -657,7 +634,7 @@
     },
     {
       "displayName": "Retreat",
-      "id": 10029,
+      "id": 10028,
       "parameters": {
         "retreatSpeed": 200.0,
         "targetDistance": 40.0
@@ -670,7 +647,7 @@
     },
     {
       "displayName": "Retreat",
-      "id": 10030,
+      "id": 10029,
       "parameters": {
         "retreatSpeed": 200.0,
         "targetDistance": 40.0
@@ -683,7 +660,7 @@
     },
     {
       "displayName": "Melee Attack",
-      "id": 10031,
+      "id": 10030,
       "parameters": {
         "attackDuration": 0.20000000298023224,
         "blockRadius": 8.0,
@@ -704,7 +681,7 @@
     },
     {
       "displayName": "Wide Shoot",
-      "id": 10032,
+      "id": 10031,
       "parameters": {
         "bulletsPerSweep": 8,
         "chargeTime": 0.800000011920929,
@@ -724,7 +701,7 @@
     },
     {
       "displayName": "Melee Attack",
-      "id": 10033,
+      "id": 10032,
       "parameters": {
         "attackDuration": 0.20000000298023224,
         "blockRadius": 8.0,
@@ -745,7 +722,7 @@
     },
     {
       "displayName": "Melee Attack",
-      "id": 10034,
+      "id": 10033,
       "parameters": {
         "attackDuration": 0.20000000298023224,
         "blockRadius": 8.0,
@@ -766,7 +743,7 @@
     },
     {
       "displayName": "Approach",
-      "id": 10035,
+      "id": 10034,
       "parameters": {
         "approachSpeed": 150.0,
         "targetDistance": 12.0
@@ -779,7 +756,7 @@
     },
     {
       "displayName": "CloseMeleeSequence",
-      "id": 10036,
+      "id": 10035,
       "parameters": null,
       "position": {
         "x": 190.0,
@@ -789,7 +766,7 @@
     },
     {
       "displayName": "Barrage",
-      "id": 10037,
+      "id": 10036,
       "parameters": {
         "chargeTime": 0.800000011920929,
         "fireInterval": 0.019999999552965164,
@@ -810,7 +787,7 @@
     },
     {
       "displayName": "Area Attack",
-      "id": 10038,
+      "id": 10037,
       "parameters": {
         "attackDuration": 0.5,
         "blinkDuration": 0.6000000238418579,
@@ -829,7 +806,7 @@
     },
     {
       "displayName": "Meteor Rain",
-      "id": 10039,
+      "id": 10038,
       "parameters": {
         "blinkDuration": 0.800000011920929,
         "blinkFrequency": 10.0,
@@ -844,8 +821,8 @@
         "launchDuration": 0.5,
         "launchSpeed": 60.0,
         "launchSpreadXZ": 5.0,
-        "maxImpacts": 14,
-        "minImpacts": 10,
+        "maxImpacts": 15,
+        "minImpacts": 13,
         "recoveryTime": 0.8999999761581421,
         "warningDuration": 1.0
       },
@@ -857,7 +834,7 @@
     },
     {
       "displayName": "Slash Attack",
-      "id": 10040,
+      "id": 10039,
       "parameters": {
         "attackDuration": 0.30000001192092896,
         "attackRadius": 40.0,
@@ -875,7 +852,7 @@
     },
     {
       "displayName": "Slash Attack",
-      "id": 10041,
+      "id": 10040,
       "parameters": {
         "attackDuration": 0.30000001192092896,
         "attackRadius": 30.0,
@@ -893,7 +870,7 @@
     },
     {
       "displayName": "Shoot",
-      "id": 10042,
+      "id": 10041,
       "parameters": {
         "bulletCount": 5,
         "bulletSpeed": 38.0,

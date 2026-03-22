@@ -25,6 +25,7 @@ struct Particle
     float currentTime;     // 経過時間（秒）
     float mass;            // 質量（衝突応答用）
     uint  cellIndex;       // 空間ハッシュ用セルインデックス
+    uint  useForceField;   // フォースフィールドの影響を受けるか（1=有効, 0=無効）
 };
 
 // �G�~�b�^�[���ʍ\����
@@ -36,6 +37,7 @@ struct Emitter
     uint isEmit;              // �ˏo�t���O�i1=�ˏo����A0=�ˏo���Ȃ��j
     uint isNormalize;         // ���K���t���O
     uint isRandomRotateZ; // Z�������_����]�t���O�i1=�����_���A0=�Œ��]�j
+    uint useForceField;   // フォースフィールド有効フラグ（1=有効, 0=無効）
     uint emitterID;           // �G�~�b�^�[ID
     
     float3 position;          // ���S/��ʒu

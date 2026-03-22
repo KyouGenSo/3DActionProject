@@ -37,11 +37,14 @@ void main(uint3 DTid : SV_DispatchThreadID)
     // --- 加速度の計算 ---
     float3 acceleration = float3(0.0f, 0.0f, 0.0f);
 
-    // フォースフィールドの評価
-    uint forceFieldCount = gPhysicsParams.activeForceFieldCount;
-    for (uint i = 0; i < forceFieldCount; i++)
+    // フォースフィールドの評価（パーティクルごとのフラグで制御）
+    if (gParticles[particleIndex].useForceField)
     {
-        acceleration += EvaluateForceField(gForceFields[i], currentPos);
+        uint forceFieldCount = gPhysicsParams.activeForceFieldCount;
+        for (uint i = 0; i < forceFieldCount; i++)
+        {
+            acceleration += EvaluateForceField(gForceFields[i], currentPos);
+        }
     }
 
     // --- Verlet 積分 ---

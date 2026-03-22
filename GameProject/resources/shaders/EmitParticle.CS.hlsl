@@ -214,9 +214,10 @@ void main(uint3 DTid : SV_DispatchThreadID)
             // 位置設定---------------------------------------------------------------------------------
             gParticles[particleID].translate = particlePosition;
 
-            // 質量・セルインデックス設定--------------------------------------------------------------
+            // 質量・セルインデックス・フォースフィールドフラグ設定----------------------------------
             gParticles[particleID].mass = 1.0f;
             gParticles[particleID].cellIndex = 0xFFFFFFFF; // 未割り当て
+            gParticles[particleID].useForceField = gEmitters[emitterIndex].useForceField;
 
         	// ��]�ݒ�---------------------------------------------------------------------------------
             if (gEmitters[emitterIndex].isRandomRotateZ > 0)

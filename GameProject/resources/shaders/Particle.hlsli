@@ -1,9 +1,20 @@
 static const int kMaxParticles = 1000000;
 
-// �G�~�b�^�[�^�C�v�̒�`
+// エミッタータイプの定義
 #define EMITTER_TYPE_SPHERE 0
 #define EMITTER_TYPE_BOX 1
 #define EMITTER_TYPE_TRIANGLE 2
+
+// パーティクル用ビットフラグ定数
+#define PFLAG_USE_FORCE_FIELD  (1u << 0)
+
+// エミッター用ビットフラグ定数
+#define EFLAG_ACTIVE           (1u << 0)
+#define EFLAG_EMITTING         (1u << 1)
+#define EFLAG_NORMALIZE        (1u << 2)
+#define EFLAG_RANDOM_ROTATE_Z  (1u << 3)
+#define EFLAG_USE_FORCE_FIELD  (1u << 4)
+#define EFLAG_TEMPORARY        (1u << 5)
 
 struct VertexShaderOutput
 {
@@ -25,64 +36,58 @@ struct Particle
     float currentTime;     // 経過時間（秒）
     float mass;            // 質量（衝突応答用）
     uint  cellIndex;       // 空間ハッシュ用セルインデックス
-    uint  useForceField;   // フォースフィールドの影響を受けるか（1=有効, 0=無効）
+    uint  flags;           // パーティクルフラグ（PFLAG_* ビットフラグ）
 };
 
-// �G�~�b�^�[���ʍ\����
+// エミッター共通構造体
 struct Emitter
 {
-    // ��{���
-    uint type;                // �G�~�b�^�[�^�C�v
-    uint isActive;            // �A�N�e�B�u��ԁi1=�L���A0=�����j
-    uint isEmit;              // �ˏo�t���O�i1=�ˏo����A0=�ˏo���Ȃ��j
-    uint isNormalize;         // ���K���t���O
-    uint isRandomRotateZ; // Z�������_����]�t���O�i1=�����_���A0=�Œ��]�j
-    uint useForceField;   // フォースフィールド有効フラグ（1=有効, 0=無効）
-    uint emitterID;           // �G�~�b�^�[ID
-    
-    float3 position;          // ���S/��ʒu
-    float2 scaleRangeX;       // �p�[�e�B�N����X�T�C�Y�͈́i�ŏ��A�ő�j
-    float2 scaleRangeY;       // �p�[�e�B�N����Y�T�C�Y�͈́i�ŏ��A�ő�j
-    float2 velRangeX;         // �p�[�e�B�N����X���x�͈́i�ŏ��A�ő�j
-    float2 velRangeY;         // �p�[�e�B�N����Y���x�͈́i�ŏ��A�ő�j
-    float2 velRangeZ;         // �p�[�e�B�N����Z���x�͈́i�ŏ��A�ő�j
-    float2 lifeTimeRange;     // �p�[�e�B�N���̎����͈́i�ŏ��A�ő�j
-    float4 startColorTint;    // �p�[�e�B�N���̊J�n�F�iRGBA�j
-    float4 endColorTint;      // �p�[�e�B�N���̏I���F�iRGBA�j
-    
-    uint  count;              // 1��̎ˏo�Ő�������p�[�e�B�N����
-    float frequency;          // �ˏo�p�x�i�b�j
-    float frequencyTime;      // �o�ߎ��ԃJ�E���^�[
+    uint   type;              // エミッタータイプ
+    uint   flags;             // エミッターフラグ（EFLAG_* ビットフラグ）
+    uint   emitterID;         // エミッターID
 
-    uint isTemp;              // �ꎞ�I�ȃG�~�b�^�[���ǂ����i1=�ꎞ�I�A0=�i���j
-    float emitterLifeTime;    // �G�~�b�^�[�̎����i�b�j
-    float emitterCurrentTime; // �G�~�b�^�[�̌o�ߎ���
+    float3 position;          // 中心/基準位置
+    float2 scaleRangeX;       // パーティクルXサイズ範囲（最小、最大）
+    float2 scaleRangeY;       // パーティクルYサイズ範囲（最小、最大）
+    float2 velRangeX;         // パーティクルX速度範囲（最小、最大）
+    float2 velRangeY;         // パーティクルY速度範囲（最小、最大）
+    float2 velRangeZ;         // パーティクルZ速度範囲（最小、最大）
+    float2 lifeTimeRange;     // パーティクルの寿命範囲（最小、最大）
+    float4 startColorTint;    // パーティクルの開始色（RGBA）
+    float4 endColorTint;      // パーティクルの終了色（RGBA）
 
-    // ���̗p�p�����[�^
-    float radius;             // ���̂̔��a
-    
-    // ���^�p�p�����[�^
-    float3 boxSize;           // ���̑傫���i���A�����A���s���j
-    float3 boxRotation;       // ���̉�]�iX,Y,Z���A�x���@�j
-    
-    // �O�p�`�p�p�����[�^
-    float3 triangleV1;        // �O�p�`�̒��_1�i���΍��W�j
-    float3 triangleV2;        // �O�p�`�̒��_2�i���΍��W�j
-    float3 triangleV3;        // �O�p�`�̒��_3�i���΍��W�j
+    uint   count;             // 1回の射出で生成するパーティクル数
+    float  frequency;         // 射出頻度（秒）
+    float  frequencyTime;     // 経過時間カウンター
+
+    float  emitterLifeTime;   // エミッターの寿命（秒）
+    float  emitterCurrentTime;// エミッターの経過時間
+
+    // 球体用パラメータ
+    float  radius;            // 球体の半径
+
+    // 箱型用パラメータ
+    float3 boxSize;           // 箱の大きさ（幅、高さ、奥行き）
+    float3 boxRotation;       // 箱の回転（X,Y,Z軸、度数法）
+
+    // 三角形用パラメータ
+    float3 triangleV1;        // 三角形の頂点1（相対座標）
+    float3 triangleV2;        // 三角形の頂点2（相対座標）
+    float3 triangleV3;        // 三角形の頂点3（相対座標）
 };
 
-// �p�[�t���[�����\����
+// パーフレーム情報構造体
 struct PerFrame
 {
-    float time;                 // ����
-    float deltaTime;            // �f���^�^�C��
-    uint activeEmitterCount;    // �A�N�e�B�u�ȃG�~�b�^�[��
-    uint pad;                   // �p�f�B���O
+    float time;                 // 時間
+    float deltaTime;            // デルタタイム
+    uint activeEmitterCount;    // アクティブなエミッター数
+    uint pad;                   // パディング
 };
 
-// PerView���\����
+// PerView情報構造体
 struct PerView
 {
-    float4x4 viewProj;          // �r���[�v���W�F�N�V�����s��
-    float4x4 billboardMat;      // �r���{�[�h�s��
+    float4x4 viewProj;          // ビュープロジェクション行列
+    float4x4 billboardMat;      // ビルボード行列
 };

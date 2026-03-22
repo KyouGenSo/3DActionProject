@@ -38,7 +38,7 @@ void main(uint3 DTid : SV_DispatchThreadID)
     float3 acceleration = float3(0.0f, 0.0f, 0.0f);
 
     // フォースフィールドの評価（パーティクルごとのフラグで制御）
-    if (gParticles[particleIndex].useForceField)
+    if (gParticles[particleIndex].flags & PFLAG_USE_FORCE_FIELD)
     {
         uint forceFieldCount = gPhysicsParams.activeForceFieldCount;
         for (uint i = 0; i < forceFieldCount; i++)

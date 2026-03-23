@@ -48,20 +48,20 @@ void main(uint3 DTid : SV_DispatchThreadID)
         }
     }
 
-    // Curl Noise乱流（エミッター単位で制御、ForceFieldとは独立）
-    if (gParticles[particleIndex].flags & PFLAG_USE_CURL_NOISE)
-    {
-        float scale = gPhysicsParams.noiseScale;
-        float3 noisePos = currentPos * scale + float3(0.0f, 0.0f, gPhysicsParams.noiseTime);
-        acceleration += curlNoise3D(noisePos);
-    }
-
     // --- Verlet 積分 ---
     // フレーム間変位から暗黙速度を導出
     float3 displacement = currentPos - prevPos;
 
     // 減衰の適用（エネルギー散逸）
     displacement *= gPhysicsParams.damping;
+
+    // Curl Noise乱流（速度の擾乱として displacement に加算。accelerationではなくdisplacementに適用することで十分な強度を得る）
+    if (gParticles[particleIndex].flags & PFLAG_USE_CURL_NOISE)
+    {
+        float scale = gPhysicsParams.noiseScale;
+        float3 noisePos = currentPos * scale + float3(0.0f, 0.0f, gPhysicsParams.noiseTime);
+        displacement += curlNoise3D(noisePos) * gPhysicsParams.noiseStrength;
+    }
 
     // 新しい位置を計算: newPos = pos + displacement + accel * dt²
     float3 newPos = currentPos + displacement + acceleration * dt * dt;

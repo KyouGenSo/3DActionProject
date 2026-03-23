@@ -20,6 +20,9 @@ struct PhysicsParams
     float2 screenSize;           // スクリーンサイズ
     float  noiseTime;            // Curl Noise 用の時間オフセット
     float  noiseScale;           // Curl Noise の空間スケール
+
+    float  noiseStrength;        // Curl Noise の強度
+    float3 pad;                  // パディング（16Bアライメント）
 };
 
 #endif // PHYSICS_PARAMS_HLSLI

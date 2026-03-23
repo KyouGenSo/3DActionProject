@@ -220,6 +220,8 @@ void main(uint3 DTid : SV_DispatchThreadID)
             gParticles[particleID].flags = 0;
             if (gEmitters[emitterIndex].flags & EFLAG_USE_FORCE_FIELD)
                 gParticles[particleID].flags |= PFLAG_USE_FORCE_FIELD;
+            if (gEmitters[emitterIndex].flags & EFLAG_USE_CURL_NOISE)
+                gParticles[particleID].flags |= PFLAG_USE_CURL_NOISE;
 
             // 回転設定---------------------------------------------------------------------------------
             if (gEmitters[emitterIndex].flags & EFLAG_RANDOM_ROTATE_Z)

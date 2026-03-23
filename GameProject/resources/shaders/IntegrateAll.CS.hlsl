@@ -1,6 +1,7 @@
 #include "Particle.hlsli"
 #include "ForceField.hlsli"
 #include "PhysicsParams.hlsli"
+#include "PerlinNoise3D.hlsli"
 
 // リソースバインディング
 RWStructuredBuffer<Particle> gParticles : register(u0);
@@ -47,23 +48,27 @@ void main(uint3 DTid : SV_DispatchThreadID)
         }
     }
 
+    // Curl Noise乱流（エミッター単位で制御、ForceFieldとは独立）
+    if (gParticles[particleIndex].flags & PFLAG_USE_CURL_NOISE)
+    {
+        float scale = gPhysicsParams.noiseScale;
+        float3 noisePos = currentPos * scale + float3(0.0f, 0.0f, gPhysicsParams.noiseTime);
+        acceleration += curlNoise3D(noisePos);
+    }
+
     // --- Verlet 積分 ---
-    // newPos = 2 * currentPos - prevPos + acceleration * dt^2
-    // 速度は暗黙的に (currentPos - prevPos) / dt で導出
-    float3 velocity = currentPos - prevPos;
+    // フレーム間変位から暗黙速度を導出
+    float3 displacement = currentPos - prevPos;
 
-    // 速度減衰の適用
-    velocity *= gPhysicsParams.damping;
+    // 減衰の適用（エネルギー散逸）
+    displacement *= gPhysicsParams.damping;
 
-    // 新しい位置を計算
-    float3 newPos = currentPos + velocity + acceleration * dt * dt;
+    // 新しい位置を計算: newPos = pos + displacement + accel * dt²
+    float3 newPos = currentPos + displacement + acceleration * dt * dt;
 
-    // 位置の更新（Verlet 積分）
+    // 位置の更新
     gParticles[particleIndex].prevPosition = currentPos;
     gParticles[particleIndex].translate = newPos;
-
-    // 明示的な速度も更新（描画やエミッション参照用）
-    gParticles[particleIndex].velocity = (newPos - currentPos) / max(dt, 0.0001f);
 
     // --- 寿命管理 ---
     // 経過時間の更新

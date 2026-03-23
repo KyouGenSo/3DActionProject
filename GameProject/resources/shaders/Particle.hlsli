@@ -7,6 +7,7 @@ static const int kMaxParticles = 1000000;
 
 // パーティクル用ビットフラグ定数
 #define PFLAG_USE_FORCE_FIELD  (1u << 0)
+#define PFLAG_USE_CURL_NOISE   (1u << 1)
 
 // エミッター用ビットフラグ定数
 #define EFLAG_ACTIVE           (1u << 0)
@@ -15,6 +16,7 @@ static const int kMaxParticles = 1000000;
 #define EFLAG_RANDOM_ROTATE_Z  (1u << 3)
 #define EFLAG_USE_FORCE_FIELD  (1u << 4)
 #define EFLAG_TEMPORARY        (1u << 5)
+#define EFLAG_USE_CURL_NOISE   (1u << 6)
 
 struct VertexShaderOutput
 {

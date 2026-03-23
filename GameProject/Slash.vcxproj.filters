@@ -759,6 +759,9 @@
     <None Include="resources\shaders\Particle.hlsli">
       <Filter>Shader\Particle</Filter>
     </None>
+    <None Include="resources\shaders\PerlinNoise3D.hlsli">
+      <Filter>Shader\Particle</Filter>
+    </None>
     <None Include="resources\shaders\ForceField.hlsli">
       <Filter>Shader\Particle</Filter>
     </None>

@@ -5,11 +5,6 @@
 // 深度バッファ衝突モジュール
 // パーティクルがシーンジオメトリを貫通しないよう、深度バッファから
 // 推定した表面法線で反射バウンスさせる。
-//
-// 使用条件:
-//   - PhysicsParams.hlsli がインクルード済み
-//   - gPhysicsParams (ConstantBuffer<PhysicsParams>) がバインド済み
-//   - 行列規約: mul(row_vector, matrix) — GPUParticle.VS.hlsl と統一
 // ============================================================================
 
 /// ワールド座標をスクリーンUV + NDC深度に変換
@@ -61,11 +56,7 @@ float3 EstimateDepthNormal(
     return normalize(cross(tangentH, tangentV));
 }
 
-/// 深度バッファ衝突の検出と応答（Verlet積分対応）
-///
-/// @param currentPos [inout] パーティクルの新位置。衝突時は表面に押し出される。
-/// @param prevPos    [inout] パーティクルの前位置。衝突時は反射速度がエンコードされる。
-/// @return 衝突が発生した場合 true
+/// 深度バッファ衝突の検出と応答
 bool ResolveDepthCollision(
     inout float3 currentPos,
     inout float3 prevPos,
@@ -79,38 +70,36 @@ bool ResolveDepthCollision(
     Texture2D<float> depthTex,
     SamplerState depthSamp)
 {
-    // 1. パーティクルをスクリーン空間に投影
+    // パーティクルをスクリーン空間に投影
     float3 screenData = ProjectToScreen(currentPos, viewProj);
     float2 screenUV = screenData.xy;
     float particleNDCDepth = screenData.z;
 
-    // 2. 画面外のパーティクルはスキップ
+    // 画面外のパーティクルはスキップ
     if (screenUV.x < 0.0f || screenUV.x > 1.0f ||
         screenUV.y < 0.0f || screenUV.y > 1.0f)
     {
         return false;
     }
 
-    // 3. カメラ背面またはファー平面外のパーティクルはスキップ
+    // カメラ背面またはファー平面外のパーティクルはスキップ
     if (particleNDCDepth < 0.0f || particleNDCDepth > 1.0f)
     {
         return false;
     }
 
-    // 4. シーン深度をサンプル
+    // シーン深度をサンプル
     float sceneDepth = depthTex.SampleLevel(depthSamp, screenUV, 0);
 
-    // 5. 貫通検出: NDC 深度の厳密比較（バイアスなし）
-    //    NDC 深度は非線形で遠方では圧縮されるため、NDC 空間でのバイアスは使わない
-    //    DX12 Standard-Z: 0 = near, 1 = far
+    // 貫通検出: NDC 深度の比較
     if (particleNDCDepth <= sceneDepth)
     {
         return false;
     }
 
-    // --- 衝突検出！ ---
+    // -------------------- 衝突検出 -------------------- //
 
-    // 6. シーン表面のワールド位置を復元（法線推定より先に実施）
+    // シーン表面のワールド位置を復元
     float3 surfacePos = ReconstructWorldPos(screenUV, sceneDepth, invViewProj);
 
     // ワールド空間で距離チェック: 離れすぎは深度不連続による偽陽性
@@ -121,7 +110,6 @@ bool ResolveDepthCollision(
         return false;
     }
 
-    // 7. 深度勾配から表面法線を推定
     float2 texelSize = 1.0f / screenSize;
 
     // 深度不連続チェック: シルエットエッジでの異常法線を回避
@@ -146,7 +134,7 @@ bool ResolveDepthCollision(
         normal = -normal;
     }
 
-    //パーティクルを表面に押し出し（半径分オフセット）
+    //パーティクルを表面に押し出し
     float3 correctedPos = surfacePos + normal * particleRadius * 2;
 
     // Verlet 速度の反射

@@ -2,6 +2,7 @@
 #include "ForceField.hlsli"
 #include "PhysicsParams.hlsli"
 #include "PerlinNoise3D.hlsli"
+#include "DepthCollision.hlsli"
 
 // リソースバインディング
 RWStructuredBuffer<Particle> gParticles : register(u0);
@@ -9,6 +10,9 @@ RWStructuredBuffer<int> gFreeListIndex : register(u1);
 RWStructuredBuffer<uint> gFreeList : register(u2);
 
 StructuredBuffer<ForceField> gForceFields : register(t0);
+Texture2D<float> gDepthBuffer : register(t1);
+
+SamplerState gDepthSampler : register(s0);
 
 ConstantBuffer<PerFrame> gPerFrame : register(b0);
 ConstantBuffer<PhysicsParams> gPhysicsParams : register(b1);
@@ -65,6 +69,24 @@ void main(uint3 DTid : SV_DispatchThreadID)
 
     // 新しい位置を計算: newPos = pos + displacement + accel * dt²
     float3 newPos = currentPos + displacement + acceleration * dt * dt;
+
+    // --- 深度バッファ衝突 ---
+    if (gParticles[particleIndex].flags & PFLAG_USE_DEPTH_COLLISION)
+    {
+        float3 collisionPrev = currentPos;
+        bool collided = ResolveDepthCollision(
+            newPos, collisionPrev,
+            gPhysicsParams.viewProj, gPhysicsParams.invViewProj,
+            gPhysicsParams.screenSize, gPhysicsParams.cameraPos,
+            gPhysicsParams.collisionRestitution, gPhysicsParams.particleRadius,
+            gPhysicsParams.depthBias, gDepthBuffer, gDepthSampler);
+
+        if (collided)
+        {
+            // 反射速度が collisionPrev にエンコード済み
+            currentPos = collisionPrev;
+        }
+    }
 
     // 位置の更新
     gParticles[particleIndex].prevPosition = currentPos;

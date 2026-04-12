@@ -762,6 +762,9 @@
     <None Include="resources\shaders\PerlinNoise3D.hlsli">
       <Filter>Shader\Particle</Filter>
     </None>
+    <None Include="resources\shaders\DepthCollision.hlsli">
+      <Filter>Shader\Particle</Filter>
+    </None>
     <None Include="resources\shaders\ForceField.hlsli">
       <Filter>Shader\Particle</Filter>
     </None>

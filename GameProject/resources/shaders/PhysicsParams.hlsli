@@ -23,6 +23,11 @@ struct PhysicsParams
 
     float  noiseStrength;        // Curl Noise の強度
     float3 pad;                  // パディング（16Bアライメント）
+
+    // 深度バッファ衝突用（段階3で追加）
+    float4x4 viewProj;          // ビュープロジェクション行列（パーティクル→スクリーン投影用）
+    float3   cameraPos;         // カメラ位置（法線方向決定用）
+    float    pad2;              // 16Bアライメント
 };
 
 #endif // PHYSICS_PARAMS_HLSLI

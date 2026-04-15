@@ -709,9 +709,6 @@
     <FxCompile Include="resources\shaders\InitParticle.CS.hlsl">
       <Filter>Shader\Particle</Filter>
     </FxCompile>
-    <FxCompile Include="resources\shaders\UpdateParticle.CS.hlsl">
-      <Filter>Shader\Particle</Filter>
-    </FxCompile>
     <FxCompile Include="resources\shaders\IntegrateAll.CS.hlsl">
       <Filter>Shader\Particle</Filter>
     </FxCompile>

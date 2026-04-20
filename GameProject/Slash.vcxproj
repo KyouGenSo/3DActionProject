@@ -178,6 +178,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClCompile Include="Object\Projectile\PenetratingBossBullet.cpp" />
     <ClCompile Include="Object\Projectile\PlayerBullet.cpp" />
     <ClCompile Include="Object\Projectile\Projectile.cpp" />
+    <ClCompile Include="Object\Projectile\ProjectileManager.cpp" />
     <ClCompile Include="Scene\ClearScene.cpp" />
     <ClCompile Include="Scene\GameScene.cpp" />
     <ClCompile Include="Scene\OverScene.cpp" />
@@ -286,6 +287,7 @@ copy "$(WindowsSdkDir)bin\$(TargetPlatformVersion)\x64\dxil.dll" "$(TargetDir)dx
     <ClInclude Include="Object\Projectile\PenetratingBossBullet.h" />
     <ClInclude Include="Object\Projectile\PlayerBullet.h" />
     <ClInclude Include="Object\Projectile\Projectile.h" />
+    <ClInclude Include="Object\Projectile\ProjectileManager.h" />
     <ClInclude Include="Scene\ClearScene.h" />
     <ClInclude Include="Scene\GameScene.h" />
     <ClInclude Include="Scene\OverScene.h" />

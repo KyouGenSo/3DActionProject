@@ -23,7 +23,6 @@
 #include "CameraSystem/Controller/ThirdPersonController.h"
 #include "CameraSystem/Controller/TopDownController.h"
 #include "CameraSystem/Controller/CameraAnimationController.h"
-#include "../Object/Projectile/BossBullet.h"
 #include "Object/Player/State/PlayerState.h"
 #include "Object/Player/State/PlayerStateMachine.h"
 #include "Common/GameConst.h"
@@ -221,18 +220,14 @@ void GameScene::Update()
     controllerUI_->Update();
     cameraManager_->Update(FrameTimer::GetInstance()->GetDeltaTime());
 
-    // ボスからの弾生成リクエストを処理
-    CreateBossBullet();
+    // ボス・プレイヤーが貯めた弾リクエストを ProjectileManager に流し、生成させる
+    projectileManager_->SpawnBossBullets(boss_->ConsumePendingBullets());
+    projectileManager_->SpawnPenetratingBossBullets(boss_->ConsumePendingPenetratingBullets());
+    projectileManager_->SpawnPlayerBullets(player_->ConsumePendingBullets());
 
-    // ボスからの貫通弾生成リクエストを処理
-    CreatePenetratingBossBullet();
-
-    // プレイヤーからの弾生成リクエストを処理
-    CreatePlayerBullet();
-
-    // プロジェクタイルの更新
+    // プロジェクタイル（弾）の更新＆非アクティブ弾の削除
     float deltaTime = FrameTimer::GetInstance()->GetDeltaTime();
-    UpdateProjectiles(deltaTime);
+    projectileManager_->Update(deltaTime);
 
     // ダッシュエフェクトの更新
     bool isDashing = false;
@@ -389,90 +384,6 @@ void GameScene::UpdateInput()
 #endif
         ) {
         inputHandler_->ResetInputs();
-    }
-}
-
-void GameScene::UpdateProjectiles(float deltaTime)
-{
-    // ボスの弾の更新
-    for (auto& bullet : bossBullets_) {
-        if (bullet && bullet->IsActive()) {
-            bullet->Update(deltaTime);
-        }
-    }
-
-    // 非アクティブなボスの弾を削除
-    std::erase_if(bossBullets_,
-        [](const std::unique_ptr<BossBullet>& bullet) {
-            if (bullet && !bullet->IsActive()) {
-                // Finalize()で自動的にコライダーが削除される
-                bullet->Finalize();
-                return true;
-            }
-            return false;
-        });
-
-    // プレイヤーの弾の更新
-    for (auto& bullet : playerBullets_) {
-        if (bullet && bullet->IsActive()) {
-            bullet->Update(deltaTime);
-        }
-    }
-
-    // 非アクティブなプレイヤーの弾を削除
-    std::erase_if(playerBullets_,
-        [](const std::unique_ptr<PlayerBullet>& bullet) {
-            if (bullet && !bullet->IsActive()) {
-                // Finalize()で自動的にコライダーが削除される
-                bullet->Finalize();
-                return true;
-            }
-            return false;
-        });
-
-    // 貫通弾の更新
-    for (auto& bullet : penetratingBossBullets_) {
-        if (bullet && bullet->IsActive()) {
-            bullet->Update(deltaTime);
-        }
-    }
-
-    // 非アクティブな貫通弾を削除
-    std::erase_if(penetratingBossBullets_,
-        [](const std::unique_ptr<PenetratingBossBullet>& bullet) {
-            if (bullet && !bullet->IsActive()) {
-                // Finalize()で自動的にコライダーが削除される
-                bullet->Finalize();
-                return true;
-            }
-            return false;
-        });
-}
-
-void GameScene::CreateBossBullet()
-{
-    for (const auto& request : boss_->ConsumePendingBullets()) {
-        auto bullet = std::make_unique<BossBullet>(emitterManager_.get());
-        bullet->Initialize(request.position, request.velocity);
-        bossBullets_.push_back(std::move(bullet));
-    }
-}
-
-void GameScene::CreatePlayerBullet()
-{
-    for (const auto& request : player_->ConsumePendingBullets()) {
-        auto bullet = std::make_unique<PlayerBullet>(emitterManager_.get());
-        bullet->Initialize(request.position, request.velocity);
-        playerBullets_.push_back(std::move(bullet));
-    }
-}
-
-void GameScene::CreatePenetratingBossBullet()
-{
-    for (const auto& request : boss_->ConsumePendingPenetratingBullets()) {
-        auto bullet = std::make_unique<PenetratingBossBullet>(emitterManager_.get());
-        bullet->Initialize(request.position, request.velocity);
-        penetratingBossBullets_.push_back(std::move(bullet));
     }
 }
 
@@ -680,6 +591,9 @@ void GameScene::InitializeEffectManager()
     // ダッシュエフェクトマネージャー
     dashEffectManager_ = std::make_unique<DashEffectManager>(emitterManager_.get());
     dashEffectManager_->InitializePosition(player_->GetTranslate());
+
+    // プロジェクタイル（弾）管理マネージャー
+    projectileManager_ = std::make_unique<ProjectileManager>(emitterManager_.get());
 }
 
 void GameScene::SetCameraAnimation()

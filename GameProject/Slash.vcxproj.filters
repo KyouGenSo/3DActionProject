@@ -297,6 +297,9 @@
     <ClCompile Include="Object\Projectile\PenetratingBossBullet.cpp">
       <Filter>Object\Projectile</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Projectile\ProjectileManager.cpp">
+      <Filter>Object\Projectile</Filter>
+    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
@@ -573,6 +576,9 @@
       <Filter>Collision</Filter>
     </ClInclude>
     <ClInclude Include="Object\Projectile\PenetratingBossBullet.h">
+      <Filter>Object\Projectile</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Projectile\ProjectileManager.h">
       <Filter>Object\Projectile</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.h">

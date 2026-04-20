@@ -5,9 +5,7 @@
 #include "Object/Boss/Boss.h"
 #include "Object/Player/Player.h"
 #include "Input/InputHandler.h"
-#include "../Object/Projectile/BossBullet.h"
-#include "../Object/Projectile/PlayerBullet.h"
-#include "../Object/Projectile/PenetratingBossBullet.h"
+#include "../Object/Projectile/ProjectileManager.h"
 #include "../Effect/OverEffectManager.h"
 #include "../Effect/ClearEffectManager.h"
 #include "../Effect/BossBorderParticleManager.h"
@@ -34,8 +32,6 @@ class CameraManager;
 class ThirdPersonController;
 class TopDownController;
 class CameraAnimationController;
-class BossBullet;
-class PlayerBullet;
 
 /// <summary>
 /// ゲームメインシーンクラス
@@ -80,26 +76,6 @@ public: // メンバ関数
     /// 入力処理の更新
     /// </summary>
     void UpdateInput();
-
-    /// <summary>
-    /// プロジェクタイル（弾）の更新処理
-    /// </summary>
-    void UpdateProjectiles(float deltaTime);
-
-    /// <summary>
-    /// ボスの弾の生成処理
-    /// </summary>
-    void CreateBossBullet();
-
-    /// <summary>
-    /// プレイヤーの弾の生成処理
-    /// </summary>
-    void CreatePlayerBullet();
-
-    /// <summary>
-    /// 貫通弾の生成処理
-    /// </summary>
-    void CreatePenetratingBossBullet();
 
     /// <summary>
     /// デバッグ用オプション初期化
@@ -156,11 +132,7 @@ private: // メンバ変数
 
     std::unique_ptr<Boss> boss_;                                // ボスキャラクター
 
-    std::vector<std::unique_ptr<BossBullet>> bossBullets_;      // ボスの弾のコンテナ
-
-    std::vector<std::unique_ptr<PlayerBullet>> playerBullets_;  // プレイヤーの弾のコンテナ
-
-    std::vector<std::unique_ptr<PenetratingBossBullet>> penetratingBossBullets_;  // 貫通弾のコンテナ
+    std::unique_ptr<ProjectileManager> projectileManager_;      // 弾（プロジェクタイル）集約管理
 
     std::unique_ptr<InputHandler> inputHandler_;                // 入力ハンドラー
 

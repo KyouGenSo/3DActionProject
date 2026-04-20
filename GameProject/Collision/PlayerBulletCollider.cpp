@@ -41,7 +41,7 @@ void PlayerBulletCollider::OnCollisionEnter(Collider* other) {
             owner_->SetActive(false);
         }
     }
-    else if (other->GetTypeID() == static_cast<uint32_t>(CollisionTypeId::BOSS_ATTACK)) { // ボスの弾との衝突判定
+    else if (other->GetTypeID() == static_cast<uint32_t>(CollisionTypeId::BOSS_PROJECTILE)) { // ボスの弾との衝突判定
         owner_->SetActive(false);
     }
 }

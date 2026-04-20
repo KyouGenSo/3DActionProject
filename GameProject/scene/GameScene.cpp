@@ -617,8 +617,20 @@ void GameScene::SetCollisionMask()
     );
 
     collisionManager->SetCollisionMask(
-        static_cast<uint32_t>(CollisionTypeId::PLAYER_ATTACK),
-        static_cast<uint32_t>(CollisionTypeId::BOSS_ATTACK),
+        static_cast<uint32_t>(CollisionTypeId::PLAYER_PROJECTILE),
+        static_cast<uint32_t>(CollisionTypeId::BOSS),
+        true
+    );
+
+    collisionManager->SetCollisionMask(
+        static_cast<uint32_t>(CollisionTypeId::PLAYER),
+        static_cast<uint32_t>(CollisionTypeId::BOSS_PROJECTILE),
+        true
+    );
+
+    collisionManager->SetCollisionMask(
+        static_cast<uint32_t>(CollisionTypeId::PLAYER_PROJECTILE),
+        static_cast<uint32_t>(CollisionTypeId::BOSS_PROJECTILE),
         true
     );
 }

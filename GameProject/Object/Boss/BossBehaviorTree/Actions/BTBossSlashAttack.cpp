@@ -1,6 +1,7 @@
 #include "BTBossSlashAttack.h"
 #include "../../Boss.h"
 #include "../../../Player/Player.h"
+
 #include "CollisionManager.h"
 #include "EmitterManager.h"
 
@@ -97,6 +98,13 @@ BTNodeStatus BTBossSlashAttack::Execute(BTBlackboard* blackboard) {
 
 void BTBossSlashAttack::Reset() {
     BTNode::Reset();
+
+    // 攻撃フェーズに入ったまま中断された場合のみエミッターを停止する
+    // （Warning/Blinkingでは未起動、Recovery以降はEndAttackPhaseで停止済み）
+    if (cachedEmitterMgr_ && particleInitialized_ && hasBegunAttack_ && !hasEndedAttack_) {
+        cachedEmitterMgr_->SetEmitterActive(emitterName_, false);
+    }
+
     Cleanup();
     elapsedTime_ = 0.0f;
     isFirstExecute_ = true;
@@ -145,6 +153,7 @@ void BTBossSlashAttack::InitializeSlashAttack(Boss* boss, BTBlackboard* blackboa
 
     // パーティクルエミッターの初期化
     EmitterManager* emitterMgr = boss->GetEmitterManager();
+    cachedEmitterMgr_ = emitterMgr;  // Reset時にboss参照を取れないためキャッシュする
     if (emitterMgr && !particleInitialized_) {
         emitterName_ = "slash_attack_0";
         emitterMgr->LoadPreset("sphere_attack_slash", emitterName_);

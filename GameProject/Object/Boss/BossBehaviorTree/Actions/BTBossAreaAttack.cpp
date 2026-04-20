@@ -2,6 +2,7 @@
 #include "../../Boss.h"
 #include "../../../Player/Player.h"
 #include "../../../../Common/GameConst.h"
+
 #include "RandomEngine.h"
 #include "CollisionManager.h"
 #include "EmitterManager.h"
@@ -100,6 +101,16 @@ BTNodeStatus BTBossAreaAttack::Execute(BTBlackboard* blackboard) {
 
 void BTBossAreaAttack::Reset() {
     BTNode::Reset();
+
+    // パーティクルエミッターを停止（攻撃中に状態がリセットされた場合の安全策）
+    if (cachedEmitterMgr_ && particlesInitialized_ && hasBegunAttack_ && !hasEndedAttack_) {
+        for (int i = 0; i < kQuadrantCount; ++i) {
+            if (activeQuadrants_[i]) {
+                cachedEmitterMgr_->SetEmitterActive(emitterNames_[i], false);
+            }
+        }
+    }
+
     Cleanup();
     elapsedTime_ = 0.0f;
     isFirstExecute_ = true;
@@ -163,6 +174,7 @@ void BTBossAreaAttack::InitializeAreaAttack(BTBlackboard* blackboard) {
 
     // パーティクルエミッターの初期化
     EmitterManager* emitterMgr = boss->GetEmitterManager();
+    cachedEmitterMgr_ = emitterMgr;  // Reset時にboss参照を取れないためキャッシュする
     if (emitterMgr && !particlesInitialized_) {
         for (int i = 0; i < kQuadrantCount; ++i) {
             emitterNames_[i] = "area_attack_q" + std::to_string(i);

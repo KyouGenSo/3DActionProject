@@ -10,6 +10,11 @@
 #include <string>
 
 class Boss;
+namespace Tako
+{
+    class EmitterManager;
+}
+
 
 /// <summary>
 /// ボスのエリア攻撃アクションノード
@@ -255,4 +260,10 @@ private:
     /// 各象限のパーティクルエミッター名
     /// </summary>
     std::array<std::string, kQuadrantCount> emitterNames_;
+
+    /// <summary>
+    /// Reset時にエミッターを停止するためのキャッシュ（初回Execute時にboss->GetEmitterManager()を保存）
+    /// Resetはboss参照を取れないため、ここに持っておく必要がある
+    /// </summary>
+    Tako::EmitterManager* cachedEmitterMgr_ = nullptr;
 };

@@ -132,8 +132,6 @@ private: // メンバ変数
 
     std::unique_ptr<Boss> boss_;                                // ボスキャラクター
 
-    std::unique_ptr<ProjectileManager> projectileManager_;      // 弾（プロジェクタイル）集約管理
-
     std::unique_ptr<InputHandler> inputHandler_;                // 入力ハンドラー
 
     // Camera system components
@@ -146,6 +144,10 @@ private: // メンバ変数
     Tako::Transform groundUvTransform_{};                       // 地面の UV トランスフォーム（テクスチャスクロール等に使用）
 
     std::unique_ptr<Tako::EmitterManager> emitterManager_;      // パーティクルエミッター管理
+
+    // NOTE: projectileManager_ は emitterManager_ を生ポインタで参照する。
+    //       破棄は宣言逆順で走るため、projectileManager_ は必ず emitterManager_ より「後」に宣言する。
+    std::unique_ptr<ProjectileManager> projectileManager_;      // 弾（プロジェクタイル）集約管理
 
     bool isStart_ = false;                                      // ゲーム開始フラグ
 

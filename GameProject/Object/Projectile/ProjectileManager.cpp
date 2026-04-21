@@ -1,6 +1,7 @@
 #include "ProjectileManager.h"
 
 #include <algorithm>
+#include <cassert>
 
 namespace {
     /// <summary>
@@ -11,7 +12,8 @@ namespace {
     {
         // アクティブ弾のみ Update
         for (auto& b : bullets) {
-            if (b && b->IsActive()) {
+            if (b && b->IsActive())
+            {
                 b->Update(dt);
             }
         }
@@ -19,7 +21,8 @@ namespace {
         // 非アクティブ弾を除去（Finalize() で専用コライダーも自動解除される）
         std::erase_if(bullets,
             [](const std::unique_ptr<T>& b) {
-                if (b && !b->IsActive()) {
+                if (b && !b->IsActive())
+                {
                     b->Finalize();
                     return true;
                 }
@@ -49,7 +52,18 @@ ProjectileManager::ProjectileManager(Tako::EmitterManager* emitterManager)
 {
 }
 
-ProjectileManager::~ProjectileManager() = default;
+ProjectileManager::~ProjectileManager()
+{
+    for (auto& b : playerBullets_) {
+        assert(!b);
+    }
+    for (auto& b : bossBullets_) {
+        assert(!b);
+    }
+    for (auto& b : penetratingBossBullets_) {
+        assert(!b);
+    }
+}
 
 void ProjectileManager::Update(float deltaTime)
 {

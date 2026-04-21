@@ -110,7 +110,6 @@ void GameScene::Finalize()
     CameraDebugUI::CleanupAnimationEditor();
 #endif
 
-    // オブジェクトの終了処理
     if (player_) {
         player_->Finalize();
     }
@@ -118,21 +117,21 @@ void GameScene::Finalize()
         boss_->Finalize();
     }
 
-    // CameraManager のクリーンアップ
     if (cameraManager_) {
         cameraManager_->Finalize();
     }
 
-    // CollisionManager のリセット
+    // CollisionManager::Reset() 前に確定させる
+    if (projectileManager_) {
+        projectileManager_->Clear();
+    }
+
     CollisionManager::GetInstance()->Reset();
 
-    // デカールの登録をクリア
     DecalManager::GetInstance()->ClearDecals();
 
-    // PostEffec をクリア
     PostEffectManager::GetInstance()->ClearEffectChain();
 
-    // ポーズメニューのクリア
     pauseMenu_.reset();
 }
 

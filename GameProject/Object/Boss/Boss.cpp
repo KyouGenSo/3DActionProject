@@ -1,5 +1,4 @@
 #include "Boss.h"
-
 #include <algorithm>
 #include "Object3d.h"
 #include "OBBCollider.h"
@@ -7,6 +6,7 @@
 #include "../../Collision/CollisionTypeIdDef.h"
 #include "../../Collision/BossMeleeAttackCollider.h"
 #include "WinApp.h"
+#include "EnginePaths.h"
 #include "BossBehaviorTree/BossBehaviorTree.h"
 #include "GlobalVariables.h"
 #include "EmitterManager.h"
@@ -58,7 +58,7 @@ void Boss::InitializeModel()
 {
     model_ = std::make_unique<Object3d>();
     model_->Initialize();
-    model_->SetModel("white_cube.gltf");
+    model_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
     model_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 
     transform_.translate = Vector3(0.0f, initialY_, initialZ_);
@@ -72,7 +72,7 @@ void Boss::InitializeHealth()
 {
     // HP バー UI の初期化（2段バー：フェーズ1=青、フェーズ2=赤）
     hpBar_.InitializeDual(
-        "white.dds",
+        EnginePaths::TexturePath("white.dds"),
         Vector2(500.0f, 30.0f),
         0.65f,  // 画面 X 比率
         0.05f,  // 画面 Y 比率
@@ -101,7 +101,7 @@ void Boss::InitializeColliders()
     // 近接攻撃用ブロックの初期化
     meleeAttackBlock_ = std::make_unique<Object3d>();
     meleeAttackBlock_->Initialize();
-    meleeAttackBlock_->SetModel("white_cube.gltf");
+    meleeAttackBlock_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
     meleeAttackBlock_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 
     // 近接攻撃コライダーの初期化

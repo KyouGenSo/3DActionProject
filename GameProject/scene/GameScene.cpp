@@ -16,6 +16,7 @@
 #include "GlobalVariables.h"
 #include "PostEffectManager.h"
 #include "DecalManager.h"
+#include "EnginePaths.h"
 
 // Game includes
 #include "../Collision/CollisionTypeIdDef.h"
@@ -447,7 +448,7 @@ void GameScene::InitializeObject3d()
 {
     // SkyBox の初期化
     skyBox_ = std::make_unique<SkyBox>();
-    skyBox_->Initialize("my_skybox.dds");
+    skyBox_->Initialize(EnginePaths::TexturePath("my_skybox.dds"));
 
     // 床モデルの UV 変換設定
     groundUvTransform_.translate = Vector3(0.0f, 0.0f, 0.0f);

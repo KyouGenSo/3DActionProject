@@ -22,6 +22,7 @@
 #include "../../Common/DamageFeedback.h"
 #include "FrameTimer.h"
 #include "EmitterManager.h"
+#include "EnginePaths.h"
 
 #include <cmath>
 #include <algorithm>
@@ -51,7 +52,7 @@ void Player::Initialize()
 
     model_ = std::make_unique<Object3d>();
     model_->Initialize();
-    model_->SetModel("white_cube.gltf");
+    model_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
 
     transform_.translate = Vector3(0.0f, initialY_, initialZ_);
     transform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
@@ -61,7 +62,7 @@ void Player::Initialize()
 
     // HP バー UI の初期化
     hpBar_.Initialize(
-        "white.dds",
+        EnginePaths::TexturePath("white.dds"),
         Vector2(500.0f, 30.0f),
         0.35f,  // 画面 X 比率
         0.05f,  // 画面 Y 比率
@@ -84,7 +85,7 @@ void Player::Initialize()
     // 攻撃ブロックの初期化
     attackBlock_ = std::make_unique<Object3d>();
     attackBlock_->Initialize();
-    attackBlock_->SetModel("white_cube.gltf");
+    attackBlock_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
 }
 
 void Player::Finalize()

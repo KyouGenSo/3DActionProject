@@ -2,6 +2,7 @@
 #include "Sprite.h"
 #include "Input.h"
 #include "WinApp.h"
+#include "EnginePaths.h"
 #include <functional>
 
 #ifdef _DEBUG
@@ -22,7 +23,7 @@ void PauseMenu::Initialize()
 {
     // 半透明黒背景オーバーレイ
     overlaySprite_ = std::make_unique<Sprite>();
-    overlaySprite_->Initialize("white.dds");
+    overlaySprite_->Initialize(EnginePaths::TexturePath("white.dds"));
     overlaySprite_->SetPos({ 0.0f, 0.0f });
     overlaySprite_->SetSize({ static_cast<float>(WinApp::clientWidth),  static_cast<float>(WinApp::clientHeight) });
     overlaySprite_->SetColor({ 0.0f, 0.0f, 0.0f, 0.5f });

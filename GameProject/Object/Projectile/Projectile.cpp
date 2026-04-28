@@ -2,6 +2,7 @@
 #include "Object3d.h"
 #include "Model.h"
 #include "EmitterManager.h"
+#include "EnginePaths.h"
 
 using namespace Tako;
 
@@ -75,10 +76,10 @@ void Projectile::Move(float deltaTime) {
 
 void Projectile::SetDefaultModel() {
     if (model_) {
-        model_->SetModel("sphere.gltf");
+        model_->SetModel(EnginePaths::ModelPath("sphere.gltf"));
         if (!model_->GetModel()) {
             // sphere モデルがない場合は代替モデルを使用
-            model_->SetModel("white_cube.gltf");
+            model_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
         }
     }
 }

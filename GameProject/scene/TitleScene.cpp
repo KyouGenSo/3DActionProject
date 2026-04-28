@@ -7,6 +7,7 @@
 #include "Input.h"
 #include "Draw2D.h"
 #include "GPUParticle.h"
+#include "EnginePaths.h"
 #include <cmath>
 #include <numbers>
 #include <format>
@@ -410,7 +411,7 @@ void TitleScene::InitializeSprites()
 {
     // 背景画像の初期化
     titleBG_ = make_unique<Sprite>();
-    titleBG_->Initialize("black.dds");
+    titleBG_->Initialize(EnginePaths::TexturePath("black.dds"));
     titleBG_->SetPos(Vector2(0.f, 0.f));
     titleBG_->SetSize(Vector2(static_cast<float>(WinApp::clientWidth), static_cast<float>(WinApp::clientHeight)));
 

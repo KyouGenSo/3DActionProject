@@ -1,5 +1,4 @@
 #include "ClearScene.h"
-
 #include "Draw2D.h"
 #include "GPUParticle.h"
 #include "Input.h"
@@ -7,6 +6,7 @@
 #include "SceneManager.h"
 #include "Sprite.h"
 #include "SpriteBasic.h"
+#include "EnginePaths.h"
 
 #ifdef _DEBUG
 #include"ImGui.h"
@@ -34,7 +34,7 @@ void ClearScene::Initialize()
 
     // sprite の初期化
     backGround_ = std::make_unique<Sprite>();
-    backGround_->Initialize("black.dds");
+    backGround_->Initialize(EnginePaths::TexturePath("black.dds"));
     backGround_->SetPos(Vector2(0.f, 0.f));
     backGround_->SetSize(Vector2(static_cast<float>(WinApp::clientWidth), static_cast<float>(WinApp::clientHeight)));
 

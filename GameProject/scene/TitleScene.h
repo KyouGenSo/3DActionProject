@@ -4,6 +4,7 @@
 #include"Object3d.h"
 #include "AABB.h"
 #include "EmitterManager.h"
+#include "ForceFieldManager.h"
 #include "PostEffectManager.h"
 #include "CameraSystem/CameraConfig.h"
 #include <vector>
@@ -133,6 +134,7 @@ private: // メンバ関数
 private: // メンバ変数
 
 	std::unique_ptr<Tako::EmitterManager> emitterManager_;  ///< パーティクルエミッター管理
+	std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;  ///< パーティクル用フォースフィールド管理
 
 	std::unique_ptr<Tako::Sprite> titleBG_;  ///< 背景スプライト
 

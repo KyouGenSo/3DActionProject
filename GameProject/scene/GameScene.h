@@ -22,6 +22,7 @@
 namespace Tako {
     class Object3d;
     class EmitterManager;
+    class ForceFieldManager;
     class Sprite;
     class BoneTracker;
     enum class DecalShape;
@@ -144,6 +145,7 @@ private: // メンバ変数
     Tako::Transform groundUvTransform_{};                       // 地面の UV トランスフォーム（テクスチャスクロール等に使用）
 
     std::unique_ptr<Tako::EmitterManager> emitterManager_;      // パーティクルエミッター管理
+    std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;// パーティクル用フォースフィールド管理
 
     // NOTE: projectileManager_ は emitterManager_ を生ポインタで参照する。
     //       破棄は宣言逆順で走るため、projectileManager_ は必ず emitterManager_ より「後」に宣言する。

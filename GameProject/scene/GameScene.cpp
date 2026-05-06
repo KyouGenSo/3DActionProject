@@ -9,6 +9,7 @@
 #include "GPUParticle.h"
 #include "SceneManager.h"
 #include "EmitterManager.h"
+#include "ForceFieldManager.h"
 #include "Object3d.h"
 #include "Model.h"
 #include "ShadowRenderer.h"
@@ -53,6 +54,10 @@ void GameScene::Initialize()
 
     // EmitterManager の生成
     emitterManager_ = std::make_unique<EmitterManager>(GPUParticle::GetInstance());
+
+    // ForceFieldManager の生成（シーンプリセット統合保存のため EmitterManager に連携）
+    forceFieldManager_ = std::make_unique<ForceFieldManager>(GPUParticle::GetInstance());
+    emitterManager_->SetForceFieldManager(forceFieldManager_.get());
 
     // Input Handler の初期化
     inputHandler_ = std::make_unique<InputHandler>();
@@ -426,6 +431,7 @@ void GameScene::InitializeDebugOption()
         [this]() { if (pauseMenu_) pauseMenu_->DrawImGui(); });
 
     DebugUIManager::GetInstance()->SetEmitterManager(emitterManager_.get());
+    DebugUIManager::GetInstance()->SetForceFieldManager(forceFieldManager_.get());
 #endif
 }
 

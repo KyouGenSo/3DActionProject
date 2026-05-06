@@ -29,6 +29,10 @@ void TitleScene::Initialize()
   // エミッタマネージャ生成
     emitterManager_ = std::make_unique<EmitterManager>(GPUParticle::GetInstance());
 
+    // フォースフィールドマネージャ生成（シーンプリセット統合保存のため連携）
+    forceFieldManager_ = std::make_unique<ForceFieldManager>(GPUParticle::GetInstance());
+    emitterManager_->SetForceFieldManager(forceFieldManager_.get());
+
     // 各種初期化処理を関数化して呼び出し
     InitializeDebugUI();       // デバッグ UI 初期化
     InitializeCamera();         // カメラ設定
@@ -377,6 +381,7 @@ void TitleScene::InitializeDebugUI()
 
     // エミッターマネージャーの設定
     DebugUIManager::GetInstance()->SetEmitterManager(emitterManager_.get());
+    DebugUIManager::GetInstance()->SetForceFieldManager(forceFieldManager_.get());
 #endif
 }
 

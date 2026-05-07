@@ -1,0 +1,61 @@
+{
+  "collisionRestitution": 0.5,
+  "damping": 0.9900000095367432,
+  "endColor": [
+    1.0,
+    0.3441455364227295,
+    0.14873266220092773,
+    1.0
+  ],
+  "frequency": 0.0010000000474974513,
+  "frequencyTime": 0.0009918437572196126,
+  "isActive": true,
+  "isEmitting": true,
+  "isNormalize": false,
+  "isRandomRotateZ": false,
+  "isTemporary": false,
+  "lifeTimeRange": [
+    1.0,
+    1.5
+  ],
+  "noiseScale": 0.009999999776482582,
+  "noiseStrength": 0.0010000000474974513,
+  "particleCount": 15,
+  "particleRadius": 0.5,
+  "position": [
+    0.0,
+    1.0,
+    -55.0
+  ],
+  "radius": 0.5,
+  "scaleRangeX": [
+    0.0,
+    0.0
+  ],
+  "scaleRangeY": [
+    0.0,
+    0.0
+  ],
+  "startColor": [
+    0.8278335928916931,
+    0.3779183030128479,
+    0.36462685465812683,
+    1.0
+  ],
+  "type": 0,
+  "useCurlNoise": true,
+  "useDepthCollision": true,
+  "useForceField": true,
+  "velRangeX": [
+    0.0010000000474974513,
+    0.0010000000474974513
+  ],
+  "velRangeY": [
+    0.0010000000474974513,
+    0.0010000000474974513
+  ],
+  "velRangeZ": [
+    0.0010000000474974513,
+    0.0010000000474974513
+  ]
+}

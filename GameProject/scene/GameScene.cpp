@@ -570,8 +570,30 @@ void GameScene::InitializeEmitterManger()
     // ボスのフェーズチェンジエフェクトの読み込み
     emitterManager_->LoadPreset("can_attack_sign", "can_attack_sign");
 
+    // ===== Phase1 リパルス・ショックウェーブ用エミッター =====
+    // BTBossRepelShockwave がランタイムで SetEmitterActive する想定で、初期は非アクティブで読み込み
+    emitterManager_->LoadPreset("boss_repel_ring", "boss_repel_ring");
+    emitterManager_->SetEmitterActive("boss_repel_ring", false);
+    emitterManager_->LoadPreset("boss_repel_flash", "boss_repel_flash");
+    emitterManager_->SetEmitterActive("boss_repel_flash", false);
+
+    // ===== Phase2 ヴォルテックス・テンペスト用エミッター =====
+    // 4 渦点 × 3 ForceField プリセット（Attract+Dir+Vortex）= 12 力場の構成。
+    // 各渦点に 1 個ずつエミッター（boss_vortex_0..3）を配置し、力場と一緒に公転させる。
+    // BTBossVortexTempest::MakeVortexEmitterName(i) と命名規則を一致させること。
+    for (int i = 0; i < 4; ++i) {
+        const std::string emitterName = "boss_vortex_" + std::to_string(i);
+        emitterManager_->LoadPreset("boss_vortex", emitterName);
+        emitterManager_->SetEmitterActive(emitterName, false);
+    }
+    // Phase2 予兆マーカーは BTBossVortexTempest 側でデカールとして自前生成するため
+    // ここでのパーティクルプリセットロードは不要。
+
     // ボスに EmitterManager を設定
     boss_->SetEmitterManager(emitterManager_.get());
+
+    // ボスに ForceFieldManager を設定（BTBossRepelShockwave / BTBossVortexTempest が利用）
+    boss_->SetForceFieldManager(forceFieldManager_.get());
 
     // プレイヤーに EmitterManager を設定
     player_->SetEmitterManager(emitterManager_.get());
@@ -600,6 +622,9 @@ void GameScene::InitializeEffectManager()
 
     // プロジェクタイル（弾）管理マネージャー
     projectileManager_ = std::make_unique<ProjectileManager>(emitterManager_.get());
+    // プレイヤー弾が ForceField の影響を受けるよう ForceFieldManager を注入
+    // （ボス弾は影響受けない設計のため、ProjectileManager 内で SpawnPlayerBullets だけが利用）
+    projectileManager_->SetForceFieldManager(forceFieldManager_.get());
 }
 
 void GameScene::SetCameraAnimation()

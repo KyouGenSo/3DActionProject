@@ -1,4 +1,6 @@
 {
+  "collisionRestitution": 0.5,
+  "damping": 0.9900000095367432,
   "endColor": [
     0.10468015819787979,
     0.4713417887687683,
@@ -6,17 +8,20 @@
     1.0
   ],
   "frequency": 0.0010000000474974513,
-  "frequencyTime": 0.0003967920783907175,
+  "frequencyTime": 0.0002913458738476038,
   "isActive": true,
   "isEmitting": true,
   "isNormalize": false,
   "isRandomRotateZ": false,
-  "isTemporary": true,
+  "isTemporary": false,
   "lifeTimeRange": [
     0.009999999776482582,
     0.10000000149011612
   ],
+  "noiseScale": 0.06499999761581421,
+  "noiseStrength": 0.030500000342726707,
   "particleCount": 10,
+  "particleRadius": 0.5,
   "position": [
     -7.099999904632568,
     7.300000190734863,
@@ -38,6 +43,9 @@
     1.0
   ],
   "type": 0,
+  "useCurlNoise": true,
+  "useDepthCollision": true,
+  "useForceField": true,
   "velRangeX": [
     0.0010000000474974513,
     0.0010000000474974513

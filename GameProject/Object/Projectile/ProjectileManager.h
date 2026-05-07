@@ -11,6 +11,7 @@
 namespace Tako
 {
     class EmitterManager;
+    class ForceFieldManager;
 }
 
 /// <summary>
@@ -56,9 +57,19 @@ public:
     /// </summary>
     void SpawnPenetratingBossBullets(const std::vector<BulletSpawnRequest>& requests);
 
+    /// <summary>
+    /// ForceFieldManager を注入する（非所有）。
+    /// 設定後に生成されるプレイヤー弾は力場の影響を受けるようになる。
+    /// ボス弾は force field の影響を受けない設計のため、注入しない。
+    /// </summary>
+    void SetForceFieldManager(Tako::ForceFieldManager* manager) { forceFieldManager_ = manager; }
+
 private:
     // エミッターマネージャー（非所有）
     Tako::EmitterManager* emitterManager_ = nullptr;
+
+    // ForceFieldManager（非所有 / null 許容）— プレイヤー弾の生成時に注入
+    Tako::ForceFieldManager* forceFieldManager_ = nullptr;
 
     // 弾コンテナ
     std::vector<std::unique_ptr<PlayerBullet>>           playerBullets_;

@@ -21,6 +21,7 @@ namespace Tako {
 class OBBCollider;
 class Object3d;
 class EmitterManager;
+class ForceFieldManager;
 }
 
 // GameProject 前方宣言
@@ -412,6 +413,16 @@ public:
     /// <returns>EmitterManager のポインタ</returns>
     Tako::EmitterManager* GetEmitterManager() const { return emitterManager_; }
 
+    /// <summary>
+    /// ForceFieldManager を設定（BTBossRepelShockwave / BTBossVortexTempest が利用）
+    /// </summary>
+    void SetForceFieldManager(Tako::ForceFieldManager* manager) { forceFieldManager_ = manager; }
+
+    /// <summary>
+    /// ForceFieldManager を取得
+    /// </summary>
+    Tako::ForceFieldManager* GetForceFieldManager() const { return forceFieldManager_; }
+
 private:
     /// <summary>
     /// モデルとトランスフォームの初期化
@@ -513,6 +524,9 @@ private:
 
     // 予兆エフェクト管理
     Tako::EmitterManager* emitterManager_ = nullptr;
+
+    // ForceField 管理（非所有 / null 許容） — Phase1/Phase2 新攻撃で力場を生成・追従させる
+    Tako::ForceFieldManager* forceFieldManager_ = nullptr;
 
     // 予兆エフェクト名
     std::string attackSignEmitterName_ = "boss_melee_attack_sign";

@@ -1,10 +1,12 @@
 #include "PlayerBullet.h"
 #include "../../Collision/PlayerBulletCollider.h"
 #include "../../Common/GameConst.h"
+#include "../../Common/ForceFieldAffectMask.h"
 #include "ModelManager.h"
 #include "Object3d.h"
 #include "CollisionManager.h"
 #include "EmitterManager.h"
+#include "ForceFieldManager.h"
 #include "GlobalVariables.h"
 #include <format>
 
@@ -102,8 +104,22 @@ void PlayerBullet::Update(float deltaTime) {
         return;
     }
 
-    // 親クラスの更新処理
+    // ForceField を弾速度に反映（GPU パーティクルと同じ力場を CPU 駆動の弾にも作用させる）
+    // mask = AffectBullets：プレイヤー弾だけに影響する力場（affectMask が AffectBullets ビットを含む）に絞り込み
+    if (forceFieldManager_) {
+        const Vector3 force = forceFieldManager_->EvaluateForceAt(
+            transform_.translate, GameForceField::AffectBullets);
+        velocity_ += force * deltaTime;
+    }
+
+    // 親クラスの更新処理（生存時間更新 → 移動）
     Projectile::Update(deltaTime);
+
+    // 速度が極端に下がったら非アクティブ化（Repel 攻撃などで吹き飛ばされて減速したケース）
+    // LengthSquared を使い sqrt 計算を回避
+    if (velocity_.LengthSquared() < kMinSpeedSquared) {
+        isActive_ = false;
+    }
 
     // 軌跡エフェクト位置を同期
     if (emitterManager_) {

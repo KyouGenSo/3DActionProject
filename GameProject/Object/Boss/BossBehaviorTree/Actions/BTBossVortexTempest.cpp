@@ -124,7 +124,11 @@ BTNodeStatus BTBossVortexTempest::Execute(BTBlackboard* blackboard) {
             vortexDecals_[v]->SetVisible(true);
         }
 
+        // Boss 硬直フラグを ON。cachedBoss_ + enteredRecovery_ を保存しておくことで、
+        // Reset 経由（BTParallel 中断含む）でも Cleanup 内で確実に解除できる。
         boss->EnterRecovery();
+        cachedBoss_ = boss;
+        enteredRecovery_ = true;
         isFirstExecute_ = false;
     }
 
@@ -175,8 +179,8 @@ BTNodeStatus BTBossVortexTempest::Execute(BTBlackboard* blackboard) {
             player->OnHit(pendingDamage_);
             pendingDamage_ = 0.0f;
         }
+        // Boss::ExitRecovery は Cleanup 内で実施するためここでの個別呼び出しは不要。
         Cleanup();
-        boss->ExitRecovery();
         status_ = BTNodeStatus::Success;
         return status_;
     }
@@ -292,6 +296,14 @@ void BTBossVortexTempest::Reset() {
 }
 
 void BTBossVortexTempest::Cleanup() {
+    // Boss 硬直状態の解除（成功終了 / Reset 経由の両方で確実に実行）。
+    // BTParallel が子ノードを中断する場合、Boss::ExitRecovery が呼ばれないと
+    // 硬直フラグが残ってボスの行動全体が固まるリスクがあるため、ここに集約する。
+    if (cachedBoss_ && enteredRecovery_) {
+        cachedBoss_->ExitRecovery();
+    }
+    enteredRecovery_ = false;
+
     // ForceField 12 個の削除：erase ベースのため、必ず逆順インデックスから削除する。
     // 内側ループ（s=2..0）と外側ループ（v=3..0）の両方を逆順にすることで、
     // インデックス順 (Add 時の昇順) の逆で削除して全 12 個のシフトを無効化。

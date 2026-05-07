@@ -164,4 +164,11 @@ private:
     //======================== Reset 用キャッシュ ========================
     Tako::ForceFieldManager* cachedForceFieldManager_ = nullptr;
     Tako::EmitterManager* cachedEmitterManager_ = nullptr;
+    /// <summary>
+    /// Reset 経由（BTParallel が子ノードを中断するケース含む）でも Boss::ExitRecovery を
+    /// 確実に呼ぶためのキャッシュ。Reset() からは Blackboard が取れないため Boss* を保持する。
+    /// </summary>
+    Boss* cachedBoss_ = nullptr;
+    /// <summary>EnterRecovery 済みか（多重 ExitRecovery と未呼び出しの両方を防ぐガード）</summary>
+    bool enteredRecovery_ = false;
 };

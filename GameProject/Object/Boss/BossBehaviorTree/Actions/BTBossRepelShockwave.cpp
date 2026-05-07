@@ -57,7 +57,11 @@ BTNodeStatus BTBossRepelShockwave::Execute(BTBlackboard* blackboard) {
             cachedEmitterManager_->SetEmitterPosition(flashEmitterName_, boss->GetTransform().translate);
         }
 
+        // Boss 硬直フラグを ON。cachedBoss_ + enteredRecovery_ を保存しておくことで、
+        // Reset 経由（BTParallel 中断含む）でも Cleanup 内で確実に解除できる。
         boss->EnterRecovery();
+        cachedBoss_ = boss;
+        enteredRecovery_ = true;
         isFirstExecute_ = false;
     }
 
@@ -101,8 +105,8 @@ BTNodeStatus BTBossRepelShockwave::Execute(BTBlackboard* blackboard) {
     }
     else {
         // Phase 3: 終了 — クリーンアップして Success
+        // Boss::ExitRecovery は Cleanup 内で実施するためここでの個別呼び出しは不要。
         Cleanup();
-        boss->ExitRecovery();
         status_ = BTNodeStatus::Success;
         return status_;
     }
@@ -131,6 +135,14 @@ void BTBossRepelShockwave::Reset() {
 }
 
 void BTBossRepelShockwave::Cleanup() {
+    // Boss 硬直状態の解除（成功終了 / Reset 経由の両方で確実に実行）。
+    // BTParallel が子ノードを中断する場合、Boss::ExitRecovery が呼ばれないと
+    // 硬直フラグが残ってボスの行動全体が固まるリスクがあるため、ここに集約する。
+    if (cachedBoss_ && enteredRecovery_) {
+        cachedBoss_->ExitRecovery();
+    }
+    enteredRecovery_ = false;
+
     // ForceField 削除
     if (cachedForceFieldManager_ && forceFieldId_ >= 0) {
         cachedForceFieldManager_->RemoveForceField(static_cast<uint32_t>(forceFieldId_));

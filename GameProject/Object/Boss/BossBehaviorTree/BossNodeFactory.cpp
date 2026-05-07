@@ -3,6 +3,7 @@
 #include "BossNodeFactory.h"
 
 // BehaviorTree ノードのインクルード
+#include "../../../BehaviorTree/Composites/BTParallel.h"
 #include "../../../BehaviorTree/Composites/BTSelector.h"
 #include "../../../BehaviorTree/Composites/BTSequence.h"
 #include "../../../BehaviorTree/Composites/BTRandomSelector.h"
@@ -18,6 +19,8 @@
 #include "../BossBehaviorTree/Actions/BTBossAreaAttack.h"
 #include "../BossBehaviorTree/Actions/BTBossMeteorRain.h"
 #include "../BossBehaviorTree/Actions/BTBossSlashAttack.h"
+#include "../BossBehaviorTree/Actions/BTBossRepelShockwave.h"
+#include "../BossBehaviorTree/Actions/BTBossVortexTempest.h"
 #include "../BossBehaviorTree/Conditions/BTActionSelector.h"
 #include "../BossBehaviorTree/Conditions/BTBossPhaseCondition.h"
 #include "../BossBehaviorTree/Conditions/BTBossHPCondition.h"
@@ -36,6 +39,9 @@ BTNodePtr BossNodeFactory::CreateNode(const std::string& nodeType) {
     }
     else if (nodeType == "BTRandomSelector") {
         return std::make_shared<BTRandomSelector>();
+    }
+    else if (nodeType == "BTParallel") {
+        return std::make_shared<BTParallel>();  // 既定 policy = MainChild
     }
     // Action ノード（Blackboard 経由で Boss/Player にアクセス）
     else if (nodeType == "BTBossIdle") {
@@ -73,6 +79,12 @@ BTNodePtr BossNodeFactory::CreateNode(const std::string& nodeType) {
     }
     else if (nodeType == "BTBossSlashAttack") {
         return std::make_shared<BTBossSlashAttack>();
+    }
+    else if (nodeType == "BTBossRepelShockwave") {
+        return std::make_shared<BTBossRepelShockwave>();
+    }
+    else if (nodeType == "BTBossVortexTempest") {
+        return std::make_shared<BTBossVortexTempest>();
     }
     // Condition ノード
     else if (nodeType == "BTActionSelector") {
@@ -142,6 +154,13 @@ void BossNodeFactory::InitializeNodeTypes() {
             "Random Selector",
             NodeCategory::Composite,
             ImVec4(0.9f, 0.6f, 0.2f, 1.0f),  // 明るいオレンジ
+            true  // 子ノードを持てる
+        },
+        {
+            "BTParallel",
+            "Parallel",
+            NodeCategory::Composite,
+            ImVec4(0.5f, 0.5f, 0.9f, 1.0f),  // 紫味の青（並列実行）
             true  // 子ノードを持てる
         },
 
@@ -230,6 +249,20 @@ void BossNodeFactory::InitializeNodeTypes() {
             ImVec4(0.8f, 0.1f, 0.6f, 1.0f),  // マゼンタ（斬撃攻撃）
             false
         },
+        {
+            "BTBossRepelShockwave",
+            "Repel Shockwave",
+            NodeCategory::Action,
+            ImVec4(0.4f, 0.7f, 1.0f, 1.0f),  // 水色（衝撃波）
+            false
+        },
+        {
+            "BTBossVortexTempest",
+            "Vortex Tempest",
+            NodeCategory::Action,
+            ImVec4(0.6f, 0.3f, 0.9f, 1.0f),  // 紫（渦・嵐）
+            false
+        },
 
         // ========== Condition ノード ==========
         {
@@ -306,6 +339,7 @@ std::string BossNodeFactory::GetNodeType(const BTNodePtr& node) {
     if (typeInfo == typeid(BTSelector)) return "BTSelector";
     if (typeInfo == typeid(BTSequence)) return "BTSequence";
     if (typeInfo == typeid(BTRandomSelector)) return "BTRandomSelector";
+    if (typeInfo == typeid(BTParallel)) return "BTParallel";
     if (typeInfo == typeid(BTBossIdle)) return "BTBossIdle";
     if (typeInfo == typeid(BTBossDash)) return "BTBossDash";
     if (typeInfo == typeid(BTBossShoot)) return "BTBossShoot";
@@ -318,6 +352,8 @@ std::string BossNodeFactory::GetNodeType(const BTNodePtr& node) {
     if (typeInfo == typeid(BTBossAreaAttack)) return "BTBossAreaAttack";
     if (typeInfo == typeid(BTBossMeteorRain)) return "BTBossMeteorRain";
     if (typeInfo == typeid(BTBossSlashAttack)) return "BTBossSlashAttack";
+    if (typeInfo == typeid(BTBossRepelShockwave)) return "BTBossRepelShockwave";
+    if (typeInfo == typeid(BTBossVortexTempest)) return "BTBossVortexTempest";
     if (typeInfo == typeid(BTActionSelector)) return "BTActionSelector";
     if (typeInfo == typeid(BTBossPhaseCondition)) return "BTBossPhaseCondition";
     if (typeInfo == typeid(BTBossHPCondition)) return "BTBossHPCondition";

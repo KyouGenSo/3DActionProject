@@ -171,6 +171,9 @@
     <ClCompile Include="Scene\OverScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="BehaviorTree\Composites\BTParallel.cpp">
+      <Filter>BehaviorTree\Composites</Filter>
+    </ClCompile>
     <ClCompile Include="BehaviorTree\Composites\BTSelector.cpp">
       <Filter>BehaviorTree\Composites</Filter>
     </ClCompile>
@@ -190,6 +193,12 @@
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRepelShockwave.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.cpp">
@@ -434,6 +443,9 @@
     <ClInclude Include="Scene\OverScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="BehaviorTree\Composites\BTParallel.h">
+      <Filter>BehaviorTree\Composites</Filter>
+    </ClInclude>
     <ClInclude Include="BehaviorTree\Composites\BTSelector.h">
       <Filter>BehaviorTree\Composites</Filter>
     </ClInclude>
@@ -461,6 +473,12 @@
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRepelShockwave.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.h">
       <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
     </ClInclude>
@@ -483,6 +501,9 @@
       <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="Common\GameConst.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Common\ForceFieldAffectMask.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\BossNodeFactory.h">

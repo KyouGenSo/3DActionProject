@@ -46,6 +46,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
+    <ClCompile Include="BehaviorTree\Composites\BTParallel.cpp" />
     <ClCompile Include="BehaviorTree\Composites\BTSelector.cpp" />
     <ClCompile Include="BehaviorTree\Composites\BTSequence.cpp" />
     <ClCompile Include="BehaviorTree\Composites\BTRandomSelector.cpp" />
@@ -98,8 +99,10 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeleeAttack.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.cpp" />
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRepelShockwave.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRetreat.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.cpp" />
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\BossBehaviorTree.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPhaseCondition.cpp" />
@@ -146,6 +149,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BehaviorTree\Composites\BTParallel.h" />
     <ClInclude Include="BehaviorTree\Composites\BTSelector.h" />
     <ClInclude Include="BehaviorTree\Composites\BTSequence.h" />
     <ClInclude Include="BehaviorTree\Composites\BTRandomSelector.h" />
@@ -179,6 +183,7 @@
     <ClInclude Include="Effect\HitFlashEffect.h" />
     <ClInclude Include="Common\BulletSpawner.h" />
     <ClInclude Include="Common\DynamicBoundary.h" />
+    <ClInclude Include="Common\ForceFieldAffectMask.h" />
     <ClInclude Include="Common\GameConst.h" />
     <ClInclude Include="Effect\BossBorderParticleManager.h" />
     <ClInclude Include="Effect\BulletSignEffect.h" />
@@ -207,8 +212,10 @@
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeleeAttack.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.h" />
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRepelShockwave.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRetreat.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.h" />
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\BossBehaviorTree.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPhaseCondition.h" />

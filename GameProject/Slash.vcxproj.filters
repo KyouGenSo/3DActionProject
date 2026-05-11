@@ -192,6 +192,9 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
@@ -468,6 +471,9 @@
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.h">

@@ -19,43 +19,25 @@ BTBossMeteorRain::BTBossMeteorRain() {
 }
 
 BTBossMeteorRain::~BTBossMeteorRain() {
-    Cleanup();
+    OnCleanup();
 }
 
-BTNodeStatus BTBossMeteorRain::Execute(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
-    if (!boss) {
-        status_ = BTNodeStatus::Failure;
-        return BTNodeStatus::Failure;
-    }
-
-    float deltaTime = blackboard->GetDeltaTime();
-
-    // 初回実行時の初期化
-    if (isFirstExecute_) {
-        InitializeMeteorRain(boss);
-        isFirstExecute_ = false;
-    }
-
+BTNodeStatus BTBossMeteorRain::OnExecute(BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
     // フェーズ管理: Charge → Launch → Warning → Blink → Impact → Recovery
-    float chargeEnd = chargeTime_;
-    float launchEnd = chargeEnd + launchDuration_;
-    float warningEnd = launchEnd + warningDuration_;
-    float blinkEnd = warningEnd + blinkDuration_;
-    float impactEnd = blinkEnd + impactDuration_;
+    const float chargeEnd = chargeTime_;
+    const float launchEnd = chargeEnd + launchDuration_;
+    const float warningEnd = launchEnd + warningDuration_;
+    const float blinkEnd = warningEnd + blinkDuration_;
+    const float impactEnd = blinkEnd + impactDuration_;
 
-    // Phase: Charge（予備動作エフェクト）
     if (elapsedTime_ < chargeEnd) {
         bulletSignEffect_.Update(boss, deltaTime);
     }
-    // Phase: Launch（弾発射演出）
     else if (elapsedTime_ < launchEnd) {
-        // Charge 完了時にエフェクトを終了（1回のみ）
         if (bulletSignEffect_.IsActive()) {
             bulletSignEffect_.End(boss);
         }
 
-        // Launch フェーズ内の経過時間（chargeEnd 基準）
         float launchElapsed = elapsedTime_ - chargeEnd;
 
         // 上方向弾（impactCount_ 発、既存処理）
@@ -82,14 +64,13 @@ BTNodeStatus BTBossMeteorRain::Execute(BTBlackboard* blackboard) {
             }
         }
     }
-    // Phase: Warning（Decal予兆表示）
     else if (elapsedTime_ < warningEnd) {
-        // 残りの上方向弾を全て発射（Launch フェーズで撃ちきれなかった場合の保険）
+        // 残りの上方向弾を全て発射（保険）
         while (bulletsLaunched_ < impactCount_) {
             LaunchBullet(boss, bulletsLaunched_);
             bulletsLaunched_++;
         }
-        // 残りの水平弾を全て発射（Launch フェーズで撃ちきれなかった場合の保険）
+        // 残りの水平弾を全て発射（保険）
         if (horizontalBulletCount_ > 0) {
             Vector3 bossPos = boss->GetTransform().translate;
             while (horizontalBulletsLaunched_ < horizontalBulletCount_) {
@@ -110,95 +91,52 @@ BTNodeStatus BTBossMeteorRain::Execute(BTBlackboard* blackboard) {
             decalsShown_ = true;
         }
     }
-    // Phase: Blink（点滅警告）
     else if (elapsedTime_ < blinkEnd) {
-        float phaseElapsed = elapsedTime_ - warningEnd;
-        UpdateBlinkingPhase(phaseElapsed);
+        UpdateBlinkingPhase(elapsedTime_ - warningEnd);
     }
-    // Phase: Impact（着弾ダメージ判定）
     else if (elapsedTime_ < impactEnd) {
-        // 着弾開始処理（1回のみ）
         if (!hasBegunImpact_) {
             BeginImpactPhase(boss);
             hasBegunImpact_ = true;
         }
     }
-    // Phase: Recovery（硬直）
     else {
-        // 着弾終了処理（1回のみ）
         if (!hasEndedImpact_) {
             EndImpactPhase(boss);
             hasEndedImpact_ = true;
         }
-
-        if (!enteredRecovery_) {
-            boss->EnterRecovery();
-            enteredRecovery_ = true;
-        }
+        EnterAttackRecovery(boss);
     }
 
-    // 経過時間を更新
     elapsedTime_ += deltaTime;
 
-    // 状態終了チェック
     if (elapsedTime_ >= totalDuration_) {
-        // 硬直フェーズ終了
-        boss->ExitRecovery();
-
-        // クリーンアップとリセット
-        Cleanup();
-        isFirstExecute_ = true;
-        elapsedTime_ = 0.0f;
         hasBegunImpact_ = false;
         hasEndedImpact_ = false;
-        enteredRecovery_ = false;
         decalsShown_ = false;
         bulletsLaunched_ = 0;
         horizontalBulletsLaunched_ = 0;
-        status_ = BTNodeStatus::Success;
-        return BTNodeStatus::Success;
+        return FinishAttack();
     }
 
-    // まだ処理中
-    status_ = BTNodeStatus::Running;
     return BTNodeStatus::Running;
 }
 
-void BTBossMeteorRain::Reset() {
-    BTNode::Reset();
-    Cleanup();
-    elapsedTime_ = 0.0f;
-    isFirstExecute_ = true;
+void BTBossMeteorRain::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
     hasBegunImpact_ = false;
     hasEndedImpact_ = false;
-    enteredRecovery_ = false;
-    decalsShown_ = false;
-    bulletsLaunched_ = 0;
-    horizontalBulletsLaunched_ = 0;
-}
-
-void BTBossMeteorRain::InitializeMeteorRain(Boss* boss) {
-    // タイマーリセット
-    elapsedTime_ = 0.0f;
-    hasBegunImpact_ = false;
-    hasEndedImpact_ = false;
-    enteredRecovery_ = false;
     decalsShown_ = false;
     bulletsLaunched_ = 0;
     horizontalBulletsLaunched_ = 0;
 
-    // 総時間を計算（Charge フェーズを含む）
     totalDuration_ = chargeTime_ + launchDuration_ + warningDuration_ + blinkDuration_ + impactDuration_ + recoveryTime_;
 
-    // 予備動作エフェクト開始
     bulletSignEffect_.Start(boss, chargeTime_);
 
-    // 着弾数を決定
     RandomEngine* rng = RandomEngine::GetInstance();
     impactCount_ = rng->GetInt(minImpacts_, maxImpacts_);
     impactCount_ = std::clamp(impactCount_, 1, kMaxImpacts);
 
-    // ランダムな着弾位置を生成
     Vector3 bossPos = boss->GetTransform().translate;
     GenerateImpactPositions(bossPos);
 
@@ -213,7 +151,7 @@ void BTBossMeteorRain::InitializeMeteorRain(Boss* boss) {
         colliderTransforms_.push_back(t);
     }
 
-    // Decal とコライダーの初期化
+    // Decal とコライダー初期化
     impactDecals_.clear();
     impactDecals_.reserve(impactCount_);
     impactColliders_.clear();
@@ -222,7 +160,6 @@ void BTBossMeteorRain::InitializeMeteorRain(Boss* boss) {
     float diameter = impactRadius_ * 2.0f;
 
     for (int i = 0; i < impactCount_; ++i) {
-        // Decal の生成（Circle 形状）
         auto decal = std::make_unique<Decal>();
         decal->Initialize();
         decal->SetShape(DecalShape::Circle);
@@ -230,11 +167,9 @@ void BTBossMeteorRain::InitializeMeteorRain(Boss* boss) {
         decal->SetScale(Vector3(diameter, 1.0f, diameter));
         decal->SetEdgeSoftness(0.02f);
         decal->SetColor(Vector4(1.0f, 0.2f, 0.1f, kDecalBaseAlpha));
-        // Launch フェーズ中はまだ非表示、Warning フェーズで表示
         decal->SetVisible(false);
         impactDecals_.push_back(std::move(decal));
 
-        // スフィアコライダーの生成（全 Transform 追加済みなのでポインタは安定）
         auto collider = std::make_unique<MeteorImpactCollider>(boss);
         collider->SetTransform(&colliderTransforms_[i]);
         collider->SetRadius(impactRadius_);
@@ -246,6 +181,26 @@ void BTBossMeteorRain::InitializeMeteorRain(Boss* boss) {
     }
 }
 
+void BTBossMeteorRain::OnCleanup() {
+    impactDecals_.clear();
+
+    for (auto& collider : impactColliders_) {
+        if (collider) {
+            CollisionManager::GetInstance()->RemoveCollider(collider.get());
+        }
+    }
+    impactColliders_.clear();
+
+    colliderTransforms_.clear();
+    impactPositions_.clear();
+    impactCount_ = 0;
+    hasBegunImpact_ = false;
+    hasEndedImpact_ = false;
+    decalsShown_ = false;
+    bulletsLaunched_ = 0;
+    horizontalBulletsLaunched_ = 0;
+}
+
 void BTBossMeteorRain::GenerateImpactPositions(const Vector3& bossPos) {
     impactPositions_.clear();
     impactPositions_.reserve(impactCount_);
@@ -253,7 +208,6 @@ void BTBossMeteorRain::GenerateImpactPositions(const Vector3& bossPos) {
     RandomEngine* rng = RandomEngine::GetInstance();
     float areaSize = GameConst::kBossPhase2AreaSize;
 
-    // 最小分離距離: 2つの着弾円が接する距離（直径分）
     float minSeparation = 2.0f * impactRadius_;
     float minSepSq = minSeparation * minSeparation;
 
@@ -265,7 +219,6 @@ void BTBossMeteorRain::GenerateImpactPositions(const Vector3& bossPos) {
             float z = bossPos.z + rng->GetFloat(-areaSize, areaSize);
             Vector3 candidate(x, bossPos.y, z);
 
-            // 既存の着弾位置との距離チェック（二乗距離で比較、sqrt回避）
             bool tooClose = false;
             for (const auto& existing : impactPositions_) {
                 if (candidate.DistanceSquared(existing) < minSepSq) {
@@ -281,7 +234,6 @@ void BTBossMeteorRain::GenerateImpactPositions(const Vector3& bossPos) {
             }
         }
 
-        // リトライ上限内に配置できなかった場合、残りを中止
         if (!placed) {
             impactCount_ = static_cast<int>(impactPositions_.size());
             break;
@@ -289,18 +241,16 @@ void BTBossMeteorRain::GenerateImpactPositions(const Vector3& bossPos) {
     }
 }
 
-void BTBossMeteorRain::LaunchBullet(Boss* boss, int index) {
+void BTBossMeteorRain::LaunchBullet(Boss* boss, int /*index*/) {
     Vector3 bossPos = boss->GetTransform().translate;
     RandomEngine* rng = RandomEngine::GetInstance();
 
-    // 上方向に弾を発射（既存処理：yBoundaryMax_=50 を超えて自動消滅、ダメージなし）
     float spreadX = rng->GetFloat(-launchSpreadXZ_, launchSpreadXZ_);
     float spreadZ = rng->GetFloat(-launchSpreadXZ_, launchSpreadXZ_);
     boss->RequestBulletSpawn(bossPos, Vector3(spreadX, launchSpeed_, spreadZ));
 }
 
 void BTBossMeteorRain::UpdateBlinkingPhase(float phaseElapsed) {
-    // sin 波で点滅（BTBossAreaAttack と同じパターン）
     float sinValue = std::abs(std::sin(phaseElapsed * blinkFrequency_ * 3.14159265f));
     float alpha = kBlinkAlphaMin + kBlinkAlphaAmplitude * sinValue;
 
@@ -312,18 +262,11 @@ void BTBossMeteorRain::UpdateBlinkingPhase(float phaseElapsed) {
 }
 
 void BTBossMeteorRain::BeginImpactPhase(Boss* boss) {
-    // Decal を即非表示
     for (int i = 0; i < impactCount_; ++i) {
-        if (impactDecals_[i]) {
-            impactDecals_[i]->SetVisible(false);
-        }
+        if (impactDecals_[i]) impactDecals_[i]->SetVisible(false);
     }
-
-    // コライダーを有効化
     for (int i = 0; i < impactCount_; ++i) {
-        if (impactColliders_[i]) {
-            impactColliders_[i]->SetActive(true);
-        }
+        if (impactColliders_[i]) impactColliders_[i]->SetActive(true);
     }
 
     // 各着弾位置の上空から弾を落下スポーン
@@ -333,124 +276,80 @@ void BTBossMeteorRain::BeginImpactPhase(Boss* boss) {
     }
 }
 
-void BTBossMeteorRain::EndImpactPhase(Boss* boss) {
-    // Decal を非表示（既に非表示のはずだが安全のため）
+void BTBossMeteorRain::EndImpactPhase(Boss* /*boss*/) {
     for (int i = 0; i < impactCount_; ++i) {
-        if (impactDecals_[i]) {
-            impactDecals_[i]->SetVisible(false);
-        }
-    }
-
-    // コライダーを無効化
-    for (int i = 0; i < impactCount_; ++i) {
-        if (impactColliders_[i]) {
-            impactColliders_[i]->SetActive(false);
-        }
+        if (impactDecals_[i])    impactDecals_[i]->SetVisible(false);
+        if (impactColliders_[i]) impactColliders_[i]->SetActive(false);
     }
 }
 
-void BTBossMeteorRain::Cleanup() {
-    // Decal のクリーンアップ（デストラクタが DecalManager から自動削除）
-    impactDecals_.clear();
-
-    // コライダーのクリーンアップ
-    for (auto& collider : impactColliders_) {
-        if (collider) {
-            CollisionManager::GetInstance()->RemoveCollider(collider.get());
-        }
-    }
-    impactColliders_.clear();
-
-    // その他のリソースをクリア
-    colliderTransforms_.clear();
-    impactPositions_.clear();
-    impactCount_ = 0;
+void BTBossMeteorRain::OnApplyParameters(const nlohmann::json& params) {
+    if (params.contains("chargeTime"))            chargeTime_ = params["chargeTime"];
+    if (params.contains("launchDuration"))        launchDuration_ = params["launchDuration"];
+    if (params.contains("warningDuration"))       warningDuration_ = params["warningDuration"];
+    if (params.contains("blinkDuration"))         blinkDuration_ = params["blinkDuration"];
+    if (params.contains("impactDuration"))        impactDuration_ = params["impactDuration"];
+    if (params.contains("recoveryTime"))          recoveryTime_ = params["recoveryTime"];
+    if (params.contains("minImpacts"))            minImpacts_ = params["minImpacts"];
+    if (params.contains("maxImpacts"))            maxImpacts_ = params["maxImpacts"];
+    if (params.contains("impactRadius"))          impactRadius_ = params["impactRadius"];
+    if (params.contains("damage"))                damage_ = params["damage"];
+    if (params.contains("blinkFrequency"))        blinkFrequency_ = params["blinkFrequency"];
+    if (params.contains("launchSpeed"))           launchSpeed_ = params["launchSpeed"];
+    if (params.contains("launchSpreadXZ"))        launchSpreadXZ_ = params["launchSpreadXZ"];
+    if (params.contains("fallSpeed"))             fallSpeed_ = params["fallSpeed"];
+    if (params.contains("fallHeight"))            fallHeight_ = params["fallHeight"];
+    if (params.contains("horizontalSpeed"))       horizontalSpeed_ = params["horizontalSpeed"];
+    if (params.contains("horizontalBulletCount")) horizontalBulletCount_ = params["horizontalBulletCount"];
 }
 
-nlohmann::json BTBossMeteorRain::ExtractParameters() const {
-    return {
-        {"chargeTime", chargeTime_},
-        {"launchDuration", launchDuration_},
-        {"warningDuration", warningDuration_},
-        {"blinkDuration", blinkDuration_},
-        {"impactDuration", impactDuration_},
-        {"recoveryTime", recoveryTime_},
-        {"minImpacts", minImpacts_},
-        {"maxImpacts", maxImpacts_},
-        {"impactRadius", impactRadius_},
-        {"damage", damage_},
-        {"blinkFrequency", blinkFrequency_},
-        {"launchSpeed", launchSpeed_},
-        {"launchSpreadXZ", launchSpreadXZ_},
-        {"fallSpeed", fallSpeed_},
-        {"fallHeight", fallHeight_},
-        {"horizontalSpeed", horizontalSpeed_},
-        {"horizontalBulletCount", horizontalBulletCount_}
-    };
+void BTBossMeteorRain::OnExtractParameters(nlohmann::json& out) const {
+    out["chargeTime"]            = chargeTime_;
+    out["launchDuration"]        = launchDuration_;
+    out["warningDuration"]       = warningDuration_;
+    out["blinkDuration"]         = blinkDuration_;
+    out["impactDuration"]        = impactDuration_;
+    out["recoveryTime"]          = recoveryTime_;
+    out["minImpacts"]            = minImpacts_;
+    out["maxImpacts"]            = maxImpacts_;
+    out["impactRadius"]          = impactRadius_;
+    out["damage"]                = damage_;
+    out["blinkFrequency"]        = blinkFrequency_;
+    out["launchSpeed"]           = launchSpeed_;
+    out["launchSpreadXZ"]        = launchSpreadXZ_;
+    out["fallSpeed"]             = fallSpeed_;
+    out["fallHeight"]            = fallHeight_;
+    out["horizontalSpeed"]       = horizontalSpeed_;
+    out["horizontalBulletCount"] = horizontalBulletCount_;
 }
 
 #ifdef _DEBUG
-bool BTBossMeteorRain::DrawImGui() {
+bool BTBossMeteorRain::OnDrawImGui() {
     bool changed = false;
 
     ImGui::SeparatorText("Phase Timing");
-    if (ImGui::DragFloat("Charge Time##meteor", &chargeTime_, 0.05f, 0.0f, 3.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Launch Duration##meteor", &launchDuration_, 0.05f, 0.1f, 3.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Warning Duration##meteor", &warningDuration_, 0.05f, 0.1f, 5.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Blink Duration##meteor", &blinkDuration_, 0.05f, 0.1f, 3.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Impact Duration##meteor", &impactDuration_, 0.05f, 0.1f, 3.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Recovery Time##meteor", &recoveryTime_, 0.05f, 0.0f, 3.0f)) {
-        changed = true;
-    }
+    if (ImGui::DragFloat("Charge Time##meteor", &chargeTime_, 0.05f, 0.0f, 3.0f))         changed = true;
+    if (ImGui::DragFloat("Launch Duration##meteor", &launchDuration_, 0.05f, 0.1f, 3.0f)) changed = true;
+    if (ImGui::DragFloat("Warning Duration##meteor", &warningDuration_, 0.05f, 0.1f, 5.0f)) changed = true;
+    if (ImGui::DragFloat("Blink Duration##meteor", &blinkDuration_, 0.05f, 0.1f, 3.0f))   changed = true;
+    if (ImGui::DragFloat("Impact Duration##meteor", &impactDuration_, 0.05f, 0.1f, 3.0f)) changed = true;
+    if (ImGui::DragFloat("Recovery Time##meteor", &recoveryTime_, 0.05f, 0.0f, 3.0f))     changed = true;
 
     ImGui::SeparatorText("Attack Parameters");
-    if (ImGui::DragInt("Min Impacts##meteor", &minImpacts_, 1, 1, kMaxImpacts)) {
-        changed = true;
-    }
-    if (ImGui::DragInt("Max Impacts##meteor", &maxImpacts_, 1, 1, kMaxImpacts)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Impact Radius##meteor", &impactRadius_, 0.5f, 1.0f, 20.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Damage##meteor", &damage_, 0.5f, 1.0f, 50.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Blink Frequency##meteor", &blinkFrequency_, 0.5f, 1.0f, 30.0f)) {
-        changed = true;
-    }
+    if (ImGui::DragInt("Min Impacts##meteor", &minImpacts_, 1, 1, kMaxImpacts))           changed = true;
+    if (ImGui::DragInt("Max Impacts##meteor", &maxImpacts_, 1, 1, kMaxImpacts))           changed = true;
+    if (ImGui::DragFloat("Impact Radius##meteor", &impactRadius_, 0.5f, 1.0f, 20.0f))     changed = true;
+    if (ImGui::DragFloat("Damage##meteor", &damage_, 0.5f, 1.0f, 50.0f))                  changed = true;
+    if (ImGui::DragFloat("Blink Frequency##meteor", &blinkFrequency_, 0.5f, 1.0f, 30.0f)) changed = true;
 
     ImGui::SeparatorText("Launch Parameters");
-    if (ImGui::DragFloat("Launch Speed##meteor", &launchSpeed_, 1.0f, 5.0f, 100.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Launch Spread XZ##meteor", &launchSpreadXZ_, 0.5f, 0.0f, 20.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Fall Speed##meteor", &fallSpeed_, 1.0f, 5.0f, 100.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Fall Height##meteor", &fallHeight_, 1.0f, 5.0f, 100.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragFloat("Horizontal Speed##meteor", &horizontalSpeed_, 1.0f, 5.0f, 100.0f)) {
-        changed = true;
-    }
-    if (ImGui::DragInt("Horizontal Bullet Count##meteor", &horizontalBulletCount_, 1, 1, 20)) {
-        changed = true;
-    }
+    if (ImGui::DragFloat("Launch Speed##meteor", &launchSpeed_, 1.0f, 5.0f, 100.0f))      changed = true;
+    if (ImGui::DragFloat("Launch Spread XZ##meteor", &launchSpreadXZ_, 0.5f, 0.0f, 20.0f)) changed = true;
+    if (ImGui::DragFloat("Fall Speed##meteor", &fallSpeed_, 1.0f, 5.0f, 100.0f))          changed = true;
+    if (ImGui::DragFloat("Fall Height##meteor", &fallHeight_, 1.0f, 5.0f, 100.0f))        changed = true;
+    if (ImGui::DragFloat("Horizontal Speed##meteor", &horizontalSpeed_, 1.0f, 5.0f, 100.0f))                 changed = true;
+    if (ImGui::DragInt("Horizontal Bullet Count##meteor", &horizontalBulletCount_, 1, 1, 20))                changed = true;
 
-    // 制約の自動修正
     if (minImpacts_ > maxImpacts_) {
         maxImpacts_ = minImpacts_;
         changed = true;

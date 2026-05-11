@@ -15,54 +15,10 @@ BTBossRepelShockwave::BTBossRepelShockwave() {
     name_ = "BossRepelShockwave";
 }
 
-BTNodeStatus BTBossRepelShockwave::Execute(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
-    if (!boss) {
-        status_ = BTNodeStatus::Failure;
-        return status_;
-    }
-
+BTNodeStatus BTBossRepelShockwave::OnExecute(BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
     ForceFieldManager* ffm = boss->GetForceFieldManager();
     if (!ffm) {
-        // ForceFieldManager 未注入：DI 配線漏れの兆候。Phase1 攻撃は実行不可。
-        status_ = BTNodeStatus::Failure;
-        return status_;
-    }
-
-    const float deltaTime = blackboard->GetDeltaTime();
-
-    // 初回実行時の初期化
-    if (isFirstExecute_) {
-        elapsedTime_ = 0.0f;
-        ringTriggered_ = false;
-
-        // Reset 用にマネージャをキャッシュ（Reset 中は blackboard が無いため）
-        cachedForceFieldManager_ = ffm;
-        cachedEmitterManager_ = boss->GetEmitterManager();
-
-        // ForceField 初期登録（強度 0 / 半径ほぼ 0 で確保）
-        ForceFieldData field{};
-        field.type = static_cast<uint32_t>(ForceFieldType::Repel);
-        field.position = boss->GetTransform().translate;
-        field.direction = { 0.0f, 0.0f, 0.0f };  // Repel では未使用
-        field.strength = 0.0f;
-        field.radius = 0.001f;
-        field.falloff = falloff_;
-        field.affectMask = affectMask_;
-        forceFieldId_ = ffm->AddForceField(field);
-
-        // 中心フラッシュ演出を起動（予兆フェーズで光る）
-        if (cachedEmitterManager_) {
-            cachedEmitterManager_->SetEmitterActive(flashEmitterName_, true);
-            cachedEmitterManager_->SetEmitterPosition(flashEmitterName_, boss->GetTransform().translate);
-        }
-
-        // Boss 硬直フラグを ON。cachedBoss_ + enteredRecovery_ を保存しておくことで、
-        // Reset 経由（BTParallel 中断含む）でも Cleanup 内で確実に解除できる。
-        boss->EnterRecovery();
-        cachedBoss_ = boss;
-        enteredRecovery_ = true;
-        isFirstExecute_ = false;
+        return BTNodeStatus::Failure;
     }
 
     elapsedTime_ += deltaTime;
@@ -81,12 +37,12 @@ BTNodeStatus BTBossRepelShockwave::Execute(BTBlackboard* blackboard) {
     field.affectMask = affectMask_;
 
     if (elapsedTime_ < warningEnd) {
-        // Phase 0: 予兆 — 弱い力場（プレイヤーへの予告として軽く感じさせる）
+        // Phase 0: 予兆 — 弱い力場
         field.strength = strength_ * 0.1f;
         field.radius = maxRadius_ * 0.2f;
     }
     else if (elapsedTime_ < expandEnd) {
-        // Phase 1: 展開 — 半径を 0 → max へランプアップ
+        // Phase 1: 展開 — 半径ランプアップ
         const float t = (elapsedTime_ - warningEnd) / std::max<float>(expandTime_, 0.0001f);
         field.strength = strength_;
         field.radius = maxRadius_ * std::clamp(t, 0.0f, 1.0f);
@@ -99,19 +55,17 @@ BTNodeStatus BTBossRepelShockwave::Execute(BTBlackboard* blackboard) {
         }
     }
     else if (elapsedTime_ < sustainEnd) {
-        // Phase 2: 持続 — 最大半径維持
+        // Phase 2: 持続 — 最大半径維持 + Recovery 突入（プレイヤーがスタンを取れる隙）
         field.strength = strength_;
         field.radius = maxRadius_;
+        EnterAttackRecovery(boss);
     }
     else {
-        // Phase 3: 終了 — クリーンアップして Success
-        // Boss::ExitRecovery は Cleanup 内で実施するためここでの個別呼び出しは不要。
-        Cleanup();
-        status_ = BTNodeStatus::Success;
-        return status_;
+        // Phase 3: 終了
+        return FinishAttack();
     }
 
-    // エミッター位置をボス追従させる（ボスが移動しても演出が中心ズレしない）
+    // エミッター位置をボス追従
     if (cachedEmitterManager_) {
         cachedEmitterManager_->SetEmitterPosition(flashEmitterName_, boss->GetTransform().translate);
         if (ringTriggered_) {
@@ -119,35 +73,47 @@ BTNodeStatus BTBossRepelShockwave::Execute(BTBlackboard* blackboard) {
         }
     }
 
-    // ForceField を更新
+    // ForceField 更新
     if (forceFieldId_ >= 0) {
         ffm->UpdateForceField(static_cast<uint32_t>(forceFieldId_), field);
     }
 
-    status_ = BTNodeStatus::Running;
-    return status_;
+    return BTNodeStatus::Running;
 }
 
-void BTBossRepelShockwave::Reset() {
-    BTNode::Reset();
-    // スタン等による中断時：力場とエミッターを必ず後始末してから状態をリセット
-    Cleanup();
-}
+void BTBossRepelShockwave::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
+    ringTriggered_ = false;
 
-void BTBossRepelShockwave::Cleanup() {
-    // Boss 硬直状態の解除（成功終了 / Reset 経由の両方で確実に実行）。
-    // BTParallel が子ノードを中断する場合、Boss::ExitRecovery が呼ばれないと
-    // 硬直フラグが残ってボスの行動全体が固まるリスクがあるため、ここに集約する。
-    if (cachedBoss_ && enteredRecovery_) {
-        cachedBoss_->ExitRecovery();
+    ForceFieldManager* ffm = boss->GetForceFieldManager();
+    if (!ffm) return;
+
+    cachedForceFieldManager_ = ffm;
+
+    // ForceField 初期登録（強度 0 / 半径ほぼ 0 で確保）
+    ForceFieldData field{};
+    field.type = static_cast<uint32_t>(ForceFieldType::Repel);
+    field.position = boss->GetTransform().translate;
+    field.direction = { 0.0f, 0.0f, 0.0f };
+    field.strength = 0.0f;
+    field.radius = 0.001f;
+    field.falloff = falloff_;
+    field.affectMask = affectMask_;
+    forceFieldId_ = ffm->AddForceField(field);
+
+    // 中心フラッシュ演出を起動
+    if (cachedEmitterManager_) {
+        cachedEmitterManager_->SetEmitterActive(flashEmitterName_, true);
+        cachedEmitterManager_->SetEmitterPosition(flashEmitterName_, boss->GetTransform().translate);
     }
-    enteredRecovery_ = false;
+}
 
+void BTBossRepelShockwave::OnCleanup() {
     // ForceField 削除
     if (cachedForceFieldManager_ && forceFieldId_ >= 0) {
         cachedForceFieldManager_->RemoveForceField(static_cast<uint32_t>(forceFieldId_));
     }
     forceFieldId_ = -1;
+    cachedForceFieldManager_ = nullptr;
 
     // エミッター停止
     if (cachedEmitterManager_) {
@@ -155,13 +121,10 @@ void BTBossRepelShockwave::Cleanup() {
         cachedEmitterManager_->SetEmitterActive(flashEmitterName_, false);
     }
 
-    // 状態フラグ初期化
-    elapsedTime_ = 0.0f;
-    isFirstExecute_ = true;
     ringTriggered_ = false;
 }
 
-void BTBossRepelShockwave::ApplyParameters(const nlohmann::json& params) {
+void BTBossRepelShockwave::OnApplyParameters(const nlohmann::json& params) {
     if (params.contains("warningTime"))  warningTime_ = params["warningTime"];
     if (params.contains("expandTime"))   expandTime_ = params["expandTime"];
     if (params.contains("sustainTime"))  sustainTime_ = params["sustainTime"];
@@ -179,22 +142,20 @@ void BTBossRepelShockwave::ApplyParameters(const nlohmann::json& params) {
     }
 }
 
-nlohmann::json BTBossRepelShockwave::ExtractParameters() const {
-    return {
-        {"warningTime",      warningTime_},
-        {"expandTime",       expandTime_},
-        {"sustainTime",      sustainTime_},
-        {"maxRadius",        maxRadius_},
-        {"strength",         strength_},
-        {"falloff",          falloff_},
-        {"affectMask",       affectMask_},
-        {"ringEmitterName",  ringEmitterName_},
-        {"flashEmitterName", flashEmitterName_},
-    };
+void BTBossRepelShockwave::OnExtractParameters(nlohmann::json& out) const {
+    out["warningTime"]      = warningTime_;
+    out["expandTime"]       = expandTime_;
+    out["sustainTime"]      = sustainTime_;
+    out["maxRadius"]        = maxRadius_;
+    out["strength"]         = strength_;
+    out["falloff"]          = falloff_;
+    out["affectMask"]       = affectMask_;
+    out["ringEmitterName"]  = ringEmitterName_;
+    out["flashEmitterName"] = flashEmitterName_;
 }
 
 #ifdef _DEBUG
-bool BTBossRepelShockwave::DrawImGui() {
+bool BTBossRepelShockwave::OnDrawImGui() {
     bool changed = false;
     if (ImGui::DragFloat("Warning Time##repel",  &warningTime_,  0.05f, 0.0f, 3.0f))  changed = true;
     if (ImGui::DragFloat("Expand Time##repel",   &expandTime_,   0.05f, 0.0f, 3.0f))  changed = true;

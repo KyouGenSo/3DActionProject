@@ -560,8 +560,11 @@ void Boss::OnMeleeAttackHit(float damage, const Vector3& knockbackDir, bool isKn
     }
 
     if (currentState == "Normal") {
-        if (isInRecovery_) {
-            // 硬直中: ダメージ + スタンへ遷移
+        // isInRecovery_: 攻撃後の硬直中（既存仕様の隙）
+        // forceVulnerable_: AttackNode が isBypassRecoveryGuard で立てる強制脆弱化フラグ
+        // どちらか true ならスタン誘発、両方 false なら攻撃を中断して離脱
+        if (isInRecovery_ || forceVulnerable_) {
+            // 硬直中 or 強制脆弱: ダメージ + スタンへ遷移
             OnHit(damage, 1.0f);
             CameraManager::GetInstance()->StartShake(0.3f);
             pendingStunDirection_ = knockbackDir;

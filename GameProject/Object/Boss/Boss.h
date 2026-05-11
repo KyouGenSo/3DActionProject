@@ -259,6 +259,16 @@ public:
     /// <returns>硬直中なら true</returns>
     bool IsInRecovery() const { return isInRecovery_; }
 
+    /// <summary>
+    /// 強制脆弱化フラグを設定（攻撃中も常時スタン誘発を許可するオプション）。
+    /// AttackNode の isBypassRecoveryGuard が ON のときに攻撃ノードが立てる。
+    /// Boss::OnHit 時の分岐で isInRecovery_ と OR で評価される。
+    /// </summary>
+    void SetForceVulnerable(bool v) { forceVulnerable_ = v; }
+
+    /// <summary>強制脆弱化中かどうか</summary>
+    bool IsForceVulnerable() const { return forceVulnerable_; }
+
     //-----------------------------ダッシュ状態システム------------------------------//
     /// <summary>
     /// ダッシュ状態を設定
@@ -508,6 +518,7 @@ private:
     // ===== BT 内サブ状態フラグ（ステートマシンの責務外） =====
     bool isInRecovery_ = false;                   ///< 硬直中フラグ（BT アクションが設定）
     bool isDashing_ = false;                      ///< ダッシュ中フラグ（BT アクションが設定）
+    bool forceVulnerable_ = false;                ///< 強制脆弱化フラグ（AttackNode::isBypassRecoveryGuard ON 時に立つ）
 
     // ボス本体の衝突判定用 AABB コライダー
     std::unique_ptr<Tako::OBBCollider> bodyCollider_;

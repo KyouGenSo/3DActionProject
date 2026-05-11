@@ -45,6 +45,38 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Command />
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <PreBuildEvent>
+      <Message />
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command />
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message />
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Command />
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Message />
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command />
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message />
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BehaviorTree\Composites\BTParallel.cpp" />
     <ClCompile Include="BehaviorTree\Composites\BTSelector.cpp" />
@@ -94,6 +126,7 @@
     <ClCompile Include="Object\Boss\State\BossRetreatingState.cpp" />
     <ClCompile Include="Object\Boss\State\BossPhaseTransitionStunState.cpp" />
     <ClCompile Include="Object\Boss\State\BossDeadState.cpp" />
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossApproach.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.cpp" />
@@ -207,6 +240,7 @@
     <ClInclude Include="Object\Boss\State\BossRetreatingState.h" />
     <ClInclude Include="Object\Boss\State\BossPhaseTransitionStunState.h" />
     <ClInclude Include="Object\Boss\State\BossDeadState.h" />
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossApproach.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.h" />

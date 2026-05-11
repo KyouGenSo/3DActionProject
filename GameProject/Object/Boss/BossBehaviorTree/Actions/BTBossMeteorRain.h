@@ -58,20 +58,75 @@ public:
     void  SetFallHeight(float height) { fallHeight_ = height; }
 
 protected:
+    /// <summary>
+    /// 固有攻撃ロジック本体（Charge → Launch → Warning → Blink → Impact → Recovery のフェーズ制御）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <returns>BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
     BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+
+    /// <summary>
+    /// 固有初期化処理（着弾位置の生成、Decal の準備、totalDuration の算出）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+
+    /// <summary>
+    /// 固有クリーンアップ処理（Decal / コライダー / パーティクル群の解放とフラグリセット）
+    /// </summary>
     void OnCleanup() override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ適用
+    /// </summary>
+    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ抽出処理
+    /// </summary>
+    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
+    /// <summary>
+    /// 固有のImGuiデバッグ表示
+    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
 private:
+    /// <summary>
+    /// フェーズ2エリア内のランダムな着弾位置群を生成して impactPositions_ に格納する
+    /// </summary>
+    /// <param name="bossPos">ボスの現在位置（生成範囲の基準）</param>
     void GenerateImpactPositions(const Tako::Vector3& bossPos);
+
+    /// <summary>
+    /// 上空に向けて弾を1発発射する（Launch フェーズで index 番目の弾を発射）
+    /// </summary>
+    /// <param name="boss">弾を発射するBossへのポインタ</param>
+    /// <param name="index">発射する弾のインデックス</param>
     void LaunchBullet(Boss* boss, int index);
+
+    /// <summary>
+    /// 点滅フェーズの透明度更新（着弾位置 Decal の点滅警告）
+    /// </summary>
+    /// <param name="phaseElapsed">点滅フェーズの経過時間</param>
     void UpdateBlinkingPhase(float phaseElapsed);
+
+    /// <summary>
+    /// 着弾フェーズの開始処理（コライダー有効化と着弾パーティクル起動）
+    /// </summary>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void BeginImpactPhase(Boss* boss);
+
+    /// <summary>
+    /// 着弾フェーズの終了処理（コライダー無効化と Decal の非表示化）
+    /// </summary>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void EndImpactPhase(Boss* boss);
 
     static constexpr int kMaxImpacts = 20;

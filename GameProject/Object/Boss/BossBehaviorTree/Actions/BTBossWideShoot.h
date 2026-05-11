@@ -36,11 +36,37 @@ public:
     void  SetPenetratingCount(int count) { penetratingCount_ = count; }
 
 protected:
+    /// <summary>
+    /// 固有攻撃ロジック本体（チャージ → 角度スイープ連射 → 硬直の制御）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <returns>BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
     BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+
+    /// <summary>
+    /// 固有初期化処理（totalDuration / fireInterval の算出、基準方向の決定、予兆エフェクト起動）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ適用
+    /// </summary>
+    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ抽出処理
+    /// </summary>
+    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
+    /// <summary>
+    /// 固有のImGuiデバッグ表示
+    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
@@ -48,10 +74,37 @@ private:
     static constexpr float kDirectionEpsilon = 0.001f;
     static constexpr float kAngleEpsilon = 0.0001f;
 
+    /// <summary>
+    /// プレイヤー方向へボスを徐々に旋回させる
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
     void AimAtPlayer(BTBlackboard* blackboard, float deltaTime);
+
+    /// <summary>
+    /// 現在のスイープ位置・弾種に基づき弾を1発生成・発射する
+    /// </summary>
+    /// <param name="boss">弾を発射するBossへのポインタ</param>
     void FireBullet(Boss* boss);
+
+    /// <summary>
+    /// 現在のスイープ進捗から基準方向に対する角度オフセットを算出する
+    /// </summary>
+    /// <returns>基準方向に対する角度オフセット（ラジアン）</returns>
     float GetCurrentAngleOffset() const;
+
+    /// <summary>
+    /// 現在のスイープ内位置から、発射する弾が貫通弾であるかを判定する
+    /// </summary>
+    /// <returns>貫通弾なら true、通常弾なら false</returns>
     bool  IsPenetratingBullet() const;
+
+    /// <summary>
+    /// 基準方向と角度オフセットから弾の進行方向ベクトルを算出する
+    /// </summary>
+    /// <param name="baseDirection">基準となる正規化済み方向ベクトル</param>
+    /// <param name="angleOffset">基準方向からの角度オフセット（ラジアン）</param>
+    /// <returns>計算された弾の進行方向ベクトル</returns>
     Tako::Vector3 CalculateBulletDirection(const Tako::Vector3& baseDirection, float angleOffset);
 
     //=========================================================================================

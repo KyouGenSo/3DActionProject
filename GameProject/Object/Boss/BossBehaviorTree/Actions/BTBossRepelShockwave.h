@@ -12,19 +12,16 @@ namespace Tako {
 class Boss;
 
 /// <summary>
-/// ボス Phase1 新攻撃：リパルス・ショックウェーブ
-/// </summary>
-/// <remarks>
 /// ForceField の Repel タイプを 1 個生成し、ボスを中心に放射状の押し戻し場を発生させる。
 /// プレイヤー弾は速度逆転で吹き飛ばされ、速度低下で消滅する（PlayerBullet 側で対応）。
-///
+/// </summary>
+/// <remarks>
 /// 内部フェーズ:
 ///   Phase 0 (0〜warningTime_)              予兆: 弱め力場
 ///   Phase 1 (warningTime_ 〜 +expandTime_) 展開: 半径を 0 → maxRadius_ へランプアップ
 ///   Phase 2 (+expandTime_ 〜 +sustainTime_) 持続: 最大半径維持 + Recovery 突入（隙）
 ///   Phase 3                                 終了: Cleanup
 ///
-/// クールダウン・発動条件は本ノードの責務外（BT 親側で表現）。
 /// </remarks>
 class BTBossRepelShockwave : public AttackNode {
 public:
@@ -35,12 +32,42 @@ public:
     [[nodiscard]] float GetTotalDuration() const { return warningTime_ + expandTime_ + sustainTime_; }
 
 protected:
+    /// <summary>
+    /// 固有攻撃ロジック本体（予兆 → ForceField 展開 → 持続 → 終了のフェーズ制御）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <returns>BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
     BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+
+    /// <summary>
+    /// 固有初期化処理（ForceFieldManager のキャッシュと Repel ForceField の登録）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+
+    /// <summary>
+    /// 固有クリーンアップ処理（登録済み ForceField の解除とランタイム状態リセット）
+    /// </summary>
     void OnCleanup() override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ適用
+    /// </summary>
+    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ抽出処理
+    /// </summary>
+    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
+    /// <summary>
+    /// 固有のImGuiデバッグ表示
+    /// </summary>
     bool OnDrawImGui() override;
 #endif
 

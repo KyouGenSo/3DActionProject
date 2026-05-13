@@ -45,24 +45,102 @@ public:
     void  SetStopDistance(float distance) { stopDistance_ = distance; }
 
 protected:
+    /// <summary>
+    /// 固有攻撃ロジック本体（Prepare → Execute → (Interval →) Recovery のフェーズ制御）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <returns>BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
     BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+
+    /// <summary>
+    /// 固有初期化処理（コンボ抽選、totalDuration の算出、武器ブロックの生成と初期姿勢の設定）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+
+    /// <summary>
+    /// 固有クリーンアップ処理（武器ブロック解放とフェーズ状態のリセット）
+    /// </summary>
     void OnCleanup() override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ適用
+    /// </summary>
+    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ抽出処理
+    /// </summary>
+    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
+    /// <summary>
+    /// 固有のImGuiデバッグ表示
+    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
 private:
+    /// <summary>
+    /// プレイヤー方向へボスを徐々に旋回させる
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
     void AimAtPlayer(BTBlackboard* blackboard, float deltaTime);
+
+    /// <summary>
+    /// 準備フェーズの更新処理（プレイヤー追尾と突進初期化）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
     void ProcessPreparePhase(BTBlackboard* blackboard, float deltaTime);
+
+    /// <summary>
+    /// 攻撃実行フェーズの更新処理（突進移動とブロック振り回し）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
     void ProcessExecutePhase(BTBlackboard* blackboard, float deltaTime);
+
+    /// <summary>
+    /// 硬直フェーズの開始処理（Boss を硬直状態へ遷移させる）
+    /// </summary>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void ProcessRecoveryPhase(Boss* boss);
+
+    /// <summary>
+    /// コンボ間隔フェーズの更新処理（次の攻撃までの待機とプレイヤー追尾）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
     void ProcessIntervalPhase(BTBlackboard* blackboard, float deltaTime);
+
+    /// <summary>
+    /// 現在のコンボ段に応じた振り方向と初期角度を設定する
+    /// </summary>
     void InitializeSwingForCurrentCombo();
+
+    /// <summary>
+    /// 現在のブロック角度に基づき武器ブロックの位置・姿勢を更新する
+    /// </summary>
+    /// <param name="boss">武器ブロックを保有するBossへのポインタ</param>
     void UpdateBlockPosition(Boss* boss);
+
+    /// <summary>
+    /// 指定座標をフェーズ2のプレイエリア境界内にクランプして返す
+    /// </summary>
+    /// <param name="position">クランプ対象のワールド座標</param>
+    /// <returns>エリア境界内に収めた座標</returns>
     Tako::Vector3 ClampToArea(const Tako::Vector3& position);
+
+    /// <summary>
+    /// 突進の開始位置・目標位置・方向ベクトルを算出して初期化する
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
     void InitializeRush(BTBlackboard* blackboard);
 
     //=========================================================================================

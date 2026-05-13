@@ -36,18 +36,62 @@ public:
     void  SetBlinkFrequency(float freq) { blinkFrequency_ = freq; }
 
 protected:
+    /// <summary>
+    /// 固有攻撃ロジック本体（Warning → Blinking → Attack → Recovery のフェーズ制御）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <returns>BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
     BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+
+    /// <summary>
+    /// 固有初期化処理（プレイヤー位置への着弾点確定、Decal の準備、totalDuration の算出）
+    /// </summary>
+    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+
+    /// <summary>
+    /// 固有クリーンアップ処理（Decal / コライダー / パーティクルの解放とフラグリセット）
+    /// </summary>
     void OnCleanup() override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ適用
+    /// </summary>
+    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
+
+    /// <summary>
+    /// 固有のjsonパラメータ抽出処理
+    /// </summary>
+    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
+    /// <summary>
+    /// 固有のImGuiデバッグ表示
+    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
 private:
+    /// <summary>
+    /// 点滅フェーズの更新処理（攻撃範囲 Decal の透明度をサインカーブで点滅させる）
+    /// </summary>
+    /// <param name="phaseElapsed">点滅フェーズの経過時間</param>
     void UpdateBlinkingPhase(float phaseElapsed);
+
+    /// <summary>
+    /// 攻撃フェーズの開始処理（コライダー有効化と斬撃パーティクル起動）
+    /// </summary>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void BeginAttackPhase(Boss* boss);
+
+    /// <summary>
+    /// 攻撃フェーズの終了処理（コライダー無効化と Decal の非表示化）
+    /// </summary>
+    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void EndAttackPhase(Boss* boss);
 
     static constexpr float kDecalBaseAlpha = 0.3f;

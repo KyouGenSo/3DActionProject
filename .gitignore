@@ -344,6 +344,7 @@ nul
 Docs/
 
 GameProject/imgui.ini
+GameProject/EngineResources/
 
 # Claude Code temporary files
 tmpclaude-*

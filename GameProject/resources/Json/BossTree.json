@@ -93,204 +93,281 @@
     },
     {
       "id": 30013,
-      "sourceNodeId": 10013,
-      "sourcePinId": 20022,
-      "targetNodeId": 10022,
-      "targetPinId": 20033
-    },
-    {
-      "id": 30014,
       "sourceNodeId": 10016,
       "sourcePinId": 20026,
       "targetNodeId": 10023,
       "targetPinId": 20035
     },
     {
-      "id": 30015,
-      "sourceNodeId": 10022,
-      "sourcePinId": 20034,
-      "targetNodeId": 10008,
-      "targetPinId": 20012
-    },
-    {
-      "id": 30016,
+      "id": 30014,
       "sourceNodeId": 10016,
       "sourcePinId": 20026,
       "targetNodeId": 10026,
       "targetPinId": 20039
     },
     {
-      "id": 30017,
+      "id": 30015,
       "sourceNodeId": 10016,
       "sourcePinId": 20026,
       "targetNodeId": 10027,
       "targetPinId": 20041
     },
     {
-      "id": 30018,
+      "id": 30016,
       "sourceNodeId": 10026,
       "sourcePinId": 20040,
       "targetNodeId": 10029,
       "targetPinId": 20044
     },
     {
-      "id": 30019,
+      "id": 30017,
       "sourceNodeId": 10026,
       "sourcePinId": 20040,
       "targetNodeId": 10017,
       "targetPinId": 20027
     },
     {
-      "id": 30020,
+      "id": 30018,
       "sourceNodeId": 10027,
       "sourcePinId": 20042,
       "targetNodeId": 10028,
       "targetPinId": 20043
     },
     {
-      "id": 30021,
+      "id": 30019,
       "sourceNodeId": 10027,
       "sourcePinId": 20042,
       "targetNodeId": 10018,
       "targetPinId": 20028
     },
     {
-      "id": 30022,
+      "id": 30020,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
       "targetNodeId": 10030,
       "targetPinId": 20045
     },
     {
-      "id": 30023,
+      "id": 30021,
       "sourceNodeId": 10024,
       "sourcePinId": 20037,
       "targetNodeId": 10001,
       "targetPinId": 20002
     },
     {
-      "id": 30024,
+      "id": 30022,
       "sourceNodeId": 10024,
       "sourcePinId": 20037,
       "targetNodeId": 10025,
       "targetPinId": 20038
     },
     {
-      "id": 30025,
+      "id": 30023,
       "sourceNodeId": 10008,
       "sourcePinId": 20013,
       "targetNodeId": 10031,
       "targetPinId": 20046
     },
     {
-      "id": 30026,
+      "id": 30024,
       "sourceNodeId": 10008,
       "sourcePinId": 20013,
       "targetNodeId": 10002,
       "targetPinId": 20003
     },
     {
-      "id": 30027,
+      "id": 30025,
       "sourceNodeId": 10008,
       "sourcePinId": 20013,
       "targetNodeId": 10009,
       "targetPinId": 20014
     },
     {
-      "id": 30028,
+      "id": 30026,
       "sourceNodeId": 10022,
       "sourcePinId": 20034,
       "targetNodeId": 10021,
       "targetPinId": 20031
     },
     {
-      "id": 30029,
+      "id": 30027,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
       "targetNodeId": 10032,
       "targetPinId": 20047
     },
     {
-      "id": 30030,
+      "id": 30028,
       "sourceNodeId": 10035,
       "sourcePinId": 20051,
       "targetNodeId": 10034,
       "targetPinId": 20049
     },
     {
-      "id": 30031,
+      "id": 30029,
       "sourceNodeId": 10035,
       "sourcePinId": 20051,
       "targetNodeId": 10033,
       "targetPinId": 20048
     },
     {
-      "id": 30032,
+      "id": 30030,
       "sourceNodeId": 10016,
       "sourcePinId": 20026,
       "targetNodeId": 10035,
       "targetPinId": 20050
     },
     {
-      "id": 30033,
+      "id": 30031,
       "sourceNodeId": 10008,
       "sourcePinId": 20013,
       "targetNodeId": 10036,
       "targetPinId": 20052
     },
     {
-      "id": 30034,
+      "id": 30032,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
       "targetNodeId": 10024,
       "targetPinId": 20036
     },
     {
-      "id": 30035,
+      "id": 30033,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
       "targetNodeId": 10007,
       "targetPinId": 20010
     },
     {
-      "id": 30036,
+      "id": 30034,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
       "targetNodeId": 10037,
       "targetPinId": 20053
     },
     {
-      "id": 30037,
+      "id": 30035,
       "sourceNodeId": 10008,
       "sourcePinId": 20013,
       "targetNodeId": 10039,
       "targetPinId": 20055
     },
     {
-      "id": 30038,
+      "id": 30036,
       "sourceNodeId": 10016,
       "sourcePinId": 20026,
       "targetNodeId": 10040,
       "targetPinId": 20056
     },
     {
-      "id": 30039,
+      "id": 30037,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
       "targetNodeId": 10038,
       "targetPinId": 20054
     },
     {
-      "id": 30040,
+      "id": 30038,
       "sourceNodeId": 10010,
       "sourcePinId": 20016,
       "targetNodeId": 10041,
       "targetPinId": 20057
+    },
+    {
+      "id": 30039,
+      "sourceNodeId": 10043,
+      "sourcePinId": 20060,
+      "targetNodeId": 10042,
+      "targetPinId": 20058
+    },
+    {
+      "id": 30040,
+      "sourceNodeId": 10043,
+      "sourcePinId": 20060,
+      "targetNodeId": 10044,
+      "targetPinId": 20061
+    },
+    {
+      "id": 30041,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10045,
+      "targetPinId": 20063
+    },
+    {
+      "id": 30042,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10046,
+      "targetPinId": 20064
+    },
+    {
+      "id": 30043,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10047,
+      "targetPinId": 20065
+    },
+    {
+      "id": 30044,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10048,
+      "targetPinId": 20066
+    },
+    {
+      "id": 30045,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10049,
+      "targetPinId": 20067
+    },
+    {
+      "id": 30046,
+      "sourceNodeId": 10022,
+      "sourcePinId": 20034,
+      "targetNodeId": 10008,
+      "targetPinId": 20012
+    },
+    {
+      "id": 30047,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10050,
+      "targetPinId": 20068
+    },
+    {
+      "id": 30048,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10051,
+      "targetPinId": 20069
+    },
+    {
+      "id": 30049,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10052,
+      "targetPinId": 20070
+    },
+    {
+      "id": 30050,
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
+      "targetNodeId": 10043,
+      "targetPinId": 20059
+    },
+    {
+      "id": 30051,
+      "sourceNodeId": 10013,
+      "sourcePinId": 20022,
+      "targetNodeId": 10022,
+      "targetPinId": 20033
     }
   ],
   "metadata": {
-    "created": "2026-03-17T23:17:37",
-    "modified": "2026-03-17T23:17:37",
+    "created": "2026-05-07T09:39:49",
+    "modified": "2026-05-07T09:39:49",
     "name": "Boss Behavior Tree"
   },
   "nodes": [
@@ -308,7 +385,7 @@
       "displayName": "Dash",
       "id": 10001,
       "parameters": {
-        "dashDuration": 0.04895099252462387,
+        "dashDuration": 0.09511236846446991,
         "dashSpeed": 200.0
       },
       "position": {
@@ -403,11 +480,11 @@
       "displayName": "Shoot",
       "id": 10009,
       "parameters": {
-        "bulletCount": 3,
+        "bulletCount": 5,
         "bulletSpeed": 200.0,
         "chargeTime": 0.44999998807907104,
         "recoveryTime": 1.0,
-        "spreadAngle": 0.1745329350233078
+        "spreadAngle": 0.2617993950843811
       },
       "position": {
         "x": 130.0,
@@ -511,7 +588,7 @@
       "displayName": "Shoot",
       "id": 10018,
       "parameters": {
-        "bulletCount": 3,
+        "bulletCount": 5,
         "bulletSpeed": 50.0,
         "chargeTime": 0.44999998807907104,
         "recoveryTime": 1.0,
@@ -881,6 +958,174 @@
       "position": {
         "x": 100.0,
         "y": 100.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Vortex Tempest",
+      "id": 10042,
+      "parameters": {
+        "angularSpeed": 1.75,
+        "attractPresetName": "boss_vortexattacck_attract",
+        "damageTickInterval": 0.5,
+        "decayTime": 0.5,
+        "dirPresetName": "boss_vortexattacck_dir",
+        "expandTime": 0.5,
+        "markerEmitterName": "boss_vortex_marker",
+        "maxDoT": 15.0,
+        "minDoT": 5.0,
+        "orbitRadius": 20.5,
+        "sustainTime": 10.0,
+        "vortexEmitterBaseName": "boss_vortex",
+        "vortexPresetName": "boss_vortexattack_vortex",
+        "warningTime": 1.5
+      },
+      "position": {
+        "x": 100.0,
+        "y": 100.0
+      },
+      "type": "BTBossVortexTempest"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10043,
+      "parameters": {
+        "policy": "AllSuccess"
+      },
+      "position": {
+        "x": 130.0,
+        "y": 120.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Sequence",
+      "id": 10044,
+      "parameters": null,
+      "position": {
+        "x": 160.0,
+        "y": 140.0
+      },
+      "type": "BTSequence"
+    },
+    {
+      "displayName": "Approach",
+      "id": 10045,
+      "parameters": {
+        "approachSpeed": 150.0,
+        "targetDistance": 12.0
+      },
+      "position": {
+        "x": 190.0,
+        "y": 160.0
+      },
+      "type": "BTBossApproach"
+    },
+    {
+      "displayName": "Melee Attack",
+      "id": 10046,
+      "parameters": {
+        "attackDuration": 0.20000000298023224,
+        "blockRadius": 8.0,
+        "blockScale": 0.5,
+        "comboInterval": 0.5,
+        "comboProbability": 0.0,
+        "prepareTime": 0.5,
+        "recoveryTime": 1.5,
+        "rushDistance": 25.0,
+        "stopDistance": 5.0,
+        "swingAngle": 3.1415927410125732
+      },
+      "position": {
+        "x": 220.0,
+        "y": 180.0
+      },
+      "type": "BTBossMeleeAttack"
+    },
+    {
+      "displayName": "Retreat",
+      "id": 10047,
+      "parameters": {
+        "retreatSpeed": 200.0,
+        "targetDistance": 60.0
+      },
+      "position": {
+        "x": 250.0,
+        "y": 200.0
+      },
+      "type": "BTBossRetreat"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10048,
+      "parameters": {
+        "bulletCount": 7,
+        "bulletSpeed": 150.0,
+        "chargeTime": 0.800000011920929,
+        "recoveryTime": 2.0,
+        "spreadAngle": 0.4363323152065277
+      },
+      "position": {
+        "x": 280.0,
+        "y": 220.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Dash",
+      "id": 10049,
+      "parameters": {
+        "dashDuration": 0.4177797734737396,
+        "dashSpeed": 100.0
+      },
+      "position": {
+        "x": 310.0,
+        "y": 240.0
+      },
+      "type": "BTBossDash"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10050,
+      "parameters": {
+        "bulletCount": 7,
+        "bulletSpeed": 150.0,
+        "chargeTime": 0.8999999761581421,
+        "recoveryTime": 3.0,
+        "spreadAngle": 0.26179999113082886
+      },
+      "position": {
+        "x": 100.0,
+        "y": 100.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Dash",
+      "id": 10051,
+      "parameters": {
+        "dashDuration": 0.4473901391029358,
+        "dashSpeed": 100.0
+      },
+      "position": {
+        "x": 130.0,
+        "y": 120.0
+      },
+      "type": "BTBossDash"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10052,
+      "parameters": {
+        "bulletCount": 7,
+        "bulletSpeed": 150.0,
+        "chargeTime": 0.8999999761581421,
+        "recoveryTime": 3.0,
+        "spreadAngle": 0.26179999113082886
+      },
+      "position": {
+        "x": 160.0,
+        "y": 140.0
       },
       "type": "BTBossShoot"
     }

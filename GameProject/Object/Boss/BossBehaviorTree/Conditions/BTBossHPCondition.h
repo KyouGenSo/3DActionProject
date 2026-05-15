@@ -1,12 +1,12 @@
 #pragma once
-#include "../../../../BehaviorTree/Core/BTNode.h"
-#include "../../../../BehaviorTree/Core/BTBlackboard.h"
+#include "BTNode.h"
+#include "BTBlackboard.h"
 
 /// <summary>
 /// HP 条件ノード
 /// 現在のボス HP を最大 HP に対するパーセンテージで比較して成功/失敗を返す
 /// </summary>
-class BTBossHPCondition : public BTNode {
+class BTBossHPCondition : public Tako::BTNode {
 public:
     /// <summary>
     /// 比較タイプ
@@ -33,7 +33,7 @@ public:
     /// </summary>
     /// <param name="blackboard">ブラックボード</param>
     /// <returns>実行結果</returns>
-    BTNodeStatus Execute(BTBlackboard* blackboard) override;
+    Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
 
     /// <summary>
     /// ノードのリセット

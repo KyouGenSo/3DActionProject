@@ -41,13 +41,13 @@ BTBossVortexTempest::BTBossVortexTempest() {
     name_ = "BossVortexTempest";
 }
 
-BTNodeStatus BTBossVortexTempest::OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossVortexTempest::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
     ForceFieldManager* ffm = boss->GetForceFieldManager();
     if (!ffm) {
-        return BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
-    Player* player = blackboard->GetPlayer();
+    Player* player = blackboard->GetPtr<Player>("player");
     elapsedTime_ += deltaTime;
 
     //=================================================================
@@ -181,10 +181,10 @@ BTNodeStatus BTBossVortexTempest::OnExecute(BTBlackboard* blackboard, Boss* boss
         }
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossVortexTempest::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
+void BTBossVortexTempest::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss) {
     ForceFieldManager* ffm = boss->GetForceFieldManager();
     if (!ffm) return;
 

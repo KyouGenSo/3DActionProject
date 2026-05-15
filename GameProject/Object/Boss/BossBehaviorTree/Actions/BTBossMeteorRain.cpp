@@ -22,7 +22,7 @@ BTBossMeteorRain::~BTBossMeteorRain() {
     OnCleanup();
 }
 
-BTNodeStatus BTBossMeteorRain::OnExecute(BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossMeteorRain::OnExecute(Tako::BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
     // フェーズ管理: Charge → Launch → Warning → Blink → Impact → Recovery
     const float chargeEnd = chargeTime_;
     const float launchEnd = chargeEnd + launchDuration_;
@@ -119,10 +119,10 @@ BTNodeStatus BTBossMeteorRain::OnExecute(BTBlackboard* /*blackboard*/, Boss* bos
         return FinishAttack();
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossMeteorRain::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
+void BTBossMeteorRain::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss) {
     hasBegunImpact_ = false;
     hasEndedImpact_ = false;
     decalsShown_ = false;

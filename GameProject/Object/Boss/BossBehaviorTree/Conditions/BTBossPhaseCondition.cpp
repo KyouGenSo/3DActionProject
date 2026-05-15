@@ -9,28 +9,28 @@ BTBossPhaseCondition::BTBossPhaseCondition() {
     name_ = "PhaseCondition";
 }
 
-BTNodeStatus BTBossPhaseCondition::Execute(BTBlackboard* blackboard) {
+Tako::BTNodeStatus BTBossPhaseCondition::Execute(Tako::BTBlackboard* blackboard) {
     // ボスを取得
-    Boss* boss = blackboard->GetBoss();
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     if (!boss) {
-        status_ = BTNodeStatus::Failure;
-        return BTNodeStatus::Failure;
+        status_ = Tako::BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
     // 現在のフェーズを取得して比較
     uint32_t currentPhase = boss->GetPhase();
 
     if (EvaluateCondition(currentPhase)) {
-        status_ = BTNodeStatus::Success;
-        return BTNodeStatus::Success;
+        status_ = Tako::BTNodeStatus::Success;
+        return Tako::BTNodeStatus::Success;
     }
 
-    status_ = BTNodeStatus::Failure;
-    return BTNodeStatus::Failure;
+    status_ = Tako::BTNodeStatus::Failure;
+    return Tako::BTNodeStatus::Failure;
 }
 
 void BTBossPhaseCondition::Reset() {
-    BTNode::Reset();
+    Tako::BTNode::Reset();
 }
 
 bool BTBossPhaseCondition::EvaluateCondition(uint32_t currentPhase) const {

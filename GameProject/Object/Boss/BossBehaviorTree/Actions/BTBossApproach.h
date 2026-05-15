@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../../BehaviorTree/Core/BTNode.h"
-#include "../../../../BehaviorTree/Core/BTBlackboard.h"
+#include "BTNode.h"
+#include "BTBlackboard.h"
 #include "Vector3.h"
 
 class Boss;
@@ -10,7 +10,7 @@ class Player;
 /// ボスのプレイヤー接近アクションノード
 /// プレイヤー方向にイージング移動で素早く接近し、一定距離で停止する
 /// </summary>
-class BTBossApproach : public BTNode {
+class BTBossApproach : public Tako::BTNode {
     //=========================================================================================
     // 定数
     //=========================================================================================
@@ -36,7 +36,7 @@ public:
     /// </summary>
     /// <param name="blackboard">ブラックボード</param>
     /// <returns>実行結果</returns>
-    BTNodeStatus Execute(BTBlackboard* blackboard) override;
+    Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
 
     /// <summary>
     /// ノードのリセット

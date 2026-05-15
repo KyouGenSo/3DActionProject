@@ -1,6 +1,6 @@
 #pragma once
-#include "../../../../BehaviorTree/Core/BTNode.h"
-#include "../../../../BehaviorTree/Core/BTBlackboard.h"
+#include "BTNode.h"
+#include "BTBlackboard.h"
 
 namespace Tako {
     class EmitterManager;
@@ -11,7 +11,7 @@ class Boss;
 /// <summary>
 /// ボス攻撃アクションノードの基底クラス。
 /// </summary>
-class AttackNode : public BTNode {
+class AttackNode : public Tako::BTNode {
 public:
     AttackNode();
     virtual ~AttackNode() = default;
@@ -19,7 +19,7 @@ public:
     /// <summary>
     /// 共通フローを実行する固定実装（派生は OnExecute を override）
     /// </summary>
-    BTNodeStatus Execute(BTBlackboard* blackboard) final;
+    Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) final;
 
     /// <summary>
     /// 標準 Reset。OnCleanup を呼んで Recovery / ForceVulnerable を確実に解除
@@ -49,12 +49,12 @@ protected:
     /// <summary>
     /// 攻撃ロジック本体（純粋仮想）。派生は elapsedTime_ += deltaTime も自分で行う。
     /// </summary>
-    virtual BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) = 0;
+    virtual Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) = 0;
 
     /// <summary>
     /// 初回実行時の派生固有初期化（totalDuration 計算など）
     /// </summary>
-    virtual void OnInitialize(BTBlackboard* blackboard, Boss* boss) { (void)blackboard; (void)boss; }
+    virtual void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) { (void)blackboard; (void)boss; }
 
     /// <summary>
     /// 後始末。Reset / 成功終了 / Failure 経路で共通に呼ばれる。
@@ -89,7 +89,7 @@ protected:
     /// 攻撃成功終了の標準パス: ExitRecovery → ForceVulnerable 解除 → OnCleanup → status=Success。
     /// 派生は終了条件を満たしたら `return FinishAttack();` で抜ける。
     /// </summary>
-    BTNodeStatus FinishAttack();
+    Tako::BTNodeStatus FinishAttack();
 
 protected:
     //=================== 共通メンバ ===================

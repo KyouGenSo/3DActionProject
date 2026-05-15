@@ -13,14 +13,14 @@ BTBossDistanceCondition::BTBossDistanceCondition() {
     name_ = "DistanceCondition";
 }
 
-BTNodeStatus BTBossDistanceCondition::Execute(BTBlackboard* blackboard) {
+Tako::BTNodeStatus BTBossDistanceCondition::Execute(Tako::BTBlackboard* blackboard) {
     // ボスとプレイヤーを取得
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
 
     if (!boss || !player) {
-        status_ = BTNodeStatus::Failure;
-        return BTNodeStatus::Failure;
+        status_ = Tako::BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
     // 位置を取得
@@ -34,16 +34,16 @@ BTNodeStatus BTBossDistanceCondition::Execute(BTBlackboard* blackboard) {
 
     // 範囲内チェック: minDistance_ <= distance <= maxDistance_
     if (distance >= minDistance_ && distance <= maxDistance_) {
-        status_ = BTNodeStatus::Success;
-        return BTNodeStatus::Success;
+        status_ = Tako::BTNodeStatus::Success;
+        return Tako::BTNodeStatus::Success;
     }
 
-    status_ = BTNodeStatus::Failure;
-    return BTNodeStatus::Failure;
+    status_ = Tako::BTNodeStatus::Failure;
+    return Tako::BTNodeStatus::Failure;
 }
 
 void BTBossDistanceCondition::Reset() {
-    BTNode::Reset();
+    Tako::BTNode::Reset();
 }
 
 void BTBossDistanceCondition::ApplyParameters(const nlohmann::json& params) {

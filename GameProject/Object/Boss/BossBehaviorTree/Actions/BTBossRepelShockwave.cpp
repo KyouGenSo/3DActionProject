@@ -15,10 +15,10 @@ BTBossRepelShockwave::BTBossRepelShockwave() {
     name_ = "BossRepelShockwave";
 }
 
-BTNodeStatus BTBossRepelShockwave::OnExecute(BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossRepelShockwave::OnExecute(Tako::BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
     ForceFieldManager* ffm = boss->GetForceFieldManager();
     if (!ffm) {
-        return BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
     elapsedTime_ += deltaTime;
@@ -78,10 +78,10 @@ BTNodeStatus BTBossRepelShockwave::OnExecute(BTBlackboard* /*blackboard*/, Boss*
         ffm->UpdateForceField(static_cast<uint32_t>(forceFieldId_), field);
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossRepelShockwave::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
+void BTBossRepelShockwave::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss) {
     ringTriggered_ = false;
 
     ForceFieldManager* ffm = boss->GetForceFieldManager();

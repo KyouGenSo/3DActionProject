@@ -16,17 +16,17 @@ BTBossApproach::BTBossApproach() {
     name_ = "BossApproach";
 }
 
-BTNodeStatus BTBossApproach::Execute(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
+Tako::BTNodeStatus BTBossApproach::Execute(Tako::BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     if (!boss) {
-        status_ = BTNodeStatus::Failure;
-        return BTNodeStatus::Failure;
+        status_ = Tako::BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
-    Player* player = blackboard->GetPlayer();
+    Player* player = blackboard->GetPtr<Player>("player");
     if (!player) {
-        status_ = BTNodeStatus::Failure;
-        return BTNodeStatus::Failure;
+        status_ = Tako::BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
     float deltaTime = blackboard->GetDeltaTime();
@@ -39,8 +39,8 @@ BTNodeStatus BTBossApproach::Execute(BTBlackboard* blackboard) {
         // 既に目標距離内にいる場合は即座に成功
         if (approachDuration_ <= 0.0f) {
             isFirstExecute_ = true;
-            status_ = BTNodeStatus::Success;
-            return BTNodeStatus::Success;
+            status_ = Tako::BTNodeStatus::Success;
+            return Tako::BTNodeStatus::Success;
         }
     }
 
@@ -63,17 +63,17 @@ BTNodeStatus BTBossApproach::Execute(BTBlackboard* blackboard) {
         // リセットして成功を返す
         isFirstExecute_ = true;
         elapsedTime_ = 0.0f;
-        status_ = BTNodeStatus::Success;
-        return BTNodeStatus::Success;
+        status_ = Tako::BTNodeStatus::Success;
+        return Tako::BTNodeStatus::Success;
     }
 
     // まだ接近中
-    status_ = BTNodeStatus::Running;
-    return BTNodeStatus::Running;
+    status_ = Tako::BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
 void BTBossApproach::Reset() {
-    BTNode::Reset();
+    Tako::BTNode::Reset();
     elapsedTime_ = 0.0f;
     isFirstExecute_ = true;
     approachDuration_ = 0.0f;

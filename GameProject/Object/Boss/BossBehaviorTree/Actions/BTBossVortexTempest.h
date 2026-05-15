@@ -56,15 +56,15 @@ protected:
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="boss">攻撃を行うBossへのポインタ</param>
     /// <param name="deltaTime">1フレームの経過時間</param>
-    /// <returns>BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
-    BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+    /// <returns>Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
     /// <summary>
     /// 固有初期化処理（ForceFieldManager のキャッシュ、4 渦点 × 3 プリセットの ForceField 登録、Decal/エミッターの準備）
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="boss">攻撃を行うBossへのポインタ</param>
-    void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+    void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
     /// <summary>
     /// 固有クリーンアップ処理（12 力場の逆順削除、エミッター停止、Decal 解放、ランタイム状態リセット）

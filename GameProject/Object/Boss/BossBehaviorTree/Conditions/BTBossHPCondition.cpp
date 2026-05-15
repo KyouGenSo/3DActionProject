@@ -9,12 +9,12 @@ BTBossHPCondition::BTBossHPCondition() {
     name_ = "HPCondition";
 }
 
-BTNodeStatus BTBossHPCondition::Execute(BTBlackboard* blackboard) {
+Tako::BTNodeStatus BTBossHPCondition::Execute(Tako::BTBlackboard* blackboard) {
     // ボスを取得
-    Boss* boss = blackboard->GetBoss();
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     if (!boss) {
-        status_ = BTNodeStatus::Failure;
-        return BTNodeStatus::Failure;
+        status_ = Tako::BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
     // 現在の HP をパーセンテージに変換
@@ -22,16 +22,16 @@ BTNodeStatus BTBossHPCondition::Execute(BTBlackboard* blackboard) {
     float currentPercent = (currentHp / Boss::GetMaxHp()) * 100.0f;
 
     if (EvaluateCondition(currentPercent)) {
-        status_ = BTNodeStatus::Success;
-        return BTNodeStatus::Success;
+        status_ = Tako::BTNodeStatus::Success;
+        return Tako::BTNodeStatus::Success;
     }
 
-    status_ = BTNodeStatus::Failure;
-    return BTNodeStatus::Failure;
+    status_ = Tako::BTNodeStatus::Failure;
+    return Tako::BTNodeStatus::Failure;
 }
 
 void BTBossHPCondition::Reset() {
-    BTNode::Reset();
+    Tako::BTNode::Reset();
 }
 
 bool BTBossHPCondition::EvaluateCondition(float currentPercent) const {

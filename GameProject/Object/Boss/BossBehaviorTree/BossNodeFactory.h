@@ -1,138 +1,15 @@
 #pragma once
 
-#include <string>
-#include <vector>
-#include <memory>
-#include "../../../BehaviorTree/Core/BTNode.h"
-
-#ifdef _DEBUG
-#include "ImGuiManager.h"
-#endif
-
-class Boss;
-class Player;
-
 /// <summary>
-/// ボスノードの生成ファクトリ
-/// ノードタイプ文字列から実際の BTNode インスタンスを生成
+/// Boss 専用ビヘイビアツリーノードを Tako::BTNodeRegistry に登録するためのファクトリ。
+/// 各 BTBoss* / 条件ノードの型情報・メタ情報 (表示名・カラー・カテゴリ) を Registry に登録する。
 /// </summary>
 class BossNodeFactory {
 public:
-    // ===== 全ビルドで使用可能 =====
-
-    /// <summary>
-    /// ノードの生成
-    /// </summary>
-    /// <param name="nodeType">ノードタイプ名（"BTSelector", "BTSequence"等）</param>
-    /// <returns>生成されたノード（失敗時は nullptr）</returns>
-    static BTNodePtr CreateNode(const std::string& nodeType);
-
-    /// <summary>
-    /// Boss/Player の依存関係を持つノードの生成
-    /// </summary>
-    /// <param name="nodeType">ノードタイプ名</param>
-    /// <param name="boss">ボスのポインタ（必要な場合）</param>
-    /// <param name="player">プレイヤーのポインタ（必要な場合）</param>
-    /// <returns>生成されたノード（失敗時は nullptr）</returns>
-    static BTNodePtr CreateNodeWithDependencies(
-        const std::string& nodeType,
-        Boss* boss = nullptr,
-        Player* player = nullptr
-    );
-
-#ifdef _DEBUG
-    // ===== デバッグビルドのみ =====
-
-    /// <summary>
-    /// ノードカテゴリ
-    /// </summary>
-    enum class NodeCategory {
-        Composite,      // 複合ノード（Selector, Sequence）
-        Action,         // アクションノード（Idle, Dash, Shoot）
-        Condition,      // 条件ノード（ActionSelector）
-        Decorator       // デコレータノード（将来の拡張用）
-    };
-
-    /// <summary>
-    /// ノードタイプ情報
-    /// </summary>
-    struct NodeTypeInfo {
-        std::string typeName;           // ノードタイプ名（"BTSelector"等）
-        std::string displayName;        // 表示名（"セレクター"等）
-        NodeCategory category;          // カテゴリ
-        ImVec4 color;                  // ノードカラー
-        bool isComposite;              // 子ノードを持てるか
-    };
-
-    /// <summary>
-    /// 利用可能なノードタイプ一覧の取得
-    /// </summary>
-    /// <returns>利用可能なノードタイプ名のリスト</returns>
-    static std::vector<std::string> GetAvailableNodeTypes();
-
-    /// <summary>
-    /// カテゴリごとのノードタイプ取得
-    /// </summary>
-    /// <param name="category">カテゴリ</param>
-    /// <returns>該当カテゴリのノードタイプリスト</returns>
-    static std::vector<std::string> GetNodeTypesByCategory(NodeCategory category);
-
-    /// <summary>
-    /// ノードタイプの取得（逆引き）
-    /// </summary>
-    /// <param name="node">BTNode インスタンス</param>
-    /// <returns>ノードタイプ名</returns>
-    static std::string GetNodeType(const BTNodePtr& node);
-
-    /// <summary>
-    /// ノードタイプ情報の取得
-    /// </summary>
-    /// <param name="nodeType">ノードタイプ名</param>
-    /// <returns>ノードタイプ情報</returns>
-    static NodeTypeInfo GetNodeTypeInfo(const std::string& nodeType);
-
-    /// <summary>
-    /// ノードの表示名を取得
-    /// </summary>
-    /// <param name="nodeType">ノードタイプ名</param>
-    /// <returns>表示用の名前</returns>
-    static std::string GetNodeDisplayName(const std::string& nodeType);
-
-    /// <summary>
-    /// ノードの色を取得（エディタ表示用）
-    /// </summary>
-    /// <param name="nodeType">ノードタイプ名</param>
-    /// <returns>ノードの色（ImVec4）</returns>
-    static ImVec4 GetNodeColor(const std::string& nodeType);
-
-    /// <summary>
-    /// コンポジットノードかどうか判定
-    /// </summary>
-    /// <param name="nodeType">ノードタイプ名</param>
-    /// <returns>コンポジット（子を持てる）なら true</returns>
-    static bool IsCompositeNode(const std::string& nodeType);
-
-    /// <summary>
-    /// ノードカテゴリを取得
-    /// </summary>
-    /// <param name="nodeType">ノードタイプ名</param>
-    /// <returns>ノードカテゴリ</returns>
-    static NodeCategory GetNodeCategory(const std::string& nodeType);
-
-private:
-    /// <summary>
-    /// ノードタイプ情報の初期化（静的）
-    /// </summary>
-    static void InitializeNodeTypes();
-
-    /// <summary>
-    /// ノードタイプ情報のマップ
-    /// </summary>
-    static std::vector<NodeTypeInfo> nodeTypes_;
-
-    /// <summary>
-    /// 初期化フラグ
-    /// </summary>
-    static bool initialized_;
-#endif // _DEBUG
+  /// <summary>
+  /// Boss 専用ノード (Action 14 種 + Condition 4 種) を Tako::BTNodeRegistry に一括登録する。
+  /// アプリ起動時 (Boss::InitializeAI 等) で 1 回呼び出すこと。
+  /// 重複登録は Registry 側で上書き処理されるため、複数回呼んでも安全。
+  /// </summary>
+  static void RegisterAll();
 };

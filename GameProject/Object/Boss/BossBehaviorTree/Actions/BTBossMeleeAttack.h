@@ -51,15 +51,15 @@ protected:
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="boss">攻撃を行うBossへのポインタ</param>
     /// <param name="deltaTime">1フレームの経過時間</param>
-    /// <returns>BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
-    BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+    /// <returns>Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
     /// <summary>
     /// 固有初期化処理（コンボ抽選、totalDuration の算出、武器ブロックの生成と初期姿勢の設定）
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="boss">攻撃を行うBossへのポインタ</param>
-    void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+    void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
     /// <summary>
     /// 固有クリーンアップ処理（武器ブロック解放とフェーズ状態のリセット）
@@ -90,21 +90,21 @@ private:
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="deltaTime">1フレームの経過時間</param>
-    void AimAtPlayer(BTBlackboard* blackboard, float deltaTime);
+    void AimAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 準備フェーズの更新処理（プレイヤー追尾と突進初期化）
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="deltaTime">1フレームの経過時間</param>
-    void ProcessPreparePhase(BTBlackboard* blackboard, float deltaTime);
+    void ProcessPreparePhase(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 攻撃実行フェーズの更新処理（突進移動とブロック振り回し）
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="deltaTime">1フレームの経過時間</param>
-    void ProcessExecutePhase(BTBlackboard* blackboard, float deltaTime);
+    void ProcessExecutePhase(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 硬直フェーズの開始処理（Boss を硬直状態へ遷移させる）
@@ -117,7 +117,7 @@ private:
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="deltaTime">1フレームの経過時間</param>
-    void ProcessIntervalPhase(BTBlackboard* blackboard, float deltaTime);
+    void ProcessIntervalPhase(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// 現在のコンボ段に応じた振り方向と初期角度を設定する
@@ -141,7 +141,7 @@ private:
     /// 突進の開始位置・目標位置・方向ベクトルを算出して初期化する
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    void InitializeRush(BTBlackboard* blackboard);
+    void InitializeRush(Tako::BTBlackboard* blackboard);
 
     //=========================================================================================
     // パラメータ

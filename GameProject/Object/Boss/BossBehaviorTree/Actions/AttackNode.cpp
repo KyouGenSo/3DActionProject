@@ -10,10 +10,10 @@ AttackNode::AttackNode() {
     name_ = "AttackNode";  // 派生クラスのコンストラクタで上書きされる
 }
 
-BTNodeStatus AttackNode::Execute(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
+Tako::BTNodeStatus AttackNode::Execute(Tako::BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     if (!boss) {
-        status_ = BTNodeStatus::Failure;
+        status_ = Tako::BTNodeStatus::Failure;
         return status_;
     }
 
@@ -35,8 +35,8 @@ BTNodeStatus AttackNode::Execute(BTBlackboard* blackboard) {
 }
 
 void AttackNode::Reset() {
-    BTNode::Reset();
-    // BTParallel 等が中断する場合でも Boss のフラグを必ず解除する。
+    Tako::BTNode::Reset();
+    // Tako::BTParallel 等が中断する場合でも Boss のフラグを必ず解除する。
     if (cachedBoss_) {
         if (enteredRecovery_) {
             cachedBoss_->ExitRecovery();
@@ -63,7 +63,7 @@ void AttackNode::EnterAttackRecovery(Boss* boss) {
     enteredRecovery_ = true;
 }
 
-BTNodeStatus AttackNode::FinishAttack() {
+Tako::BTNodeStatus AttackNode::FinishAttack() {
     // Recovery / ForceVulnerable 解除
     if (cachedBoss_) {
         if (enteredRecovery_) {
@@ -82,7 +82,7 @@ BTNodeStatus AttackNode::FinishAttack() {
     cachedBoss_ = nullptr;
     cachedEmitterManager_ = nullptr;
 
-    status_ = BTNodeStatus::Success;
+    status_ = Tako::BTNodeStatus::Success;
     return status_;
 }
 

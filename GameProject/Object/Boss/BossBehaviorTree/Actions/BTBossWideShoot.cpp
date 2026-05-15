@@ -13,7 +13,7 @@ BTBossWideShoot::BTBossWideShoot() {
     name_ = "BossWideShoot";
 }
 
-BTNodeStatus BTBossWideShoot::OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossWideShoot::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
     // チャージフェーズ：プレイヤーの方向を向く
     if (elapsedTime_ < chargeTime_) {
         AimAtPlayer(blackboard, deltaTime);
@@ -54,10 +54,10 @@ BTNodeStatus BTBossWideShoot::OnExecute(BTBlackboard* blackboard, Boss* boss, fl
         return FinishAttack();
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossWideShoot::OnInitialize(BTBlackboard* blackboard, Boss* boss) {
+void BTBossWideShoot::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
     timeSinceLastFire_ = 0.0f;
     currentSweep_ = 0;
     firedInSweep_ = 0;
@@ -74,7 +74,7 @@ void BTBossWideShoot::OnInitialize(BTBlackboard* blackboard, Boss* boss) {
     bulletSignEffect_.Start(boss, chargeTime_);
 
     // 基準方向を計算（プレイヤー方向）
-    Player* player = blackboard->GetPlayer();
+    Player* player = blackboard->GetPtr<Player>("player");
     if (player) {
         Vector3 playerPos = player->GetTransform().translate;
         Vector3 bossPos = boss->GetTransform().translate;
@@ -88,9 +88,9 @@ void BTBossWideShoot::OnInitialize(BTBlackboard* blackboard, Boss* boss) {
     }
 }
 
-void BTBossWideShoot::AimAtPlayer(BTBlackboard* blackboard, float /*deltaTime*/) {
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+void BTBossWideShoot::AimAtPlayer(Tako::BTBlackboard* blackboard, float /*deltaTime*/) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
     if (!player) return;
 
     Vector3 playerPos = player->GetTransform().translate;

@@ -19,7 +19,7 @@ BTBossMeleeAttack::BTBossMeleeAttack() {
     name_ = "BossMeleeAttack";
 }
 
-BTNodeStatus BTBossMeleeAttack::OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossMeleeAttack::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
     elapsedTime_ += deltaTime;
     phaseTimer_ += deltaTime;
 
@@ -82,10 +82,10 @@ BTNodeStatus BTBossMeleeAttack::OnExecute(BTBlackboard* blackboard, Boss* boss, 
         break;
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossMeleeAttack::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
+void BTBossMeleeAttack::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss) {
     phaseTimer_ = 0.0f;
     currentPhase_ = MeleePhase::Prepare;
     colliderActivated_ = false;
@@ -122,9 +122,9 @@ void BTBossMeleeAttack::OnCleanup() {
     currentSwingDirection_ = 1.0f;
 }
 
-void BTBossMeleeAttack::AimAtPlayer(BTBlackboard* blackboard, float deltaTime) {
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+void BTBossMeleeAttack::AimAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
     if (!player) return;
 
     Vector3 playerPos = player->GetTransform().translate;
@@ -149,8 +149,8 @@ void BTBossMeleeAttack::AimAtPlayer(BTBlackboard* blackboard, float deltaTime) {
     }
 }
 
-void BTBossMeleeAttack::ProcessPreparePhase(BTBlackboard* blackboard, float deltaTime) {
-    Boss* boss = blackboard->GetBoss();
+void BTBossMeleeAttack::ProcessPreparePhase(Tako::BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     AimAtPlayer(blackboard, deltaTime);
     UpdateBlockPosition(boss);
 
@@ -160,13 +160,13 @@ void BTBossMeleeAttack::ProcessPreparePhase(BTBlackboard* blackboard, float delt
     }
 }
 
-void BTBossMeleeAttack::ProcessExecutePhase(BTBlackboard* blackboard, float deltaTime) {
-    Boss* boss = blackboard->GetBoss();
+void BTBossMeleeAttack::ProcessExecutePhase(Tako::BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     BossMeleeAttackCollider* collider = boss->GetMeleeAttackCollider();
     bool hasHit = collider && collider->HasHitPlayer();
 
     if (hasHit) {
-        Player* player = blackboard->GetPlayer();
+        Player* player = blackboard->GetPtr<Player>("player");
         if (player) {
             Vector3 playerPos = player->GetTransform().translate;
             Vector3 bossPos = boss->GetTransform().translate;
@@ -201,7 +201,7 @@ void BTBossMeleeAttack::ProcessRecoveryPhase(Boss* boss) {
     (void)boss;
 }
 
-void BTBossMeleeAttack::ProcessIntervalPhase(BTBlackboard* blackboard, float deltaTime) {
+void BTBossMeleeAttack::ProcessIntervalPhase(Tako::BTBlackboard* blackboard, float deltaTime) {
     AimAtPlayer(blackboard, deltaTime);
 }
 
@@ -227,12 +227,12 @@ Vector3 BTBossMeleeAttack::ClampToArea(const Vector3& position) {
     return clampedPos;
 }
 
-void BTBossMeleeAttack::InitializeRush(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
+void BTBossMeleeAttack::InitializeRush(Tako::BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     rushInitialized_ = true;
     startPosition_ = boss->GetTransform().translate;
 
-    Player* player = blackboard->GetPlayer();
+    Player* player = blackboard->GetPtr<Player>("player");
     if (player) {
         Vector3 playerPos = player->GetTransform().translate;
         Vector3 toPlayer = playerPos - startPosition_;

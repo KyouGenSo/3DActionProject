@@ -13,7 +13,7 @@ BTBossShoot::BTBossShoot() {
     name_ = "BossShoot";
 }
 
-BTNodeStatus BTBossShoot::OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossShoot::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
     // プレイヤーの方向を向く（射撃準備中）
     if (elapsedTime_ < chargeTime_) {
         AimAtPlayer(blackboard, deltaTime);
@@ -35,18 +35,18 @@ BTNodeStatus BTBossShoot::OnExecute(BTBlackboard* blackboard, Boss* boss, float 
         return FinishAttack();
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossShoot::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
+void BTBossShoot::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss) {
     totalDuration_ = chargeTime_ + recoveryTime_;
     hasFired_ = false;
     bulletSignEffect_.Start(boss, chargeTime_);
 }
 
-void BTBossShoot::AimAtPlayer(BTBlackboard* blackboard, float /*deltaTime*/) {
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+void BTBossShoot::AimAtPlayer(Tako::BTBlackboard* blackboard, float /*deltaTime*/) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
     if (!player) return;
 
     Vector3 playerPos = player->GetTransform().translate;
@@ -61,9 +61,9 @@ void BTBossShoot::AimAtPlayer(BTBlackboard* blackboard, float /*deltaTime*/) {
     }
 }
 
-void BTBossShoot::FireBullets(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+void BTBossShoot::FireBullets(Tako::BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
     if (!player) return;
 
     Vector3 firePosition = boss->GetTransform().translate;

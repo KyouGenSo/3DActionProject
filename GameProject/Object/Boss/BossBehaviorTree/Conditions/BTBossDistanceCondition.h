@@ -1,12 +1,12 @@
 #pragma once
-#include "../../../../BehaviorTree/Core/BTNode.h"
-#include "../../../../BehaviorTree/Core/BTBlackboard.h"
+#include "BTNode.h"
+#include "BTBlackboard.h"
 
 /// <summary>
 /// 距離条件ノード
 /// プレイヤーとの距離が指定範囲内かを判定して成功/失敗を返す
 /// </summary>
-class BTBossDistanceCondition : public BTNode {
+class BTBossDistanceCondition : public Tako::BTNode {
 public:
     /// <summary>
     /// コンストラクタ
@@ -23,7 +23,7 @@ public:
     /// </summary>
     /// <param name="blackboard">ブラックボード</param>
     /// <returns>実行結果</returns>
-    BTNodeStatus Execute(BTBlackboard* blackboard) override;
+    Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
 
     /// <summary>
     /// ノードのリセット

@@ -16,7 +16,7 @@ BTBossBarrage::BTBossBarrage() {
     name_ = "BossBarrage";
 }
 
-BTNodeStatus BTBossBarrage::OnExecute(BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossBarrage::OnExecute(Tako::BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
     // フェーズ管理: Move → Charge → Firing → Recovery
     const float moveEnd = moveDuration_;
     const float chargeEnd = moveEnd + chargeTime_;
@@ -56,10 +56,10 @@ BTNodeStatus BTBossBarrage::OnExecute(BTBlackboard* /*blackboard*/, Boss* boss, 
         return FinishAttack();
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossBarrage::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
+void BTBossBarrage::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss) {
     timeSinceLastFire_ = 0.0f;
     hasEndedEffect_ = false;
 

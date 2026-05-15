@@ -1,13 +1,13 @@
 #pragma once
-#include "../../../../BehaviorTree/Core/BTNode.h"
-#include "../../../../BehaviorTree/Core/BTBlackboard.h"
+#include "BTNode.h"
+#include "BTBlackboard.h"
 
 class Boss;
 
 /// <summary>
 /// ボスの待機アクションノード
 /// </summary>
-class BTBossIdle : public BTNode {
+class BTBossIdle : public Tako::BTNode {
     //=========================================================================================
     // 定数
     //=========================================================================================
@@ -30,7 +30,7 @@ public:
     /// </summary>
     /// <param name="blackboard">ブラックボード</param>
     /// <returns>実行結果</returns>
-    BTNodeStatus Execute(BTBlackboard* blackboard) override;
+    Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
 
     /// <summary>
     /// ノードのリセット
@@ -77,7 +77,7 @@ private:
     /// </summary>
     /// <param name="boss">ボス</param>
     /// <param name="deltaTime">経過時間</param>
-    void LookAtPlayer(BTBlackboard* blackboard, float deltaTime);
+    void LookAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime);
 
 
     // 待機時間（次の行動までの時間）

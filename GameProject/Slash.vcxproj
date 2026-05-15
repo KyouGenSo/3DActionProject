@@ -47,11 +47,6 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <ItemGroup>
-    <ClCompile Include="BehaviorTree\Composites\BTParallel.cpp" />
-    <ClCompile Include="BehaviorTree\Composites\BTSelector.cpp" />
-    <ClCompile Include="BehaviorTree\Composites\BTSequence.cpp" />
-    <ClCompile Include="BehaviorTree\Composites\BTRandomSelector.cpp" />
-    <ClCompile Include="BehaviorTree\Core\BTComposite.cpp" />
     <ClCompile Include="CameraAnimation\CameraAnimation.cpp" />
     <ClCompile Include="CameraSystem\Controller\CameraAnimationController.cpp" />
     <ClCompile Include="CameraSystem\CameraDebugUI.cpp" />
@@ -105,14 +100,10 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRetreat.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.cpp" />
-    <ClCompile Include="Object\Boss\BossBehaviorTree\BossBehaviorTree.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPhaseCondition.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossHPCondition.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossDistanceCondition.cpp" />
-    <ClCompile Include="Object\Boss\BossNodeEditor\BossNodeEditor.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\BossNodeFactory.cpp" />
     <ClCompile Include="Collision\MeleeAttackCollider.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
@@ -151,13 +142,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BehaviorTree\Composites\BTParallel.h" />
-    <ClInclude Include="BehaviorTree\Composites\BTSelector.h" />
-    <ClInclude Include="BehaviorTree\Composites\BTSequence.h" />
-    <ClInclude Include="BehaviorTree\Composites\BTRandomSelector.h" />
-    <ClInclude Include="BehaviorTree\Core\BTBlackboard.h" />
-    <ClInclude Include="BehaviorTree\Core\BTComposite.h" />
-    <ClInclude Include="BehaviorTree\Core\BTNode.h" />
     <ClInclude Include="CameraAnimation\CameraAnimation.h" />
     <ClInclude Include="CameraAnimation\CameraKeyframe.h" />
     <ClInclude Include="CameraSystem\Controller\CameraAnimationController.h" />
@@ -219,14 +203,10 @@
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRetreat.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.h" />
-    <ClInclude Include="Object\Boss\BossBehaviorTree\BossBehaviorTree.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPhaseCondition.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossHPCondition.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossDistanceCondition.h" />
-    <ClInclude Include="Object\Boss\BossNodeEditor\BossNodeEditor.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\BossNodeFactory.h" />
     <ClInclude Include="Collision\MeleeAttackCollider.h" />
     <ClInclude Include="Object\Player\Player.h" />

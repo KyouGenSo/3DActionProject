@@ -21,7 +21,7 @@ BTBossSlashAttack::~BTBossSlashAttack() {
     OnCleanup();
 }
 
-BTNodeStatus BTBossSlashAttack::OnExecute(BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossSlashAttack::OnExecute(Tako::BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
     // フェーズ管理: Warning → Blinking → Attack → Recovery
     const float warningEnd = warningDuration_;
     const float blinkEnd = warningEnd + blinkDuration_;
@@ -56,17 +56,17 @@ BTNodeStatus BTBossSlashAttack::OnExecute(BTBlackboard* /*blackboard*/, Boss* bo
         return FinishAttack();
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossSlashAttack::OnInitialize(BTBlackboard* blackboard, Boss* boss) {
+void BTBossSlashAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
     hasBegunAttack_ = false;
     hasEndedAttack_ = false;
 
     totalDuration_ = warningDuration_ + blinkDuration_ + attackDuration_ + recoveryTime_;
 
     // プレイヤー位置を取得・確定（発動時の位置を使い続ける）
-    Vector3 targetPos = blackboard->GetPlayer()->GetTransform().translate;
+    Vector3 targetPos = blackboard->GetPtr<Player>("player")->GetTransform().translate;
 
     // Decal の生成（Circle 形状）
     float diameter = attackRadius_ * 2.0f;

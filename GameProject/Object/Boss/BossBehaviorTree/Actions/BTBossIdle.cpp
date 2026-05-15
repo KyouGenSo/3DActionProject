@@ -15,11 +15,11 @@ BTBossIdle::BTBossIdle() {
     name_ = "BossIdle";
 }
 
-BTNodeStatus BTBossIdle::Execute(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
+Tako::BTNodeStatus BTBossIdle::Execute(Tako::BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     if (!boss) {
-        status_ = BTNodeStatus::Failure;
-        return BTNodeStatus::Failure;
+        status_ = Tako::BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
     float deltaTime = blackboard->GetDeltaTime();
@@ -43,24 +43,24 @@ BTNodeStatus BTBossIdle::Execute(BTBlackboard* blackboard) {
     // 待機時間が経過したら成功を返す
     if (elapsedTime_ >= idleDuration_) {
         isFirstExecute_ = true;  // 次回実行時のためにリセット
-        status_ = BTNodeStatus::Success;
-        return BTNodeStatus::Success;
+        status_ = Tako::BTNodeStatus::Success;
+        return Tako::BTNodeStatus::Success;
     }
 
     // まだ待機中
-    status_ = BTNodeStatus::Running;
-    return BTNodeStatus::Running;
+    status_ = Tako::BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
 void BTBossIdle::Reset() {
-    BTNode::Reset();
+    Tako::BTNode::Reset();
     elapsedTime_ = 0.0f;
     isFirstExecute_ = true;
 }
 
-void BTBossIdle::LookAtPlayer(BTBlackboard* blackboard, float deltaTime) {
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+void BTBossIdle::LookAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
     if (!player) {
         return;
     }

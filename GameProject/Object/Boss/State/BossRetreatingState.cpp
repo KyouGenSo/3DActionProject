@@ -3,8 +3,8 @@
 #include "BossStateMachine.h"
 #include "../../Player/Player.h"
 #include "../../../Common/GameConst.h"
-#include "../BossBehaviorTree/BossBehaviorTree.h"
-#include "../../../BehaviorTree/Core/BTBlackboard.h"
+#include "BehaviorTree.h"
+#include "BTBlackboard.h"
 #include "Mat4x4Func.h"
 
 #include <algorithm>
@@ -25,7 +25,7 @@ void BossRetreatingState::Enter(Boss* boss)
 
 	startPosition_ = boss->GetTransform().translate;
 
-	Player* player = boss->GetBehaviorTree()->GetBlackboard()->GetPlayer();
+	Player* player = boss->GetBehaviorTree()->GetBlackboard()->GetPtr<Player>("player");
 	if (!player) {
 		// プレイヤーがいない場合はすぐ Normal に戻る
 		retreatDuration_ = 0.0f;

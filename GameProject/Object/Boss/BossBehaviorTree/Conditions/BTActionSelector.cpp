@@ -9,7 +9,7 @@ BTActionSelector::BTActionSelector(ActionType type)
     name_ = (type == ActionType::Dash) ? "ActionSelector(Dash)" : "ActionSelector(Shoot)";
 }
 
-BTNodeStatus BTActionSelector::Execute(BTBlackboard* blackboard) {
+Tako::BTNodeStatus BTActionSelector::Execute(Tako::BTBlackboard* blackboard) {
     // アクションカウンターを取得
     int actionCounter = blackboard->GetInt("ActionCounter", 0);
 
@@ -18,16 +18,16 @@ BTNodeStatus BTActionSelector::Execute(BTBlackboard* blackboard) {
 
     // 期待するタイプと一致すれば成功
     if (currentType == static_cast<int>(expectedType_)) {
-        status_ = BTNodeStatus::Success;
-        return BTNodeStatus::Success;
+        status_ = Tako::BTNodeStatus::Success;
+        return Tako::BTNodeStatus::Success;
     }
 
-    status_ = BTNodeStatus::Failure;
-    return BTNodeStatus::Failure;
+    status_ = Tako::BTNodeStatus::Failure;
+    return Tako::BTNodeStatus::Failure;
 }
 
 void BTActionSelector::Reset() {
-    BTNode::Reset();
+    Tako::BTNode::Reset();
 }
 
 nlohmann::json BTActionSelector::ExtractParameters() const {

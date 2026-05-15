@@ -39,12 +39,6 @@
     <Filter Include="Object\Projectile">
       <UniqueIdentifier>{93d8772f-6abc-484f-8174-74dbb0339c46}</UniqueIdentifier>
     </Filter>
-    <Filter Include="BehaviorTree">
-      <UniqueIdentifier>{09a017ea-3980-4572-a8f0-95ab2716a08d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="BehaviorTree\Core">
-      <UniqueIdentifier>{e36fa40f-3ecd-4b49-ab2a-3d9574a50ab8}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Object\Boss\BossBehaviorTree">
       <UniqueIdentifier>{8fadaa47-22cd-4bb9-8d8f-bdf710112485}</UniqueIdentifier>
     </Filter>
@@ -68,9 +62,6 @@
     </Filter>
     <Filter Include="Effect">
       <UniqueIdentifier>{fd705391-fd52-4064-bca3-6fb63c78106e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="BehaviorTree\Composites">
-      <UniqueIdentifier>{54752936-db44-4750-ae6b-d9594579c3b6}</UniqueIdentifier>
     </Filter>
     <Filter Include="Object\Boss\State">
       <UniqueIdentifier>{36347a97-464a-45da-bd0b-a4064425c6fb}</UniqueIdentifier>
@@ -171,21 +162,6 @@
     <ClCompile Include="Scene\OverScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="BehaviorTree\Composites\BTParallel.cpp">
-      <Filter>BehaviorTree\Composites</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviorTree\Composites\BTSelector.cpp">
-      <Filter>BehaviorTree\Composites</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviorTree\Composites\BTSequence.cpp">
-      <Filter>BehaviorTree\Composites</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviorTree\Composites\BTRandomSelector.cpp">
-      <Filter>BehaviorTree\Composites</Filter>
-    </ClCompile>
-    <ClCompile Include="BehaviorTree\Core\BTComposite.cpp">
-      <Filter>BehaviorTree\Core</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
@@ -206,12 +182,6 @@
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\BossBehaviorTree.cpp">
-      <Filter>Object\Boss\BossBehaviorTree</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossNodeEditor\BossNodeEditor.cpp">
-      <Filter>Object\Boss\BossNodeEditor</Filter>
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
@@ -446,27 +416,6 @@
     <ClInclude Include="Scene\OverScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="BehaviorTree\Composites\BTParallel.h">
-      <Filter>BehaviorTree\Composites</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviorTree\Composites\BTSelector.h">
-      <Filter>BehaviorTree\Composites</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviorTree\Composites\BTSequence.h">
-      <Filter>BehaviorTree\Composites</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviorTree\Composites\BTRandomSelector.h">
-      <Filter>BehaviorTree\Composites</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviorTree\Core\BTBlackboard.h">
-      <Filter>BehaviorTree\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviorTree\Core\BTComposite.h">
-      <Filter>BehaviorTree\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="BehaviorTree\Core\BTNode.h">
-      <Filter>BehaviorTree\Core</Filter>
-    </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
@@ -487,12 +436,6 @@
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.h">
       <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\BossBehaviorTree.h">
-      <Filter>Object\Boss\BossBehaviorTree</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossNodeEditor\BossNodeEditor.h">
-      <Filter>Object\Boss\BossNodeEditor</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>

@@ -14,7 +14,7 @@ BTBossRapidFire::BTBossRapidFire() {
     name_ = "BossRapidFire";
 }
 
-BTNodeStatus BTBossRapidFire::OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossRapidFire::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
     // フェーズ1: チャージ中（プレイヤーに照準）
     if (elapsedTime_ < chargeTime_) {
         AimAtPlayer(blackboard, deltaTime);
@@ -53,10 +53,10 @@ BTNodeStatus BTBossRapidFire::OnExecute(BTBlackboard* blackboard, Boss* boss, fl
         return FinishAttack();
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossRapidFire::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
+void BTBossRapidFire::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss) {
     firedCount_ = 0;
     // 即座に 1 発目を撃てるよう発射タイマを満タンに
     timeSinceLastFire_ = fireInterval_;
@@ -65,9 +65,9 @@ void BTBossRapidFire::OnInitialize(BTBlackboard* /*blackboard*/, Boss* boss) {
     bulletSignEffect_.Start(boss, chargeTime_);
 }
 
-void BTBossRapidFire::AimAtPlayer(BTBlackboard* blackboard, float /*deltaTime*/) {
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+void BTBossRapidFire::AimAtPlayer(Tako::BTBlackboard* blackboard, float /*deltaTime*/) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
     if (!player) return;
 
     Vector3 playerPos = player->GetTransform().translate;
@@ -82,17 +82,17 @@ void BTBossRapidFire::AimAtPlayer(BTBlackboard* blackboard, float /*deltaTime*/)
     }
 }
 
-void BTBossRapidFire::FireBullet(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
+void BTBossRapidFire::FireBullet(Tako::BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     Vector3 firePosition = boss->GetTransform().translate;
     Vector3 direction = CalculateDirectionToPlayer(blackboard);
     Vector3 bulletVelocity = direction * bulletSpeed_;
     boss->RequestBulletSpawn(firePosition, bulletVelocity);
 }
 
-Vector3 BTBossRapidFire::CalculateDirectionToPlayer(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+Vector3 BTBossRapidFire::CalculateDirectionToPlayer(Tako::BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
     if (!player) return Vector3(0.0f, 0.0f, 1.0f);
 
     Vector3 firePosition = boss->GetTransform().translate;

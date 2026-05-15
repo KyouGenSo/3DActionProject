@@ -17,11 +17,11 @@ BTBossDash::BTBossDash() {
     name_ = "BossDash";
 }
 
-BTNodeStatus BTBossDash::Execute(BTBlackboard* blackboard) {
-    Boss* boss = blackboard->GetBoss();
+Tako::BTNodeStatus BTBossDash::Execute(Tako::BTBlackboard* blackboard) {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
     if (!boss) {
-        status_ = BTNodeStatus::Failure;
-        return BTNodeStatus::Failure;
+        status_ = Tako::BTNodeStatus::Failure;
+        return Tako::BTNodeStatus::Failure;
     }
 
     float deltaTime = blackboard->GetDeltaTime();
@@ -50,21 +50,21 @@ BTNodeStatus BTBossDash::Execute(BTBlackboard* blackboard) {
         // リセットして成功を返す
         isFirstExecute_ = true;
         elapsedTime_ = 0.0f;
-        status_ = BTNodeStatus::Success;
-        return BTNodeStatus::Success;
+        status_ = Tako::BTNodeStatus::Success;
+        return Tako::BTNodeStatus::Success;
     }
 
     // まだダッシュ中
-    status_ = BTNodeStatus::Running;
-    return BTNodeStatus::Running;
+    status_ = Tako::BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
 void BTBossDash::Reset() {
-    BTNode::Reset();
+    Tako::BTNode::Reset();
     elapsedTime_ = 0.0f;
     isFirstExecute_ = true;
     // 注意: Reset 時は boss 参照がないため、SetDashing(false)は呼べない
-    // BossBehaviorTree::Update()でのリセット時にも安全に動作するよう
+    // BehaviorTree のリセット時にも安全に動作するよう
     // BTBossDash 自体は状態を保持しない設計とする
 }
 

@@ -45,15 +45,15 @@ private:
     /// <param name= "blackboard">BTBlackboardへのポインタ</param>
     /// <param name= "boss">攻撃を行うBossへのポインタ</param>
     /// <param name= "deltaTime">1フレームの経過時間</param>
-    /// <returns> BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
-    BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+    /// <returns> Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
     /// <summary>
     /// 固有初期化処理
     /// </summary>
     /// <param name= "blackboard">BTBlackboardへのポインタ</param>
     /// <param name= "boss">攻撃を行うBossへのポインタ</param>
-    void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+    void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
     /// <summary>
     ///　固有クリーンアップ処理
@@ -83,13 +83,13 @@ private:
     ///　攻撃対象の象限をランダムに選択して activeQuadrants_ を更新する
     /// </summary>
     /// <param name= "blackboard">BTBlackboardへのポインタ</param>
-    void SelectRandomQuadrants(BTBlackboard* blackboard);
+    void SelectRandomQuadrants(Tako::BTBlackboard* blackboard);
 
     /// <summary>
     ///　プレイヤーがどの象限にいるかを取得する
     /// </summary>
     /// <param name= "blackboard">BTBlackboardへのポインタ</param>
-    int GetPlayerQuadrant(BTBlackboard* blackboard) const;
+    int GetPlayerQuadrant(Tako::BTBlackboard* blackboard) const;
 
     /// <summary>
     ///　象限インデックスからその象限の中心座標を計算して返す

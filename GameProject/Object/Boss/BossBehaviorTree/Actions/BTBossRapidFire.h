@@ -33,15 +33,15 @@ protected:
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="boss">攻撃を行うBossへのポインタ</param>
     /// <param name="deltaTime">1フレームの経過時間</param>
-    /// <returns>BTNodeStatus::Running（攻撃継続中） / BTNodeStatus::Success（攻撃完了）</returns>
-    BTNodeStatus OnExecute(BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
+    /// <returns>Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
     /// <summary>
     /// 固有初期化処理（totalDuration の算出と予兆エフェクト起動）
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="boss">攻撃を行うBossへのポインタ</param>
-    void OnInitialize(BTBlackboard* blackboard, Boss* boss) override;
+    void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
     /// <summary>
     /// 固有のjsonパラメータ適用
@@ -67,20 +67,20 @@ private:
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <param name="deltaTime">1フレームの経過時間</param>
-    void AimAtPlayer(BTBlackboard* blackboard, float deltaTime);
+    void AimAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
     /// プレイヤー方向に向けて弾を1発生成・発射する
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    void FireBullet(BTBlackboard* blackboard);
+    void FireBullet(Tako::BTBlackboard* blackboard);
 
     /// <summary>
     /// 現在のボス位置からプレイヤー位置への正規化済み方向ベクトルを算出する
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>
     /// <returns>ボスからプレイヤーへの正規化方向ベクトル</returns>
-    Tako::Vector3 CalculateDirectionToPlayer(BTBlackboard* blackboard);
+    Tako::Vector3 CalculateDirectionToPlayer(Tako::BTBlackboard* blackboard);
 
     //=========================================================================================
     // パラメータ

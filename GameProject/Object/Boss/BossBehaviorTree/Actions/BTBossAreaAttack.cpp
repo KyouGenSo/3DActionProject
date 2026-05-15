@@ -24,7 +24,7 @@ BTBossAreaAttack::~BTBossAreaAttack() {
     OnCleanup();
 }
 
-BTNodeStatus BTBossAreaAttack::OnExecute(BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
+Tako::BTNodeStatus BTBossAreaAttack::OnExecute(Tako::BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
     // フェーズ管理: Warning → Blinking → Attack → Recovery
     const float warningEnd = warningDuration_;
     const float blinkEnd = warningEnd + blinkDuration_;
@@ -57,10 +57,10 @@ BTNodeStatus BTBossAreaAttack::OnExecute(BTBlackboard* /*blackboard*/, Boss* bos
         return FinishAttack();
     }
 
-    return BTNodeStatus::Running;
+    return Tako::BTNodeStatus::Running;
 }
 
-void BTBossAreaAttack::OnInitialize(BTBlackboard* blackboard, Boss* boss) {
+void BTBossAreaAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
     hasBegunAttack_ = false;
     hasEndedAttack_ = false;
 
@@ -142,7 +142,7 @@ void BTBossAreaAttack::OnCleanup() {
     hasEndedAttack_ = false;
 }
 
-void BTBossAreaAttack::SelectRandomQuadrants(BTBlackboard* blackboard) {
+void BTBossAreaAttack::SelectRandomQuadrants(Tako::BTBlackboard* blackboard) {
     RandomEngine* rng = RandomEngine::GetInstance();
 
     int count = rng->GetInt(minQuadrants_, maxQuadrants_);
@@ -174,9 +174,9 @@ void BTBossAreaAttack::SelectRandomQuadrants(BTBlackboard* blackboard) {
     }
 }
 
-int BTBossAreaAttack::GetPlayerQuadrant(BTBlackboard* blackboard) const {
-    Boss* boss = blackboard->GetBoss();
-    Player* player = blackboard->GetPlayer();
+int BTBossAreaAttack::GetPlayerQuadrant(Tako::BTBlackboard* blackboard) const {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
     Vector3 bossPos = boss->GetTransform().translate;
     Vector3 playerPos = player->GetTransform().translate;
 

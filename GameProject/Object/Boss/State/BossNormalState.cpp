@@ -1,6 +1,6 @@
 #include "BossNormalState.h"
 #include "../Boss.h"
-#include "../BossBehaviorTree/BossBehaviorTree.h"
+#include "BehaviorTree.h"
 
 BossNormalState::BossNormalState()
     : BossState("Normal")
@@ -10,7 +10,7 @@ BossNormalState::BossNormalState()
 void BossNormalState::Enter(Boss* boss)
 {
     // BT を初期化
-    BossBehaviorTree* bt = boss->GetBehaviorTree();
+    Tako::BehaviorTree* bt = boss->GetBehaviorTree();
     if (bt) {
         bt->Reset();
     }
@@ -18,9 +18,9 @@ void BossNormalState::Enter(Boss* boss)
 
 void BossNormalState::Update(Boss* boss, float deltaTime)
 {
-    BossBehaviorTree* bt = boss->GetBehaviorTree();
+    Tako::BehaviorTree* bt = boss->GetBehaviorTree();
     if (bt) {
-        bt->Update(deltaTime);
+        bt->Tick(deltaTime);
     }
 }
 
@@ -30,7 +30,7 @@ void BossNormalState::Exit(Boss* boss)
     boss->ResetActionState();
 
     // BT をリセット（Running 中のアクションを中断）
-    BossBehaviorTree* bt = boss->GetBehaviorTree();
+    Tako::BehaviorTree* bt = boss->GetBehaviorTree();
     if (bt) {
         bt->Reset();
     }

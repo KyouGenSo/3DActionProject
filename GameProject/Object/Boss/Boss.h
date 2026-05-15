@@ -24,11 +24,14 @@ class EmitterManager;
 class ForceFieldManager;
 }
 
+#include "BehaviorTree.h"
+#ifdef _DEBUG
+#include "BehaviorTreeEditor.h"
+#endif
+
 // GameProject 前方宣言
 class BossStateMachine;
 class BossStunnedState;
-class BossBehaviorTree;
-class BossNodeEditor;
 class Player;
 class BossMeleeAttackCollider;
 
@@ -185,7 +188,7 @@ public:
     /// ビヘイビアツリーを取得
     /// </summary>
     /// <returns>ビヘイビアツリーのポインタ</returns>
-    BossBehaviorTree* GetBehaviorTree() const { return behaviorTree_.get(); }
+    Tako::BehaviorTree* GetBehaviorTree() const { return behaviorTree_.get(); }
 
     /// <summary>
     /// 近接攻撃ヒット時の統合処理
@@ -484,12 +487,12 @@ private:
     // ステートマシン（外部イベント駆動の状態管理）
     std::unique_ptr<BossStateMachine> stateMachine_;
 
-    // ビヘイビアツリー（AI 意思決定）
-    std::unique_ptr<BossBehaviorTree> behaviorTree_;
+    // ビヘイビアツリー (AI 意思決定)
+    std::unique_ptr<Tako::BehaviorTree> behaviorTree_;
 
 #ifdef _DEBUG
     // ビヘイビアツリーノードエディタ
-    std::unique_ptr<BossNodeEditor> nodeEditor_;
+    std::unique_ptr<Tako::BehaviorTreeEditor> nodeEditor_;
 
     // ノードエディタの表示フラグ
     bool showNodeEditor_ = false;

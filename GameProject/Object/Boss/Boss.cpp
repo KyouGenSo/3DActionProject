@@ -7,7 +7,7 @@
 #include "../../Collision/BossMeleeAttackCollider.h"
 #include "WinApp.h"
 #include "EnginePaths.h"
-#include "BossBehaviorTree/BossBehaviorTree.h"
+#include "BossBehaviorTree/BossNodeFactory.h"
 #include "GlobalVariables.h"
 #include "EmitterManager.h"
 #include "State/BossStateMachine.h"
@@ -20,7 +20,7 @@
 #include "../Player/Player.h"
 
 #ifdef _DEBUG
-#include "BossNodeEditor/BossNodeEditor.h"
+#include "ImGuiManager.h"
 #endif
 
 using namespace Tako;
@@ -126,12 +126,27 @@ void Boss::InitializeEffects()
 
 void Boss::InitializeAI()
 {
-    behaviorTree_ = std::make_unique<BossBehaviorTree>(this, player_);
+    // BehaviorTree 生成前に Boss 専用ノード型を Registry に登録する必要がある
+    BossNodeFactory::RegisterAll();
+
+    behaviorTree_ = std::make_unique<Tako::BehaviorTree>();
+    auto* bb = behaviorTree_->GetBlackboard();
+    bb->SetPtr<Boss>("boss", this);
+    bb->SetPtr<Player>("player", player_);
+    bb->SetInt("ActionCounter", 0);
+    behaviorTree_->LoadFromJSON("resources/Json/BT/BossTree.json");
 
 #ifdef _DEBUG
-    nodeEditor_ = std::make_unique<BossNodeEditor>();
-    nodeEditor_->Initialize();
-    BTNodePtr runtimeTree = nodeEditor_->BuildRuntimeTree();
+    nodeEditor_ = std::make_unique<Tako::BehaviorTreeEditor>();
+    Tako::EditorConfig editorConfig{
+        .btJsonDir = "resources/Json/BT/",
+        .initialTreeFile = "BossTree.json",
+        .windowName = "Boss Behavior Tree Editor",
+        .nodeInspectorName = "Node Inspector##BNE",
+        .canvasName = "Boss Node Editor Canvas",
+    };
+    nodeEditor_->Initialize(editorConfig);
+    Tako::BTNodePtr runtimeTree = nodeEditor_->BuildRuntimeTree();
     if (runtimeTree && behaviorTree_) {
         behaviorTree_->SetRootNode(runtimeTree);
     }
@@ -188,7 +203,7 @@ void Boss::Update(float deltaTime)
         // エディタが有効な場合、実行中のノードをハイライト
         if (stateMachine_->GetCurrentStateName() == "Normal" &&
             nodeEditor_ && showNodeEditor_ && behaviorTree_) {
-            BTNodePtr currentNode = behaviorTree_->GetCurrentRunningNode();
+            Tako::BTNodePtr currentNode = behaviorTree_->GetCurrentRunningNode();
             if (currentNode) {
                 nodeEditor_->HighlightRunningNode(currentNode);
             }
@@ -356,15 +371,8 @@ void Boss::DrawImGui()
 
     // ビヘイビアツリーの制御
     if (behaviorTree_) {
-        // JSON から直接ビヘイビアツリーに読み込み（デバッグ・リリース共通）
         ImGui::SameLine();
-        if (ImGui::Button("Load Tree from JSON")) {
-            if (behaviorTree_->LoadFromJSON("resources/Json/BossTree.json")) {
-                ImGui::Text("Tree loaded successfully!");
-            }
-        }
-
-        // デバッグビルド専用：ノードエディタ機能
+        // ノードエディタを開く
         if (nodeEditor_) {
             ImGui::SameLine();
             if (ImGui::Button("Node Editor")) {
@@ -375,7 +383,7 @@ void Boss::DrawImGui()
             // エディタのツリーを BehaviorTree に適用
             ImGui::SameLine();
             if (ImGui::Button("Apply Editor Tree")) {
-                BTNodePtr runtimeTree = nodeEditor_->BuildRuntimeTree();
+                Tako::BTNodePtr runtimeTree = nodeEditor_->BuildRuntimeTree();
                 if (runtimeTree && behaviorTree_) {
                     behaviorTree_->SetRootNode(runtimeTree);
                 }
@@ -458,7 +466,7 @@ std::vector<BulletSpawnRequest> Boss::ConsumePendingPenetratingBullets() {
 void Boss::SetPlayer(Player* player) {
     player_ = player;
     if (behaviorTree_) {
-        behaviorTree_->SetPlayer(player);
+        behaviorTree_->GetBlackboard()->SetPtr<Player>("player", player);
     }
 }
 

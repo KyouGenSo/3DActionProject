@@ -83,13 +83,8 @@ private:
     /// <summary>影響対象 mask（既定: プレイヤー弾 + プレイヤー本体）</summary>
     uint32_t affectMask_ = GameForceField::AffectBullets | GameForceField::AffectPlayer;
 
-    /// <summary>衝撃波リング演出のエミッタ名</summary>
-    std::string ringEmitterName_ = "boss_repel_ring";
-    /// <summary>中心フラッシュ演出のエミッタ名</summary>
-    std::string flashEmitterName_ = "boss_repel_flash";
-
     //======================== ランタイム状態 ========================
-    bool ringTriggered_ = false;       ///< 衝撃波エミッター起動済みか（Phase 1 突入時に ON）
+    bool ringTriggered_ = false;       ///< 衝撃波スフィア表示開始済みか（Phase 1 突入時に ON）
     int32_t forceFieldId_ = -1;        ///< 登録した ForceField のインデックス（-1 = 未登録）
 
     //======================== Reset 用キャッシュ ========================

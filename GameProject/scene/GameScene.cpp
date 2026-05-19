@@ -277,7 +277,7 @@ void GameScene::Draw()
         ShadowRenderer::GetInstance()->BeginShadowPass();
         ground_->Draw();
         player_->Draw();
-        boss_->Draw();
+        boss_->DrawShadow();
         ShadowRenderer::GetInstance()->EndShadowPass();
     }
 

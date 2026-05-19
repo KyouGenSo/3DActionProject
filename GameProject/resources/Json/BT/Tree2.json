@@ -29,23 +29,16 @@
       "targetPinId": 20006
     },
     {
-      "id": 30004,
+      "id": 30006,
       "sourceNodeId": 10004,
       "sourcePinId": 20007,
-      "targetNodeId": 10005,
-      "targetPinId": 20008
-    },
-    {
-      "id": 30005,
-      "sourceNodeId": 10004,
-      "sourcePinId": 20007,
-      "targetNodeId": 10006,
-      "targetPinId": 20009
+      "targetNodeId": 10007,
+      "targetPinId": 20010
     }
   ],
   "metadata": {
-    "created": "2026-05-15T15:40:07",
-    "modified": "2026-05-15T15:40:07",
+    "created": "2026-05-19T20:12:07",
+    "modified": "2026-05-19T20:12:07",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -105,38 +98,23 @@
       "type": "BTRandomSelector"
     },
     {
-      "displayName": "Shoot",
-      "id": 10005,
+      "displayName": "Repel Shockwave",
+      "id": 10007,
       "parameters": {
-        "bulletCount": 3,
-        "bulletSpeed": 20.0,
-        "chargeTime": 0.8999999761581421,
+        "affectMask": 3,
+        "expandTime": 0.5,
+        "falloff": 0.0,
         "isBypassRecoveryGuard": false,
-        "recoveryTime": 0.5,
-        "spreadAngle": 0.26179999113082886
+        "maxRadius": 35.0,
+        "strength": 2000.0,
+        "sustainTime": 1.0,
+        "warningTime": 0.5
       },
       "position": {
-        "x": 408.0,
+        "x": 264.0,
         "y": 175.0
       },
-      "type": "BTBossShoot"
-    },
-    {
-      "displayName": "Rapid Fire",
-      "id": 10006,
-      "parameters": {
-        "bulletCount": 5,
-        "bulletSpeed": 20.0,
-        "chargeTime": 0.8999999761581421,
-        "fireInterval": 0.15000000596046448,
-        "isBypassRecoveryGuard": false,
-        "recoveryTime": 0.5
-      },
-      "position": {
-        "x": 184.0,
-        "y": 175.0
-      },
-      "type": "BTBossRapidFire"
+      "type": "BTBossRepelShockwave"
     }
   ],
   "version": "1.0"

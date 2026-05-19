@@ -1,6 +1,8 @@
 #include "Boss.h"
 #include <algorithm>
 #include "Object3d.h"
+#include "Model.h"
+#include "PrimitiveBuilder.h"
 #include "OBBCollider.h"
 #include "CollisionManager.h"
 #include "../../Collision/CollisionTypeIdDef.h"
@@ -56,6 +58,7 @@ void Boss::InitializeStateMachine()
 
 void Boss::InitializeModel()
 {
+    // ボス本体の3Dモデルの初期化
     model_ = std::make_unique<Object3d>();
     model_->Initialize();
     model_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
@@ -64,8 +67,21 @@ void Boss::InitializeModel()
     transform_.translate = Vector3(0.0f, initialY_, initialZ_);
     transform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
     transform_.scale = Vector3(1.0f, 1.0f, 1.0f);
-
     model_->SetTransform(transform_);
+
+    // 近接攻撃用ブロックの初期化
+    meleeAttackBlock_ = std::make_unique<Object3d>();
+    meleeAttackBlock_->Initialize();
+    meleeAttackBlock_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
+    meleeAttackBlock_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+
+    // 反発衝撃波エフェクト用スフィアの初期化（半径1の単位球、SetScale で動的サイズ調整）
+    repelShockwaveSphere_ = std::make_unique<Object3d>();
+    repelShockwaveSphere_->Initialize();
+    repelShockwaveSphere_->SetModel(PrimitiveBuilder::CreateSphere({ .radius = 1.0f, .lonDiv = 32, .latDiv = 16 }));
+    repelShockwaveSphere_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 0.3f));
+    repelShockwaveSphere_->SetEnableLighting(false);
+    repelShockwaveSphere_->SetScale({ 0.0f, 0.0f, 0.0f });
 }
 
 void Boss::InitializeHealth()
@@ -97,12 +113,6 @@ void Boss::InitializeColliders()
     bodyCollider_->SetTypeID(static_cast<uint32_t>(CollisionTypeId::BOSS));
     bodyCollider_->SetOwner(this);
     CollisionManager::GetInstance()->AddCollider(bodyCollider_.get());
-
-    // 近接攻撃用ブロックの初期化
-    meleeAttackBlock_ = std::make_unique<Object3d>();
-    meleeAttackBlock_->Initialize();
-    meleeAttackBlock_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
-    meleeAttackBlock_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 
     // 近接攻撃コライダーの初期化
     float meleeColliderSizeX = gv->GetValueFloat("BossMeleeAttackCollider", "ColliderSizeX");
@@ -223,6 +233,12 @@ void Boss::Update(float deltaTime)
     renderTransform.translate += shakeEffect_.GetOffset();
     model_->SetTransform(renderTransform);
     model_->Update();
+
+    // 反発衝撃波スフィアの更新（表示中のみ位置をボスに追従）
+    if (repelShockwaveSphereVisible_ && repelShockwaveSphere_) {
+        repelShockwaveSphere_->SetTranslate(transform_.translate);
+        repelShockwaveSphere_->Update();
+    }
 }
 
 void Boss::Draw()
@@ -232,6 +248,28 @@ void Boss::Draw()
     // 攻撃ブロックの描画（表示フラグが true の時のみ）
     if (meleeAttackBlockVisible_ && meleeAttackBlock_) {
         meleeAttackBlock_->Draw();
+    }
+
+    // 反発衝撃波スフィアの描画（表示フラグが true の時のみ）
+    if (repelShockwaveSphereVisible_ && repelShockwaveSphere_) {
+        repelShockwaveSphere_->Draw();
+    }
+}
+
+void Boss::DrawShadow()
+{
+    model_->Draw();
+
+    // 攻撃ブロックの描画（表示フラグが true の時のみ）
+    if (meleeAttackBlockVisible_ && meleeAttackBlock_) {
+        meleeAttackBlock_->Draw();
+    }
+}
+
+void Boss::SetRepelShockwaveSphereScale(float radius)
+{
+    if (repelShockwaveSphere_) {
+        repelShockwaveSphere_->SetScale({ radius, radius, radius });
     }
 }
 

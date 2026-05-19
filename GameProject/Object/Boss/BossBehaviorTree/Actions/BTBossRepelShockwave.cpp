@@ -1,6 +1,5 @@
 #include "BTBossRepelShockwave.h"
 #include "../../Boss.h"
-#include "EmitterManager.h"
 #include "ForceFieldManager.h"
 #include "ParticleStruct.h"
 #include <algorithm>
@@ -47,30 +46,24 @@ Tako::BTNodeStatus BTBossRepelShockwave::OnExecute(Tako::BTBlackboard* /*blackbo
         field.strength = strength_;
         field.radius = maxRadius_ * std::clamp(t, 0.0f, 1.0f);
 
-        // 衝撃波リング演出を一度だけ ON
-        if (!ringTriggered_ && cachedEmitterManager_) {
-            cachedEmitterManager_->SetEmitterActive(ringEmitterName_, true);
-            cachedEmitterManager_->SetEmitterPosition(ringEmitterName_, boss->GetTransform().translate);
+        // Phase 1 突入時にスフィア表示開始（一度だけ）
+        if (!ringTriggered_) {
+            boss->SetRepelShockwaveSphereVisible(true);
             ringTriggered_ = true;
         }
+        // スフィアのサイズを ForceField の半径と同期
+        boss->SetRepelShockwaveSphereScale(field.radius);
     }
     else if (elapsedTime_ < sustainEnd) {
         // Phase 2: 持続 — 最大半径維持 + Recovery 突入（プレイヤーがスタンを取れる隙）
         field.strength = strength_;
         field.radius = maxRadius_;
+        boss->SetRepelShockwaveSphereScale(field.radius);
         EnterAttackRecovery(boss);
     }
     else {
         // Phase 3: 終了
         return FinishAttack();
-    }
-
-    // エミッター位置をボス追従
-    if (cachedEmitterManager_) {
-        cachedEmitterManager_->SetEmitterPosition(flashEmitterName_, boss->GetTransform().translate);
-        if (ringTriggered_) {
-            cachedEmitterManager_->SetEmitterPosition(ringEmitterName_, boss->GetTransform().translate);
-        }
     }
 
     // ForceField 更新
@@ -99,12 +92,6 @@ void BTBossRepelShockwave::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss
     field.falloff = falloff_;
     field.affectMask = affectMask_;
     forceFieldId_ = ffm->AddForceField(field);
-
-    // 中心フラッシュ演出を起動
-    if (cachedEmitterManager_) {
-        cachedEmitterManager_->SetEmitterActive(flashEmitterName_, true);
-        cachedEmitterManager_->SetEmitterPosition(flashEmitterName_, boss->GetTransform().translate);
-    }
 }
 
 void BTBossRepelShockwave::OnCleanup() {
@@ -115,10 +102,9 @@ void BTBossRepelShockwave::OnCleanup() {
     forceFieldId_ = -1;
     cachedForceFieldManager_ = nullptr;
 
-    // エミッター停止
-    if (cachedEmitterManager_) {
-        cachedEmitterManager_->SetEmitterActive(ringEmitterName_, false);
-        cachedEmitterManager_->SetEmitterActive(flashEmitterName_, false);
+    // 衝撃波スフィアを非表示化（cachedBoss_ は親 AttackNode で管理）
+    if (cachedBoss_) {
+        cachedBoss_->SetRepelShockwaveSphereVisible(false);
     }
 
     ringTriggered_ = false;
@@ -134,12 +120,6 @@ void BTBossRepelShockwave::OnApplyParameters(const nlohmann::json& params) {
     if (params.contains("affectMask") && params["affectMask"].is_number_unsigned()) {
         affectMask_ = params["affectMask"].get<uint32_t>();
     }
-    if (params.contains("ringEmitterName") && params["ringEmitterName"].is_string()) {
-        ringEmitterName_ = params["ringEmitterName"].get<std::string>();
-    }
-    if (params.contains("flashEmitterName") && params["flashEmitterName"].is_string()) {
-        flashEmitterName_ = params["flashEmitterName"].get<std::string>();
-    }
 }
 
 void BTBossRepelShockwave::OnExtractParameters(nlohmann::json& out) const {
@@ -150,8 +130,6 @@ void BTBossRepelShockwave::OnExtractParameters(nlohmann::json& out) const {
     out["strength"]         = strength_;
     out["falloff"]          = falloff_;
     out["affectMask"]       = affectMask_;
-    out["ringEmitterName"]  = ringEmitterName_;
-    out["flashEmitterName"] = flashEmitterName_;
 }
 
 #ifdef _DEBUG

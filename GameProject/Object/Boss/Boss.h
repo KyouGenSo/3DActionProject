@@ -78,6 +78,7 @@ public:
     /// 描画
     /// </summary>
     void Draw();
+    void DrawShadow();
 
     /// <summary>
     /// スプライト描画
@@ -378,6 +379,18 @@ public:
     bool IsMeleeAttackBlockVisible() const { return meleeAttackBlockVisible_; }
 
     /// <summary>
+    /// 反発衝撃波スフィアの表示/非表示を設定（BTBossRepelShockwave から呼ばれる）
+    /// </summary>
+    /// <param name="visible">表示する場合 true</param>
+    void SetRepelShockwaveSphereVisible(bool visible) { repelShockwaveSphereVisible_ = visible; }
+
+    /// <summary>
+    /// 反発衝撃波スフィアのスケール（実効半径）を設定（BTBossRepelShockwave から呼ばれる）
+    /// </summary>
+    /// <param name="radius">スフィアの半径（ForceField の radius と同期）</param>
+    void SetRepelShockwaveSphereScale(float radius);
+
+    /// <summary>
     /// 近接攻撃コライダーを取得
     /// </summary>
     /// <returns>近接攻撃コライダーのポインタ</returns>
@@ -532,6 +545,10 @@ private:
 
     // 攻撃ブロック表示フラグ
     bool meleeAttackBlockVisible_ = false;
+
+    // 反発衝撃波エフェクト用スフィア（BTBossRepelShockwave アクション中に半透明赤で表示）
+    std::unique_ptr<Tako::Object3d> repelShockwaveSphere_;
+    bool repelShockwaveSphereVisible_ = false;
 
     // 近接攻撃用コライダー
     std::unique_ptr<BossMeleeAttackCollider> meleeAttackCollider_;

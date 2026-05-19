@@ -20,6 +20,7 @@ class OBBCollider;
 class Object3d;
 class Camera;
 class EmitterManager;
+class ForceFieldManager;
 }
 
 // GameProject 前方宣言
@@ -40,6 +41,7 @@ class Player
 private:
 	static constexpr float kVelocityEpsilon = 0.01f;   ///< 速度判定の閾値
 	static constexpr float kBoundaryDisabled = 9999.0f; ///< 境界無効化マーカー
+	static constexpr float kExternalVelocityDamping = 0.9f; ///< 外力速度の減衰係数（毎フレーム乗算）
     // イージング用定数
     static constexpr float kMoveArrivalThreshold = 0.5f;
     static constexpr float kMoveEasingCoeffA = 3.0f;
@@ -388,6 +390,12 @@ public: // メンバ関数
     Tako::EmitterManager* GetEmitterManager() const { return emitterManager_; }
 
     /// <summary>
+    /// ForceFieldManager を設定（BTBossRepelShockwave などの反発衝撃波を受ける）
+    /// </summary>
+    /// <param name="manager">ForceFieldManager のポインタ（非所有）</param>
+    void SetForceFieldManager(Tako::ForceFieldManager* manager) { forceFieldManager_ = manager; }
+
+    /// <summary>
     /// パリィ状態かどうかを判定
     /// </summary>
     /// <returns>true: パリィ中, false: それ以外</returns>
@@ -446,6 +454,12 @@ private:
     void UpdateTransform();
 
     /// <summary>
+    /// 物理更新（ForceField による外力を反映、減衰処理）
+    /// </summary>
+    /// <param name="deltaTime">フレーム時間</param>
+    void UpdatePhysics(float deltaTime);
+
+    /// <summary>
     /// 視覚エフェクトの更新
     /// </summary>
     /// <param name="deltaTime">フレーム時間</param>
@@ -460,6 +474,8 @@ private: // メンバ変数
     Tako::Camera* camera_ = nullptr;        ///< カメラ
     Tako::Transform transform_{};           ///< 変形情報
     Tako::Vector3 velocity_{};              ///< 速度
+    Tako::Vector3 externalVelocity_{};      ///< 外力速度 (m/s、ForceField による反発)
+    Tako::ForceFieldManager* forceFieldManager_ = nullptr; ///< ForceFieldManager への参照（非所有）
     float speed_ = 0.5f;              ///< 移動速度
     float targetAngle_ = 0.f;         ///< 目標角度
     float hp_ = 100.f;                ///< 体力

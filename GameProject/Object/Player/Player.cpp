@@ -22,6 +22,8 @@
 #include "../../Common/DamageFeedback.h"
 #include "FrameTimer.h"
 #include "EmitterManager.h"
+#include "ForceFieldManager.h"
+#include "../../Common/ForceFieldAffectMask.h"
 #include "EnginePaths.h"
 
 #include <cmath>
@@ -111,6 +113,7 @@ void Player::Update()
     UpdateStateMachine(deltaTime);
     UpdateVisuals(deltaTime);
     UpdateCollider();
+    UpdatePhysics(deltaTime);
     UpdateTransform();
 }
 
@@ -161,6 +164,21 @@ void Player::UpdateTransform()
     // 位置制限適用
     transform_.translate.x = std::clamp(transform_.translate.x, effectiveXMin, effectiveXMax);
     transform_.translate.z = std::clamp(transform_.translate.z, effectiveZMin, effectiveZMax);
+}
+
+void Player::UpdatePhysics(float deltaTime)
+{
+    // ForceField の外力を速度に反映（PlayerBullet と同じパターン、AffectPlayer マスクでクエリ）
+    if (forceFieldManager_) {
+        const Vector3 force = forceFieldManager_->EvaluateForceAt(
+            transform_.translate, GameForceField::AffectPlayer);
+        externalVelocity_ += force * deltaTime; // 加速度 → 速度
+    }
+    // 外力を位置に反映
+    transform_.translate.x += externalVelocity_.x * deltaTime;
+    transform_.translate.z += externalVelocity_.z * deltaTime;
+    // 外力減衰
+    externalVelocity_ *= kExternalVelocityDamping;
 }
 
 void Player::UpdateVisuals(float deltaTime)

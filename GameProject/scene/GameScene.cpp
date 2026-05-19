@@ -595,6 +595,9 @@ void GameScene::InitializeEmitterManger()
     // ボスに ForceFieldManager を設定（BTBossRepelShockwave / BTBossVortexTempest が利用）
     boss_->SetForceFieldManager(forceFieldManager_.get());
 
+    // プレイヤーに ForceFieldManager を設定（BTBossRepelShockwave がプレイヤーを押し出す）
+    player_->SetForceFieldManager(forceFieldManager_.get());
+
     // プレイヤーに EmitterManager を設定
     player_->SetEmitterManager(emitterManager_.get());
 

@@ -82,6 +82,7 @@ void Boss::InitializeModel()
     repelShockwaveSphere_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 0.3f));
     repelShockwaveSphere_->SetEnableLighting(false);
     repelShockwaveSphere_->SetScale({ 0.0f, 0.0f, 0.0f });
+    repelShockwaveSphere_->SetTransparent(true);  // 両面描画 + 深度書き込み無効で球全体が透けて見える
 }
 
 void Boss::InitializeHealth()

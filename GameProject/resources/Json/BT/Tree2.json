@@ -29,16 +29,16 @@
       "targetPinId": 20006
     },
     {
-      "id": 30006,
+      "id": 30004,
       "sourceNodeId": 10004,
       "sourcePinId": 20007,
-      "targetNodeId": 10007,
-      "targetPinId": 20010
+      "targetNodeId": 10005,
+      "targetPinId": 20008
     }
   ],
   "metadata": {
-    "created": "2026-05-19T20:12:07",
-    "modified": "2026-05-19T20:12:07",
+    "created": "2026-05-19T21:37:28",
+    "modified": "2026-05-19T21:37:28",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -99,19 +99,19 @@
     },
     {
       "displayName": "Repel Shockwave",
-      "id": 10007,
+      "id": 10005,
       "parameters": {
         "affectMask": 3,
-        "expandTime": 0.5,
+        "expandTime": 0.30000001192092896,
         "falloff": 0.0,
         "isBypassRecoveryGuard": false,
-        "maxRadius": 35.0,
+        "maxRadius": 50.0,
         "strength": 2000.0,
-        "sustainTime": 1.0,
+        "sustainTime": 0.4000000059604645,
         "warningTime": 0.5
       },
       "position": {
-        "x": 264.0,
+        "x": 248.0,
         "y": 175.0
       },
       "type": "BTBossRepelShockwave"

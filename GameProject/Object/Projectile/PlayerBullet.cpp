@@ -105,7 +105,6 @@ void PlayerBullet::Update(float deltaTime) {
     }
 
     // ForceField を弾速度に反映（GPU パーティクルと同じ力場を CPU 駆動の弾にも作用させる）
-    // mask = AffectBullets：プレイヤー弾だけに影響する力場（affectMask が AffectBullets ビットを含む）に絞り込み
     if (forceFieldManager_) {
         const Vector3 force = forceFieldManager_->EvaluateForceAt(
             transform_.translate, GameForceField::AffectBullets);

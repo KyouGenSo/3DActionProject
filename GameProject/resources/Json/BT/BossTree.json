@@ -351,23 +351,37 @@
       "targetPinId": 20070
     },
     {
-      "id": 30050,
-      "sourceNodeId": 10008,
-      "sourcePinId": 20013,
-      "targetNodeId": 10043,
-      "targetPinId": 20059
-    },
-    {
       "id": 30051,
       "sourceNodeId": 10013,
       "sourcePinId": 20022,
       "targetNodeId": 10022,
       "targetPinId": 20033
+    },
+    {
+      "id": 30052,
+      "sourceNodeId": 10016,
+      "sourcePinId": 20026,
+      "targetNodeId": 10053,
+      "targetPinId": 20071
+    },
+    {
+      "id": 30053,
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
+      "targetNodeId": 10054,
+      "targetPinId": 20072
+    },
+    {
+      "id": 30054,
+      "sourceNodeId": 10008,
+      "sourcePinId": 20013,
+      "targetNodeId": 10043,
+      "targetPinId": 20059
     }
   ],
   "metadata": {
-    "created": "2026-05-15T15:02:30",
-    "modified": "2026-05-15T15:02:30",
+    "created": "2026-05-19T21:40:55",
+    "modified": "2026-05-19T21:40:55",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -385,7 +399,7 @@
       "displayName": "Dash",
       "id": 10001,
       "parameters": {
-        "dashDuration": 0.09511236846446991,
+        "dashDuration": 0.2349991649389267,
         "dashSpeed": 200.0
       },
       "position": {
@@ -429,8 +443,8 @@
       "id": 10004,
       "parameters": null,
       "position": {
-        "x": 475.0,
-        "y": -418.0
+        "x": 936.0,
+        "y": -130.0
       },
       "type": "BTSequence"
     },
@@ -452,8 +466,8 @@
         "targetPhase": 2
       },
       "position": {
-        "x": 360.0,
-        "y": -274.0
+        "x": 821.0,
+        "y": 14.0
       },
       "type": "BTBossPhaseCondition"
     },
@@ -472,7 +486,7 @@
       "id": 10008,
       "parameters": null,
       "position": {
-        "x": -917.0,
+        "x": -905.0,
         "y": 457.0
       },
       "type": "BTRandomSelector"
@@ -499,8 +513,8 @@
       "id": 10010,
       "parameters": null,
       "position": {
-        "x": 667.0,
-        "y": -258.0
+        "x": 1128.0,
+        "y": 30.0
       },
       "type": "BTRandomSelector"
     },
@@ -519,8 +533,8 @@
       "id": 10012,
       "parameters": null,
       "position": {
-        "x": -485.0,
-        "y": 159.0
+        "x": -325.0,
+        "y": 169.0
       },
       "type": "BTSequence"
     },
@@ -555,8 +569,8 @@
         "minDistance": 0.0
       },
       "position": {
-        "x": -633.0,
-        "y": 319.0
+        "x": -473.0,
+        "y": 329.0
       },
       "type": "BTBossDistanceCondition"
     },
@@ -565,8 +579,8 @@
       "id": 10016,
       "parameters": null,
       "position": {
-        "x": -360.0,
-        "y": 286.0
+        "x": -200.0,
+        "y": 296.0
       },
       "type": "BTRandomSelector"
     },
@@ -583,7 +597,7 @@
       },
       "position": {
         "x": -601.0,
-        "y": 655.0
+        "y": 681.0
       },
       "type": "BTBossRapidFire"
     },
@@ -600,7 +614,7 @@
       },
       "position": {
         "x": -153.0,
-        "y": 655.0
+        "y": 681.0
       },
       "type": "BTBossShoot"
     },
@@ -668,7 +682,7 @@
       },
       "position": {
         "x": 72.0,
-        "y": 431.0
+        "y": 457.0
       },
       "type": "BTBossRetreat"
     },
@@ -700,7 +714,7 @@
       "parameters": null,
       "position": {
         "x": -597.0,
-        "y": 431.0
+        "y": 457.0
       },
       "type": "BTSequence"
     },
@@ -710,7 +724,7 @@
       "parameters": null,
       "position": {
         "x": -149.0,
-        "y": 431.0
+        "y": 457.0
       },
       "type": "BTSequence"
     },
@@ -723,7 +737,7 @@
       },
       "position": {
         "x": -153.0,
-        "y": 559.0
+        "y": 585.0
       },
       "type": "BTBossRetreat"
     },
@@ -736,7 +750,7 @@
       },
       "position": {
         "x": -601.0,
-        "y": 559.0
+        "y": 585.0
       },
       "type": "BTBossRetreat"
     },
@@ -757,8 +771,8 @@
         "swingAngle": 3.1415927410125732
       },
       "position": {
-        "x": 664.0,
-        "y": -114.0
+        "x": 1125.0,
+        "y": 174.0
       },
       "type": "BTBossMeleeAttack"
     },
@@ -800,8 +814,8 @@
         "swingAngle": 3.1415927410125732
       },
       "position": {
-        "x": 664.0,
-        "y": -17.0
+        "x": 1125.0,
+        "y": 271.0
       },
       "type": "BTBossMeleeAttack"
     },
@@ -823,7 +837,7 @@
       },
       "position": {
         "x": -377.0,
-        "y": 655.0
+        "y": 681.0
       },
       "type": "BTBossMeleeAttack"
     },
@@ -836,7 +850,7 @@
       },
       "position": {
         "x": -377.0,
-        "y": 559.0
+        "y": 585.0
       },
       "type": "BTBossApproach"
     },
@@ -846,7 +860,7 @@
       "parameters": null,
       "position": {
         "x": -373.0,
-        "y": 431.0
+        "y": 457.0
       },
       "type": "BTSequence"
     },
@@ -887,8 +901,8 @@
         "warningDuration": 1.2000000476837158
       },
       "position": {
-        "x": 664.0,
-        "y": 175.0
+        "x": 1125.0,
+        "y": 463.0
       },
       "type": "BTBossAreaAttack"
     },
@@ -916,8 +930,8 @@
         "warningDuration": 1.0
       },
       "position": {
-        "x": 664.0,
-        "y": 79.0
+        "x": 1125.0,
+        "y": 367.0
       },
       "type": "BTBossMeteorRain"
     },
@@ -955,7 +969,7 @@
       },
       "position": {
         "x": 296.0,
-        "y": 431.0
+        "y": 457.0
       },
       "type": "BTBossSlashAttack"
     },
@@ -971,8 +985,8 @@
         "spreadAngle": 0.4363323152065277
       },
       "position": {
-        "x": 664.0,
-        "y": 271.0
+        "x": 1125.0,
+        "y": 559.0
       },
       "type": "BTBossShoot"
     },
@@ -998,7 +1012,7 @@
       },
       "position": {
         "x": -1049.0,
-        "y": 1257.0
+        "y": 1353.0
       },
       "type": "BTBossVortexTempest"
     },
@@ -1010,7 +1024,7 @@
       },
       "position": {
         "x": -917.0,
-        "y": 1103.0
+        "y": 1199.0
       },
       "type": "BTParallel"
     },
@@ -1020,7 +1034,7 @@
       "parameters": null,
       "position": {
         "x": -805.0,
-        "y": 1247.0
+        "y": 1343.0
       },
       "type": "BTSequence"
     },
@@ -1033,7 +1047,7 @@
       },
       "position": {
         "x": -808.0,
-        "y": 1402.0
+        "y": 1498.0
       },
       "type": "BTBossApproach"
     },
@@ -1055,7 +1069,7 @@
       },
       "position": {
         "x": -808.0,
-        "y": 1498.0
+        "y": 1594.0
       },
       "type": "BTBossMeleeAttack"
     },
@@ -1068,7 +1082,7 @@
       },
       "position": {
         "x": -808.0,
-        "y": 1594.0
+        "y": 1690.0
       },
       "type": "BTBossRetreat"
     },
@@ -1085,7 +1099,7 @@
       },
       "position": {
         "x": -808.0,
-        "y": 1690.0
+        "y": 1786.0
       },
       "type": "BTBossShoot"
     },
@@ -1098,7 +1112,7 @@
       },
       "position": {
         "x": -809.0,
-        "y": 1791.0
+        "y": 1887.0
       },
       "type": "BTBossDash"
     },
@@ -1115,7 +1129,7 @@
       },
       "position": {
         "x": -809.0,
-        "y": 1887.0
+        "y": 1983.0
       },
       "type": "BTBossShoot"
     },
@@ -1128,7 +1142,7 @@
       },
       "position": {
         "x": -809.0,
-        "y": 1983.0
+        "y": 2079.0
       },
       "type": "BTBossDash"
     },
@@ -1145,9 +1159,47 @@
       },
       "position": {
         "x": -809.0,
-        "y": 2079.0
+        "y": 2175.0
       },
       "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Repel Shockwave",
+      "id": 10053,
+      "parameters": {
+        "affectMask": 3,
+        "expandTime": 0.30000001192092896,
+        "falloff": 0.0,
+        "isBypassRecoveryGuard": false,
+        "maxRadius": 50.0,
+        "strength": 2000.0,
+        "sustainTime": 0.4000000059604645,
+        "warningTime": 0.5
+      },
+      "position": {
+        "x": 520.0,
+        "y": 463.0
+      },
+      "type": "BTBossRepelShockwave"
+    },
+    {
+      "displayName": "Repel Shockwave",
+      "id": 10054,
+      "parameters": {
+        "affectMask": 3,
+        "expandTime": 0.5,
+        "falloff": 0.0,
+        "isBypassRecoveryGuard": false,
+        "maxRadius": 30.0,
+        "strength": 2000.0,
+        "sustainTime": 1.0,
+        "warningTime": 0.5
+      },
+      "position": {
+        "x": -921.0,
+        "y": 1103.0
+      },
+      "type": "BTBossRepelShockwave"
     }
   ],
   "version": "1.0"

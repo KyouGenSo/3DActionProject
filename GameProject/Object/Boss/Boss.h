@@ -273,6 +273,15 @@ public:
     /// <summary>強制脆弱化中かどうか</summary>
     bool IsForceVulnerable() const { return forceVulnerable_; }
 
+    /// <summary>
+    /// テレポート中フラグを設定 (BTBossTeleport が OnInitialize/OnCleanup で切替)。
+    /// boss_aura エミッタの自動同期条件に含まれ、true の間は aura が無効化される。
+    /// </summary>
+    void SetTeleporting(bool teleporting) { isTeleporting_ = teleporting; }
+
+    /// <summary>テレポート中かどうか</summary>
+    bool IsTeleporting() const { return isTeleporting_; }
+
     //-----------------------------ダッシュ状態システム------------------------------//
     /// <summary>
     /// ダッシュ状態を設定
@@ -584,6 +593,7 @@ private:
     bool isInRecovery_ = false;                   ///< 硬直中フラグ（BT アクションが設定）
     bool isDashing_ = false;                      ///< ダッシュ中フラグ（BT アクションが設定）
     bool forceVulnerable_ = false;                ///< 強制脆弱化フラグ（AttackNode::isBypassRecoveryGuard ON 時に立つ）
+    bool isTeleporting_ = false;                  ///< テレポート中フラグ（BTBossTeleport が設定、aura 自動無効化用）
 
     // ボス本体の衝突判定用 AABB コライダー
     std::unique_ptr<Tako::OBBCollider> bodyCollider_;

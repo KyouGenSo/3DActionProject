@@ -8,13 +8,6 @@
       "targetPinId": 20000
     },
     {
-      "id": 30001,
-      "sourceNodeId": 10000,
-      "sourcePinId": 20001,
-      "targetNodeId": 10002,
-      "targetPinId": 20004
-    },
-    {
       "id": 30002,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
@@ -29,16 +22,16 @@
       "targetPinId": 20006
     },
     {
-      "id": 30005,
+      "id": 30004,
       "sourceNodeId": 10004,
       "sourcePinId": 20007,
-      "targetNodeId": 10006,
-      "targetPinId": 20009
+      "targetNodeId": 10005,
+      "targetPinId": 20008
     }
   ],
   "metadata": {
-    "created": "2026-05-21T08:30:52",
-    "modified": "2026-05-21T08:30:52",
+    "created": "2026-05-21T08:44:28",
+    "modified": "2026-05-21T08:44:28",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -47,8 +40,8 @@
       "id": 10000,
       "parameters": null,
       "position": {
-        "x": -105.0,
-        "y": 47.0
+        "x": -121.0,
+        "y": 25.0
       },
       "type": "BTSelector"
     },
@@ -57,29 +50,16 @@
       "id": 10001,
       "parameters": null,
       "position": {
-        "x": 43.0,
-        "y": -98.0
+        "x": 88.0,
+        "y": -146.0
       },
       "type": "BTSequence"
-    },
-    {
-      "displayName": "Dash",
-      "id": 10002,
-      "parameters": {
-        "dashDuration": 0.3706270158290863,
-        "dashSpeed": 60.0
-      },
-      "position": {
-        "x": -40.0,
-        "y": 175.0
-      },
-      "type": "BTBossDash"
     },
     {
       "displayName": "Idle",
       "id": 10003,
       "parameters": {
-        "idleDuration": 2.0
+        "idleDuration": 0.4000000059604645
       },
       "position": {
         "x": -265.0,
@@ -99,20 +79,22 @@
     },
     {
       "displayName": "Teleport",
-      "id": 10006,
+      "id": 10005,
       "parameters": {
         "fadeInDuration": 0.6000000238418579,
         "fadeOutDuration": 0.6000000238418579,
         "isBypassRecoveryGuard": false,
+        "mode": 2,
+        "playerRandomMaxDistance": 35.0,
+        "playerRandomMinDistance": 20.0,
         "randomMaxDistance": 200.0,
         "randomMinDistance": 100.0,
         "targetPositionX": 0.0,
         "targetPositionY": 0.0,
-        "targetPositionZ": 0.0,
-        "useRandomPosition": true
+        "targetPositionZ": 0.0
       },
       "position": {
-        "x": 248.0,
+        "x": 264.0,
         "y": 191.0
       },
       "type": "BTBossTeleport"

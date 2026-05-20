@@ -28,6 +28,13 @@ class Boss;
 /// </remarks>
 class BTBossTeleport : public AttackNode {
 public:
+    /// <summary>テレポート先決定モード</summary>
+    enum class TeleportMode : int {
+        Fixed            = 0,  ///< 固定座標 (targetPositionX/Y/Z)
+        RandomFromBoss   = 1,  ///< ボス現在位置を中心にランダム
+        RandomFromPlayer = 2,  ///< プレイヤー位置を中心にランダム
+    };
+
     BTBossTeleport();
     virtual ~BTBossTeleport() = default;
 
@@ -65,14 +72,16 @@ private:
     void UpdateModelAlpha(Tako::Object3d* model, float alpha) const;
 
     //======================== パラメータ ========================
-    float fadeOutDuration_ = 0.3f;          ///< フェードアウト時間 (秒)
-    float fadeInDuration_  = 0.3f;          ///< フェードイン時間 (秒)
-    bool  useRandomPosition_ = true;        ///< true: ランダム座標、false: 固定座標
-    float targetPositionX_ = 0.0f;          ///< 固定座標 X
-    float targetPositionY_ = 0.0f;          ///< 固定座標 Y
-    float targetPositionZ_ = 0.0f;          ///< 固定座標 Z
-    float randomMinDistance_ = 10.0f;       ///< 現在位置からの最小距離 (random 時)
-    float randomMaxDistance_ = 30.0f;       ///< 現在位置からの最大距離 (random 時)
+    float fadeOutDuration_ = 0.3f;                  ///< フェードアウト時間 (秒)
+    float fadeInDuration_  = 0.3f;                  ///< フェードイン時間 (秒)
+    TeleportMode mode_ = TeleportMode::RandomFromBoss; ///< テレポート先決定モード
+    float targetPositionX_ = 0.0f;                  ///< Fixed 用 X
+    float targetPositionY_ = 0.0f;                  ///< Fixed 用 Y
+    float targetPositionZ_ = 0.0f;                  ///< Fixed 用 Z
+    float randomMinDistance_ = 10.0f;               ///< RandomFromBoss 最小距離
+    float randomMaxDistance_ = 30.0f;               ///< RandomFromBoss 最大距離
+    float playerRandomMinDistance_ = 10.0f;         ///< RandomFromPlayer 最小距離
+    float playerRandomMaxDistance_ = 30.0f;         ///< RandomFromPlayer 最大距離
 
     //======================== ランタイム状態 ========================
     Tako::Vector3 targetTeleportPosition_{};        ///< OnInitialize で確定するテレポート先

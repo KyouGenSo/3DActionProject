@@ -163,8 +163,8 @@ void Boss::InitializeAuraEmitter()
             kDefaultCount, kDefaultFreq);
     }
 
-    // 初期状態: 非硬直 かつ 非スタン であれば有効 (Update でも毎フレーム同期される)
-    emitterManager_->SetEmitterActive(auraEmitterName_, !isInRecovery_ && !IsStunned());
+    // 初期状態: 非硬直 かつ 非スタン かつ 非テレポート中 であれば有効 (Update でも毎フレーム同期される)
+    emitterManager_->SetEmitterActive(auraEmitterName_, !isInRecovery_ && !IsStunned() && !isTeleporting_);
 }
 
 void Boss::SetAuraEmitterActive(bool active)
@@ -309,10 +309,10 @@ void Boss::Update(float deltaTime)
 #endif
     }
 
-    // boss_aura エミッタは「硬直中 or スタン中 or フェーズ移行スタン中」のみ無効
+    // boss_aura エミッタは「硬直 or スタン or フェーズ移行スタン or テレポート中」のいずれかで無効
     // IsStunned() が Stunned/PhaseTransitionStun の両方を OR 判定するため再利用
-    // BT/StateMachine が isInRecovery_ または状態名を変更した直後に同期する
-    SetAuraEmitterActive(!isInRecovery_ && !IsStunned());
+    // BTBossTeleport が SetTeleporting(true/false) を切替えるため isTeleporting_ も含める
+    SetAuraEmitterActive(!isInRecovery_ && !IsStunned() && !isTeleporting_);
 
     // ヒットエフェクトの更新
     static const Vector4 kOriginalColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f);

@@ -1,7 +1,7 @@
 #include "BossStunnedState.h"
 #include "../Boss.h"
 #include "BossStateMachine.h"
-#include "../../../Common/GameConst.h"
+#include "../Movement/BossAreaBounds.h"
 
 #include <algorithm>
 #include <cmath>
@@ -50,7 +50,7 @@ void BossStunnedState::Enter(Boss* boss)
 
 	// 目標位置を計算
 	targetPosition_ = startPosition_ + knockbackDir * knockbackDistance_;
-	targetPosition_ = ClampToArea(targetPosition_);
+	targetPosition_ = BossMovement::ClampToBounds(targetPosition_, BossMovement::CalcStageBounds());
 
 	// 初回フラッシュを即座に開始
 	UpdateFlash(boss);
@@ -77,7 +77,7 @@ void BossStunnedState::Update(Boss* boss, float deltaTime)
 		knockbackDir = knockbackDir.Normalize();
 
 		targetPosition_ = startPosition_ + knockbackDir * knockbackDistance_;
-		targetPosition_ = ClampToArea(targetPosition_);
+		targetPosition_ = BossMovement::ClampToBounds(targetPosition_, BossMovement::CalcStageBounds());
 	}
 
 	// ノックバック処理
@@ -142,19 +142,3 @@ void BossStunnedState::UpdateFlash(Boss* boss)
 	boss->StartStunFlash(stunFlashColor_, flashDuration_);
 }
 
-Vector3 BossStunnedState::ClampToArea(const Vector3& position)
-{
-	Vector3 clampedPos = position;
-
-	clampedPos.x = std::clamp(clampedPos.x,
-		GameConst::kStageXMin + GameConst::kAreaMargin,
-		GameConst::kStageXMax - GameConst::kAreaMargin);
-
-	clampedPos.z = std::clamp(clampedPos.z,
-		GameConst::kStageZMin + GameConst::kAreaMargin,
-		GameConst::kStageZMax - GameConst::kAreaMargin);
-
-	clampedPos.y = position.y;
-
-	return clampedPos;
-}

@@ -1,8 +1,8 @@
 #include "BTBossMeleeAttack.h"
 #include "../../Boss.h"
+#include "../../Movement/BossAreaBounds.h"
 #include "../../../Player/Player.h"
 #include "../../../../Collision/BossMeleeAttackCollider.h"
-#include "../../../../Common/GameConst.h"
 #include "Object3d.h"
 #include "Mat4x4Func.h"
 #include "RandomEngine.h"
@@ -177,7 +177,7 @@ void BTBossMeleeAttack::ProcessExecutePhase(Tako::BTBlackboard* blackboard, floa
             if (currentDistance < stopDistance_ && currentDistance > kDirectionEpsilon) {
                 Vector3 direction = toPlayer.Normalize();
                 Vector3 stopPos = playerPos - direction * stopDistance_;
-                stopPos = ClampToArea(stopPos);
+                stopPos = BossMovement::ClampToBounds(stopPos, BossMovement::CalcStageBounds());
                 boss->SetTranslate(stopPos);
             }
         }
@@ -215,18 +215,6 @@ void BTBossMeleeAttack::InitializeSwingForCurrentCombo() {
     }
 }
 
-Vector3 BTBossMeleeAttack::ClampToArea(const Vector3& position) {
-    Vector3 clampedPos = position;
-    clampedPos.x = std::clamp(clampedPos.x,
-        GameConst::kStageXMin + GameConst::kAreaMargin,
-        GameConst::kStageXMax - GameConst::kAreaMargin);
-    clampedPos.z = std::clamp(clampedPos.z,
-        GameConst::kStageZMin + GameConst::kAreaMargin,
-        GameConst::kStageZMax - GameConst::kAreaMargin);
-    clampedPos.y = position.y;
-    return clampedPos;
-}
-
 void BTBossMeleeAttack::InitializeRush(Tako::BTBlackboard* blackboard) {
     Boss* boss = blackboard->GetPtr<Boss>("boss");
     rushInitialized_ = true;
@@ -244,7 +232,7 @@ void BTBossMeleeAttack::InitializeRush(Tako::BTBlackboard* blackboard) {
             boss->SetRotate(Vector3(0.0f, angle, 0.0f));
 
             targetPosition_ = startPosition_ + rushDirection_ * rushDistance_;
-            targetPosition_ = ClampToArea(targetPosition_);
+            targetPosition_ = BossMovement::ClampToBounds(targetPosition_, BossMovement::CalcStageBounds());
         } else {
             rushDirection_ = Vector3(0.0f, 0.0f, 1.0f);
             targetPosition_ = startPosition_;

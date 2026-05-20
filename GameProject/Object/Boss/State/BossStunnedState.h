@@ -34,11 +34,6 @@ private:
 	/// </summary>
 	void UpdateFlash(Boss* boss);
 
-	/// <summary>
-	/// エリア内に収まる位置を計算
-	/// </summary>
-	Tako::Vector3 ClampToArea(const Tako::Vector3& position);
-
 	// 定数
 	static constexpr float kEasingCoeffA = 3.0f;
 	static constexpr float kEasingCoeffB = 2.0f;

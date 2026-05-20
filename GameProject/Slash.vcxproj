@@ -90,6 +90,8 @@
     <ClCompile Include="Object\Boss\State\BossRetreatingState.cpp" />
     <ClCompile Include="Object\Boss\State\BossPhaseTransitionStunState.cpp" />
     <ClCompile Include="Object\Boss\State\BossDeadState.cpp" />
+    <ClCompile Include="Object\Boss\Movement\BossAreaBounds.cpp" />
+    <ClCompile Include="Object\Boss\Movement\BossRetreatExecutor.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossApproach.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.cpp" />
@@ -193,6 +195,8 @@
     <ClInclude Include="Object\Boss\State\BossRetreatingState.h" />
     <ClInclude Include="Object\Boss\State\BossPhaseTransitionStunState.h" />
     <ClInclude Include="Object\Boss\State\BossDeadState.h" />
+    <ClInclude Include="Object\Boss\Movement\BossAreaBounds.h" />
+    <ClInclude Include="Object\Boss\Movement\BossRetreatExecutor.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossApproach.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.h" />

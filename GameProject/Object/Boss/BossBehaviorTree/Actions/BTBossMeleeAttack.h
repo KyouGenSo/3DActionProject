@@ -131,13 +131,6 @@ private:
     void UpdateBlockPosition(Boss* boss);
 
     /// <summary>
-    /// 指定座標をフェーズ2のプレイエリア境界内にクランプして返す
-    /// </summary>
-    /// <param name="position">クランプ対象のワールド座標</param>
-    /// <returns>エリア境界内に収めた座標</returns>
-    Tako::Vector3 ClampToArea(const Tako::Vector3& position);
-
-    /// <summary>
     /// 突進の開始位置・目標位置・方向ベクトルを算出して初期化する
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>

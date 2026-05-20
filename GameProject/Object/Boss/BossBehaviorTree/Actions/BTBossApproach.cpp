@@ -1,7 +1,7 @@
 #include "BTBossApproach.h"
 #include "../../Boss.h"
+#include "../../Movement/BossAreaBounds.h"
 #include "../../../Player/Player.h"
-#include "../../../../Common/GameConst.h"
 
 #include <algorithm>
 #include <cmath>
@@ -105,7 +105,7 @@ void BTBossApproach::InitializeApproach(Boss* boss, Player* player) {
         float approachDistance = distance - targetDistance_;
         if (approachDistance > 0.0f) {
             targetPosition_ = startPosition_ + direction * approachDistance;
-            targetPosition_ = ClampToArea(targetPosition_);
+            targetPosition_ = BossMovement::ClampToBounds(targetPosition_, BossMovement::CalcStageBounds());
 
             // 実際の移動距離から所要時間を計算
             Vector3 actualMove = targetPosition_ - startPosition_;
@@ -142,22 +142,6 @@ void BTBossApproach::UpdateApproachMovement(Boss* boss, float deltaTime) {
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);
         boss->SetTranslate(newPosition);
     }
-}
-
-Vector3 BTBossApproach::ClampToArea(const Vector3& position) {
-    Vector3 clampedPos = position;
-
-    // GameConstants のステージ境界を使用
-    // X 座標の制限
-    clampedPos.x = std::clamp(clampedPos.x, GameConst::kStageXMin + GameConst::kAreaMargin, GameConst::kStageXMax - GameConst::kAreaMargin);
-
-    // Z 座標の制限
-    clampedPos.z = std::clamp(clampedPos.z, GameConst::kStageZMin + GameConst::kAreaMargin, GameConst::kStageZMax - GameConst::kAreaMargin);
-
-    // Y 座標は元の値を保持
-    clampedPos.y = position.y;
-
-    return clampedPos;
 }
 
 nlohmann::json BTBossApproach::ExtractParameters() const {

@@ -85,14 +85,6 @@ private:
     /// <param name="deltaTime">経過時間</param>
     void UpdateDashMovement(Boss* boss, float deltaTime);
 
-    /// <summary>
-    /// エリア内に収まる位置を計算
-    /// </summary>
-    /// <param name="position">調整前の位置</param>
-    /// <param name="boss">ボスのポインター</param>
-    /// <returns>エリア内に収まる位置</returns>
-    Tako::Vector3 ClampToArea(const Tako::Vector3& position, const Boss* boss);
-
     // ダッシュ方向
     Tako::Vector3 dashDirection_;
 

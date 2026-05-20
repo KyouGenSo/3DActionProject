@@ -1,12 +1,14 @@
 #pragma once
 #include "AttackNode.h"
 #include "../../../../Common/ForceFieldAffectMask.h"
+#include "ParticleStruct.h"
 #include "Vector3.h"
 #include <cstdint>
 #include <string>
 
 namespace Tako {
     class ForceFieldManager;
+    class EmitterManager;
 }
 
 class Boss;
@@ -87,6 +89,18 @@ private:
     bool ringTriggered_ = false;       ///< 衝撃波スフィア表示開始済みか（Phase 1 突入時に ON）
     int32_t forceFieldId_ = -1;        ///< 登録した ForceField のインデックス（-1 = 未登録）
 
+    //======================== バリアパーティクル & 渦力場 ========================
+    int32_t vortexFieldId_ = -1;                              ///< 追加で登録した渦力場のインデックス（-1 = 未登録）
+    Tako::ForceFieldData vortexFieldBase_{};                  ///< preset から読み込んだ基底値（strength/falloff/direction/affectMask を保持）
+    bool barrierEmitterLoaded_ = false;                       ///< LoadPreset 二重ロードガード（インスタンス寿命を跨いで保持）
+    bool barrierActivated_ = false;                           ///< Phase 1 到達時の一度きり活性化フラグ
+
     //======================== Reset 用キャッシュ ========================
     Tako::ForceFieldManager* cachedForceFieldManager_ = nullptr;
+    Tako::EmitterManager* cachedEmitterManager_ = nullptr;
+
+    //======================== プリセット名（ハードコード） ========================
+    const std::string barrierEmitterPreset_   = "repel_barrier_effect";   ///< Particles/Presets/ 配下の JSON 名
+    const std::string barrierEmitterInstance_ = "boss_repel_barrier";     ///< emitterMap_ 上の登録名
+    const std::string vortexFieldPreset_      = "repel_barrier_vortex";   ///< ParticlePresets/ForceFieldPresets/ 配下の JSON 名
 };

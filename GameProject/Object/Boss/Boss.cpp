@@ -1,5 +1,6 @@
 #include "Boss.h"
 #include <algorithm>
+#include <filesystem>
 #include "Object3d.h"
 #include "Model.h"
 #include "PrimitiveBuilder.h"
@@ -62,7 +63,7 @@ void Boss::InitializeModel()
     model_ = std::make_unique<Object3d>();
     model_->Initialize();
     model_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
-    model_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    model_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 0.0f));
 
     transform_.translate = Vector3(0.0f, initialY_, initialZ_);
     transform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
@@ -135,6 +136,44 @@ void Boss::InitializeEffects()
     shakeEffect_.SetDefaultIntensity(gv->GetValueFloat("Boss", "ShakeIntensity"));
 }
 
+void Boss::InitializeAuraEmitter()
+{
+    if (!emitterManager_ || !model_) {
+        return;
+    }
+
+    // 二重登録防止: シーン再初期化や差し替え時に旧エミッタが残らないように
+    if (emitterManager_->HasEmitter(auraEmitterName_)) {
+        emitterManager_->RemoveEmitter(auraEmitterName_);
+    }
+
+    // 単一プリセット JSON のパス (EmitterManager::LoadPreset と同じ規約)
+    const std::string presetPath =
+        "resources/Json/ParticlePresets/Presets/" + auraEmitterName_ + ".json";
+
+    if (std::filesystem::exists(presetPath)) {
+        // 保存済みプリセットを読込: object3dKey は sentinel で上書きされ model_ にバインドされる
+        emitterManager_->LoadPreset(auraEmitterName_, auraEmitterName_, model_.get());
+    } else {
+        // 初回起動: programmatic 既定値で生成 (object3dKey = emitter 名で round-trip 可能)
+        constexpr uint32_t kDefaultCount = 100;
+        constexpr float    kDefaultFreq  = 0.1f;
+        emitterManager_->CreateMeshEmitter(
+            auraEmitterName_, model_.get(), auraEmitterName_,
+            kDefaultCount, kDefaultFreq);
+    }
+
+    // 初期状態: 非硬直 かつ 非スタン であれば有効 (Update でも毎フレーム同期される)
+    emitterManager_->SetEmitterActive(auraEmitterName_, !isInRecovery_ && !IsStunned());
+}
+
+void Boss::SetAuraEmitterActive(bool active)
+{
+    if (!emitterManager_) return;
+    if (!emitterManager_->HasEmitter(auraEmitterName_)) return;
+    emitterManager_->SetEmitterActive(auraEmitterName_, active);
+}
+
 void Boss::InitializeAI()
 {
     // BehaviorTree 生成前に Boss 専用ノード型を Registry に登録する必要がある
@@ -172,6 +211,12 @@ void Boss::Finalize()
     }
     if (meleeAttackCollider_) {
         CollisionManager::GetInstance()->RemoveCollider(meleeAttackCollider_.get());
+    }
+
+    // boss_aura MeshEmitter は model_ を boundObject3d_ として参照しているため、
+    // model_ 解放前にエミッタ側から明示削除して dangling pointer access を防ぐ
+    if (emitterManager_ && emitterManager_->HasEmitter(auraEmitterName_)) {
+        emitterManager_->RemoveEmitter(auraEmitterName_);
     }
 
 #ifdef _DEBUG
@@ -221,6 +266,11 @@ void Boss::Update(float deltaTime)
         }
 #endif
     }
+
+    // boss_aura エミッタは「硬直中 or スタン中 or フェーズ移行スタン中」のみ無効
+    // IsStunned() が Stunned/PhaseTransitionStun の両方を OR 判定するため再利用
+    // BT/StateMachine が isInRecovery_ または状態名を変更した直後に同期する
+    SetAuraEmitterActive(!isInRecovery_ && !IsStunned());
 
     // ヒットエフェクトの更新
     static const Vector4 kOriginalColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f);

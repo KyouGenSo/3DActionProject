@@ -119,6 +119,11 @@ public: // メンバ関数
     void SetCameraAnimation();
 
     /// <summary>
+    /// ポーズ状態のチェックと切り替え
+    /// </summary>
+    void CheckPause();
+
+    /// <summary>
     /// ポーズメニューの更新処理
     /// </summary>
     void UpdatePause();

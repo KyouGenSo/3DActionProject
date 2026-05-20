@@ -449,6 +449,28 @@ public:
     /// </summary>
     Tako::ForceFieldManager* GetForceFieldManager() const { return forceFieldManager_; }
 
+    /// <summary>
+    /// ボスのモデルをスポーン形状とする MeshEmitter "boss_aura" を初期化
+    /// </summary>
+    /// <remarks>
+    /// 事前条件: model_ 生成済み、emitterManager_ 注入済み。
+    /// preset JSON が存在すれば LoadPreset で復元 (object3dKey は sentinel 上書きで model_ にバインド)、
+    /// 存在しなければ programmatic 既定値で CreateMeshEmitter を呼ぶ。
+    /// 初期状態は <c>!isInRecovery_ &amp;&amp; !IsStunned()</c>。以降は <c>Update()</c> で毎フレーム同期。
+    /// </remarks>
+    void InitializeAuraEmitter();
+
+    /// <summary>
+    /// boss_aura エミッターのアクティブ状態を切り替え
+    /// </summary>
+    /// <param name="active">true で発火、false で停止</param>
+    void SetAuraEmitterActive(bool active);
+
+    /// <summary>
+    /// boss_aura エミッター名を取得 (preset 名と同一)
+    /// </summary>
+    const std::string& GetAuraEmitterName() const { return auraEmitterName_; }
+
 private:
     /// <summary>
     /// モデルとトランスフォームの初期化
@@ -562,6 +584,9 @@ private:
     // 予兆エフェクト名
     std::string attackSignEmitterName_ = "boss_melee_attack_sign";
     std::string bulletSignEmitterName_ = "boss_bullet_sign";
+
+    // ボスモデルをスポーン形状とする MeshEmitter (ランタイム名 = preset 名)
+    std::string auraEmitterName_ = "boss_aura";
 
     // ===== エフェクト関連 =====
     HitFlashEffect hitFlashEffect_;     ///< ヒット時の色変化エフェクト

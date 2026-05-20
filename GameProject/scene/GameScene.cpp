@@ -158,25 +158,7 @@ void GameScene::Update()
     // ポーズ中でも入力は更新（メニュー操作に必要、かつポーズトグル判定の前に実行する必要がある）
     inputHandler_->Update();
 
-    // ポーズ入力チェック（ゲーム開始後、演出中以外、生存中のみ）
-    if (isStart_ && !player_->IsDead() && !boss_->IsDead() &&
-        animationController_->GetPlayState() != CameraAnimation::PlayState::PLAYING) {
-        if (inputHandler_->IsPaused()) {
-            isPaused_ = !isPaused_;
-            controllerUI_->SetIsPaused(isPaused_);
-            if (isPaused_) {
-                PostEffectManager::GetInstance()->SetEffectParam("GaussianBlur", GaussianBlurParam{ .sigma = 20.0f, .kernelSize = 30 });
-                PostEffectManager::GetInstance()->AddEffectToChain("GaussianBlur");
-                player_->SetIsPause(true);
-                boss_->SetIsPause(true);
-                pauseMenu_->Reset();
-            } else {
-                PostEffectManager::GetInstance()->RemoveEffectFromChain("GaussianBlur");
-                player_->SetIsPause(false);
-                boss_->SetIsPause(false);
-            }
-        }
-    }
+    CheckPause();
 
     // ポーズ中はメニュー更新のみ
     if (isPaused_) {
@@ -592,6 +574,10 @@ void GameScene::InitializeEmitterManger()
     // ボスに EmitterManager を設定
     boss_->SetEmitterManager(emitterManager_.get());
 
+    // ボスモデルをスポーン形状とする MeshEmitter "boss_aura" を初期化
+    // (preset 存在時は LoadPreset、無ければ programmatic 生成。object3dKey で永続化)
+    boss_->InitializeAuraEmitter();
+
     // ボスに ForceFieldManager を設定（BTBossRepelShockwave / BTBossVortexTempest が利用）
     boss_->SetForceFieldManager(forceFieldManager_.get());
 
@@ -645,6 +631,30 @@ void GameScene::SetCameraAnimation()
     // クリア演出アニメーションの読み込みと設定
     animationController_->LoadAnimationFromFile("clear_anim");
     animationController_->SetAnimationTargetByName("clear_anim", boss_->GetTransformPtr());
+}
+
+void GameScene::CheckPause()
+{
+    // ポーズ入力チェック（ゲーム開始後、演出中以外、生存中のみ）
+    if (isStart_ && !player_->IsDead() && !boss_->IsDead() &&
+        animationController_->GetPlayState() != CameraAnimation::PlayState::PLAYING) {
+        if (inputHandler_->IsPaused()) {
+            isPaused_ = !isPaused_;
+            controllerUI_->SetIsPaused(isPaused_);
+            if (isPaused_) {
+                PostEffectManager::GetInstance()->SetEffectParam("GaussianBlur", GaussianBlurParam{ .sigma = 20.0f, .kernelSize = 30 });
+                PostEffectManager::GetInstance()->AddEffectToChain("GaussianBlur");
+                player_->SetIsPause(true);
+                boss_->SetIsPause(true);
+                pauseMenu_->Reset();
+            }
+            else {
+                PostEffectManager::GetInstance()->RemoveEffectFromChain("GaussianBlur");
+                player_->SetIsPause(false);
+                boss_->SetIsPause(false);
+            }
+        }
+    }
 }
 
 void GameScene::UpdatePause()

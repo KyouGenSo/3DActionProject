@@ -471,6 +471,33 @@ public:
     /// </summary>
     const std::string& GetAuraEmitterName() const { return auraEmitterName_; }
 
+    /// <summary>
+    /// ボス本体モデルを取得 (BT ノードから transparent / material color 操作用)
+    /// </summary>
+    Tako::Object3d* GetModel() const { return model_.get(); }
+
+    /// <summary>
+    /// ボスモデルをスポーン形状とする MeshEmitter "boss_particle_body" を初期化
+    /// </summary>
+    /// <remarks>
+    /// 事前条件: model_ 生成済み、emitterManager_ 注入済み。
+    /// preset JSON が存在すれば LoadPreset で復元 (object3dKey は sentinel 上書きで model_ にバインド)、
+    /// 存在しなければ programmatic 既定値で CreateMeshEmitter を呼ぶ。
+    /// 初期状態は非アクティブ (BT ノードが必要時に有効化)。
+    /// </remarks>
+    void InitializeBodyParticleEmitter();
+
+    /// <summary>
+    /// boss_particle_body エミッターのアクティブ状態を切り替え
+    /// </summary>
+    /// <param name="active">true で発火、false で停止</param>
+    void SetBodyParticleEmitterActive(bool active);
+
+    /// <summary>
+    /// boss_particle_body エミッター名を取得 (preset 名と同一)
+    /// </summary>
+    const std::string& GetBodyParticleEmitterName() const { return bodyParticleEmitterName_; }
+
 private:
     /// <summary>
     /// モデルとトランスフォームの初期化
@@ -587,6 +614,9 @@ private:
 
     // ボスモデルをスポーン形状とする MeshEmitter (ランタイム名 = preset 名)
     std::string auraEmitterName_ = "boss_aura";
+
+    // テレポート演出用 MeshEmitter (BTBossTeleport が ON/OFF 制御)
+    std::string bodyParticleEmitterName_ = "boss_particle_body";
 
     // ===== エフェクト関連 =====
     HitFlashEffect hitFlashEffect_;     ///< ヒット時の色変化エフェクト

@@ -82,6 +82,7 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossBarrage.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.cpp" />
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.cpp" />
     <ClCompile Include="Object\Boss\BossPhaseManager.cpp" />
     <ClCompile Include="Object\Boss\State\BossStateMachine.cpp" />
@@ -186,6 +187,7 @@
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossBarrage.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.h" />
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.h" />
     <ClInclude Include="Object\Boss\BossPhaseManager.h" />
     <ClInclude Include="Object\Boss\State\BossState.h" />

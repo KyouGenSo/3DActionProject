@@ -48,9 +48,6 @@
     <Filter Include="Object\Boss\BossBehaviorTree\Conditions">
       <UniqueIdentifier>{4b1eb71d-c76e-4ef5-83ed-9bdace6a3b5c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Object\Boss\BossNodeEditor">
-      <UniqueIdentifier>{25c158da-6b5c-4fac-9f5e-e540c569d30e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{2efc4229-8240-4c6f-8339-ac353fe07ab6}</UniqueIdentifier>
     </Filter>
@@ -67,7 +64,7 @@
       <UniqueIdentifier>{36347a97-464a-45da-bd0b-a4064425c6fb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Object\Boss\Movement">
-      <UniqueIdentifier>{7a4d2e91-3c8b-4f6a-9d1e-5b8c7a2f9e34}</UniqueIdentifier>
+      <UniqueIdentifier>{25c158da-6b5c-4fac-9f5e-e540c569d30e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -300,12 +297,6 @@
     <ClCompile Include="Object\Boss\State\BossStunnedState.cpp">
       <Filter>Object\Boss\State</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Boss\Movement\BossAreaBounds.cpp">
-      <Filter>Object\Boss\Movement</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\Movement\BossRetreatExecutor.cpp">
-      <Filter>Object\Boss\Movement</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
@@ -320,6 +311,15 @@
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\Movement\BossAreaBounds.cpp">
+      <Filter>Object\Boss\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\Movement\BossRetreatExecutor.cpp">
+      <Filter>Object\Boss\Movement</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -578,12 +578,6 @@
     <ClInclude Include="Object\Boss\State\BossStunnedState.h">
       <Filter>Object\Boss\State</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Boss\Movement\BossAreaBounds.h">
-      <Filter>Object\Boss\Movement</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\Movement\BossRetreatExecutor.h">
-      <Filter>Object\Boss\Movement</Filter>
-    </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
@@ -598,6 +592,15 @@
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\Movement\BossAreaBounds.h">
+      <Filter>Object\Boss\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\Movement\BossRetreatExecutor.h">
+      <Filter>Object\Boss\Movement</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

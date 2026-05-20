@@ -578,6 +578,9 @@ void GameScene::InitializeEmitterManger()
     // (preset 存在時は LoadPreset、無ければ programmatic 生成。object3dKey で永続化)
     boss_->InitializeAuraEmitter();
 
+    // テレポート演出用 MeshEmitter "boss_particle_body" を初期化 (BTBossTeleport が制御)
+    boss_->InitializeBodyParticleEmitter();
+
     // ボスに ForceFieldManager を設定（BTBossRepelShockwave / BTBossVortexTempest が利用）
     boss_->SetForceFieldManager(forceFieldManager_.get());
 

@@ -29,16 +29,16 @@
       "targetPinId": 20006
     },
     {
-      "id": 30004,
+      "id": 30005,
       "sourceNodeId": 10004,
       "sourcePinId": 20007,
-      "targetNodeId": 10005,
-      "targetPinId": 20008
+      "targetNodeId": 10006,
+      "targetPinId": 20009
     }
   ],
   "metadata": {
-    "created": "2026-05-19T21:37:28",
-    "modified": "2026-05-19T21:37:28",
+    "created": "2026-05-21T08:30:52",
+    "modified": "2026-05-21T08:30:52",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -66,7 +66,7 @@
       "displayName": "Dash",
       "id": 10002,
       "parameters": {
-        "dashDuration": 0.5,
+        "dashDuration": 0.3706270158290863,
         "dashSpeed": 60.0
       },
       "position": {
@@ -98,23 +98,24 @@
       "type": "BTRandomSelector"
     },
     {
-      "displayName": "Repel Shockwave",
-      "id": 10005,
+      "displayName": "Teleport",
+      "id": 10006,
       "parameters": {
-        "affectMask": 3,
-        "expandTime": 0.30000001192092896,
-        "falloff": 0.0,
+        "fadeInDuration": 0.6000000238418579,
+        "fadeOutDuration": 0.6000000238418579,
         "isBypassRecoveryGuard": false,
-        "maxRadius": 50.0,
-        "strength": 2000.0,
-        "sustainTime": 0.4000000059604645,
-        "warningTime": 0.5
+        "randomMaxDistance": 200.0,
+        "randomMinDistance": 100.0,
+        "targetPositionX": 0.0,
+        "targetPositionY": 0.0,
+        "targetPositionZ": 0.0,
+        "useRandomPosition": true
       },
       "position": {
         "x": 248.0,
-        "y": 175.0
+        "y": 191.0
       },
-      "type": "BTBossRepelShockwave"
+      "type": "BTBossTeleport"
     }
   ],
   "version": "1.0"

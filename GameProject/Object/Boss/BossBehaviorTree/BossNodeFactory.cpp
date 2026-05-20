@@ -19,6 +19,7 @@
 #include "Actions/BTBossSlashAttack.h"
 #include "Actions/BTBossRepelShockwave.h"
 #include "Actions/BTBossVortexTempest.h"
+#include "Actions/BTBossTeleport.h"
 
 // Condition ノード (4 種)
 #include "Conditions/BTActionSelector.h"
@@ -91,6 +92,10 @@ void BossNodeFactory::RegisterAll() {
   reg->RegisterNode<BTBossVortexTempest>("BTBossVortexTempest", Tako::NodeMeta{
     "Vortex Tempest", Tako::NodeCategory::Action,
     Tako::NodeColor(0.6f, 0.3f, 0.9f, 1.0f), false  // 紫 (渦・嵐)
+  });
+  reg->RegisterNode<BTBossTeleport>("BTBossTeleport", Tako::NodeMeta{
+    "Teleport", Tako::NodeCategory::Action,
+    Tako::NodeColor(0.5f, 0.9f, 0.9f, 1.0f), false  // 水色 (瞬間移動)
   });
 
   // ========================================================================

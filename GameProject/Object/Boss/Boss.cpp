@@ -63,7 +63,7 @@ void Boss::InitializeModel()
     model_ = std::make_unique<Object3d>();
     model_->Initialize();
     model_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
-    model_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 0.0f));
+    model_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 
     transform_.translate = Vector3(0.0f, initialY_, initialZ_);
     transform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
@@ -174,6 +174,43 @@ void Boss::SetAuraEmitterActive(bool active)
     emitterManager_->SetEmitterActive(auraEmitterName_, active);
 }
 
+void Boss::InitializeBodyParticleEmitter()
+{
+    if (!emitterManager_ || !model_) {
+        return;
+    }
+
+    // 二重登録防止: シーン再初期化や差し替え時に旧エミッタが残らないように
+    if (emitterManager_->HasEmitter(bodyParticleEmitterName_)) {
+        emitterManager_->RemoveEmitter(bodyParticleEmitterName_);
+    }
+
+    const std::string presetPath =
+        "resources/Json/ParticlePresets/Presets/" + bodyParticleEmitterName_ + ".json";
+
+    if (std::filesystem::exists(presetPath)) {
+        // 保存済みプリセット読込: object3dKey は sentinel で上書きされ model_ にバインドされる
+        emitterManager_->LoadPreset(bodyParticleEmitterName_, bodyParticleEmitterName_, model_.get());
+    } else {
+        // 初回起動: programmatic 既定値で生成 (object3dKey = emitter 名で round-trip 可能)
+        constexpr uint32_t kDefaultCount = 200;
+        constexpr float    kDefaultFreq  = 0.02f;
+        emitterManager_->CreateMeshEmitter(
+            bodyParticleEmitterName_, model_.get(), bodyParticleEmitterName_,
+            kDefaultCount, kDefaultFreq);
+    }
+
+    // 初期は非アクティブ: BTBossTeleport が必要時に SetBodyParticleEmitterActive(true) で起動
+    emitterManager_->SetEmitterActive(bodyParticleEmitterName_, false);
+}
+
+void Boss::SetBodyParticleEmitterActive(bool active)
+{
+    if (!emitterManager_) return;
+    if (!emitterManager_->HasEmitter(bodyParticleEmitterName_)) return;
+    emitterManager_->SetEmitterActive(bodyParticleEmitterName_, active);
+}
+
 void Boss::InitializeAI()
 {
     // BehaviorTree 生成前に Boss 専用ノード型を Registry に登録する必要がある
@@ -213,10 +250,15 @@ void Boss::Finalize()
         CollisionManager::GetInstance()->RemoveCollider(meleeAttackCollider_.get());
     }
 
-    // boss_aura MeshEmitter は model_ を boundObject3d_ として参照しているため、
+    // boss_aura / boss_particle_body MeshEmitter は model_ を boundObject3d_ として参照しているため、
     // model_ 解放前にエミッタ側から明示削除して dangling pointer access を防ぐ
-    if (emitterManager_ && emitterManager_->HasEmitter(auraEmitterName_)) {
-        emitterManager_->RemoveEmitter(auraEmitterName_);
+    if (emitterManager_) {
+        if (emitterManager_->HasEmitter(auraEmitterName_)) {
+            emitterManager_->RemoveEmitter(auraEmitterName_);
+        }
+        if (emitterManager_->HasEmitter(bodyParticleEmitterName_)) {
+            emitterManager_->RemoveEmitter(bodyParticleEmitterName_);
+        }
     }
 
 #ifdef _DEBUG

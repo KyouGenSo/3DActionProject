@@ -41,6 +41,10 @@ PlayerBullet::PlayerBullet(EmitterManager* emitterManager) {
         emitterManager_->SetEmitterActive(bulletEmitterName_, false);
         emitterManager_->LoadPreset("player_bullet_explode", explodeEmitterName_);
         emitterManager_->SetEmitterActive(explodeEmitterName_, false);
+        // 弾本体に上乗せする追加エフェクト
+        effectEmitterName_ = std::format("player_bullet_effect{}", id);
+        emitterManager_->LoadPreset("player_bullet_effect", effectEmitterName_);
+        emitterManager_->SetEmitterActive(effectEmitterName_, false);
     }
 
     id++;
@@ -65,6 +69,12 @@ void PlayerBullet::Initialize(const Vector3& position, const Vector3& velocity) 
 
     // エミッターを有効化
     Projectile::ActivateBulletEmitter(position);
+
+    // 追加エフェクトエミッタを起動 + 初期位置同期
+    if (emitterManager_) {
+        emitterManager_->SetEmitterActive(effectEmitterName_, true);
+        emitterManager_->SetEmitterPosition(effectEmitterName_, position);
+    }
 
     // コライダーの設定
     if (!collider_) {
@@ -93,6 +103,11 @@ void PlayerBullet::Finalize() {
     // CollisionManager から削除
     if (collider_) {
         CollisionManager::GetInstance()->RemoveCollider(collider_.get());
+    }
+
+    // 追加エフェクトエミッタは一時化せず即時破棄 (爆発演出は explode 側で完結)
+    if (emitterManager_) {
+        emitterManager_->RemoveEmitter(effectEmitterName_);
     }
 
     // エミッター終了処理
@@ -124,6 +139,7 @@ void PlayerBullet::Update(float deltaTime) {
     if (emitterManager_) {
         emitterManager_->SetEmitterPosition(bulletEmitterName_, transform_.translate);
         emitterManager_->SetEmitterPosition(explodeEmitterName_, transform_.translate);
+        emitterManager_->SetEmitterPosition(effectEmitterName_, transform_.translate);
     }
 
     // エリア外に出たら非アクティブ化

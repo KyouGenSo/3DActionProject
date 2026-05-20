@@ -73,6 +73,9 @@ private:
     // id
     static uint32_t id;
 
+    // 追加エフェクトエミッタ (弾本体エミッタと並列に動かす上乗せ演出)
+    std::string effectEmitterName_;
+
     // 調整可能パラメータ
     float rotationSpeedMin_ = -10.0f; ///< 回転速度の最小値
     float rotationSpeedMax_ = 10.0f; ///< 回転速度の最大値

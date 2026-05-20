@@ -84,6 +84,9 @@ private:
     // ForceFieldManager（非所有 / null 許容）— ForceField の力を弾の挙動に反映するためのクエリ先
     Tako::ForceFieldManager* forceFieldManager_ = nullptr;
 
+    // 追加エフェクトエミッタ (弾本体エミッタと並列に動かす上乗せ演出)
+    std::string effectEmitterName_;
+
     // 調整可能パラメータ
     float yBoundaryMin_ = -10.0f;  ///< Y 座標の下限
     float yBoundaryMax_ = 50.0f;   ///< Y 座標の上限

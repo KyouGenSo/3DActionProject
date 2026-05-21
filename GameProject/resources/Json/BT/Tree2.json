@@ -2,15 +2,22 @@
   "links": [
     {
       "id": 30000,
-      "sourceNodeId": 10001,
-      "sourcePinId": 20003,
-      "targetNodeId": 10000,
-      "targetPinId": 20000
+      "sourceNodeId": 10000,
+      "sourcePinId": 20001,
+      "targetNodeId": 10001,
+      "targetPinId": 20002
+    },
+    {
+      "id": 30001,
+      "sourceNodeId": 10000,
+      "sourcePinId": 20001,
+      "targetNodeId": 10002,
+      "targetPinId": 20004
     },
     {
       "id": 30002,
-      "sourceNodeId": 10000,
-      "sourcePinId": 20001,
+      "sourceNodeId": 10001,
+      "sourcePinId": 20003,
       "targetNodeId": 10003,
       "targetPinId": 20005
     },
@@ -20,84 +27,88 @@
       "sourcePinId": 20003,
       "targetNodeId": 10004,
       "targetPinId": 20006
-    },
-    {
-      "id": 30004,
-      "sourceNodeId": 10004,
-      "sourcePinId": 20007,
-      "targetNodeId": 10005,
-      "targetPinId": 20008
     }
   ],
   "metadata": {
-    "created": "2026-05-21T08:44:28",
-    "modified": "2026-05-21T08:44:28",
+    "created": "2026-05-21T08:58:38",
+    "modified": "2026-05-21T08:58:38",
     "name": "Behavior Tree"
   },
   "nodes": [
     {
-      "displayName": "Selector",
+      "displayName": "Sequence",
       "id": 10000,
       "parameters": null,
       "position": {
-        "x": -121.0,
-        "y": 25.0
-      },
-      "type": "BTSelector"
-    },
-    {
-      "displayName": "Sequence",
-      "id": 10001,
-      "parameters": null,
-      "position": {
-        "x": 88.0,
-        "y": -146.0
+        "x": 8.0,
+        "y": -157.0
       },
       "type": "BTSequence"
     },
     {
-      "displayName": "Idle",
-      "id": 10003,
+      "displayName": "Parallel",
+      "id": 10001,
       "parameters": {
-        "idleDuration": 0.4000000059604645
+        "policy": "MainChild"
       },
       "position": {
-        "x": -265.0,
+        "x": 120.0,
+        "y": 15.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Idle",
+      "id": 10002,
+      "parameters": {
+        "idleDuration": 2.0
+      },
+      "position": {
+        "x": -169.0,
         "y": 175.0
       },
       "type": "BTBossIdle"
     },
     {
-      "displayName": "RandomSelector",
-      "id": 10004,
-      "parameters": null,
-      "position": {
-        "x": 248.0,
-        "y": 47.0
+      "displayName": "Barrage",
+      "id": 10003,
+      "parameters": {
+        "chargeTime": 0.800000011920929,
+        "fireInterval": 0.07999999821186066,
+        "firingDuration": 3.0,
+        "isBypassRecoveryGuard": false,
+        "moveDuration": 0.5,
+        "normalBulletSpeedMax": 200.0,
+        "normalBulletSpeedMin": 150.0,
+        "penetratingBulletSpeedMax": 80.0,
+        "penetratingBulletSpeedMin": 50.0,
+        "penetratingRatio": 0.30000001192092896,
+        "recoveryTime": 0.800000011920929
       },
-      "type": "BTRandomSelector"
+      "position": {
+        "x": 120.0,
+        "y": 159.0
+      },
+      "type": "BTBossBarrage"
     },
     {
-      "displayName": "Teleport",
-      "id": 10005,
+      "displayName": "Repel Shockwave",
+      "id": 10004,
       "parameters": {
-        "fadeInDuration": 0.6000000238418579,
-        "fadeOutDuration": 0.6000000238418579,
+        "affectMask": 3,
+        "expandTime": 0.4000000059604645,
+        "falloff": 0.0,
         "isBypassRecoveryGuard": false,
-        "mode": 2,
-        "playerRandomMaxDistance": 35.0,
-        "playerRandomMinDistance": 20.0,
-        "randomMaxDistance": 200.0,
-        "randomMinDistance": 100.0,
-        "targetPositionX": 0.0,
-        "targetPositionY": 0.0,
-        "targetPositionZ": 0.0
+        "maxRadius": 20.5,
+        "strength": 2000.0,
+        "sustainTime": 10.0,
+        "warningTime": 0.5
       },
       "position": {
-        "x": 264.0,
-        "y": 191.0
+        "x": 120.0,
+        "y": 255.0
       },
-      "type": "BTBossTeleport"
+      "type": "BTBossRepelShockwave"
     }
   ],
   "version": "1.0"

@@ -30,12 +30,11 @@
 void BossNodeFactory::RegisterAll() {
   auto* reg = Tako::BTNodeRegistry::GetInstance();
 
-  // 標準コンポジットを先に登録 (BehaviorTree::LoadFromJSON がエディタ生成より先に
-  // 呼ばれるため、ここで Initialize しておかないと BTSelector 等が未登録のままになる)
+  // 標準コンポジットを先に登録
   reg->Initialize();
 
   // ========================================================================
-  // Action ノード (14 種) - Blackboard 経由で Boss/Player にアクセス
+  //                              Action ノード 
   // ========================================================================
   reg->RegisterNode<BTBossIdle>("BTBossIdle", Tako::NodeMeta{
     "Idle", Tako::NodeCategory::Action,
@@ -99,7 +98,7 @@ void BossNodeFactory::RegisterAll() {
   });
 
   // ========================================================================
-  // Condition ノード (4 種)
+  //                               Condition 
   // ========================================================================
   // BTActionSelector は引数付きコンストラクタ (ActionType::Dash) のため RegisterFactory を使用
   reg->RegisterFactory("BTActionSelector",

@@ -15,6 +15,11 @@
 #include "../../Common/BulletSpawner.h"
 #include "../../UI/HPBarUI.h"
 #include "BossPhaseManager.h"
+#include "BehaviorTree.h"
+
+#ifdef _DEBUG
+#include "BehaviorTreeEditor.h"
+#endif
 
 // Tako namespace 前方宣言
 namespace Tako {
@@ -24,21 +29,12 @@ class EmitterManager;
 class ForceFieldManager;
 }
 
-#include "BehaviorTree.h"
-#ifdef _DEBUG
-#include "BehaviorTreeEditor.h"
-#endif
-
 // GameProject 前方宣言
 class BossStateMachine;
 class BossStunnedState;
 class Player;
 class BossMeleeAttackCollider;
 
-/// <summary>
-/// ボスエネミークラス
-/// HP とフェーズ管理、ダメージ処理を制御
-/// </summary>
 class Boss
 {
     // 定数

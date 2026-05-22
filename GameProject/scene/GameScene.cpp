@@ -553,44 +553,37 @@ void GameScene::InitializeEmitterManger()
     emitterManager_->LoadPreset("can_attack_sign", "can_attack_sign");
 
     // ===== Phase1 リパルス・ショックウェーブ用エミッター =====
-    // BTBossRepelShockwave がランタイムで SetEmitterActive する想定で、初期は非アクティブで読み込み
     emitterManager_->LoadPreset("boss_repel_ring", "boss_repel_ring");
     emitterManager_->SetEmitterActive("boss_repel_ring", false);
     emitterManager_->LoadPreset("boss_repel_flash", "boss_repel_flash");
     emitterManager_->SetEmitterActive("boss_repel_flash", false);
 
     // ===== Phase2 ヴォルテックス・テンペスト用エミッター =====
-    // 4 渦点 × 3 ForceField プリセット（Attract+Dir+Vortex）= 12 力場の構成。
-    // 各渦点に 1 個ずつエミッター（boss_vortex_0..3）を配置し、力場と一緒に公転させる。
-    // BTBossVortexTempest::MakeVortexEmitterName(i) と命名規則を一致させること。
     for (int i = 0; i < 4; ++i) {
         const std::string emitterName = "boss_vortex_" + std::to_string(i);
         emitterManager_->LoadPreset("boss_vortex", emitterName);
         emitterManager_->SetEmitterActive(emitterName, false);
     }
-    // Phase2 予兆マーカーは BTBossVortexTempest 側でデカールとして自前生成するため
-    // ここでのパーティクルプリセットロードは不要。
 
     // ボスに EmitterManager を設定
     boss_->SetEmitterManager(emitterManager_.get());
 
     // ボスモデルをスポーン形状とする MeshEmitter "boss_aura" を初期化
-    // (preset 存在時は LoadPreset、無ければ programmatic 生成。object3dKey で永続化)
     boss_->InitializeAuraEmitter();
 
-    // テレポート演出用 MeshEmitter "boss_particle_body" を初期化 (BTBossTeleport が制御)
+    // テレポート演出用 MeshEmitter "boss_particle_body" を初期化
     boss_->InitializeBodyParticleEmitter();
 
-    // ボスに ForceFieldManager を設定（BTBossRepelShockwave / BTBossVortexTempest が利用）
+    // ボスに ForceFieldManager を設定
     boss_->SetForceFieldManager(forceFieldManager_.get());
 
-    // プレイヤーに ForceFieldManager を設定（BTBossRepelShockwave がプレイヤーを押し出す）
+    // プレイヤーに ForceFieldManager を設定
     player_->SetForceFieldManager(forceFieldManager_.get());
 
     // プレイヤーに EmitterManager を設定
     player_->SetEmitterManager(emitterManager_.get());
 
-    // パリィエフェクトの初期状態を設定（gamescene_preset で読み込み済み）
+    // パリィエフェクトの初期状態を設定
     emitterManager_->SetEmitterActive("parry_effect", false);
     emitterManager_->SetEmitterActive("parry_success", false);
 }
@@ -614,8 +607,8 @@ void GameScene::InitializeEffectManager()
 
     // プロジェクタイル（弾）管理マネージャー
     projectileManager_ = std::make_unique<ProjectileManager>(emitterManager_.get());
+
     // プレイヤー弾が ForceField の影響を受けるよう ForceFieldManager を注入
-    // （ボス弾は影響受けない設計のため、ProjectileManager 内で SpawnPlayerBullets だけが利用）
     projectileManager_->SetForceFieldManager(forceFieldManager_.get());
 }
 

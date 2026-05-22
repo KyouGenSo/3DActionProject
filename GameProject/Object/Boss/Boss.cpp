@@ -142,7 +142,7 @@ void Boss::InitializeAuraEmitter()
         return;
     }
 
-    // 二重登録防止: シーン再初期化や差し替え時に旧エミッタが残らないように
+    // 二重登録防止
     if (emitterManager_->HasEmitter(auraEmitterName_)) {
         emitterManager_->RemoveEmitter(auraEmitterName_);
     }
@@ -180,7 +180,7 @@ void Boss::InitializeBodyParticleEmitter()
         return;
     }
 
-    // 二重登録防止: シーン再初期化や差し替え時に旧エミッタが残らないように
+    // 二重登録防止
     if (emitterManager_->HasEmitter(bodyParticleEmitterName_)) {
         emitterManager_->RemoveEmitter(bodyParticleEmitterName_);
     }
@@ -189,10 +189,9 @@ void Boss::InitializeBodyParticleEmitter()
         "resources/Json/ParticlePresets/Presets/" + bodyParticleEmitterName_ + ".json";
 
     if (std::filesystem::exists(presetPath)) {
-        // 保存済みプリセット読込: object3dKey は sentinel で上書きされ model_ にバインドされる
         emitterManager_->LoadPreset(bodyParticleEmitterName_, bodyParticleEmitterName_, model_.get());
     } else {
-        // 初回起動: programmatic 既定値で生成 (object3dKey = emitter 名で round-trip 可能)
+        // 初回起動: programmatic 既定値で生成
         constexpr uint32_t kDefaultCount = 200;
         constexpr float    kDefaultFreq  = 0.02f;
         emitterManager_->CreateMeshEmitter(
@@ -250,8 +249,6 @@ void Boss::Finalize()
         CollisionManager::GetInstance()->RemoveCollider(meleeAttackCollider_.get());
     }
 
-    // boss_aura / boss_particle_body MeshEmitter は model_ を boundObject3d_ として参照しているため、
-    // model_ 解放前にエミッタ側から明示削除して dangling pointer access を防ぐ
     if (emitterManager_) {
         if (emitterManager_->HasEmitter(auraEmitterName_)) {
             emitterManager_->RemoveEmitter(auraEmitterName_);
@@ -262,9 +259,7 @@ void Boss::Finalize()
     }
 
 #ifdef _DEBUG
-    // ノードエディタを明示的にクリーンアップ
-    // ImGui コンテキストが有効なうちに破棄する必要がある
-    // （Boss デストラクタ時点では ImGui が既に終了している可能性があるため）
+    // ノードエディタクリーンアップ
     if (nodeEditor_) {
         nodeEditor_->Finalize();
         nodeEditor_.reset();
@@ -285,14 +280,6 @@ void Boss::Update(float deltaTime)
         stateMachine_->ChangeState("Dead");
     }
 
-    // フェーズに応じてプレイヤーの射撃有効/無効を切り替え
-    if (phaseManager_.GetPhase() == 1) {
-        if (player_) { player_->SetShootingEnabled(true); }
-    }
-    else if (phaseManager_.GetPhase() == 2) {
-        if (player_) { player_->SetShootingEnabled(false); }
-    }
-
     // ステートマシンが全てを駆動（Normal 内で BT が動く）
     if (!isPause_) {
         stateMachine_->Update(deltaTime);
@@ -310,8 +297,6 @@ void Boss::Update(float deltaTime)
     }
 
     // boss_aura エミッタは「硬直 or スタン or フェーズ移行スタン or テレポート中」のいずれかで無効
-    // IsStunned() が Stunned/PhaseTransitionStun の両方を OR 判定するため再利用
-    // BTBossTeleport が SetTeleporting(true/false) を切替えるため isTeleporting_ も含める
     SetAuraEmitterActive(!isInRecovery_ && !IsStunned() && !isTeleporting_);
 
     // ヒットエフェクトの更新
@@ -380,7 +365,6 @@ void Boss::OnHit(float damage, float shakeIntensityOverride)
     hp_ = std::max<float>(hp_, 0.0f);
 
     // フェーズ移行スタン条件チェック
-    // 条件: フェーズ1 && HP <= 110 && 未トリガー && スタン中でない
     if (phaseManager_.GetPhase() == 1 &&
         hp_ <= kPhaseTransitionStunThreshold &&
         !hasTriggeredPhaseTransitionStun_) {

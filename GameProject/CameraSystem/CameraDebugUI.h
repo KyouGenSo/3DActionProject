@@ -75,6 +75,8 @@ private:
     /// </summary>
     static void DrawCameraState();
 
+private:
+
     // UI 表示フラグ
     static bool showManagerInfo_;
     static bool showControllerInfo_;

@@ -15,7 +15,7 @@ namespace Tako
 }
 
 /// <summary>
-/// プロジェクタイル（弾丸）集約管理クラス
+/// プロジェクタイル（弾）集約管理クラス
 /// プレイヤー弾・ボス弾・貫通弾の生成・更新・削除を一手に引き受ける
 /// </summary>
 class ProjectileManager {

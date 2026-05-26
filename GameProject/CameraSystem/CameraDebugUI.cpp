@@ -78,11 +78,10 @@ void CameraDebugUI::DrawManagerInfo() {
         ImGui::TableSetupColumn("Status", ImGuiTableColumnFlags_WidthFixed, 80.0f);
         ImGui::TableHeadersRow();
 
-        // デバッグ情報をパースして表示（簡易版）
-        // 実際は CameraManager にコントローラーリストを取得する API があればそれを使う
+        // デバッグ情報をパースして表示
         std::string debugInfo = manager->GetDebugInfo();
 
-        // 各行を解析して表示（簡易的な実装）
+        // 各行を解析して表示
         if (manager->GetControllerCount() > 0) {
             // ThirdPerson
             ImGui::TableNextRow();
@@ -152,13 +151,13 @@ void CameraDebugUI::DrawFirstPersonControllerInfo(ThirdPersonController* control
         controller->SetOffset(Vector3(offsetArray[0], offsetArray[1], offsetArray[2]));
     }
 
-    // 回転速度（変数名を明確に）
+    // 回転速度
     static float fpRotateSpeed = CameraConfig::ThirdPerson::DEFAULT_ROTATE_SPEED;
     if (ImGui::SliderFloat("Rotate Speed", &fpRotateSpeed, 0.01f, 0.2f)) {
         controller->SetRotateSpeed(fpRotateSpeed);
     }
 
-    // 追従の滑らかさ（変数名を明確に）
+    // 追従の滑らかさ
     static float fpSmoothness = CameraConfig::FOLLOW_SMOOTHNESS;
     if (ImGui::SliderFloat("Follow Smoothness", &fpSmoothness, 0.01f, 1.0f)) {
         controller->SetSmoothness(fpSmoothness);
@@ -195,25 +194,25 @@ void CameraDebugUI::DrawTopDownControllerInfo(TopDownController* controller) {
 
     ImGui::Separator();
 
-    // カメラ高さ設定（変数名を明確に）
+    // カメラ高さ設定
     static float tdBaseHeight = CameraConfig::TopDown::BASE_HEIGHT;
     if (ImGui::DragFloat("Base Height", &tdBaseHeight, 0.5f, 5.0f, 100.0f)) {
         controller->SetBaseHeight(tdBaseHeight);
     }
 
-    // 高さ倍率（変数名を明確に）
+    // 高さ倍率
     static float tdHeightMultiplier = CameraConfig::TopDown::HEIGHT_MULTIPLIER;
     if (ImGui::SliderFloat("Height Multiplier", &tdHeightMultiplier, 0.0f, 2.0f)) {
         controller->SetHeightMultiplier(tdHeightMultiplier);
     }
 
-    // カメラ角度（変数名を明確に）
+    // カメラ角度
     static float tdAngleXDegrees = DirectX::XMConvertToDegrees(CameraConfig::TopDown::DEFAULT_ANGLE_X);
     if (ImGui::SliderFloat("Camera Angle (deg)", &tdAngleXDegrees, 0.0f, 90.0f)) {
         controller->SetCameraAngle(DirectX::XMConvertToRadians(tdAngleXDegrees));
     }
 
-    // 追従の滑らかさ（変数名を明確に）
+    // 追従の滑らかさ
     static float tdSmoothness = CameraConfig::FOLLOW_SMOOTHNESS;
     if (ImGui::SliderFloat("Follow Smoothness", &tdSmoothness, 0.01f, 1.0f)) {
         controller->SetSmoothness(tdSmoothness);
@@ -266,7 +265,7 @@ void CameraDebugUI::DrawAnimationInfo(CameraAnimation* animation) {
         return;
     }
 
-    // 従来のシンプルな UI
+    // シンプルな UI--------------------------------------
 
     // アニメーション情報
     ImGui::Text("Animation: %s", animation->GetAnimationName().c_str());

@@ -245,7 +245,7 @@ void CameraAnimationTimeline::DrawTrack(TrackType trackType, float yPos) {
             static_cast<int>(i)) != selectedKeyframes_.end();
         bool isHovered = (hoveredKeyframe_ == static_cast<int>(i) && hoveredTrack_ == trackType);
 
-        // SUMMARY トラックの場合は全キーフレーム表示
+        // トラックの場合は全キーフレーム表示
         if (trackType == TrackType::SUMMARY) {
             DrawKeyframe(static_cast<int>(i), x, yPos + trackHeight_ / 2, isSelected, isHovered);
         }
@@ -707,7 +707,7 @@ void CameraAnimationTimeline::SetOffset(float offset) {
 void CameraAnimationTimeline::ClampOffset() {
     if (!animation_) return;
 
-    // キャンバスサイズを取得（簡易的に800として仮定、実際は ImGui から取得）
+    // キャンバスサイズを取得（800として仮定、実際は ImGui から取得）
     float visibleWidth = 800.0f - trackLabelWidth_;
     float visibleTime = visibleWidth / (100.0f * zoom_);
     float duration = animation_->GetDuration();

@@ -82,12 +82,12 @@ void CameraAnimationEditor::Draw() {
     // メニューバー
     DrawMenuBar();
 
-    // アニメーション選択 UI（コントローラー経由の場合のみ）
+    // アニメーション選択 UI
     if (controller_) {
         DrawAnimationSelector();
     }
 
-    // レイアウト描画（ADVANCED モードのみ）
+    // レイアウト描画
     // 上部：再生コントロールとツール
     DrawPlaybackControls();
 
@@ -270,12 +270,12 @@ void CameraAnimationEditor::DrawMenuBar() {
     }
 
     // View menu
-    if (ImGui::BeginMenu("View")) {
-        // 現在実装済みの機能のみ表示
-        // 将来的に拡張予定
+    //if (ImGui::BeginMenu("View")) {
+    //    // 現在実装済みの機能のみ表示
+    //    // 拡張予定
 
-        ImGui::EndMenu();
-    }
+    //    ImGui::EndMenu();
+    //}
 
     // Animation menu
     if (ImGui::BeginMenu("Animation")) {

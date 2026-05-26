@@ -29,8 +29,8 @@ void InputHandler::Update()
 {
   Input* input = Input::GetInstance();
 
-  moveDirection_ = Vector2(0.0f, 0.0f); // 初期化
-  aimDirection_ = Vector2(0.0f, 0.0f); // 初期化
+  moveDirection_ = Vector2(0.0f, 0.0f); // 0で初期化
+  aimDirection_ = Vector2(0.0f, 0.0f); // 0で初期化
 
   // 移動入力（左スティック + キーボード）
   if (input->IsConnect()) moveDirection_ += input->GetLeftStick();

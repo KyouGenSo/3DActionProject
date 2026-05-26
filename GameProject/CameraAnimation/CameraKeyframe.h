@@ -15,14 +15,14 @@ struct CameraKeyframe {
         EASE_IN,        ///< 緩やかに開始
         EASE_OUT,       ///< 緩やかに終了
         EASE_IN_OUT,    ///< 両端で緩やか
-        CUBIC_BEZIER    ///< カスタムベジェカーブ（将来実装）
+        CUBIC_BEZIER    ///< カスタムベジェカーブ
     };
 
     /// <summary>
     /// 座標系タイプ
     /// </summary>
     enum class CoordinateType {
-        WORLD,          ///< ワールド座標系（従来の動作）
+        WORLD,          ///< ワールド座標系
         TARGET_RELATIVE ///< ターゲット相対座標系（ターゲットからのオフセット）
     };
 
@@ -158,7 +158,7 @@ namespace nlohmann {
             keyframe.fov = j.at("fov").get<float>();
             keyframe.interpolation = j.at("interpolation").get<CameraKeyframe::InterpolationType>();
 
-            // 後方互換性: coordinateType が存在しない場合は WORLD をデフォルトとする
+            // coordinateType が存在しない場合は WORLD をデフォルトとする
             if (j.contains("coordinateType")) {
                 keyframe.coordinateType = j.at("coordinateType").get<CameraKeyframe::CoordinateType>();
             }

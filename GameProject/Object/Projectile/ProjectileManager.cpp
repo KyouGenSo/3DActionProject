@@ -18,7 +18,7 @@ namespace {
             }
         }
 
-        // 非アクティブ弾を除去（Finalize() で専用コライダーも自動解除される）
+        // 非アクティブ弾を除去
         std::erase_if(bullets,
             [](const std::unique_ptr<T>& b) {
                 if (b && !b->IsActive())
@@ -86,8 +86,7 @@ void ProjectileManager::Clear()
 
 void ProjectileManager::SpawnPlayerBullets(const std::vector<BulletSpawnRequest>& requests)
 {
-    // PlayerBullet はテンプレートを使わず特殊化：生成直後に ForceFieldManager を注入する。
-    // ボス弾は force field の影響を受けない設計のため、共通テンプレートのまま注入しない。
+    // PlayerBullet はForceFieldに影響されるのでテンプレートを使わず特殊化：生成直後に ForceFieldManager を注入する。
     for (const auto& req : requests) {
         auto bullet = std::make_unique<PlayerBullet>(emitterManager_);
         bullet->SetForceFieldManager(forceFieldManager_);

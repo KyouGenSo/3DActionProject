@@ -462,15 +462,12 @@ float CameraAnimation::ApplyEasing(float t, CameraKeyframe::InterpolationType ty
         return t;
 
     case CameraKeyframe::InterpolationType::EASE_IN:
-        // 二次関数でゆっくり開始
         return t * t;
 
     case CameraKeyframe::InterpolationType::EASE_OUT:
-        // 二次関数でゆっくり終了
         return 1.0f - (1.0f - t) * (1.0f - t);
 
     case CameraKeyframe::InterpolationType::EASE_IN_OUT:
-        // 両端でゆっくり（三次関数）
         if (t < 0.5f) {
             return 2.0f * t * t;
         }

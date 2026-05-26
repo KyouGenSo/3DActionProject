@@ -195,23 +195,23 @@ private:
     // コントローラーリスト（優先度順）
     std::vector<ControllerEntry> controllers_;
 
-    // 名前からインデックスへのマップ（高速検索用）
+    // 名前からインデックスへのマップ（検索用）
     std::unordered_map<std::string, size_t> nameToIndex_;
 
     // ソートが必要かのフラグ
     bool needsSort_ = false;
 
     //==================== カメラシェイク ====================
-    /// シェイク中フラグ
+    // シェイク中フラグ
     bool isShaking_ = false;
-    /// シェイクタイマー（経過時間）
+    // シェイクタイマー（経過時間）
     float shakeTimer_ = 0.0f;
-    /// シェイク持続時間
+    // シェイク持続時間
     float shakeDuration_ = CameraConfig::Shake::DEFAULT_DURATION;
-    /// シェイク強度（デフォルト）
+    // シェイク強度（デフォルト）
     float shakeIntensity_ = CameraConfig::Shake::DEFAULT_INTENSITY;
-    /// 現在のシェイク強度（実行時）
+    // 現在のシェイク強度（実行時）
     float currentShakeIntensity_ = 0.0f;
-    /// 描画用シェイクオフセット
+    // 描画用シェイクオフセット
     Tako::Vector3 shakeOffset_ = { 0.0f, 0.0f, 0.0f };
 };

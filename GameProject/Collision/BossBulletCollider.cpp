@@ -39,8 +39,6 @@ void BossBulletCollider::OnCollisionEnter(Collider* other) {
 
             // 弾を非アクティブ化
             owner_->SetActive(false);
-
-            // TODO: ヒットエフェクト生成
         }
     }
     else if (other->GetTypeID() == static_cast<uint32_t>(CollisionTypeId::PLAYER_PROJECTILE)) { // プレイヤーの弾との衝突判定

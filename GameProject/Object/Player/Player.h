@@ -517,7 +517,7 @@ private: // メンバ変数
     BulletSpawner bulletSpawner_;
 
     // 調整可能パラメータ（ImGui 編集用）
-    float initialY_ = 1.5f;                   ///< 初期 Y 座標
+    float initialY_ = 2.5f;                   ///< 初期 Y 座標
     float initialZ_ = -120.0f;                ///< 初期 Z 座標
     float attackMinDist_ = 5.0f;             ///< 攻撃開始距離
     float attackMoveRotationLerp_ = 0.3f;     ///< 攻撃移動中の回転補間速度

@@ -3,6 +3,7 @@
 #include "../../Movement/BossAreaBounds.h"
 #include "../../../Player/Player.h"
 #include "RandomEngine.h"
+#include "EaseFunc.h"
 
 #include <algorithm>
 #include <cmath>
@@ -113,7 +114,7 @@ void BTBossDash::UpdateDashMovement(Boss* boss, float deltaTime) {
         float t = elapsedTime_ / dashDuration_;
 
         // イージング（加速→減速）
-        t = t * t * (kEasingCoeffA - kEasingCoeffB * t);
+        t = Ease::SmoothStep(t);
 
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);
         boss->SetTranslate(newPosition);

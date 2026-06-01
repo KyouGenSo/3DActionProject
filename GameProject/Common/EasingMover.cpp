@@ -1,4 +1,5 @@
 #include "EasingMover.h"
+#include "EaseFunc.h"
 #include <algorithm>
 
 using namespace Tako;
@@ -85,13 +86,11 @@ float EasingMover::ApplyEasing(float t) const
 {
     switch (easingType_) {
     case EasingType::Linear:
-        return t;
+        return Ease::Linear(t);
     case EasingType::SmoothStep:
-        // smoothstep: t * t * (3 - 2 * t)
-        return t * t * (3.0f - 2.0f * t);
+        return Ease::SmoothStep(t);
     case EasingType::EaseOut:
-        // easeOutQuad: 1 - (1 - t)^2
-        return 1.0f - (1.0f - t) * (1.0f - t);
+        return Ease::OutQuad(t);
     default:
         return t;
     }

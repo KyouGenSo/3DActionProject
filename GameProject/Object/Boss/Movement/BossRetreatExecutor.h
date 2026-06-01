@@ -90,8 +90,6 @@ private:
 
     static constexpr float kDirectionEpsilon   = 0.01f;   ///< 方向有効判定の閾値
     static constexpr float kArrivalThreshold   = 0.5f;    ///< 到達判定の距離閾値
-    static constexpr float kEasingCoeffA       = 3.0f;    ///< smoothstep 係数 A
-    static constexpr float kEasingCoeffB       = 2.0f;    ///< smoothstep 係数 B
     static constexpr float kMinRetreatDistance = 10.0f;   ///< 代替方向検討の最小移動距離
 
     Parameters    params_{};

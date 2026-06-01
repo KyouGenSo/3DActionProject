@@ -1,5 +1,6 @@
 #include "BulletSignEffect.h"
 #include "../Object/Boss/Boss.h"
+#include "Vec3Func.h"
 #include <cmath>
 
 using namespace Tako;
@@ -24,7 +25,7 @@ void BulletSignEffect::Update(Boss* boss, float deltaTime) {
     // スケール補間: 0.01 → 7.0
     float t = elapsedTime_ / duration_;
     if (t > 1.0f) t = 1.0f;
-    float scale = kScaleMin + t * (kScaleMax - kScaleMin);
+    float scale = Vec3::Lerp(kScaleMin, kScaleMax, t);
 
     // エミッター更新
     boss->SetBulletSignEmitterScaleRangeX(scale);

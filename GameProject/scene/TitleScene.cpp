@@ -8,6 +8,7 @@
 #include "Draw2D.h"
 #include "GPUParticle.h"
 #include "EnginePaths.h"
+#include "Vec3Func.h"
 #include <cmath>
 #include <numbers>
 #include <format>
@@ -559,13 +560,13 @@ void TitleScene::UpdateSlashParticleAnimation()
     if (slashEmitter) {
         // count 値を線形補間
         uint32_t currentCount = static_cast<uint32_t>(
-            slashEmitterStartCount_ +
-            (slashEmitterEndCount_ - slashEmitterStartCount_) * progress
-            );
+            Vec3::Lerp(
+                static_cast<float>(slashEmitterStartCount_),
+                static_cast<float>(slashEmitterEndCount_),
+                progress));
 
         // frequency 値を線形補間
-        float currentFreq = slashEmitterStartFreq_ +
-            (slashEmitterEndFreq_ - slashEmitterStartFreq_) * progress;
+        float currentFreq = Vec3::Lerp(slashEmitterStartFreq_, slashEmitterEndFreq_, progress);
 
         // パラメータを適用
         slashEmitter->SetParticleCount(currentCount);
@@ -592,10 +593,10 @@ void TitleScene::UpdateTitleEffectAnimation()
     }
     else {
         // スケールを線形補間で拡大
-        effectScale_ = 1.0f + (effectMaxScale_ - 1.0f) * progress;
+        effectScale_ = Vec3::Lerp(1.0f, effectMaxScale_, progress);
 
         // アルファ値を線形補間でフェードアウト
-        effectAlpha_ = effectInitialAlpha_ * (1.0f - progress);
+        effectAlpha_ = Vec3::Lerp(effectInitialAlpha_, 0.0f, progress);
     }
 
     // エフェクトスプライトに適用

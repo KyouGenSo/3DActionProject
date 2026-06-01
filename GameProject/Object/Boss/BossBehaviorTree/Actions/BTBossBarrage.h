@@ -74,8 +74,6 @@ protected:
 
 private:
     static constexpr float kDirectionEpsilon = 0.001f;
-    static constexpr float kEasingCoeffA = 3.0f;
-    static constexpr float kEasingCoeffB = 2.0f;
 
     /// <summary>
     /// 移動フェーズの更新処理（startPosition_ から targetPosition_ へイージング移動）

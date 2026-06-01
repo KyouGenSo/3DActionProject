@@ -4,6 +4,7 @@
 #include "../Boss.h"
 #include "../../Player/Player.h"
 #include "Mat4x4Func.h"
+#include "EaseFunc.h"
 
 #include <algorithm>
 #include <array>
@@ -67,7 +68,7 @@ void BossRetreatExecutor::Tick(Boss* boss, float deltaTime) {
 
     float t = elapsedTime_ / retreatDuration_;
     t = std::clamp(t, 0.0f, 1.0f);
-    t = t * t * (kEasingCoeffA - kEasingCoeffB * t);
+    t = Ease::SmoothStep(t);
 
     const Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);
     boss->SetTranslate(newPosition);

@@ -3,6 +3,7 @@
 #include "../../../Player/Player.h"
 #include "../../../../Common/GameConst.h"
 #include "RandomEngine.h"
+#include "EaseFunc.h"
 
 #include <cmath>
 
@@ -77,7 +78,7 @@ void BTBossBarrage::UpdateMove(Boss* boss, float /*deltaTime*/) {
     if (elapsedTime_ < moveDuration_) {
         float t = elapsedTime_ / moveDuration_;
         // イージング（加速→減速）
-        t = t * t * (kEasingCoeffA - kEasingCoeffB * t);
+        t = Ease::SmoothStep(t);
 
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);
         boss->SetTranslate(newPosition);

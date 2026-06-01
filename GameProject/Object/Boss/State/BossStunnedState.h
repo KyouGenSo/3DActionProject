@@ -35,8 +35,6 @@ private:
 	void UpdateFlash(Boss* boss);
 
 	// 定数
-	static constexpr float kEasingCoeffA = 3.0f;
-	static constexpr float kEasingCoeffB = 2.0f;
 	static constexpr float kDirectionEpsilon = 0.01f;
 
 	// パラメータ

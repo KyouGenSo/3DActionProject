@@ -2,6 +2,7 @@
 #include "../../Boss.h"
 #include "../../Movement/BossAreaBounds.h"
 #include "../../../Player/Player.h"
+#include "EaseFunc.h"
 
 #include <algorithm>
 #include <cmath>
@@ -137,7 +138,7 @@ void BTBossApproach::UpdateApproachMovement(Boss* boss, float deltaTime) {
         t = std::clamp(t, 0.0f, 1.0f);
 
         // イージング（加速→減速）: smoothstep
-        t = t * t * (kEasingCoeffA - kEasingCoeffB * t);
+        t = Ease::SmoothStep(t);
 
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);
         boss->SetTranslate(newPosition);

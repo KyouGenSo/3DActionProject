@@ -1,5 +1,6 @@
 #include "ShakeEffect.h"
 #include "RandomEngine.h"
+#include "Vec3Func.h"
 
 using namespace Tako;
 
@@ -28,7 +29,7 @@ void ShakeEffect::Update(float deltaTime)
     }
 
     // 減衰係数（1.0→0.0へ線形減衰）
-    float decay = 1.0f - (timer_ / duration_);
+    float decay = Vec3::Lerp(1.0f, 0.0f, timer_ / duration_);
 
     // ランダムオフセット生成
     RandomEngine* rng = RandomEngine::GetInstance();

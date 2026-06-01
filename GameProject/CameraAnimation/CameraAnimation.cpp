@@ -1,6 +1,7 @@
 #include "CameraAnimation.h"
 #include "Vec3Func.h"
 #include "QuatFunc.h"
+#include "EaseFunc.h"
 #include "CameraSystem/CameraConfig.h"
 
 #include <algorithm>
@@ -459,21 +460,16 @@ void CameraAnimation::InterpolateKeyframes(const CameraKeyframe& prev, const Cam
 float CameraAnimation::ApplyEasing(float t, CameraKeyframe::InterpolationType type) const {
     switch (type) {
     case CameraKeyframe::InterpolationType::LINEAR:
-        return t;
+        return Ease::Linear(t);
 
     case CameraKeyframe::InterpolationType::EASE_IN:
-        return t * t;
+        return Ease::InQuad(t);
 
     case CameraKeyframe::InterpolationType::EASE_OUT:
-        return 1.0f - (1.0f - t) * (1.0f - t);
+        return Ease::OutQuad(t);
 
     case CameraKeyframe::InterpolationType::EASE_IN_OUT:
-        if (t < 0.5f) {
-            return 2.0f * t * t;
-        }
-        else {
-            return 1.0f - 2.0f * (1.0f - t) * (1.0f - t);
-        }
+        return Ease::InOutQuad(t);
 
     case CameraKeyframe::InterpolationType::CUBIC_BEZIER:
         // TODO: カスタムベジェカーブの実装

@@ -1,6 +1,7 @@
 #ifdef _DEBUG
 
 #include "CameraAnimationCurveEditor.h"
+#include "EaseFunc.h"
 #include <algorithm>
 #include <cmath>
 #include <format>
@@ -377,21 +378,16 @@ void CameraAnimationCurveEditor::SetCurveValue(CameraKeyframe& kf, CurveType typ
 float CameraAnimationCurveEditor::ApplyEasing(float t, CameraKeyframe::InterpolationType type) const {
     switch (type) {
     case CameraKeyframe::InterpolationType::LINEAR:
-        return t;
+        return Tako::Ease::Linear(t);
 
     case CameraKeyframe::InterpolationType::EASE_IN:
-        return t * t;
+        return Tako::Ease::InQuad(t);
 
     case CameraKeyframe::InterpolationType::EASE_OUT:
-        return 1.0f - (1.0f - t) * (1.0f - t);
+        return Tako::Ease::OutQuad(t);
 
     case CameraKeyframe::InterpolationType::EASE_IN_OUT:
-        if (t < 0.5f) {
-            return 2.0f * t * t;
-        }
-        else {
-            return 1.0f - 2.0f * (1.0f - t) * (1.0f - t);
-        }
+        return Tako::Ease::InOutQuad(t);
 
     default:
         return t;

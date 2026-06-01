@@ -14,8 +14,6 @@ class BTBossDash : public Tako::BTNode {
     //=========================================================================================
 private:
     static constexpr float kDirectionEpsilon = 0.01f;  ///< 方向判定の閾値
-    static constexpr float kEasingCoeffA = 3.0f;       ///< イージング係数 A
-    static constexpr float kEasingCoeffB = 2.0f;       ///< イージング係数 B
 
 public:
     /// <summary>

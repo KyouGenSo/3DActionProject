@@ -6,6 +6,7 @@
 #include "Object3d.h"
 #include "Mat4x4Func.h"
 #include "RandomEngine.h"
+#include "EaseFunc.h"
 #include <cmath>
 #include <algorithm>
 
@@ -185,7 +186,7 @@ void BTBossMeleeAttack::ProcessExecutePhase(Tako::BTBlackboard* blackboard, floa
         // ミス時: 通常通り突進
         float t = phaseTimer_ / attackDuration_;
         t = std::clamp(t, 0.0f, 1.0f);
-        t = t * t * (3.0f - 2.0f * t);  // Smoothstep
+        t = Ease::SmoothStep(t);
 
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);
         boss->SetTranslate(newPosition);

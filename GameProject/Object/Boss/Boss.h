@@ -458,11 +458,6 @@ public:
     /// ボスのモデルをスポーン形状とする MeshEmitter "boss_aura" を初期化
     /// </summary>
     /// <remarks>
-    /// 事前条件: model_ 生成済み、emitterManager_ 注入済み。
-    /// preset JSON が存在すれば LoadPreset で復元 (object3dKey は sentinel 上書きで model_ にバインド)、
-    /// 存在しなければ programmatic 既定値で CreateMeshEmitter を呼ぶ。
-    /// 初期状態は <c>!isInRecovery_ &amp;&amp; !IsStunned()</c>。以降は <c>Update()</c> で毎フレーム同期。
-    /// </remarks>
     void InitializeAuraEmitter();
 
     /// <summary>
@@ -484,12 +479,6 @@ public:
     /// <summary>
     /// ボスモデルをスポーン形状とする MeshEmitter "boss_particle_body" を初期化
     /// </summary>
-    /// <remarks>
-    /// 事前条件: model_ 生成済み、emitterManager_ 注入済み。
-    /// preset JSON が存在すれば LoadPreset で復元 (object3dKey は sentinel 上書きで model_ にバインド)、
-    /// 存在しなければ programmatic 既定値で CreateMeshEmitter を呼ぶ。
-    /// 初期状態は非アクティブ (BT ノードが必要時に有効化)。
-    /// </remarks>
     void InitializeBodyParticleEmitter();
 
     /// <summary>

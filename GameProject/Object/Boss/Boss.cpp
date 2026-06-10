@@ -147,23 +147,18 @@ void Boss::InitializeAuraEmitter()
         emitterManager_->RemoveEmitter(auraEmitterName_);
     }
 
-    // 単一プリセット JSON のパス (EmitterManager::LoadPreset と同じ規約)
     const std::string presetPath =
         "resources/Json/ParticlePresets/Presets/" + auraEmitterName_ + ".json";
 
     if (std::filesystem::exists(presetPath)) {
-        // 保存済みプリセットを読込: object3dKey は sentinel で上書きされ model_ にバインドされる
         emitterManager_->LoadPreset(auraEmitterName_, auraEmitterName_, model_.get());
     } else {
-        // 初回起動: programmatic 既定値で生成 (object3dKey = emitter 名で round-trip 可能)
         constexpr uint32_t kDefaultCount = 100;
         constexpr float    kDefaultFreq  = 0.1f;
         emitterManager_->CreateMeshEmitter(
-            auraEmitterName_, model_.get(), auraEmitterName_,
-            kDefaultCount, kDefaultFreq);
+            auraEmitterName_, model_.get(), kDefaultCount, kDefaultFreq);
     }
 
-    // 初期状態: 非硬直 かつ 非スタン かつ 非テレポート中 であれば有効 (Update でも毎フレーム同期される)
     emitterManager_->SetEmitterActive(auraEmitterName_, !isInRecovery_ && !IsStunned() && !isTeleporting_);
 }
 
@@ -191,15 +186,12 @@ void Boss::InitializeBodyParticleEmitter()
     if (std::filesystem::exists(presetPath)) {
         emitterManager_->LoadPreset(bodyParticleEmitterName_, bodyParticleEmitterName_, model_.get());
     } else {
-        // 初回起動: programmatic 既定値で生成
         constexpr uint32_t kDefaultCount = 200;
         constexpr float    kDefaultFreq  = 0.02f;
         emitterManager_->CreateMeshEmitter(
-            bodyParticleEmitterName_, model_.get(), bodyParticleEmitterName_,
-            kDefaultCount, kDefaultFreq);
+            bodyParticleEmitterName_, model_.get(), kDefaultCount, kDefaultFreq);
     }
 
-    // 初期は非アクティブ: BTBossTeleport が必要時に SetBodyParticleEmitterActive(true) で起動
     emitterManager_->SetEmitterActive(bodyParticleEmitterName_, false);
 }
 

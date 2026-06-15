@@ -584,6 +584,7 @@ void GameScene::InitializeEmitterManger()
     player_->SetEmitterManager(emitterManager_.get());
 
     // パリィエフェクトの初期状態を設定
+    emitterManager_->LoadPreset("parry_true", "parry_effect");
     emitterManager_->SetEmitterActive("parry_effect", false);
     emitterManager_->SetEmitterActive("parry_success", false);
 }

@@ -1,15 +1,15 @@
 {
   "billboard": true,
-  "blendMode": 0,
+  "blendMode": 2,
   "collisionRestitution": 0.5,
   "convergeDamping": 2.0,
   "convergeStiffness": 8.0,
   "convergeToTarget": false,
   "damping": 0.9900000095367432,
   "endColor": [
-    1.0,
-    0.4000000059604645,
-    0.0,
+    0.937828779220581,
+    0.26955291628837585,
+    0.26955291628837585,
     0.0
   ],
   "endScaleDefault": [
@@ -18,9 +18,9 @@
     0.0
   ],
   "frequency": 0.05000000074505806,
-  "frequencyTime": 0.0006204694509506226,
+  "frequencyTime": 0.018065761774778366,
   "isActive": true,
-  "isEmitting": true,
+  "isEmitting": false,
   "isNormalize": false,
   "isRandomRotateZ": false,
   "isTemporary": false,
@@ -40,30 +40,30 @@
     1.0,
     1.0
   ],
-  "noiseScale": 0.1770000010728836,
-  "noiseStrength": 0.004000000189989805,
-  "particleCount": 15,
+  "noiseScale": 0.3889999985694885,
+  "noiseStrength": 0.0026000000070780516,
+  "particleCount": 30,
   "particleRadius": 0.30000001192092896,
   "position": [
     0.0,
     0.0,
     0.0
   ],
-  "randomFlags": 0,
+  "randomFlags": 63,
   "scaleRangeX": [
-    0.699999988079071,
-    0.699999988079071
+    0.20000000298023224,
+    0.20000000298023224
   ],
   "scaleRangeY": [
-    0.699999988079071,
-    0.699999988079071
+    0.20000000298023224,
+    0.20000000298023224
   ],
-  "spawnLocation": 1,
+  "spawnLocation": 2,
   "spawnLock": false,
   "startColor": [
-    1.0,
-    0.30000001192092896,
-    0.30000001192092896,
+    0.0,
+    0.0,
+    0.0,
     1.0
   ],
   "targetPosition": [
@@ -71,22 +71,23 @@
     0.0,
     0.0
   ],
+  "texturePath": "EngineResources/Texture/white.dds",
   "type": 3,
   "useAlphaFade": false,
   "useCurlNoise": true,
-  "useDepthCollision": false,
+  "useDepthCollision": true,
   "useForceField": false,
   "useScaleFade": true,
   "velRangeX": [
-    0.0,
-    0.0
+    -0.10000000149011612,
+    0.10000000149011612
   ],
   "velRangeY": [
     0.0,
-    0.20000000298023224
+    0.30000001192092896
   ],
   "velRangeZ": [
-    0.0,
-    0.0
+    -0.10000000149011612,
+    0.10000000149011612
   ]
 }

@@ -1,0 +1,84 @@
+{
+  "billboard": true,
+  "blendMode": 0,
+  "collisionRestitution": 0.5350000262260437,
+  "convergeDamping": 2.0,
+  "convergeStiffness": 8.0,
+  "convergeToTarget": false,
+  "damping": 0.8999999761581421,
+  "endColor": [
+    0.5504543781280518,
+    1.0,
+    0.6446202993392944,
+    1.0
+  ],
+  "endScaleDefault": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "frequency": 0.0010000000474974513,
+  "frequencyTime": 0.0009618365438655019,
+  "isActive": false,
+  "isEmitting": true,
+  "isNormalize": false,
+  "isRandomRotateZ": false,
+  "isTemporary": false,
+  "lifeTimeRange": [
+    0.25,
+    0.25
+  ],
+  "lockDamping": 3.0,
+  "lockStiffness": 20.0,
+  "noiseScale": 10.0,
+  "noiseStrength": 0.025100000202655792,
+  "particleCount": 200,
+  "particleRadius": 0.5569999814033508,
+  "position": [
+    -2.649465799331665,
+    2.5,
+    -85.1084976196289
+  ],
+  "radius": 3.5,
+  "randomFlags": 63,
+  "scaleRangeX": [
+    1.0,
+    1.0
+  ],
+  "scaleRangeY": [
+    1.0,
+    1.0
+  ],
+  "spawnLocation": 1,
+  "spawnLock": true,
+  "startColor": [
+    0.34002870321273804,
+    0.8399783372879028,
+    1.0,
+    1.0
+  ],
+  "targetPosition": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "texturePath": "EngineResources/Texture/circle.dds",
+  "type": 0,
+  "useAlphaFade": true,
+  "useCurlNoise": false,
+  "useDepthCollision": false,
+  "useForceField": true,
+  "useScaleFade": false,
+  "velRangeX": [
+    0.0,
+    0.0
+  ],
+  "velRangeY": [
+    0.0,
+    0.0
+  ],
+  "velRangeZ": [
+    0.0,
+    0.0
+  ]
+}

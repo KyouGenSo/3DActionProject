@@ -22,8 +22,7 @@ void ParryState::Enter(Player* player)
     // パリィ中エフェクトをアクティブ化
     EmitterManager* em = player->GetEmitterManager();
     if (em) {
-        Vector3 effectPos = player->GetFrontPosition(2.0f);
-        em->SetEmitterPosition("parry_effect", effectPos);
+        em->SetEmitterPosition("parry_effect", player->GetTranslate());
         em->SetEmitterActive("parry_effect", true);
     }
 }
@@ -39,7 +38,7 @@ void ParryState::Update(Player* player, float deltaTime)
     // パリィエフェクトの位置を追従
     EmitterManager* em = player->GetEmitterManager();
     if (em) {
-        Vector3 effectPos = player->GetFrontPosition(2.0f);
+        Vector3 effectPos = player->GetFrontPosition(0.0f);
         em->SetEmitterPosition("parry_effect", effectPos);
     }
 

@@ -29,12 +29,10 @@
 using namespace Tako;
 
 Boss::Boss()
-{
-}
+{}
 
 Boss::~Boss()
-{
-}
+{}
 
 void Boss::Initialize()
 {
@@ -147,26 +145,18 @@ void Boss::InitializeAuraEmitter()
         emitterManager_->RemoveEmitter(auraEmitterName_);
     }
 
-    const std::string presetPath =
-        "resources/Json/ParticlePresets/Presets/" + auraEmitterName_ + ".json";
-
-    if (std::filesystem::exists(presetPath)) {
-        emitterManager_->LoadPreset(auraEmitterName_, auraEmitterName_, model_.get());
-    } else {
-        constexpr uint32_t kDefaultCount = 100;
-        constexpr float    kDefaultFreq  = 0.1f;
-        emitterManager_->CreateMeshEmitter(
-            auraEmitterName_, model_.get(), kDefaultCount, kDefaultFreq);
-    }
+    emitterManager_->LoadPreset(auraEmitterName_, auraEmitterName_, model_.get());
+    emitterManager_->LoadPreset(darkAuraEmitterName_, darkAuraEmitterName_, model_.get());
 
     emitterManager_->SetEmitterActive(auraEmitterName_, !isInRecovery_ && !IsStunned() && !isTeleporting_);
+    emitterManager_->SetEmitterActive(darkAuraEmitterName_, !isInRecovery_ && !IsStunned() && !isTeleporting_);
 }
 
 void Boss::SetAuraEmitterActive(bool active)
 {
     if (!emitterManager_) return;
-    if (!emitterManager_->HasEmitter(auraEmitterName_)) return;
     emitterManager_->SetEmitterActive(auraEmitterName_, active);
+    emitterManager_->SetEmitterActive(darkAuraEmitterName_, active);
 }
 
 void Boss::InitializeBodyParticleEmitter()
@@ -180,17 +170,7 @@ void Boss::InitializeBodyParticleEmitter()
         emitterManager_->RemoveEmitter(bodyParticleEmitterName_);
     }
 
-    const std::string presetPath =
-        "resources/Json/ParticlePresets/Presets/" + bodyParticleEmitterName_ + ".json";
-
-    if (std::filesystem::exists(presetPath)) {
-        emitterManager_->LoadPreset(bodyParticleEmitterName_, bodyParticleEmitterName_, model_.get());
-    } else {
-        constexpr uint32_t kDefaultCount = 200;
-        constexpr float    kDefaultFreq  = 0.02f;
-        emitterManager_->CreateMeshEmitter(
-            bodyParticleEmitterName_, model_.get(), kDefaultCount, kDefaultFreq);
-    }
+    emitterManager_->LoadPreset(bodyParticleEmitterName_, bodyParticleEmitterName_, model_.get());
 
     emitterManager_->SetEmitterActive(bodyParticleEmitterName_, false);
 }
@@ -198,7 +178,6 @@ void Boss::InitializeBodyParticleEmitter()
 void Boss::SetBodyParticleEmitterActive(bool active)
 {
     if (!emitterManager_) return;
-    if (!emitterManager_->HasEmitter(bodyParticleEmitterName_)) return;
     emitterManager_->SetEmitterActive(bodyParticleEmitterName_, active);
 }
 
@@ -244,6 +223,9 @@ void Boss::Finalize()
     if (emitterManager_) {
         if (emitterManager_->HasEmitter(auraEmitterName_)) {
             emitterManager_->RemoveEmitter(auraEmitterName_);
+        }
+        if (emitterManager_->HasEmitter(darkAuraEmitterName_)) {
+            emitterManager_->RemoveEmitter(darkAuraEmitterName_);
         }
         if (emitterManager_->HasEmitter(bodyParticleEmitterName_)) {
             emitterManager_->RemoveEmitter(bodyParticleEmitterName_);

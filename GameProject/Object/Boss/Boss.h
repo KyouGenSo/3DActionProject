@@ -607,8 +607,9 @@ private:
     std::string attackSignEmitterName_ = "boss_melee_attack_sign";
     std::string bulletSignEmitterName_ = "boss_bullet_sign";
 
-    // ボスモデルをスポーン形状とする MeshEmitter (ランタイム名 = preset 名)
+    // ボスモデルをスポーン形状とするオーラ MeshEmitter
     std::string auraEmitterName_ = "boss_aura";
+    std::string darkAuraEmitterName_ = "boss_dark_aura";
 
     // テレポート演出用 MeshEmitter (BTBossTeleport が ON/OFF 制御)
     std::string bodyParticleEmitterName_ = "boss_particle_body";

@@ -267,67 +267,11 @@
       "targetPinId": 20061
     },
     {
-      "id": 30038,
-      "sourceNodeId": 10044,
-      "sourcePinId": 20062,
-      "targetNodeId": 10045,
-      "targetPinId": 20063
-    },
-    {
-      "id": 30039,
-      "sourceNodeId": 10044,
-      "sourcePinId": 20062,
-      "targetNodeId": 10046,
-      "targetPinId": 20064
-    },
-    {
-      "id": 30040,
-      "sourceNodeId": 10044,
-      "sourcePinId": 20062,
-      "targetNodeId": 10047,
-      "targetPinId": 20065
-    },
-    {
-      "id": 30041,
-      "sourceNodeId": 10044,
-      "sourcePinId": 20062,
-      "targetNodeId": 10048,
-      "targetPinId": 20066
-    },
-    {
-      "id": 30042,
-      "sourceNodeId": 10044,
-      "sourcePinId": 20062,
-      "targetNodeId": 10049,
-      "targetPinId": 20067
-    },
-    {
       "id": 30043,
       "sourceNodeId": 10022,
       "sourcePinId": 20034,
       "targetNodeId": 10008,
       "targetPinId": 20012
-    },
-    {
-      "id": 30044,
-      "sourceNodeId": 10044,
-      "sourcePinId": 20062,
-      "targetNodeId": 10050,
-      "targetPinId": 20068
-    },
-    {
-      "id": 30045,
-      "sourceNodeId": 10044,
-      "sourcePinId": 20062,
-      "targetNodeId": 10051,
-      "targetPinId": 20069
-    },
-    {
-      "id": 30046,
-      "sourceNodeId": 10044,
-      "sourcePinId": 20062,
-      "targetNodeId": 10052,
-      "targetPinId": 20070
     },
     {
       "id": 30047,
@@ -510,11 +454,67 @@
       "sourcePinId": 20080,
       "targetNodeId": 10073,
       "targetPinId": 20097
+    },
+    {
+      "id": 30073,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10045,
+      "targetPinId": 20063
+    },
+    {
+      "id": 30074,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10046,
+      "targetPinId": 20064
+    },
+    {
+      "id": 30075,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10047,
+      "targetPinId": 20065
+    },
+    {
+      "id": 30076,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10048,
+      "targetPinId": 20066
+    },
+    {
+      "id": 30077,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10074,
+      "targetPinId": 20098
+    },
+    {
+      "id": 30078,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10050,
+      "targetPinId": 20068
+    },
+    {
+      "id": 30079,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10075,
+      "targetPinId": 20099
+    },
+    {
+      "id": 30081,
+      "sourceNodeId": 10044,
+      "sourcePinId": 20062,
+      "targetNodeId": 10076,
+      "targetPinId": 20100
     }
   ],
   "metadata": {
-    "created": "2026-05-21T09:32:38",
-    "modified": "2026-05-21T09:32:38",
+    "created": "2026-06-15T12:35:01",
+    "modified": "2026-06-15T12:35:01",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -532,7 +532,7 @@
       "displayName": "Dash",
       "id": 10001,
       "parameters": {
-        "dashDuration": 0.23697184026241302,
+        "dashDuration": 0.11334439367055893,
         "dashSpeed": 200.0
       },
       "position": {
@@ -1237,19 +1237,6 @@
       "type": "BTBossShoot"
     },
     {
-      "displayName": "Dash",
-      "id": 10049,
-      "parameters": {
-        "dashDuration": 0.1419869363307953,
-        "dashSpeed": 100.0
-      },
-      "position": {
-        "x": -1049.0,
-        "y": 1801.0
-      },
-      "type": "BTBossDash"
-    },
-    {
       "displayName": "Shoot",
       "id": 10050,
       "parameters": {
@@ -1262,37 +1249,7 @@
       },
       "position": {
         "x": -1049.0,
-        "y": 1897.0
-      },
-      "type": "BTBossShoot"
-    },
-    {
-      "displayName": "Dash",
-      "id": 10051,
-      "parameters": {
-        "dashDuration": 0.22121265530586243,
-        "dashSpeed": 100.0
-      },
-      "position": {
-        "x": -1049.0,
-        "y": 1993.0
-      },
-      "type": "BTBossDash"
-    },
-    {
-      "displayName": "Shoot",
-      "id": 10052,
-      "parameters": {
-        "bulletCount": 7,
-        "bulletSpeed": 150.0,
-        "chargeTime": 0.8999999761581421,
-        "isBypassRecoveryGuard": false,
-        "recoveryTime": 3.0,
-        "spreadAngle": 0.26179999113082886
-      },
-      "position": {
-        "x": -1049.0,
-        "y": 2089.0
+        "y": 1903.0
       },
       "type": "BTBossShoot"
     },
@@ -1304,7 +1261,7 @@
         "expandTime": 0.30000001192092896,
         "falloff": 0.0,
         "isBypassRecoveryGuard": false,
-        "maxRadius": 50.0,
+        "maxRadius": 40.0,
         "strength": 2000.0,
         "sustainTime": 1.0,
         "warningTime": 0.5
@@ -1348,7 +1305,7 @@
       "displayName": "Distance Condition",
       "id": 10056,
       "parameters": {
-        "maxDistance": 13.0,
+        "maxDistance": 20.5,
         "minDistance": 0.0
       },
       "position": {
@@ -1377,7 +1334,7 @@
         "expandTime": 0.4000000059604645,
         "falloff": 0.0,
         "isBypassRecoveryGuard": false,
-        "maxRadius": 20.0,
+        "maxRadius": 30.0,
         "strength": 2000.0,
         "sustainTime": 10.0,
         "warningTime": 0.5
@@ -1406,8 +1363,8 @@
         "fadeOutDuration": 0.30000001192092896,
         "isBypassRecoveryGuard": false,
         "mode": 2,
-        "playerRandomMaxDistance": 30.0,
-        "playerRandomMinDistance": 15.0,
+        "playerRandomMaxDistance": 20.0,
+        "playerRandomMinDistance": 10.0,
         "randomMaxDistance": 30.0,
         "randomMinDistance": 10.0,
         "targetPositionX": 0.0,
@@ -1432,7 +1389,7 @@
         "isBypassRecoveryGuard": false,
         "prepareTime": 0.550000011920929,
         "recoveryTime": 0.0,
-        "rushDistance": 30.0,
+        "rushDistance": 25.0,
         "stopDistance": 5.0,
         "swingAngle": 3.1415927410125732
       },
@@ -1454,8 +1411,8 @@
         "spreadAngle": 0.3490658700466156
       },
       "position": {
-        "x": 868.0,
-        "y": 821.0
+        "x": 872.0,
+        "y": 815.0
       },
       "type": "BTBossShoot"
     },
@@ -1477,8 +1434,8 @@
         "fadeOutDuration": 0.30000001192092896,
         "isBypassRecoveryGuard": false,
         "mode": 2,
-        "playerRandomMaxDistance": 30.0,
-        "playerRandomMinDistance": 15.0,
+        "playerRandomMaxDistance": 20.0,
+        "playerRandomMinDistance": 10.0,
         "randomMaxDistance": 30.0,
         "randomMinDistance": 10.0,
         "targetPositionX": 0.0,
@@ -1523,7 +1480,7 @@
         "isBypassRecoveryGuard": false,
         "prepareTime": 0.550000011920929,
         "recoveryTime": 0.0,
-        "rushDistance": 30.0,
+        "rushDistance": 25.0,
         "stopDistance": 5.0,
         "swingAngle": 3.1415927410125732
       },
@@ -1545,7 +1502,7 @@
         "isBypassRecoveryGuard": false,
         "prepareTime": 0.550000011920929,
         "recoveryTime": 0.0,
-        "rushDistance": 30.0,
+        "rushDistance": 25.0,
         "stopDistance": 5.0,
         "swingAngle": 3.1415927410125732
       },
@@ -1584,8 +1541,8 @@
         "spreadAngle": 0.3490658700466156
       },
       "position": {
-        "x": 868.0,
-        "y": 1157.0
+        "x": 872.0,
+        "y": 1151.0
       },
       "type": "BTBossShoot"
     },
@@ -1597,8 +1554,8 @@
         "fadeOutDuration": 0.30000001192092896,
         "isBypassRecoveryGuard": false,
         "mode": 2,
-        "playerRandomMaxDistance": 30.0,
-        "playerRandomMinDistance": 15.0,
+        "playerRandomMaxDistance": 20.0,
+        "playerRandomMinDistance": 10.0,
         "randomMaxDistance": 30.0,
         "randomMinDistance": 10.0,
         "targetPositionX": 0.0,
@@ -1619,8 +1576,8 @@
         "fadeOutDuration": 0.30000001192092896,
         "isBypassRecoveryGuard": false,
         "mode": 2,
-        "playerRandomMaxDistance": 30.0,
-        "playerRandomMinDistance": 15.0,
+        "playerRandomMaxDistance": 20.0,
+        "playerRandomMinDistance": 10.0,
         "randomMaxDistance": 30.0,
         "randomMinDistance": 10.0,
         "targetPositionX": 0.0,
@@ -1645,7 +1602,7 @@
         "isBypassRecoveryGuard": false,
         "prepareTime": 0.550000011920929,
         "recoveryTime": 1.149999976158142,
-        "rushDistance": 30.0,
+        "rushDistance": 25.0,
         "stopDistance": 5.0,
         "swingAngle": 3.1415927410125732
       },
@@ -1654,6 +1611,53 @@
         "y": 1663.0
       },
       "type": "BTBossMeleeAttack"
+    },
+    {
+      "displayName": "Approach",
+      "id": 10074,
+      "parameters": {
+        "approachSpeed": 150.0,
+        "targetDistance": 12.0
+      },
+      "position": {
+        "x": -1049.0,
+        "y": 1807.0
+      },
+      "type": "BTBossApproach"
+    },
+    {
+      "displayName": "Retreat",
+      "id": 10075,
+      "parameters": {
+        "retreatSpeed": 200.0,
+        "targetDistance": 30.0
+      },
+      "position": {
+        "x": -1049.0,
+        "y": 1999.0
+      },
+      "type": "BTBossRetreat"
+    },
+    {
+      "displayName": "Wide Shoot",
+      "id": 10076,
+      "parameters": {
+        "bulletsPerSweep": 10,
+        "chargeTime": 0.800000011920929,
+        "firingDuration": 0.5,
+        "isBypassRecoveryGuard": false,
+        "normalBulletSpeed": 180.0,
+        "penetratingBulletSpeed": 50.0,
+        "penetratingCount": 4,
+        "recoveryTime": 1.0,
+        "sweepAngle": 0.6981317400932312,
+        "sweepCount": 2
+      },
+      "position": {
+        "x": -1049.0,
+        "y": 2095.0
+      },
+      "type": "BTBossWideShoot"
     }
   ],
   "version": "1.0"

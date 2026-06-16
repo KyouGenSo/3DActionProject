@@ -108,8 +108,6 @@ void GameScene::Initialize()
 void GameScene::Finalize()
 {
 #ifdef _DEBUG
-    // デバッグ情報の登録解除
-    DebugUIManager::GetInstance()->ClearDebugInfo();
     // ゲームオブジェクトの登録解除
     DebugUIManager::GetInstance()->ClearGameObjects();
     // AnimationEditor のクリーンアップ

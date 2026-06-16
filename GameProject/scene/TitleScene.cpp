@@ -45,8 +45,6 @@ void TitleScene::Initialize()
 void TitleScene::Finalize()
 {
 #ifdef _DEBUG
-    // デバッグ情報の登録解除
-    DebugUIManager::GetInstance()->ClearDebugInfo();
     // ゲームオブジェクトの登録解除
     DebugUIManager::GetInstance()->ClearGameObjects();
 #endif

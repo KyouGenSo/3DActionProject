@@ -341,18 +341,18 @@ void AttackState::DrawImGui(Player* player)
 
     // フェーズ情報
     const char* phaseNames[] = { "SearchTarget", "MoveToTarget", "ExecuteAttack", "Recovery" };
-    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Phase: %s", phaseNames[phase_]);
+    ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Phase: %s", phaseNames[GetPhase()]);
 
     // コンボ情報
     if (ImGui::TreeNode("Combo System")) {
-        ImGui::Text("Combo Index: %d / %d", comboIndex_ + 1, maxCombo_);
+        ImGui::Text("Combo Index: %d / %d", GetComboIndex() + 1, GetMaxCombo());
 
         // コンボ進行バー
-        float comboProgress = static_cast<float>(comboIndex_ + 1) / static_cast<float>(maxCombo_);
+        float comboProgress = static_cast<float>(GetComboIndex() + 1) / static_cast<float>(GetMaxCombo());
         ImGui::ProgressBar(comboProgress, ImVec2(-1, 0), "Combo Progress");
 
         // プリインプット状態
-        if (hasBufferedInput_) {
+        if (HasBufferedInput()) {
             ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Buffered Input: YES");
         }
         else {
@@ -364,7 +364,7 @@ void AttackState::DrawImGui(Player* player)
 
     // 現在のコンボデータ
     if (ImGui::TreeNode("Current Combo Data")) {
-        const ComboData& currentCombo = combos_[comboIndex_];
+        const ComboData& currentCombo = GetCurrentComboData();
 
         const char* axisNames[] = { "Horizontal", "Vertical" };
         ImGui::Text("Axis: %s", axisNames[static_cast<int>(currentCombo.axis)]);
@@ -379,8 +379,8 @@ void AttackState::DrawImGui(Player* player)
         ImGui::Text("Damage: %.1f", currentCombo.damage);
 
         // 攻撃進行バー
-        if (phase_ == ExecuteAttack) {
-            float attackProgress = phaseTimer_ / currentCombo.attackDuration;
+        if (GetPhase() == ExecuteAttack) {
+            float attackProgress = GetPhaseTimer() / currentCombo.attackDuration;
             ImGui::ProgressBar(attackProgress, ImVec2(-1, 0), "Attack Progress");
         }
 
@@ -389,22 +389,22 @@ void AttackState::DrawImGui(Player* player)
 
     // タイマー情報
     if (ImGui::TreeNode("Timers")) {
-        switch (phase_) {
+        switch (GetPhase()) {
         case SearchTarget:
-            ImGui::Text("Search Timer: %.2f / %.2f", phaseTimer_, maxSearchTime_);
-            ImGui::ProgressBar(phaseTimer_ / maxSearchTime_);
+            ImGui::Text("Search Timer: %.2f / %.2f", GetPhaseTimer(), maxSearchTime_);
+            ImGui::ProgressBar(GetPhaseTimer() / maxSearchTime_);
             break;
         case MoveToTarget:
-            ImGui::Text("Move Timer: %.2f / %.2f", phaseTimer_, maxMoveTime_);
-            ImGui::ProgressBar(phaseTimer_ / maxMoveTime_);
+            ImGui::Text("Move Timer: %.2f / %.2f", GetPhaseTimer(), GetMaxMoveTime());
+            ImGui::ProgressBar(GetPhaseTimer() / GetMaxMoveTime());
             break;
         case ExecuteAttack:
-            ImGui::Text("Attack Timer: %.2f / %.2f", phaseTimer_, combos_[comboIndex_].attackDuration);
-            ImGui::ProgressBar(phaseTimer_ / combos_[comboIndex_].attackDuration);
+            ImGui::Text("Attack Timer: %.2f / %.2f", GetPhaseTimer(), GetCurrentComboData().attackDuration);
+            ImGui::ProgressBar(GetPhaseTimer() / GetCurrentComboData().attackDuration);
             break;
         case Recovery:
-            ImGui::Text("Recovery Timer: %.2f / %.2f", phaseTimer_, recoveryTime_);
-            ImGui::ProgressBar(phaseTimer_ / recoveryTime_);
+            ImGui::Text("Recovery Timer: %.2f / %.2f", GetPhaseTimer(), GetRecoveryTime());
+            ImGui::ProgressBar(GetPhaseTimer() / GetRecoveryTime());
             break;
         }
 
@@ -413,7 +413,7 @@ void AttackState::DrawImGui(Player* player)
 
     // ターゲット情報
     if (ImGui::TreeNode("Target Info")) {
-        if (targetEnemy_) {
+        if (GetTargetEnemy()) {
             ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Target: DETECTED");
         }
         else {
@@ -427,7 +427,7 @@ void AttackState::DrawImGui(Player* player)
     if (ImGui::TreeNode("All Combo Data")) {
         for (int i = 0; i < kMaxComboCount; ++i) {
             const ComboData& combo = combos_[i];
-            bool isCurrentCombo = (i == comboIndex_);
+            bool isCurrentCombo = (i == GetComboIndex());
 
             if (isCurrentCombo) {
                 ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.0f, 1.0f, 0.0f, 1.0f));

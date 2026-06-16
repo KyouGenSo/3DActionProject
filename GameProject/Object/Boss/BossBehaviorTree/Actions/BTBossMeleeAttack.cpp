@@ -124,30 +124,22 @@ void BTBossMeleeAttack::OnCleanup() {
 }
 
 void BTBossMeleeAttack::AimAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime) {
+    Vector3 dir = PlanarDirToPlayer(blackboard);
+    if (dir.Length() <= 0.0f) return;
+
     Boss* boss = blackboard->GetPtr<Boss>("boss");
-    Player* player = blackboard->GetPtr<Player>("player");
-    if (!player) return;
+    float targetAngle = atan2f(dir.x, dir.z);
 
-    Vector3 playerPos = player->GetTransform().translate;
-    Vector3 bossPos = boss->GetTransform().translate;
-    Vector3 toPlayer = playerPos - bossPos;
-    toPlayer.y = 0.0f;
+    float currentAngle = boss->GetRotate().y;
+    float angleDiff = targetAngle - currentAngle;
 
-    if (toPlayer.Length() > kDirectionEpsilon) {
-        toPlayer = toPlayer.Normalize();
-        float targetAngle = atan2f(toPlayer.x, toPlayer.z);
+    while (angleDiff >  std::numbers::pi_v<float>) angleDiff -= 2.0f * std::numbers::pi_v<float>;
+    while (angleDiff < -std::numbers::pi_v<float>) angleDiff += 2.0f * std::numbers::pi_v<float>;
 
-        float currentAngle = boss->GetRotate().y;
-        float angleDiff = targetAngle - currentAngle;
+    float rotationSpeed = 5.0f;
+    float newAngle = currentAngle + angleDiff * rotationSpeed * deltaTime;
 
-        while (angleDiff >  std::numbers::pi_v<float>) angleDiff -= 2.0f * std::numbers::pi_v<float>;
-        while (angleDiff < -std::numbers::pi_v<float>) angleDiff += 2.0f * std::numbers::pi_v<float>;
-
-        float rotationSpeed = 5.0f;
-        float newAngle = currentAngle + angleDiff * rotationSpeed * deltaTime;
-
-        boss->SetRotate(Vector3(0.0f, newAngle, 0.0f));
-    }
+    boss->SetRotate(Vector3(0.0f, newAngle, 0.0f));
 }
 
 void BTBossMeleeAttack::ProcessPreparePhase(Tako::BTBlackboard* blackboard, float deltaTime) {

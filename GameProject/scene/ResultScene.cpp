@@ -1,4 +1,4 @@
-#include "ClearScene.h"
+#include "ResultScene.h"
 #include "Draw2D.h"
 #include "GPUParticle.h"
 #include "Input.h"
@@ -15,7 +15,12 @@
 
 using namespace Tako;
 
-void ClearScene::Initialize()
+ResultScene::ResultScene(const std::string& titleTexture)
+    : titleTexture_(titleTexture)
+{
+}
+
+void ResultScene::Initialize()
 {
 #ifdef _DEBUG
     DebugCamera::GetInstance()->Initialize();
@@ -39,7 +44,7 @@ void ClearScene::Initialize()
     backGround_->SetSize(Vector2(static_cast<float>(WinApp::clientWidth), static_cast<float>(WinApp::clientHeight)));
 
     titleText_ = std::make_unique<Sprite>();
-    titleText_->Initialize("gameClear_Text.dds");
+    titleText_->Initialize(titleTexture_);
     titleText_->SetPos(Vector2(WinApp::clientWidth / 2.f - titleTextHalfWidth_, titleTextY_));
 
     pressButtonText_ = std::make_unique<Sprite>();
@@ -51,12 +56,12 @@ void ClearScene::Initialize()
 }
 
 
-void ClearScene::Finalize()
+void ResultScene::Finalize()
 {
 
 }
 
-void ClearScene::Update()
+void ResultScene::Update()
 {
     /// ================================== ///
     ///              更新処理               ///
@@ -76,7 +81,7 @@ void ClearScene::Update()
     }
 }
 
-void ClearScene::Draw()
+void ResultScene::Draw()
 {
     /// ================================== ///
     ///              描画処理               ///
@@ -108,7 +113,7 @@ void ClearScene::Draw()
 
 }
 
-void ClearScene::DrawWithoutEffect()
+void ResultScene::DrawWithoutEffect()
 {
     /// ================================== ///
     ///              描画処理               ///
@@ -138,7 +143,7 @@ void ClearScene::DrawWithoutEffect()
 
 }
 
-void ClearScene::DrawImGui()
+void ResultScene::DrawImGui()
 {
 #ifdef _DEBUG
 

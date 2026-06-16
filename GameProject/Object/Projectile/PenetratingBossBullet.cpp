@@ -1,5 +1,5 @@
 #include "PenetratingBossBullet.h"
-#include "../../Collision/PenetratingBossBulletCollider.h"
+#include "../../Collision/BulletCollider.h"
 #include "../../Object/Player/Player.h"
 #include "../../Common/GameConst.h"
 #include "ModelManager.h"
@@ -77,9 +77,21 @@ void PenetratingBossBullet::Initialize(const Vector3& position, const Vector3& v
         emitterManager_->SetEmitterPosition(effectEmitterName_, position);
     }
 
-    // コライダーの設定
+    // コライダーの設定（貫通弾：プレイヤーの弾では消えない）
     if (!collider_) {
-        collider_ = std::make_unique<PenetratingBossBulletCollider>(this);
+        collider_ = std::make_unique<BulletCollider>(this,
+            static_cast<uint32_t>(CollisionTypeId::PLAYER),
+            BulletCollider::kNoCancelType);
+        collider_->SetHitHandler([this](Tako::Collider* other) {
+            Player* player = static_cast<Player*>(other->GetOwner());
+            if (!player) return;
+            if (player->IsParrying()) {
+                player->OnParrySuccess();
+            } else {
+                player->OnHit(GetDamage());
+            }
+            SetActive(false);
+        });
     }
     float colliderRadius = GlobalVariables::GetInstance()->GetValueFloat("PenetratingBossBullet", "ColliderRadius");
     collider_->SetTransform(&transform_);

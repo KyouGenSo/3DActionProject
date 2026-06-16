@@ -11,7 +11,7 @@ namespace  Tako
     class ForceFieldManager;
 }
 
-class PlayerBulletCollider;
+class BulletCollider;
 
 /// <summary>
 /// プレイヤーの弾クラス
@@ -64,7 +64,7 @@ public:
     /// <summary>
     /// コライダーを取得
     /// </summary>
-    PlayerBulletCollider* GetCollider() const { return collider_.get(); }
+    BulletCollider* GetCollider() const { return collider_.get(); }
 
     /// <summary>
     /// ForceFieldManager を注入する（非所有）。
@@ -76,7 +76,7 @@ public:
 
 private:
     // 専用コライダー
-    std::unique_ptr<PlayerBulletCollider> collider_;
+    std::unique_ptr<BulletCollider> collider_;
 
     // id（複数弾の識別用）
     static uint32_t id;

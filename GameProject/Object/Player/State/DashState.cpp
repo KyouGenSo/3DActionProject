@@ -72,32 +72,34 @@ void DashState::DrawImGui(Player* player)
 	ImGui::Separator();
 
 	// ダッシュ進行状況
-	float progress = (duration_ > 0.0f) ? (timer_ / duration_) : 0.0f;
+	float progress = (GetDuration() > 0.0f) ? (GetTimer() / GetDuration()) : 0.0f;
 	ImGui::Text("Dash Progress: %.1f%%", progress * 100.0f);
 	ImGui::ProgressBar(progress);
 
 	// タイマー情報
-	ImGui::Text("Timer: %.3f / %.3f", timer_, duration_);
+	ImGui::Text("Timer: %.3f / %.3f", GetTimer(), GetDuration());
 
 	// パラメータ調整
 	if (ImGui::TreeNode("Dash Parameters")) {
-		ImGui::SliderFloat("Duration", &duration_, 0.01f, 0.5f, "%.3f");
-		ImGui::SliderFloat("Speed", &speed_, 1.0f, 50.0f, "%.1f");
+		float duration = GetDuration();
+		if (ImGui::SliderFloat("Duration", &duration, 0.01f, 0.5f, "%.3f")) SetDuration(duration);
+		float speed = GetSpeed();
+		if (ImGui::SliderFloat("Speed", &speed, 1.0f, 50.0f, "%.1f")) SetSpeed(speed);
 
 		// 推奨値のプリセット
 		if (ImGui::Button("Fast Dash")) {
-			duration_ = 0.05f;
-			speed_ = 10.0f;
+			SetDuration(0.05f);
+			SetSpeed(10.0f);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Long Dash")) {
-			duration_ = 0.2f;
-			speed_ = 5.0f;
+			SetDuration(0.2f);
+			SetSpeed(5.0f);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Teleport")) {
-			duration_ = 0.01f;
-			speed_ = 50.0f;
+			SetDuration(0.01f);
+			SetSpeed(50.0f);
 		}
 
 		ImGui::TreePop();
@@ -105,8 +107,8 @@ void DashState::DrawImGui(Player* player)
 
 	// デバッグ情報
 	if (ImGui::TreeNode("Debug Info")) {
-		ImGui::Text("Actual Distance: %.2f", timer_ * speed_);
-		ImGui::Text("Frame Count: %d", (int)(timer_ * 60.0f));
+		ImGui::Text("Actual Distance: %.2f", GetTimer() * GetSpeed());
+		ImGui::Text("Frame Count: %d", (int)(GetTimer() * 60.0f));
 		ImGui::TreePop();
 	}
 #endif

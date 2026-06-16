@@ -16,7 +16,7 @@ BTBossShoot::BTBossShoot() {
 Tako::BTNodeStatus BTBossShoot::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
     // プレイヤーの方向を向く（射撃準備中）
     if (elapsedTime_ < chargeTime_) {
-        AimAtPlayer(blackboard, deltaTime);
+        FacePlayerInstant(blackboard);
         bulletSignEffect_.Update(boss, deltaTime);
     }
 
@@ -42,23 +42,6 @@ void BTBossShoot::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss) {
     totalDuration_ = chargeTime_ + recoveryTime_;
     hasFired_ = false;
     bulletSignEffect_.Start(boss, chargeTime_);
-}
-
-void BTBossShoot::AimAtPlayer(Tako::BTBlackboard* blackboard, float /*deltaTime*/) {
-    Boss* boss = blackboard->GetPtr<Boss>("boss");
-    Player* player = blackboard->GetPtr<Player>("player");
-    if (!player) return;
-
-    Vector3 playerPos = player->GetTransform().translate;
-    Vector3 bossPos = boss->GetTransform().translate;
-    Vector3 toPlayer = playerPos - bossPos;
-    toPlayer.y = 0.0f;
-
-    if (toPlayer.Length() > kDirectionEpsilon) {
-        toPlayer = toPlayer.Normalize();
-        float angle = atan2f(toPlayer.x, toPlayer.z);
-        boss->SetRotate(Vector3(0.0f, angle, 0.0f));
-    }
 }
 
 void BTBossShoot::FireBullets(Tako::BTBlackboard* blackboard) {

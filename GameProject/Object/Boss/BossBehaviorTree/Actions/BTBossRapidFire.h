@@ -63,13 +63,6 @@ protected:
 
 private:
     /// <summary>
-    /// プレイヤー方向へボスを徐々に旋回させる
-    /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
-    void AimAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime);
-
-    /// <summary>
     /// プレイヤー方向に向けて弾を1発生成・発射する
     /// </summary>
     /// <param name="blackboard">BTBlackboardへのポインタ</param>

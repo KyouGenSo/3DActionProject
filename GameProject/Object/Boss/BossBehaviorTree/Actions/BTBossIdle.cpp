@@ -28,10 +28,6 @@ Tako::BTNodeStatus BTBossIdle::Execute(Tako::BTBlackboard* blackboard) {
     if (isFirstExecute_) {
         elapsedTime_ = 0.0f;
         isFirstExecute_ = false;
-
-        // 次のアクションカウンターをインクリメント
-        int actionCounter = blackboard->GetInt("ActionCounter", 0);
-        blackboard->SetInt("ActionCounter", actionCounter + 1);
     }
 
     // プレイヤーの方向を向く

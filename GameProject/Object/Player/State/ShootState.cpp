@@ -158,37 +158,39 @@ void ShootState::DrawImGui(Player* player)
 	ImGui::Separator();
 
 	// 発射レート情報
-	ImGui::Text("Fire Rate: %.2f (%.1f shots/sec)", fireRate_, 1.0f / fireRate_);
-	ImGui::Text("Next Shot In: %.2f", std::max<float>(0.0f, fireRate_ - fireRateTimer_));
+	ImGui::Text("Fire Rate: %.2f (%.1f shots/sec)", GetFireRate(), 1.0f / GetFireRate());
+	ImGui::Text("Next Shot In: %.2f", std::max<float>(0.0f, GetFireRate() - GetFireRateTimer()));
 
 	// プログレスバー
-	float progress = (fireRate_ > 0.0f) ? (fireRateTimer_ / fireRate_) : 0.0f;
+	float progress = (GetFireRate() > 0.0f) ? (GetFireRateTimer() / GetFireRate()) : 0.0f;
 	ImGui::ProgressBar(progress, ImVec2(-1, 0), "Reload");
 
 	// 照準方向
 	if (ImGui::TreeNode("Aim Direction")) {
-		ImGui::Text("X: %.3f", aimDirection_.x);
-		ImGui::Text("Y: %.3f", aimDirection_.y);
-		ImGui::Text("Z: %.3f", aimDirection_.z);
-		ImGui::Text("Length: %.3f", aimDirection_.Length());
+		const Tako::Vector3& aim = GetAimDirection();
+		ImGui::Text("X: %.3f", aim.x);
+		ImGui::Text("Y: %.3f", aim.y);
+		ImGui::Text("Z: %.3f", aim.z);
+		ImGui::Text("Length: %.3f", aim.Length());
 		ImGui::TreePop();
 	}
 
 	// パラメータ調整
 	if (ImGui::TreeNode("Shooting Parameters")) {
-		ImGui::SliderFloat("Fire Rate", &fireRate_, 0.05f, 2.0f, "%.2f sec");
+		float fireRate = GetFireRate();
+		if (ImGui::SliderFloat("Fire Rate", &fireRate, 0.05f, 2.0f, "%.2f sec")) SetFireRate(fireRate);
 
 		// プリセット
 		if (ImGui::Button("Rapid Fire")) {
-			fireRate_ = 0.05f;
+			SetFireRate(0.05f);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Normal")) {
-			fireRate_ = 0.2f;
+			SetFireRate(0.2f);
 		}
 		ImGui::SameLine();
 		if (ImGui::Button("Slow")) {
-			fireRate_ = 0.5f;
+			SetFireRate(0.5f);
 		}
 
 		ImGui::TreePop();

@@ -117,7 +117,7 @@
     <ClCompile Include="Object\Boss\BossPhaseManager.cpp">
       <Filter>Object\Boss</Filter>
     </ClCompile>
-    <ClCompile Include="Scene\ClearScene.cpp">
+    <ClCompile Include="Scene\ResultScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="CameraSystem\CameraDebugUI.cpp">
@@ -156,11 +156,8 @@
     <ClCompile Include="Object\Projectile\Projectile.cpp">
       <Filter>Object\Projectile</Filter>
     </ClCompile>
-    <ClCompile Include="Collision\BossBulletCollider.cpp">
+    <ClCompile Include="Collision\BulletCollider.cpp">
       <Filter>Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene\OverScene.cpp">
-      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
@@ -180,9 +177,6 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
@@ -200,9 +194,6 @@
     </ClCompile>
     <ClCompile Include="CameraAnimation\CameraAnimation.cpp">
       <Filter>CameraSystem\CameraAnimation</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\PlayerBulletCollider.cpp">
-      <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="Object\Projectile\PlayerBullet.cpp">
       <Filter>Object\Projectile</Filter>
@@ -254,9 +245,6 @@
     </ClCompile>
     <ClCompile Include="Effect\BulletSignEffect.cpp">
       <Filter>Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision\PenetratingBossBulletCollider.cpp">
-      <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="Object\Projectile\PenetratingBossBullet.cpp">
       <Filter>Object\Projectile</Filter>
@@ -374,7 +362,7 @@
     <ClInclude Include="Object\Boss\BossPhaseManager.h">
       <Filter>Object\Boss</Filter>
     </ClInclude>
-    <ClInclude Include="Scene\ClearScene.h">
+    <ClInclude Include="Scene\ResultScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="CameraSystem\CameraConfig.h">
@@ -419,11 +407,8 @@
     <ClInclude Include="Object\Projectile\Projectile.h">
       <Filter>Object\Projectile</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\BossBulletCollider.h">
+    <ClInclude Include="Collision\BulletCollider.h">
       <Filter>Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Scene\OverScene.h">
-      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
@@ -442,9 +427,6 @@
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTActionSelector.h">
-      <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
@@ -472,9 +454,6 @@
     </ClInclude>
     <ClInclude Include="CameraAnimation\CameraKeyframe.h">
       <Filter>CameraSystem\CameraAnimation</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision\PlayerBulletCollider.h">
-      <Filter>Collision</Filter>
     </ClInclude>
     <ClInclude Include="Object\Projectile\PlayerBullet.h">
       <Filter>Object\Projectile</Filter>
@@ -533,9 +512,6 @@
     <ClInclude Include="Effect\BulletSignEffect.h">
       <Filter>Effect</Filter>
     </ClInclude>
-    <ClInclude Include="Collision\PenetratingBossBulletCollider.h">
-      <Filter>Collision</Filter>
-    </ClInclude>
     <ClInclude Include="Object\Projectile\PenetratingBossBullet.h">
       <Filter>Object\Projectile</Filter>
     </ClInclude>
@@ -585,6 +561,9 @@
       <Filter>Collision</Filter>
     </ClInclude>
     <ClInclude Include="Collision\MeteorImpactCollider.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Collision\PlayerHitResolver.h">
       <Filter>Collision</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.h">

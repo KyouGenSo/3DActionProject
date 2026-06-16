@@ -1,6 +1,8 @@
 #include "AttackNode.h"
 #include "../../Boss.h"
+#include "../../../Player/Player.h"
 #include "EmitterManager.h"
+#include <cmath>
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -84,6 +86,27 @@ Tako::BTNodeStatus AttackNode::FinishAttack() {
 
     status_ = Tako::BTNodeStatus::Success;
     return status_;
+}
+
+Tako::Vector3 AttackNode::PlanarDirToPlayer(Tako::BTBlackboard* blackboard, float epsilon) const {
+    Boss* boss = blackboard->GetPtr<Boss>("boss");
+    Player* player = blackboard->GetPtr<Player>("player");
+    if (!boss || !player) return Tako::Vector3(0.0f, 0.0f, 0.0f);
+
+    Tako::Vector3 toPlayer = player->GetTransform().translate - boss->GetTransform().translate;
+    toPlayer.y = 0.0f;
+    if (toPlayer.Length() <= epsilon) return Tako::Vector3(0.0f, 0.0f, 0.0f);
+    return toPlayer.Normalize();
+}
+
+Tako::Vector3 AttackNode::FacePlayerInstant(Tako::BTBlackboard* blackboard, float epsilon) {
+    Tako::Vector3 dir = PlanarDirToPlayer(blackboard, epsilon);
+    if (dir.Length() > 0.0f) {
+        if (Boss* boss = blackboard->GetPtr<Boss>("boss")) {
+            boss->SetRotate(Tako::Vector3(0.0f, atan2f(dir.x, dir.z), 0.0f));
+        }
+    }
+    return dir;
 }
 
 void AttackNode::ApplyParameters(const nlohmann::json& params) {

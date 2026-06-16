@@ -86,24 +86,25 @@ void ParryState::DrawImGui(Player* player)
     ImGui::Separator();
 
     // タイマー情報
-    ImGui::Text("Parry Timer: %.3f / %.3f", parryTimer_, parryDuration_);
+    ImGui::Text("Parry Timer: %.3f / %.3f", GetParryTimer(), GetParryDuration());
 
     // 全体の進行状況
-    float totalProgress = (parryDuration_ > 0.0f) ? (parryTimer_ / parryDuration_) : 0.0f;
+    float totalProgress = (GetParryDuration() > 0.0f) ? (GetParryTimer() / GetParryDuration()) : 0.0f;
     ImGui::Text("Total Progress:");
     ImGui::ProgressBar(totalProgress);
 
     // パラメータ調整
     if (ImGui::TreeNode("Parry Parameters")) {
-        ImGui::SliderFloat("Parry Duration", &parryDuration_, 0.2f, 2.0f, "%.2f sec");
+        float parryDuration = GetParryDuration();
+        if (ImGui::SliderFloat("Parry Duration", &parryDuration, 0.2f, 2.0f, "%.2f sec")) SetParryDuration(parryDuration);
 
         ImGui::TreePop();
     }
 
     // フレーム情報
     if (ImGui::TreeNode("Frame Data")) {
-        ImGui::Text("Total Frames: %d", (int)(parryDuration_ * 60.0f));
-        ImGui::Text("Current Frame: %d", (int)(parryTimer_ * 60.0f));
+        ImGui::Text("Total Frames: %d", (int)(GetParryDuration() * 60.0f));
+        ImGui::Text("Current Frame: %d", (int)(GetParryTimer() * 60.0f));
         ImGui::TreePop();
     }
 #endif

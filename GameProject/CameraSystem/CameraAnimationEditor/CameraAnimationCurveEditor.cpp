@@ -44,10 +44,10 @@ void CameraAnimationCurveEditor::Draw(const std::vector<int>& selectedKeyframes)
         for (int i = 0; i < static_cast<int>(CurveType::COUNT); ++i) {
             if (ImGui::BeginTabItem(curveNames[i])) {
                 selectedTab = i;
-                activeCurve_ = static_cast<CurveType>(i);
+                SetActiveCurve(static_cast<CurveType>(i));
                 // 選択されたカーブのみ可視に設定
                 for (int j = 0; j < static_cast<int>(CurveType::COUNT); ++j) {
-                    curveVisible_[j] = (j == i);
+                    SetCurveVisible(static_cast<CurveType>(j), j == i);
                 }
                 ImGui::EndTabItem();
             }

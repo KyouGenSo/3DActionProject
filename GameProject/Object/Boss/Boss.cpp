@@ -190,7 +190,6 @@ void Boss::InitializeAI()
     auto* bb = behaviorTree_->GetBlackboard();
     bb->SetPtr<Boss>("boss", this);
     bb->SetPtr<Player>("player", player_);
-    bb->SetInt("ActionCounter", 0);
     behaviorTree_->LoadFromJSON("resources/Json/BT/BossTree.json");
 
 #ifdef _DEBUG

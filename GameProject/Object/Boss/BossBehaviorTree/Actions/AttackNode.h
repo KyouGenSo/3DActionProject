@@ -1,6 +1,8 @@
 #pragma once
 #include "BTNode.h"
 #include "BTBlackboard.h"
+#include "Vector3.h"
+#include "../../../../Common/GameConst.h"
 
 namespace Tako {
     class EmitterManager;
@@ -90,6 +92,16 @@ protected:
     /// 派生は終了条件を満たしたら `return FinishAttack();` で抜ける。
     /// </summary>
     Tako::BTNodeStatus FinishAttack();
+
+    /// <summary>
+    /// プレイヤーへの水平方向（y=0・正規化）。近すぎ / 未取得は零ベクトル。
+    /// </summary>
+    Tako::Vector3 PlanarDirToPlayer(Tako::BTBlackboard* blackboard, float epsilon = GameConst::kDirectionEpsilon) const;
+
+    /// <summary>
+    /// プレイヤー方向へ Boss を即時旋回させ、使用した方向を返す（近すぎ / 未取得は旋回せず零ベクトル）。
+    /// </summary>
+    Tako::Vector3 FacePlayerInstant(Tako::BTBlackboard* blackboard, float epsilon = GameConst::kDirectionEpsilon);
 
 protected:
     //=================== 共通メンバ ===================

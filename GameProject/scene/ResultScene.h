@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <string>
 
 #include "BaseScene.h"
 #include "vector2.h"
@@ -10,40 +11,30 @@ class Sprite;
 }
 
 /// <summary>
-/// クリアシーンクラス
-/// ゲームクリア時の演出と結果表示を管理
+/// 結果シーンクラス
+/// クリア / ゲームオーバーの結果表示を管理。タイトルテクスチャの差し替えで両用途を兼ねる
 /// </summary>
-class ClearScene : public Tako::BaseScene
+class ResultScene : public Tako::BaseScene
 {
 public: // メンバ関数
 
-  /// <summary>
-  /// 初期化
-  /// </summary>
+  /// <param name="titleTexture">中央に表示するタイトルテクスチャ名</param>
+  explicit ResultScene(const std::string& titleTexture);
+
   void Initialize() override;
 
-  /// <summary>
-  /// 終了処理
-  /// </summary>
   void Finalize() override;
 
-  /// <summary>
-  /// 更新
-  /// </summary>
   void Update() override;
 
-  /// <summary>
-  /// 描画
-  /// </summary>
   void Draw() override;
   void DrawWithoutEffect() override;
 
-  /// <summary>
-  /// ImGui の描画
-  /// </summary>
   void DrawImGui() override;
 
 private: // メンバ変数
+
+    std::string titleTexture_;
 
     // sprite
     std::unique_ptr<Tako::Sprite> backGround_ = nullptr;
@@ -58,4 +49,3 @@ private: // メンバ変数
     float titleTextY_ = 300.0f;  ///< タイトルテキスト Y 座標
     float buttonBottomOffset_ = 300.0f;  ///< ボタン下端からのオフセット
 };
-

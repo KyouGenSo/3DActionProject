@@ -156,14 +156,15 @@ void Player::UpdateStateMachine(float deltaTime)
 void Player::UpdateTransform()
 {
     // 実効的な制限を計算（静的制限と動的制限の交差）
-    float effectiveXMin = std::max<float>(GameConst::kStageXMin, dynamicBounds_.xMin);
-    float effectiveXMax = std::min<float>(GameConst::kStageXMax, dynamicBounds_.xMax);
-    float effectiveZMin = std::max<float>(GameConst::kStageZMin, dynamicBounds_.zMin);
-    float effectiveZMax = std::min<float>(GameConst::kStageZMax, dynamicBounds_.zMax);
+    DynamicBoundary effectiveBounds;
+    effectiveBounds.Set(
+        std::max<float>(GameConst::kStageXMin, dynamicBounds_.xMin),
+        std::min<float>(GameConst::kStageXMax, dynamicBounds_.xMax),
+        std::max<float>(GameConst::kStageZMin, dynamicBounds_.zMin),
+        std::min<float>(GameConst::kStageZMax, dynamicBounds_.zMax));
 
     // 位置制限適用
-    transform_.translate.x = std::clamp(transform_.translate.x, effectiveXMin, effectiveXMax);
-    transform_.translate.z = std::clamp(transform_.translate.z, effectiveZMin, effectiveZMax);
+    transform_.translate = effectiveBounds.Clamp(transform_.translate);
 }
 
 void Player::UpdatePhysics(float deltaTime)

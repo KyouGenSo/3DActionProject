@@ -89,20 +89,9 @@ void BTBossWideShoot::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
 }
 
 void BTBossWideShoot::AimAtPlayer(Tako::BTBlackboard* blackboard, float /*deltaTime*/) {
-    Boss* boss = blackboard->GetPtr<Boss>("boss");
-    Player* player = blackboard->GetPtr<Player>("player");
-    if (!player) return;
-
-    Vector3 playerPos = player->GetTransform().translate;
-    Vector3 bossPos = boss->GetTransform().translate;
-    Vector3 toPlayer = playerPos - bossPos;
-    toPlayer.y = 0.0f;
-
-    if (toPlayer.Length() > kDirectionEpsilon) {
-        toPlayer = toPlayer.Normalize();
-        float angle = atan2f(toPlayer.x, toPlayer.z);
-        boss->SetRotate(Vector3(0.0f, angle, 0.0f));
-        baseDirection_ = toPlayer;
+    Vector3 dir = FacePlayerInstant(blackboard, kDirectionEpsilon);
+    if (dir.Length() > 0.0f) {
+        baseDirection_ = dir;
     }
 }
 

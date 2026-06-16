@@ -1,5 +1,5 @@
 #include "BossBullet.h"
-#include "../../Collision/BossBulletCollider.h"
+#include "../../Collision/BulletCollider.h"
 #include "../../Object/Player/Player.h"
 #include "../../Common/GameConst.h"
 #include "ModelManager.h"
@@ -79,7 +79,19 @@ void BossBullet::Initialize(const Vector3& position, const Vector3& velocity) {
 
     // コライダーの設定
     if (!collider_) {
-        collider_ = std::make_unique<BossBulletCollider>(this);
+        collider_ = std::make_unique<BulletCollider>(this,
+            static_cast<uint32_t>(CollisionTypeId::PLAYER),
+            static_cast<uint32_t>(CollisionTypeId::PLAYER_PROJECTILE));
+        collider_->SetHitHandler([this](Tako::Collider* other) {
+            Player* player = static_cast<Player*>(other->GetOwner());
+            if (!player) return;
+            if (player->IsParrying()) {
+                player->OnParrySuccess();
+            } else {
+                player->OnHit(GetDamage());
+            }
+            SetActive(false);
+        });
     }
     float colliderRadius = GlobalVariables::GetInstance()->GetValueFloat("BossBullet", "ColliderRadius");
     collider_->SetTransform(&transform_);

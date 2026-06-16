@@ -1,9 +1,8 @@
 #include "SceneFactory.h"
 
-#include "ClearScene.h"
+#include "ResultScene.h"
 #include "TitleScene.h"
 #include "GameScene.h"
-#include "OverScene.h"
 
 #ifdef _DEBUG
 #include "DebugUIManager.h"
@@ -18,9 +17,9 @@ std::unique_ptr<BaseScene> SceneFactory::CreateScene(const std::string& sceneNam
   } else if (sceneName == "game") {
     return std::make_unique<GameScene>();
   } else if (sceneName == "clear") {
-    return std::make_unique<ClearScene>();
+    return std::make_unique<ResultScene>("gameClear_Text.dds");
   } else if (sceneName == "over") {
-    return std::make_unique<OverScene>();
+    return std::make_unique<ResultScene>("gameOver_Text.dds");
   }
 
 #ifdef _DEBUG

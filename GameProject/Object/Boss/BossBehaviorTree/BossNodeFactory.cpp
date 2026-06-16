@@ -21,8 +21,7 @@
 #include "Actions/BTBossVortexTempest.h"
 #include "Actions/BTBossTeleport.h"
 
-// Condition ノード (4 種)
-#include "Conditions/BTActionSelector.h"
+// Condition ノード (3 種)
 #include "Conditions/BTBossPhaseCondition.h"
 #include "Conditions/BTBossHPCondition.h"
 #include "Conditions/BTBossDistanceCondition.h"
@@ -100,14 +99,6 @@ void BossNodeFactory::RegisterAll() {
   // ========================================================================
   //                               Condition 
   // ========================================================================
-  // BTActionSelector は引数付きコンストラクタ (ActionType::Dash) のため RegisterFactory を使用
-  reg->RegisterFactory("BTActionSelector",
-    [] { return std::static_pointer_cast<Tako::BTNode>(
-      std::make_shared<BTActionSelector>(BTActionSelector::ActionType::Dash)); },
-    Tako::NodeMeta{
-      "Action Selector", Tako::NodeCategory::Condition,
-      Tako::NodeColor(0.8f, 0.8f, 0.2f, 1.0f), false  // 黄色
-    });
   reg->RegisterNode<BTBossPhaseCondition>("BTBossPhaseCondition", Tako::NodeMeta{
     "Phase Condition", Tako::NodeCategory::Condition,
     Tako::NodeColor(0.5f, 0.2f, 0.9f, 1.0f), false  // 紫

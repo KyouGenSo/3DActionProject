@@ -17,7 +17,7 @@ BTBossRapidFire::BTBossRapidFire() {
 Tako::BTNodeStatus BTBossRapidFire::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
     // フェーズ1: チャージ中（プレイヤーに照準）
     if (elapsedTime_ < chargeTime_) {
-        AimAtPlayer(blackboard, deltaTime);
+        FacePlayerInstant(blackboard);
         bulletSignEffect_.Update(boss, deltaTime);
     }
     // フェーズ2: 連続発射中（追尾しながら発射）
@@ -28,7 +28,7 @@ Tako::BTNodeStatus BTBossRapidFire::OnExecute(Tako::BTBlackboard* blackboard, Bo
         }
 
         // 発射中もプレイヤー方向を追尾
-        AimAtPlayer(blackboard, deltaTime);
+        FacePlayerInstant(blackboard);
 
         // 発射間隔チェック
         timeSinceLastFire_ += deltaTime;
@@ -63,23 +63,6 @@ void BTBossRapidFire::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* bos
     // totalDuration: チャージ + 発射全体 + 硬直
     totalDuration_ = chargeTime_ + (fireInterval_ * static_cast<float>(bulletCount_)) + recoveryTime_;
     bulletSignEffect_.Start(boss, chargeTime_);
-}
-
-void BTBossRapidFire::AimAtPlayer(Tako::BTBlackboard* blackboard, float /*deltaTime*/) {
-    Boss* boss = blackboard->GetPtr<Boss>("boss");
-    Player* player = blackboard->GetPtr<Player>("player");
-    if (!player) return;
-
-    Vector3 playerPos = player->GetTransform().translate;
-    Vector3 bossPos = boss->GetTransform().translate;
-    Vector3 toPlayer = playerPos - bossPos;
-    toPlayer.y = 0.0f;
-
-    if (toPlayer.Length() > GameConst::kDirectionEpsilon) {
-        toPlayer = toPlayer.Normalize();
-        float angle = atan2f(toPlayer.x, toPlayer.z);
-        boss->SetRotate(Vector3(0.0f, angle, 0.0f));
-    }
 }
 
 void BTBossRapidFire::FireBullet(Tako::BTBlackboard* blackboard) {

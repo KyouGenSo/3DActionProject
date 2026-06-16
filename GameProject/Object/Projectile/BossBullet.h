@@ -11,7 +11,7 @@ namespace Tako
     class ModelManager;
 }
 
-class BossBulletCollider;
+class BulletCollider;
 
 /// <summary>
 /// ボスの弾クラス
@@ -61,14 +61,14 @@ public:
     /// <summary>
     /// コライダーを取得
     /// </summary>
-    BossBulletCollider* GetCollider() const { return collider_.get(); }
+    BulletCollider* GetCollider() const { return collider_.get(); }
 
 private:
     // エフェクト用の回転速度
     Tako::Vector3 rotationSpeed_;
 
     // 専用コライダー
-    std::unique_ptr<BossBulletCollider> collider_;
+    std::unique_ptr<BulletCollider> collider_;
 
     // id
     static uint32_t id;

@@ -1,5 +1,6 @@
 #include "PlayerBullet.h"
-#include "../../Collision/PlayerBulletCollider.h"
+#include "../../Collision/BulletCollider.h"
+#include "../../Object/Boss/Boss.h"
 #include "../../Common/GameConst.h"
 #include "../../Common/ForceFieldAffectMask.h"
 #include "ModelManager.h"
@@ -78,7 +79,17 @@ void PlayerBullet::Initialize(const Vector3& position, const Vector3& velocity) 
 
     // コライダーの設定
     if (!collider_) {
-        collider_ = std::make_unique<PlayerBulletCollider>(this);
+        collider_ = std::make_unique<BulletCollider>(this,
+            static_cast<uint32_t>(CollisionTypeId::BOSS),
+            static_cast<uint32_t>(CollisionTypeId::BOSS_PROJECTILE));
+        collider_->SetHitHandler([this](Tako::Collider* other) {
+            Boss* boss = static_cast<Boss*>(other->GetOwner());
+            if (!boss) return;
+            if (!boss->IsInPhaseTransitionStun()) {
+                boss->OnHit(GetDamage(), 0.5f);
+            }
+            SetActive(false);
+        });
     }
 
     GlobalVariables* gv = GlobalVariables::GetInstance();

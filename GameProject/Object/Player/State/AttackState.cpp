@@ -25,7 +25,6 @@ void AttackState::LoadComboData()
 {
     GlobalVariables* gv = GlobalVariables::GetInstance();
 
-    // 基本パラメータの読み込み
     maxSearchTime_ = gv->GetValueFloat("AttackState", "SearchTime");
     maxMoveTime_ = gv->GetValueFloat("AttackState", "MoveTime");
     blockRadius_ = gv->GetValueFloat("AttackState", "BlockRadius");
@@ -33,7 +32,6 @@ void AttackState::LoadComboData()
     recoveryTime_ = gv->GetValueFloat("AttackState", "RecoveryTime");
     maxCombo_ = gv->GetValueInt("AttackState", "MaxCombo");
 
-    // 各コンボデータの読み込み
     for (int i = 0; i < kMaxComboCount; ++i) {
         std::string prefix = std::format("Combo{}_", i);
 
@@ -54,43 +52,36 @@ void AttackState::LoadComboData()
 
 void AttackState::Enter(Player* player)
 {
-    // GlobalVariables からコンボデータを読み込み
     LoadComboData();
 
-    // 状態を初期化
     phaseTimer_ = 0.0f;
     hasBufferedInput_ = false;
     phase_ = SearchTarget;
     targetEnemy_ = nullptr;
 
-    // コンボ攻撃の初期化
     InitializeComboAttack(player);
 
-    // MoveToTarget 状態をリセット
     player->ResetMoveToTarget();
 }
 
 void AttackState::InitializeComboAttack(Player* player)
 {
-    // 攻撃アニメーションを再生
     // TODO: アニメーション作成後に実装
     // player->GetModel()->PlayAnimation("Attack" + std::to_string(comboIndex_));
 
     const ComboData& currentCombo = combos_[comboIndex_];
 
-    // 攻撃範囲 Collider を有効化
     if (player->GetMeleeAttackCollider()) {
         player->GetMeleeAttackCollider()->SetActive(true);
         player->GetMeleeAttackCollider()->Reset();
+        // 最終コンボのみノックバック
         player->GetMeleeAttackCollider()->SetKnockbackEnabled(comboIndex_ == maxCombo_ - 1);
         player->GetMeleeAttackCollider()->SetAttackDamage(currentCombo.damage);
     }
 
-    // 攻撃ブロックを表示して初期位置設定
     if (player->GetAttackBlock()) {
         player->SetAttackBlockVisible(true);
 
-        // 現在のコンボの開始角度を設定
         blockAngle_ = currentCombo.startAngle;
 
         UpdateBlockPosition(player);
@@ -105,15 +96,13 @@ void AttackState::TransitionToPhase(AttackPhase newPhase)
 
 void AttackState::Exit(Player* player)
 {
-    // 攻撃範囲 Collider を無効化
     if (player->GetMeleeAttackCollider()) {
         player->GetMeleeAttackCollider()->SetActive(false);
     }
 
-    // 攻撃ブロックを非表示
     player->SetAttackBlockVisible(false);
 
-    // コンボインデックスをリセット（途中離脱でもリセット）
+    // 途中離脱でもコンボをリセット
     comboIndex_ = 0;
     hasBufferedInput_ = false;
 
@@ -126,17 +115,15 @@ void AttackState::Exit(Player* player)
 
 void AttackState::Update(Player* player, float deltaTime)
 {
-    // GlobalVariables から値を同期（ホットリロード対応）
+    // ホットリロード対応で毎フレーム同期
     LoadComboData();
 
     switch (phase_) {
     case SearchTarget:
         phaseTimer_ += deltaTime;
 
-        // 毎フレーム敵を検索
         SearchForTarget(player);
 
-        // 一定時間待機後、次のフェーズへ
         if (phaseTimer_ >= maxSearchTime_) {
             if (targetEnemy_) {
                 TransitionToPhase(MoveToTarget);
@@ -193,22 +180,20 @@ void AttackState::ProcessMoveToTarget(Player* player, float deltaTime)
 
     phaseTimer_ += deltaTime;
 
-    // 移動実行
     player->MoveToTarget(targetEnemy_, deltaTime);
 
-    // ターゲットとの現在距離をチェック
     Vector3 toTarget = targetEnemy_->GetTransform().translate - player->GetTransform().translate;
     toTarget.y = 0.0f;  // 水平距離のみ
     float currentDistance = toTarget.Length();
 
-    // ターゲットが攻撃範囲外に離れた場合、移動を終止してその場で攻撃
+    // ターゲットが攻撃範囲外へ離れたら追わずその場で攻撃
     if (currentDistance > player->GetAttackMinDistance()) {
         player->ResetMoveToTarget();
         TransitionToPhase(ExecuteAttack);
         return;
     }
 
-    // 位置ベースの終了判定または最大移動時間超過
+    // 到達 or 最大移動時間超過で攻撃へ
     if (player->HasReachedTarget() || phaseTimer_ >= maxMoveTime_) {
         TransitionToPhase(ExecuteAttack);
     }
@@ -220,17 +205,14 @@ void AttackState::ProcessExecuteAttack(Player* player, float deltaTime)
 
     const ComboData& currentCombo = combos_[comboIndex_];
 
-    // ブロックを回転させる
     float angularVelocity = currentCombo.swingAngle / currentCombo.attackDuration;
     blockAngle_ += angularVelocity * deltaTime * currentCombo.swingDirection;
     UpdateBlockPosition(player);
 
     if (player->GetMeleeAttackCollider()) {
-        // ダメージ判定（攻撃中は常に有効）
         player->GetMeleeAttackCollider()->Damage();
     }
 
-    // 攻撃時間が終了したら次の処理へ
     if (phaseTimer_ >= currentCombo.attackDuration) {
         OnExecuteAttackComplete(player);
     }
@@ -238,9 +220,8 @@ void AttackState::ProcessExecuteAttack(Player* player, float deltaTime)
 
 void AttackState::OnExecuteAttackComplete(Player* player)
 {
-    // プリインプットがあり、まだ次のコンボがある場合
+    // 先行入力があり次コンボが残っていれば継続
     if (hasBufferedInput_ && comboIndex_ < maxCombo_ - 1) {
-        // 次のコンボへ
         comboIndex_++;
         hasBufferedInput_ = false;
         TransitionToPhase(SearchTarget);
@@ -248,13 +229,13 @@ void AttackState::OnExecuteAttackComplete(Player* player)
         return;
     }
 
-    // 4コンボ完走時（comboIndex_ == 3）は硬直へ
+    // 最終コンボまで到達したら硬直へ
     if (comboIndex_ >= maxCombo_ - 1) {
         TransitionToPhase(Recovery);
         return;
     }
 
-    // それ以外（途中離脱）は即座に Idle へ（硬直なし）
+    // 途中離脱は硬直なしで即 Idle
     PlayerStateMachine* stateMachine = player->GetStateMachine();
     if (stateMachine) {
         stateMachine->ChangeState("Idle");
@@ -265,7 +246,6 @@ void AttackState::ProcessRecovery(Player* player, float deltaTime)
 {
     phaseTimer_ += deltaTime;
 
-    // 硬直時間が終了したら Idle へ
     if (phaseTimer_ >= recoveryTime_) {
         PlayerStateMachine* stateMachine = player->GetStateMachine();
         if (stateMachine) {
@@ -290,7 +270,7 @@ void AttackState::UpdateBlockPosition(Player* player)
     Vector3 blockPos;
 
     if (currentCombo.axis == SwingAxis::Horizontal) {
-        // 水平回転（XZ 平面）：コンボ0, 1, 3
+        // 水平回転（XZ 平面）
         float worldAngle = playerRotY + blockAngle_;
         blockPos = {
             playerPos.x + sinf(worldAngle) * blockRadius_,
@@ -299,8 +279,7 @@ void AttackState::UpdateBlockPosition(Player* player)
         };
     }
     else {
-        // 垂直回転（プレイヤー向き基準の YZ 平面）：コンボ2（縦切り）
-        // blockAngle_は垂直角度として使用（π/2が真上、-π/2が真下）
+        // 垂直回転（縦切り）。blockAngle_ は垂直角度（π/2 が真上、-π/2 が真下）
         float horizontalDist = cosf(blockAngle_) * blockRadius_;
         float verticalDist = sinf(blockAngle_) * blockRadius_;
 
@@ -311,11 +290,9 @@ void AttackState::UpdateBlockPosition(Player* player)
         };
     }
 
-    // ブロックのトランスフォーム設定
     Transform blockTransform;
     blockTransform.translate = blockPos;
 
-    // 回転はプレイヤーの向きに合わせる
     if (currentCombo.axis == SwingAxis::Horizontal) {
         blockTransform.rotate = { 0.0f, playerRotY + blockAngle_, 0.0f };
     }
@@ -339,19 +316,15 @@ void AttackState::DrawImGui(Player* player)
     ImGui::Text("=== Attack State Details ===");
     ImGui::Separator();
 
-    // フェーズ情報
     const char* phaseNames[] = { "SearchTarget", "MoveToTarget", "ExecuteAttack", "Recovery" };
     ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Phase: %s", phaseNames[GetPhase()]);
 
-    // コンボ情報
     if (ImGui::TreeNode("Combo System")) {
         ImGui::Text("Combo Index: %d / %d", GetComboIndex() + 1, GetMaxCombo());
 
-        // コンボ進行バー
         float comboProgress = static_cast<float>(GetComboIndex() + 1) / static_cast<float>(GetMaxCombo());
         ImGui::ProgressBar(comboProgress, ImVec2(-1, 0), "Combo Progress");
 
-        // プリインプット状態
         if (HasBufferedInput()) {
             ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Buffered Input: YES");
         }
@@ -362,7 +335,6 @@ void AttackState::DrawImGui(Player* player)
         ImGui::TreePop();
     }
 
-    // 現在のコンボデータ
     if (ImGui::TreeNode("Current Combo Data")) {
         const ComboData& currentCombo = GetCurrentComboData();
 
@@ -378,7 +350,6 @@ void AttackState::DrawImGui(Player* player)
         ImGui::Text("Duration: %.2f s", currentCombo.attackDuration);
         ImGui::Text("Damage: %.1f", currentCombo.damage);
 
-        // 攻撃進行バー
         if (GetPhase() == ExecuteAttack) {
             float attackProgress = GetPhaseTimer() / currentCombo.attackDuration;
             ImGui::ProgressBar(attackProgress, ImVec2(-1, 0), "Attack Progress");
@@ -387,7 +358,6 @@ void AttackState::DrawImGui(Player* player)
         ImGui::TreePop();
     }
 
-    // タイマー情報
     if (ImGui::TreeNode("Timers")) {
         switch (GetPhase()) {
         case SearchTarget:
@@ -411,7 +381,6 @@ void AttackState::DrawImGui(Player* player)
         ImGui::TreePop();
     }
 
-    // ターゲット情報
     if (ImGui::TreeNode("Target Info")) {
         if (GetTargetEnemy()) {
             ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Target: DETECTED");
@@ -423,7 +392,6 @@ void AttackState::DrawImGui(Player* player)
         ImGui::TreePop();
     }
 
-    // 全コンボデータ一覧
     if (ImGui::TreeNode("All Combo Data")) {
         for (int i = 0; i < kMaxComboCount; ++i) {
             const ComboData& combo = combos_[i];
@@ -452,7 +420,6 @@ void AttackState::DrawImGui(Player* player)
         ImGui::TreePop();
     }
 
-    // ブロックパラメータ
     if (ImGui::TreeNode("Block Parameters")) {
         ImGui::Text("Block Radius: %.2f", blockRadius_);
         ImGui::Text("Block Scale: %.2f", blockScale_);

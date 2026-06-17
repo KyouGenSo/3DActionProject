@@ -7,68 +7,45 @@ namespace Tako {
 }
 
 /// <summary>
-/// ダッシュエフェクト管理クラス
 /// プレイヤーダッシュ時のエミッター位置を Lerp 補間で追従させる
 /// </summary>
 class DashEffectManager
 {
 public:
-    /// <summary>
-    /// パラメータ構造体
-    /// </summary>
     struct Params {
-        float lerpSpeed = 35.0f;                        ///< 補間速度
-        float stopThreshold = 0.65f;                    ///< 停止判定閾値
-        std::string emitterName = "player_dash";        ///< エミッター名
+        float lerpSpeed = 35.0f;                        ///< 指数減衰の係数
+        float stopThreshold = 0.65f;                    ///< ダッシュ終了後に無効化する距離
+        std::string emitterName = "player_dash";
     };
 
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
-    /// <param name="emitterManager">エミッターマネージャー（依存注入）</param>
     explicit DashEffectManager(Tako::EmitterManager* emitterManager);
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     ~DashEffectManager() = default;
 
     /// <summary>
-    /// 更新処理
+    /// ダッシュ開始でエミッターを有効化し、毎フレーム位置を指数補間で追従させる
     /// </summary>
-    /// <param name="deltaTime">フレーム間隔（秒）</param>
-    /// <param name="playerPosition">プレイヤーの現在位置</param>
-    /// <param name="isDashing">現在ダッシュ中かどうか</param>
+    /// <param name="deltaTime">前フレームからの経過時間（秒）</param>
+    /// <param name="playerPosition">追従先のプレイヤー位置</param>
+    /// <param name="isDashing">ダッシュ中か。false でも追いつくまで補間を継続</param>
     void Update(float deltaTime, const Tako::Vector3& playerPosition, bool isDashing);
 
     /// <summary>
-    /// エミッター位置を初期化
+    /// 補間中のエミッター位置を即座に指定値へ初期化する
     /// </summary>
-    /// <param name="position">初期位置</param>
+    /// <param name="position">設定する初期位置</param>
     void InitializePosition(const Tako::Vector3& position);
 
-    /// <summary>
-    /// エフェクトがアクティブか
-    /// </summary>
-    /// <returns>アクティブなら true</returns>
     bool IsActive() const { return isActive_; }
 
-    /// <summary>
-    /// パラメータを設定
-    /// </summary>
-    /// <param name="params">パラメータ</param>
     void SetParams(const Params& params) { params_ = params; }
 
-    /// <summary>
-    /// パラメータを取得
-    /// </summary>
-    /// <returns>現在のパラメータ</returns>
     const Params& GetParams() const { return params_; }
 
 private:
-    Tako::EmitterManager* emitterManager_ = nullptr;   ///< エミッターマネージャー
-    Tako::Vector3 emitterPosition_{};                  ///< エミッターの補間位置
-    bool previousIsDashing_ = false;                   ///< 前フレームのダッシュ状態
-    bool isActive_ = false;                            ///< エミッターのアクティブ状態
-    Params params_;                                    ///< パラメータ
+    Tako::EmitterManager* emitterManager_ = nullptr;
+    Tako::Vector3 emitterPosition_{};                  ///< 補間中のエミッター位置
+    bool previousIsDashing_ = false;
+    bool isActive_ = false;
+    Params params_;
 };

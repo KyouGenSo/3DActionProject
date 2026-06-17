@@ -12,9 +12,8 @@
 class Boss;
 
 /// <summary>
-/// ボスのメテオレイン攻撃アクションノード
-/// フェーズ2でボスが弾を上方向に発射し、フェーズ2エリア内のランダムな位置に着弾する。
-/// Charge → Launch → Warning → Blink → Impact → Recovery
+/// 弾を上方へ発射し、フェーズ2エリア内のランダム位置へ着弾させる。
+/// 水平方向への全方位弾も同時に放つ。
 /// </summary>
 class BTBossMeteorRain : public AttackNode {
 public:
@@ -59,74 +58,55 @@ public:
 
 protected:
     /// <summary>
-    /// 固有攻撃ロジック本体（Charge → Launch → Warning → Blink → Impact → Recovery のフェーズ制御）
+    /// Charge → Launch → Warning → Blink → Impact → Recovery のフェーズを進行させる
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
-    /// <returns>Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    /// <param name="blackboard">未使用</param>
+    /// <param name="boss">発射・着弾させるボス</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
+    /// <returns>全フェーズ完了で Success、進行中は Running</returns>
     Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
-    /// <summary>
-    /// 固有初期化処理（着弾位置の生成、Decal の準備、totalDuration の算出）
-    /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
-    /// <summary>
-    /// 固有クリーンアップ処理（Decal / コライダー / パーティクル群の解放とフラグリセット）
-    /// </summary>
     void OnCleanup() override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ適用
-    /// </summary>
-    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ抽出処理
-    /// </summary>
-    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
-    /// <summary>
-    /// 固有のImGuiデバッグ表示
-    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
 private:
     /// <summary>
-    /// フェーズ2エリア内のランダムな着弾位置群を生成して impactPositions_ に格納する
+    /// エリア内のランダムな着弾位置群を生成して impactPositions_ に格納
     /// </summary>
-    /// <param name="bossPos">ボスの現在位置（生成範囲の基準）</param>
+    /// <param name="bossPos">配置範囲の中心となるボス位置</param>
     void GenerateImpactPositions(const Tako::Vector3& bossPos);
 
     /// <summary>
-    /// 上空に向けて弾を1発発射する（Launch フェーズで index 番目の弾を発射）
+    /// 上空へ弾を1発発射
     /// </summary>
-    /// <param name="boss">弾を発射するBossへのポインタ</param>
-    /// <param name="index">発射する弾のインデックス</param>
+    /// <param name="boss">発射元のボス</param>
+    /// <param name="index">未使用</param>
     void LaunchBullet(Boss* boss, int index);
 
     /// <summary>
-    /// 点滅フェーズの透明度更新（着弾位置 Decal の点滅警告）
+    /// 点滅フェーズの Decal アルファを sin で更新する
     /// </summary>
-    /// <param name="phaseElapsed">点滅フェーズの経過時間</param>
+    /// <param name="phaseElapsed">点滅フェーズ開始からの経過秒</param>
     void UpdateBlinkingPhase(float phaseElapsed);
 
     /// <summary>
-    /// 着弾フェーズの開始処理（コライダー有効化と着弾パーティクル起動）
+    /// コライダー有効化と落下弾スポーン
     /// </summary>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="boss">落下弾を発射するボス</param>
     void BeginImpactPhase(Boss* boss);
 
     /// <summary>
-    /// 着弾フェーズの終了処理（コライダー無効化と Decal の非表示化）
+    /// 着弾終了: Decal とコライダーを停止する
     /// </summary>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="boss">未使用</param>
     void EndImpactPhase(Boss* boss);
 
     static constexpr int kMaxImpacts = 20;

@@ -23,7 +23,6 @@ Tako::BTNodeStatus BTBossRepelShockwave::OnExecute(Tako::BTBlackboard* /*blackbo
 
     elapsedTime_ += deltaTime;
 
-    // フェーズ境界
     const float warningEnd = warningTime_;
     const float expandEnd = warningTime_ + expandTime_;
     const float sustainEnd = expandEnd + sustainTime_;
@@ -47,12 +46,10 @@ Tako::BTNodeStatus BTBossRepelShockwave::OnExecute(Tako::BTBlackboard* /*blackbo
         field.strength = strength_;
         field.radius = maxRadius_ * std::clamp(t, 0.0f, 1.0f);
 
-        // Phase 1 突入時にスフィア表示開始（一度だけ）
         if (!ringTriggered_) {
             boss->SetRepelShockwaveSphereVisible(true);
             ringTriggered_ = true;
         }
-        // スフィアのサイズを ForceField の半径と同期
         boss->SetRepelShockwaveSphereScale(field.radius);
     }
     else if (elapsedTime_ < sustainEnd) {
@@ -67,14 +64,11 @@ Tako::BTNodeStatus BTBossRepelShockwave::OnExecute(Tako::BTBlackboard* /*blackbo
         return FinishAttack();
     }
 
-    // ForceField 更新
     if (forceFieldId_ >= 0) {
         ffm->UpdateForceField(static_cast<uint32_t>(forceFieldId_), field);
     }
 
-    // ===== Phase 1 (expand) 以降: バリアパーティクル & 渦力場をボスに追従 =====
-    // Phase 3 は上で早期 return 済みのため、ここに来た時点で Phase 0/1/2 のいずれか。
-    // warningEnd を境に Phase 1+ のみ実行（Y は 0 固定、半径は field.radius と完全同期）。
+    // Phase 1 以降: バリアパーティクル & 渦力場をボスに追従（Y は 0 固定、半径は field.radius と同期）
     if (elapsedTime_ >= warningEnd) {
         const Vector3 bossPosFlat = {
             boss->GetTransform().translate.x,
@@ -82,13 +76,12 @@ Tako::BTNodeStatus BTBossRepelShockwave::OnExecute(Tako::BTBlackboard* /*blackbo
             boss->GetTransform().translate.z,
         };
 
-        // Phase 1 突入時の一度きり活性化
         if (!barrierActivated_ && cachedEmitterManager_) {
             cachedEmitterManager_->SetEmitterActive(barrierEmitterInstance_, true);
             barrierActivated_ = true;
         }
 
-        // 渦力場（ParticlesOnly）: 位置/半径を毎フレーム更新、その他は preset 値維持
+        // 渦力場（ParticlesOnly）: 位置/半径のみ毎フレーム更新、その他は preset 値維持
         if (vortexFieldId_ >= 0) {
             ForceFieldData vf = vortexFieldBase_;
             vf.position = bossPosFlat;
@@ -96,7 +89,6 @@ Tako::BTNodeStatus BTBossRepelShockwave::OnExecute(Tako::BTBlackboard* /*blackbo
             ffm->UpdateForceField(static_cast<uint32_t>(vortexFieldId_), vf);
         }
 
-        // バリアエミッタ: 位置/半径をバリアスフィアと同期
         if (cachedEmitterManager_) {
             cachedEmitterManager_->SetEmitterPosition(barrierEmitterInstance_, bossPosFlat);
             cachedEmitterManager_->SetEmitterRadius(barrierEmitterInstance_, field.radius);
@@ -115,7 +107,7 @@ void BTBossRepelShockwave::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss
 
     cachedForceFieldManager_ = ffm;
 
-    // ForceField 初期登録（強度 0 / 半径ほぼ 0 で確保）
+    // 強度 0 / 半径ほぼ 0 でスロットだけ確保
     ForceFieldData field{};
     field.type = static_cast<uint32_t>(ForceFieldType::Repel);
     field.position = boss->GetTransform().translate;
@@ -136,13 +128,10 @@ void BTBossRepelShockwave::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss
             emitterMgr->LoadPreset(barrierEmitterPreset_, barrierEmitterInstance_);
             barrierEmitterLoaded_ = true;
         }
-        // OnInitialize 時点では非アクティブ。Phase 1 突入で起動する。
         emitterMgr->SetEmitterActive(barrierEmitterInstance_, false);
     }
 
-    // ===== 渦力場（ParticlesOnly）初期登録 =====
-    // preset 値（strength=1000 / direction=(0,-1,0) / affectMask=0 = ParticlesOnly）を読み込んで保持。
-    // 既存 Repel 力場とは独立した別エントリとして AddForceField。
+    // 渦力場（ParticlesOnly）: 既存 Repel とは独立した別エントリとして登録
     if (ffm->LoadPresetToData(vortexFieldPreset_, vortexFieldBase_)) {
         ForceFieldData initial = vortexFieldBase_;
         initial.position = { boss->GetTransform().translate.x, 0.0f, boss->GetTransform().translate.z };
@@ -153,13 +142,13 @@ void BTBossRepelShockwave::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss
 }
 
 void BTBossRepelShockwave::OnCleanup() {
-    // バリアエミッタ停止（preset は emitterMap_ に残し次回再利用）
+    // preset は emitterMap_ に残し次回再利用
     if (cachedEmitterManager_) {
         cachedEmitterManager_->SetEmitterActive(barrierEmitterInstance_, false);
     }
     cachedEmitterManager_ = nullptr;
 
-    // ForceField 削除: erase ベースの実装に合わせて「後から登録した vortex を先に削除」
+    // erase ベースのため、後から登録した vortex を先に削除する
     if (cachedForceFieldManager_) {
         if (vortexFieldId_ >= 0) {
             cachedForceFieldManager_->RemoveForceField(static_cast<uint32_t>(vortexFieldId_));
@@ -172,7 +161,7 @@ void BTBossRepelShockwave::OnCleanup() {
     forceFieldId_ = -1;
     cachedForceFieldManager_ = nullptr;
 
-    // 衝撃波スフィアを非表示化（cachedBoss_ は親 AttackNode で管理）
+    // cachedBoss_ は親 AttackNode で管理
     if (cachedBoss_) {
         cachedBoss_->SetRepelShockwaveSphereVisible(false);
     }

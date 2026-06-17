@@ -19,10 +19,9 @@ BTBossTeleport::BTBossTeleport() {
 void BTBossTeleport::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
     teleportFired_ = false;
 
-    // テレポート中フラグを立てる: Boss::Update 内で aura エミッタが自動無効化される
+    // Boss::Update 内で aura エミッタが自動無効化される
     boss->SetTeleporting(true);
 
-    // テレポート目標座標を決定 (3 モード)
     auto* rng = Tako::RandomEngine::GetInstance();
     const auto stageBounds = BossMovement::CalcStageBounds();
 
@@ -51,13 +50,12 @@ void BTBossTeleport::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
     }
     }
 
-    // 半透明描画モードへ切替 + 元のマテリアル状態をキャッシュ
+    // 半透明モードへ切替 + 元のマテリアル状態をキャッシュ
     Object3d* model = boss->GetModel();
     if (model) {
         originalMaterialColor_ = model->GetMaterialColor();
         originalTransparentState_ = model->IsTransparent();
         model->SetTransparent(true);
-        // フェードアウト開始時は完全不透明 (alpha = 1)
         UpdateModelAlpha(model, 1.0f);
     }
 }
@@ -80,7 +78,7 @@ Tako::BTNodeStatus BTBossTeleport::OnExecute(Tako::BTBlackboard* /*blackboard*/,
         boss->SetBodyParticleEmitterActive(true);
     }
     else if (!teleportFired_) {
-        // Phase 1: 瞬間移動 (alpha = 0、body emitter OFF、座標瞬時更新)
+        // Phase 1: 瞬間移動
         if (model) UpdateModelAlpha(model, 0.0f);
         boss->SetBodyParticleEmitterActive(false);
         boss->SetTranslate(targetTeleportPosition_);
@@ -96,9 +94,9 @@ Tako::BTNodeStatus BTBossTeleport::OnExecute(Tako::BTBlackboard* /*blackboard*/,
         boss->SetBodyParticleEmitterActive(true);
     }
     else {
-        // Phase 3: 完了 (body emitter OFF、Success)
+        // Phase 3: 完了
         boss->SetBodyParticleEmitterActive(false);
-        return FinishAttack();  // OnCleanup → status = Success
+        return FinishAttack();
     }
 
     return Tako::BTNodeStatus::Running;
@@ -113,7 +111,7 @@ void BTBossTeleport::OnCleanup() {
             model->SetTransparent(originalTransparentState_);
         }
         cachedBoss_->SetBodyParticleEmitterActive(false);
-        // テレポート中フラグ解除 → 次フレームの Boss::Update で aura が再有効化される
+        // 解除後、次フレームの Boss::Update で aura が再有効化される
         cachedBoss_->SetTeleporting(false);
     }
     teleportFired_ = false;
@@ -164,7 +162,6 @@ bool BTBossTeleport::OnDrawImGui() {
     if (ImGui::DragFloat("Fade Out Duration##teleport", &fadeOutDuration_, 0.05f, 0.0f, 5.0f)) changed = true;
     if (ImGui::DragFloat("Fade In Duration##teleport",  &fadeInDuration_,  0.05f, 0.0f, 5.0f)) changed = true;
 
-    // モード選択 (Combo)
     static const char* kModeLabels[] = {
         "Fixed (固定座標)",
         "Random From Boss (ボス中心)",
@@ -176,7 +173,6 @@ bool BTBossTeleport::OnDrawImGui() {
         changed = true;
     }
 
-    // モード別 UI
     switch (mode_) {
     case TeleportMode::Fixed: {
         float pos[3] = { targetPositionX_, targetPositionY_, targetPositionZ_ };

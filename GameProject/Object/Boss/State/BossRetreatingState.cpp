@@ -21,7 +21,7 @@ void BossRetreatingState::Enter(Boss* boss)
 
 void BossRetreatingState::Update(Boss* boss, float deltaTime)
 {
-    // 即時完了 / 既に到達済み: 1 フレームで Normal に復帰
+    // 既に到達済みなら即 Normal へ
     if (executor_.IsFinished(boss)) {
         executor_.SnapToTarget(boss);
         boss->GetStateMachine()->ChangeState("Normal");

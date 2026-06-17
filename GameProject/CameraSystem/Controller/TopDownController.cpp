@@ -6,7 +6,6 @@
 using namespace Tako;
 
 TopDownController::TopDownController() {
-    // デフォルト値設定
     currentHeight_ = CameraConfig::TopDown::INITIAL_HEIGHT;
     currentBackOffset_ = CameraConfig::TopDown::INITIAL_BACK_OFFSET;
 }
@@ -16,7 +15,6 @@ void TopDownController::Update(float deltaTime) {
         return;
     }
 
-    // 標準 FOV を設定
     if (camera_) {
         camera_->SetFovY(standardFov_);
     }
@@ -27,7 +25,6 @@ void TopDownController::Update(float deltaTime) {
 void TopDownController::Activate() {
     isActive_ = true;
 
-    // 標準 FOV を設定
     if (camera_) {
         camera_->SetFovY(standardFov_);
     }
@@ -42,10 +39,8 @@ void TopDownController::Reset() {
         return;
     }
 
-    // ターゲット位置に即座に移動
     interpolatedTargetPos_ = CalculateFocusPoint();
 
-    // カメラの位置と角度を設定
     UpdateCameraPosition();
 }
 
@@ -54,7 +49,6 @@ Vector3 TopDownController::CalculateFocusPoint() const {
         return Vector3{};
     }
 
-    // 全ターゲットの中心を計算
     std::vector<Vector3> allPositions;
     allPositions.push_back(primaryTarget_->translate);
 
@@ -64,7 +58,7 @@ Vector3 TopDownController::CalculateFocusPoint() const {
         }
     }
 
-    // 平均位置を計算
+    // 全ターゲットの平均位置を中心とする
     if (!allPositions.empty()) {
         Vector3 sum = std::accumulate(allPositions.begin(), allPositions.end(),
             Vector3{ 0.0f, 0.0f, 0.0f },
@@ -84,7 +78,7 @@ float TopDownController::CalculateMaxTargetDistance() const {
 
     float maxDistance = 0.0f;
 
-    // プライマリターゲットと各追加ターゲット間の距離を計算
+    // プライマリと各追加ターゲット間の距離
     for (const auto* target : additionalTargets_) {
         if (target) {
             Vector3 diff = Vec3::Subtract(primaryTarget_->translate, target->translate);
@@ -111,26 +105,21 @@ float TopDownController::CalculateMaxTargetDistance() const {
 void TopDownController::CalculateCameraParameters(float targetDistance,
     float& outHeight,
     float& outBackOffset) const {
-    // 距離に応じて高度を調整
+    // ターゲット間距離が大きいほど高く・後方に引く
     outHeight = baseHeight_ + targetDistance * heightMultiplier_;
     outHeight = std::clamp(outHeight, minHeight_, maxHeight_);
 
-    // 距離に応じて後方オフセットも調整
     outBackOffset = baseBackOffset_ - targetDistance * backOffsetMultiplier_;
     outBackOffset = std::clamp(outBackOffset, minBackOffset_, maxBackOffset_);
 }
 
 void TopDownController::UpdateCameraPosition() {
-    // フォーカスポイントを計算
     Vector3 focusPoint = CalculateFocusPoint();
 
-    // 滑らかに追従
     interpolatedTargetPos_ = Vec3::Lerp(interpolatedTargetPos_, focusPoint, followSmoothness_);
 
-    // ターゲット間の距離を計算
     float targetDistance = CalculateMaxTargetDistance();
 
-    // カメラパラメータを計算
     float targetHeight = baseHeight_;
     float targetBackOffset = baseBackOffset_;
 
@@ -138,17 +127,15 @@ void TopDownController::UpdateCameraPosition() {
         CalculateCameraParameters(targetDistance, targetHeight, targetBackOffset);
     }
 
-    // 現在の値を滑らかに更新
     currentHeight_ = Vec3::Lerp(currentHeight_, targetHeight, followSmoothness_);
     currentBackOffset_ = Vec3::Lerp(currentBackOffset_, targetBackOffset, followSmoothness_);
 
-    // カメラ位置を設定
     Vector3 cameraPos = interpolatedTargetPos_;
     cameraPos.y = currentHeight_;
     cameraPos.z += currentBackOffset_;
 
     camera_->SetTranslate(cameraPos);
 
-    // カメラの回転を固定（俯瞰角度）
+    // 俯瞰角度に固定
     camera_->SetRotate(Vector3(cameraAngleX_, 0.0f, 0.0f));
 }

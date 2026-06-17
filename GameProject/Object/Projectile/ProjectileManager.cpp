@@ -5,12 +5,11 @@
 
 namespace {
     /// <summary>
-    /// 弾コンテナを更新し、非アクティブ弾を Finalize してから削除する共通ヘルパ
+    /// 弾を更新し、非アクティブ弾を Finalize してから削除する。
     /// </summary>
     template <typename T>
     void UpdateAndCleanup(std::vector<std::unique_ptr<T>>& bullets, float dt)
     {
-        // アクティブ弾のみ Update
         for (auto& b : bullets) {
             if (b && b->IsActive())
             {
@@ -18,7 +17,6 @@ namespace {
             }
         }
 
-        // 非アクティブ弾を除去
         std::erase_if(bullets,
             [](const std::unique_ptr<T>& b) {
                 if (b && !b->IsActive())
@@ -31,7 +29,7 @@ namespace {
     }
 
     /// <summary>
-    /// SpawnRequest 群から弾を生成してベクタに追加する共通ヘルパ
+    /// SpawnRequest 群から弾を生成してベクタに追加する。
     /// </summary>
     template <typename BulletT>
     void SpawnBullets(
@@ -86,7 +84,7 @@ void ProjectileManager::Clear()
 
 void ProjectileManager::SpawnPlayerBullets(const std::vector<BulletSpawnRequest>& requests)
 {
-    // PlayerBullet はForceFieldに影響されるのでテンプレートを使わず特殊化：生成直後に ForceFieldManager を注入する。
+    // 生成直後に ForceFieldManager を注入するため共通ヘルパを使わない
     for (const auto& req : requests) {
         auto bullet = std::make_unique<PlayerBullet>(emitterManager_);
         bullet->SetForceFieldManager(forceFieldManager_);

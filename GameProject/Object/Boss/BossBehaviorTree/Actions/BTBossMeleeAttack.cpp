@@ -184,7 +184,6 @@ void BTBossMeleeAttack::ProcessExecutePhase(Tako::BTBlackboard* blackboard, floa
         boss->SetTranslate(newPosition);
     }
 
-    // ブロック回転
     float rotationSpeed = swingAngle_ / attackDuration_ * currentSwingDirection_;
     blockAngle_ += rotationSpeed * deltaTime;
     UpdateBlockPosition(boss);

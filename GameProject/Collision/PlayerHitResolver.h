@@ -6,10 +6,10 @@
 #include "../Object/Player/Player.h"
 
 /// <summary>
-/// プレイヤーへのヒット解決。相手が PLAYER のとき、パリィ成功なら OnParrySuccess、否なら OnHit(damage)。
+/// 相手が PLAYER のとき、パリィ中なら OnParrySuccess、否なら OnHit(damage)
 /// </summary>
-/// <param name="other">衝突相手のコライダー</param>
-/// <param name="damage">与えるダメージ量</param>
+/// <param name="other">衝突相手のコライダー。nullptr や PLAYER 以外なら何もしない</param>
+/// <param name="damage">パリィしていないプレイヤーに与えるダメージ量</param>
 inline void ResolvePlayerHit(Tako::Collider* other, float damage) {
     if (!other) return;
     if (other->GetTypeID() != static_cast<uint32_t>(CollisionTypeId::PLAYER)) return;

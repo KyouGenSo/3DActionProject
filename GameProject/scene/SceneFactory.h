@@ -3,18 +3,17 @@
 #include <memory>
 
 /// <summary>
-/// シーンファクトリークラス
-/// シーン名から対応するシーンインスタンスを生成
+/// シーン名から対応するシーンを生成するファクトリー
 /// </summary>
 class SceneFactory : public Tako::AbstractSceneFactory
 {
 public: // メンバ関数
 
 	/// <summary>
-	/// シーンの生成
+	/// シーン名に対応するシーンインスタンスを生成する
 	/// </summary>
-	/// <param name="sceneName">生成するシーン名</param>
-	/// <returns>生成されたシーンインスタンス（生成失敗時は nullptr）</returns>
+	/// <param name="sceneName">"title"/"game"/"clear"/"over" のいずれか。clear/over は結果テクスチャ付きの ResultScene を生成</param>
+	/// <returns>生成したシーン。未知の名前は nullptr</returns>
 	std::unique_ptr<Tako::BaseScene> CreateScene(const std::string& sceneName) override;
 
 };

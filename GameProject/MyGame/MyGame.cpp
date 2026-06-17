@@ -30,18 +30,14 @@ void MyGame::Initialize()
 
     TakoFramework::Initialize();
 
-    // シーンの初期化
     sceneFactory_ = std::make_unique<SceneFactory>();
     SceneManager::GetInstance()->SetSceneFactory(sceneFactory_.get());
     SceneManager::GetInstance()->ChangeScene("title", 0.0f);
 
-    // テクスチャの読み込み
     LoadTextures();
 
-    // GlobalVariables にパラメータを登録
     RegisterGlobalVariables();
 
-    // GlobalVariables の Json ファイル読み込み
     GlobalVariables::GetInstance()->LoadFiles();
 }
 

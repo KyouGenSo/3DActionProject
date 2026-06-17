@@ -6,84 +6,84 @@ class Boss;
 class Player;
 
 /// <summary>
-/// ボス離脱移動の共通実行器
-/// BTBossRetreat (BehaviorTree ノード) と BossRetreatingState (StateMachine ステート) の
-/// 両方からコンポジションで利用される。プレイヤーから離れる方向に smoothstep イージングで移動し、
-/// 壁回避 (90 / 180 度回転候補) でステージ端での詰まりを回避する。
+/// プレイヤーから離れる離脱移動の実行器（壁回避付き）
 /// </summary>
 class BossRetreatExecutor {
 public:
-    /// <summary>
-    /// 離脱パラメータ
-    /// </summary>
     struct Parameters {
-        float retreatSpeed   = 60.0f;  ///< 離脱速度
-        float targetDistance = 55.0f;  ///< 目標距離 (プレイヤーからの距離)
+        float retreatSpeed   = 60.0f;
+        float targetDistance = 55.0f;  ///< プレイヤーからの目標距離
     };
 
     BossRetreatExecutor() = default;
     explicit BossRetreatExecutor(const Parameters& params) : params_(params) {}
 
     /// <summary>
-    /// 離脱開始: 開始位置 / 目標位置 / 所要時間を確定し、ボスの向きをセット。
-    /// 既に目標距離以上離れている / プレイヤーと同位置の場合は内部状態のみ初期化し、
-    /// IsFinished() がすぐ true を返す状態になる。
+    /// 開始位置 / 目標位置 / 所要時間を確定。既に目標距離以上離れていれば IsFinished() が即 true になる
     /// </summary>
+    /// <param name="boss">離脱させるボス。現在位置を開始位置とし向きを離脱方向へ更新する</param>
+    /// <param name="player">距離計算の基準。nullptr なら移動せず即完了扱い</param>
     void Begin(Boss* boss, const Player* player);
 
     /// <summary>
-    /// フレーム更新: 経過時間を加算し smoothstep でボス位置を更新。
-    /// 内部状態が「即時完了」(retreatDuration_ <= 0) の場合は何もしない。
+    /// smoothstep でボス位置を更新。即時完了 (retreatDuration_ <= 0) なら何もしない
     /// </summary>
+    /// <param name="boss">位置を更新するボス</param>
+    /// <param name="deltaTime">経過時間 (秒)</param>
     void Tick(Boss* boss, float deltaTime);
 
     /// <summary>
-    /// 終了判定: 即時完了状態、または到達閾値以内に入っている場合に true。
+    /// 即時完了、または到達閾値以内なら true
     /// </summary>
+    /// <param name="boss">現在位置を判定するボス</param>
+    /// <returns>移動不要 (retreatDuration_ <= 0)、または目標まで kArrivalThreshold 未満なら true</returns>
     bool IsFinished(const Boss* boss) const;
 
     /// <summary>
-    /// ボス位置を目標位置にスナップ。Tick / IsFinished 後の到達時に呼び出す。
+    /// ボス位置を目標へスナップ（到達時に呼ぶ）
     /// </summary>
+    /// <param name="boss">目標位置に移動させるボス</param>
     void SnapToTarget(Boss* boss) const;
 
     /// <summary>
-    /// 内部状態をリセット (パラメータは保持)
+    /// 内部状態をリセット（パラメータは保持）
     /// </summary>
     void Reset();
 
     const Parameters& GetParameters() const { return params_; }
     void SetParameters(const Parameters& params) { params_ = params; }
 
-    /// <summary>
-    /// JSON からパラメータを読み込み
-    /// </summary>
     void ApplyJson(const nlohmann::json& j);
 
-    /// <summary>
-    /// パラメータを JSON として出力
-    /// </summary>
     nlohmann::json ToJson() const;
 
 #ifdef _DEBUG
     /// <summary>
-    /// ImGui でパラメータ編集 UI を描画。戻り値: 変更があったか。
+    /// ImGui 編集 UI を描画。変更があれば true
     /// </summary>
-    /// <param name="idSuffix">複数 UI 共存時の ID サフィックス (例: "##retreat")</param>
     bool DrawImGui(const char* idSuffix);
 #endif
 
 private:
     /// <summary>
-    /// 壁回避を含めた最適な離脱方向を選択
+    /// 壁回避を含めた最適な離脱方向を選択。primary が kMinRetreatDistance 以上動けるならそれを返し、
+    /// 不足時は左右90度・180度の候補から実移動距離が最大の方向を選ぶ
     /// </summary>
+    /// <param name="boss">境界判定に使うボス</param>
+    /// <param name="primaryDirection">プレイヤーから離れる正規化済みの基本方向</param>
+    /// <param name="retreatDistance">目標距離まで離れるのに必要な移動距離</param>
+    /// <returns>実際に最も移動できる正規化方向</returns>
     Tako::Vector3 FindBestRetreatDirection(const Boss* boss,
                                            const Tako::Vector3& primaryDirection,
                                            float retreatDistance) const;
 
     /// <summary>
-    /// 指定方向での実際の移動可能距離 (境界クランプ後) を評価
+    /// 境界クランプ後の実移動可能距離を評価
     /// </summary>
+    /// <param name="boss">境界判定に使うボス</param>
+    /// <param name="direction">評価する移動方向</param>
+    /// <param name="retreatDistance">クランプ前に進ませたい距離</param>
+    /// <returns>境界でクランプした後に実際に動ける XZ 距離</returns>
     float EvaluateDirection(const Boss* boss,
                             const Tako::Vector3& direction,
                             float retreatDistance) const;

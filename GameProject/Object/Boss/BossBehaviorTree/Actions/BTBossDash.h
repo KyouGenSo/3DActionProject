@@ -6,36 +6,27 @@
 class Boss;
 
 /// <summary>
-/// ボスのダッシュアクションノード
+/// ランダム方向へエリア内で一定距離ダッシュする
 /// </summary>
 class BTBossDash : public Tako::BTNode {
     //=========================================================================================
     // 定数
     //=========================================================================================
 private:
-    static constexpr float kDirectionEpsilon = 0.01f;  ///< 方向判定の閾値
+    static constexpr float kDirectionEpsilon = 0.01f;
 
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
     BTBossDash();
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     virtual ~BTBossDash() = default;
 
     /// <summary>
-    /// ノードの実行
+    /// ランダム方向へエリア内をダッシュ移動する
     /// </summary>
-    /// <param name="blackboard">ブラックボード</param>
-    /// <returns>実行結果</returns>
+    /// <param name="blackboard">boss ポインタを保持する共有ストレージ</param>
+    /// <returns>boss 未取得で Failure、dashDuration_ 経過で Success、移動中は Running</returns>
     Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
 
-    /// <summary>
-    /// ノードのリセット
-    /// </summary>
     void Reset() override;
 
     // パラメータ取得・設定
@@ -44,10 +35,6 @@ public:
     float GetDashDuration() const { return dashDuration_; }
     void SetDashDuration(float duration) { dashDuration_ = duration; }
 
-    /// <summary>
-    /// JSON からパラメータを適用
-    /// </summary>
-    /// <param name="params">パラメータ JSON</param>
     void ApplyParameters(const nlohmann::json& params) override {
         if (params.contains("dashSpeed")) {
             dashSpeed_ = params["dashSpeed"];
@@ -57,58 +44,43 @@ public:
         }
     }
 
-    /// <summary>
-    /// パラメータを JSON として抽出
-    /// </summary>
     nlohmann::json ExtractParameters() const override;
 
 #ifdef _DEBUG
-    /// <summary>
-    /// ImGui でパラメータ編集 UI を描画
-    /// </summary>
     bool DrawImGui() override;
 #endif
 
 private:
     /// <summary>
-    /// ダッシュパラメータの初期化
+    /// ランダム方向と距離を抽選し、エリア制限後の目標位置と所要時間を決めて旋回する
     /// </summary>
-    /// <param name="boss">ボス</param>
+    /// <param name="boss">移動・旋回させるボス</param>
     void InitializeDash(Boss* boss);
 
     /// <summary>
-    /// ダッシュ移動の更新
+    /// 開始位置から目標位置へ補間移動し、上下振動を加える
     /// </summary>
-    /// <param name="boss">ボス</param>
-    /// <param name="deltaTime">経過時間</param>
+    /// <param name="boss">移動させるボス</param>
+    /// <param name="deltaTime">未使用</param>
     void UpdateDashMovement(Boss* boss, float deltaTime);
 
-    // ダッシュ方向
     Tako::Vector3 dashDirection_;
 
-    // ダッシュ速度
     float dashSpeed_ = 60.0f;
 
-    // ダッシュ時間
     float dashDuration_ = 0.5f;
 
-    // ダッシュ開始位置
     Tako::Vector3 startPosition_;
 
-    // ダッシュ目標位置
     Tako::Vector3 targetPosition_;
 
-    // 経過時間
     float elapsedTime_ = 0.0f;
 
-    // 初回実行フラグ
     bool isFirstExecute_ = true;
 
-    // ダッシュ距離範囲（ImGui 調整用）
-    float minDistance_ = 10.0f;  ///< 最小ダッシュ距離
-    float maxDistance_ = 50.0f;  ///< 最大ダッシュ距離
+    float minDistance_ = 10.0f;
+    float maxDistance_ = 50.0f;
 
-    // 調整可能パラメータ（ImGui 編集用）
-    float vibrationFreq_ = 50.0f;  ///< 振動周波数
-    float vibrationAmp_ = 0.05f;   ///< 振動振幅
+    float vibrationFreq_ = 50.0f;  ///< ダッシュ中の上下振動の周波数
+    float vibrationAmp_ = 0.05f;   ///< ダッシュ中の上下振動の振幅
 };

@@ -12,9 +12,8 @@ void BulletCollider::OnCollisionEnter(Tako::Collider* other) {
 
     uint32_t typeID = other->GetTypeID();
 
-    // 対象へのヒット
     if (typeID == targetTypeId_) {
-        // 多重ヒット防止
+        // 同一対象への多重ヒット防止
         void* targetPtr = other->GetOwner();
         if (hitTargets_.find(targetPtr) != hitTargets_.end()) {
             return;

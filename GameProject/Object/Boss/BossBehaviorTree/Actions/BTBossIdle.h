@@ -5,90 +5,59 @@
 class Boss;
 
 /// <summary>
-/// ボスの待機アクションノード
+/// プレイヤーを向きつつ idleDuration_ だけ待機する
 /// </summary>
 class BTBossIdle : public Tako::BTNode {
     //=========================================================================================
     // 定数
     //=========================================================================================
 private:
-    static constexpr float kDirectionEpsilon = 0.01f;   ///< 方向判定の閾値
+    static constexpr float kDirectionEpsilon = 0.01f;
 
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
     BTBossIdle();
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     virtual ~BTBossIdle() = default;
 
     /// <summary>
-    /// ノードの実行
+    /// プレイヤーを向きつつ idleDuration_ だけ待機する
     /// </summary>
-    /// <param name="blackboard">ブラックボード</param>
-    /// <returns>実行結果</returns>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
+    /// <returns>boss 未取得で Failure、idleDuration_ 経過で Success、待機中は Running</returns>
     Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
 
-    /// <summary>
-    /// ノードのリセット
-    /// </summary>
     void Reset() override;
 
-    /// <summary>
-    /// 待機時間の設定
-    /// </summary>
-    /// <param name="duration">待機時間</param>
     void SetIdleDuration(float duration) { idleDuration_ = duration; }
 
-    /// <summary>
-    /// 待機時間の取得
-    /// </summary>
-    /// <returns>待機時間</returns>
     float GetIdleDuration() const { return idleDuration_; }
 
-    /// <summary>
-    /// JSON からパラメータを適用
-    /// </summary>
-    /// <param name="params">パラメータ JSON</param>
     void ApplyParameters(const nlohmann::json& params) override {
         if (params.contains("idleDuration")) {
             idleDuration_ = params["idleDuration"];
         }
     }
 
-    /// <summary>
-    /// パラメータを JSON として抽出
-    /// </summary>
     nlohmann::json ExtractParameters() const override;
 
 #ifdef _DEBUG
-    /// <summary>
-    /// ImGui でパラメータ編集 UI を描画
-    /// </summary>
     bool DrawImGui() override;
 #endif
 
 private:
     /// <summary>
-    /// プレイヤーの方向を向く処理
+    /// プレイヤー方向へ rotationSpeed_ で旋回する（1フレームの回転量を制限）
     /// </summary>
-    /// <param name="boss">ボス</param>
-    /// <param name="deltaTime">経過時間</param>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
     void LookAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime);
 
 
-    // 待機時間（次の行動までの時間）
     float idleDuration_ = 2.0f;
 
-    // 回転速度（ラジアン/秒）
-    float rotationSpeed_ = 5.0f;
+    float rotationSpeed_ = 5.0f;   ///< ラジアン/秒
 
-    // 経過時間
     float elapsedTime_ = 0.0f;
 
-    // 初回実行フラグ
     bool isFirstExecute_ = true;
 };

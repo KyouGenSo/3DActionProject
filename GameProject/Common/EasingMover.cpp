@@ -36,7 +36,6 @@ Vector3 EasingMover::Update(float deltaTime)
     elapsedTime_ += deltaTime;
     float t = std::clamp(elapsedTime_ / duration_, 0.0f, 1.0f);
 
-    // イージング適用
     float easedT = ApplyEasing(t);
 
     return Vector3::Lerp(startPosition_, targetPosition_, easedT);

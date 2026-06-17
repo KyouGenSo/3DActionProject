@@ -40,7 +40,7 @@ Tako::BTNodeStatus BTBossMeteorRain::OnExecute(Tako::BTBlackboard* /*blackboard*
 
         float launchElapsed = elapsedTime_ - chargeEnd;
 
-        // 上方向弾（impactCount_ 発、既存処理）
+        // 上方向弾を launchDuration_ にわたり等間隔で発射
         float launchInterval = (impactCount_ > 0) ? launchDuration_ / static_cast<float>(impactCount_) : launchDuration_;
         int expectedLaunched = static_cast<int>(launchElapsed / launchInterval);
         expectedLaunched = std::min<int>(expectedLaunched, impactCount_);
@@ -50,7 +50,7 @@ Tako::BTNodeStatus BTBossMeteorRain::OnExecute(Tako::BTBlackboard* /*blackboard*
             bulletsLaunched_++;
         }
 
-        // 水平弾（horizontalBulletCount_ 発、独立タイミング）
+        // 水平弾（上方向弾とは独立タイミング）
         if (horizontalBulletCount_ > 0) {
             Vector3 bossPos = boss->GetTransform().translate;
             float hInterval = launchDuration_ / static_cast<float>(horizontalBulletCount_);
@@ -65,12 +65,12 @@ Tako::BTNodeStatus BTBossMeteorRain::OnExecute(Tako::BTBlackboard* /*blackboard*
         }
     }
     else if (elapsedTime_ < warningEnd) {
-        // 残りの上方向弾を全て発射（保険）
+        // 取りこぼした上方向弾を発射
         while (bulletsLaunched_ < impactCount_) {
             LaunchBullet(boss, bulletsLaunched_);
             bulletsLaunched_++;
         }
-        // 残りの水平弾を全て発射（保険）
+        // 取りこぼした水平弾を発射
         if (horizontalBulletCount_ > 0) {
             Vector3 bossPos = boss->GetTransform().translate;
             while (horizontalBulletsLaunched_ < horizontalBulletCount_) {
@@ -81,7 +81,7 @@ Tako::BTNodeStatus BTBossMeteorRain::OnExecute(Tako::BTBlackboard* /*blackboard*
                 horizontalBulletsLaunched_++;
             }
         }
-        // Warning フェーズ開始時に Decal を表示（1回のみ）
+        // Decal 表示は1回のみ
         if (!decalsShown_) {
             for (int i = 0; i < impactCount_; ++i) {
                 if (impactDecals_[i]) {
@@ -140,7 +140,7 @@ void BTBossMeteorRain::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* bo
     Vector3 bossPos = boss->GetTransform().translate;
     GenerateImpactPositions(bossPos);
 
-    // コライダー用 Transform の事前確保（再配置対策）
+    // コライダーがポインタ参照するため再確保で無効化されないよう事前確保
     colliderTransforms_.clear();
     colliderTransforms_.reserve(impactCount_);
     for (int i = 0; i < impactCount_; ++i) {
@@ -151,7 +151,6 @@ void BTBossMeteorRain::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* bo
         colliderTransforms_.push_back(t);
     }
 
-    // Decal とコライダー初期化
     impactDecals_.clear();
     impactDecals_.reserve(impactCount_);
     impactColliders_.clear();

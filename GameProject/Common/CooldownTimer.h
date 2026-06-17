@@ -1,9 +1,5 @@
 #pragma once
 
-/// <summary>
-/// 汎用クールダウンタイマークラス
-/// アクション（パリィ、ダッシュ等）のクールダウン管理を担当
-/// </summary>
 class CooldownTimer
 {
 public:
@@ -11,41 +7,37 @@ public:
     ~CooldownTimer() = default;
 
     /// <summary>
-    /// クールダウンを開始
+    /// duration 秒のクールダウンを開始
     /// </summary>
     /// <param name="duration">クールダウン時間（秒）</param>
     void Start(float duration);
 
     /// <summary>
-    /// クールダウンを更新（毎フレーム呼び出し）
+    /// 残り時間を deltaTime 分減らす（0 未満にはしない）
     /// </summary>
-    /// <param name="deltaTime">前フレームからの経過時間</param>
+    /// <param name="deltaTime">経過時間（秒）</param>
     void Update(float deltaTime);
 
     /// <summary>
-    /// クールダウンが完了したか（アクション可能か）
+    /// クールダウンが完了したかを返す
     /// </summary>
-    /// <returns>true: アクション可能, false: クールダウン中</returns>
+    /// <returns>残り時間が 0 以下なら true</returns>
     bool IsReady() const;
 
     /// <summary>
-    /// クールダウン残り時間を取得
+    /// クールダウンの残り時間を返す
     /// </summary>
     /// <returns>残り時間（秒）</returns>
     float GetRemainingTime() const;
 
     /// <summary>
-    /// クールダウン進捗を取得（0.0〜1.0）
+    /// 進捗 0.0(開始直後)〜1.0(完了) を返す
     /// </summary>
-    /// <returns>0.0: 開始直後, 1.0: 完了</returns>
     float GetProgress() const;
 
-    /// <summary>
-    /// クールダウンをリセット（即座にアクション可能に）
-    /// </summary>
     void Reset();
 
 private:
-    float remainingTime_ = 0.0f;  ///< クールダウン残り時間
-    float duration_ = 0.0f;       ///< クールダウン全体の時間
+    float remainingTime_ = 0.0f;
+    float duration_ = 0.0f;
 };

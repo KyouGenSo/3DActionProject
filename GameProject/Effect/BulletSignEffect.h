@@ -4,50 +4,46 @@
 class Boss;
 
 /// <summary>
-/// ボス射撃予備動作エフェクト管理クラス
-/// チャージ期間中にエミッターを表示し、スケールを補間する
+/// ボス射撃の予備動作。チャージ中にエミッターを表示しスケールを補間する
 /// </summary>
 class BulletSignEffect {
 public:
     /// <summary>
-    /// エフェクト開始
+    /// 予備動作を開始し、予兆エミッターを最小スケールで表示する
     /// </summary>
-    /// <param name="boss">ボス</param>
-    /// <param name="duration">持続時間（秒）</param>
+    /// <param name="boss">エミッターの位置・スケールを操作する対象ボス</param>
+    /// <param name="duration">チャージにかける時間（秒）。スケール補間の分母</param>
     void Start(Boss* boss, float duration);
 
     /// <summary>
-    /// 毎フレーム更新
+    /// 経過時間に応じてエミッターのスケールを補間し、位置を更新する
     /// </summary>
-    /// <param name="boss">ボス</param>
-    /// <param name="deltaTime">経過時間</param>
+    /// <param name="boss">操作対象のボス</param>
+    /// <param name="deltaTime">前フレームからの経過時間（秒）</param>
     void Update(Boss* boss, float deltaTime);
 
     /// <summary>
-    /// エフェクト終了
+    /// 予備動作を終了し、予兆エミッターを非表示にする
     /// </summary>
-    /// <param name="boss">ボス</param>
+    /// <param name="boss">操作対象のボス</param>
     void End(Boss* boss);
 
-    /// <summary>
-    /// エフェクトがアクティブか
-    /// </summary>
     bool IsActive() const { return isActive_; }
 
 private:
     /// <summary>
-    /// ボス前方のエミッター位置を計算
+    /// ボスの正面方向へ kForwardDistance だけ進めたエミッター配置位置を求める
     /// </summary>
-    /// <param name="boss">ボス</param>
-    /// <returns>エミッター位置</returns>
+    /// <param name="boss">位置・向きの取得元のボス</param>
+    /// <returns>ボス前方のワールド座標</returns>
     Tako::Vector3 CalculateEmitterPosition(Boss* boss);
 
 private:
-    static constexpr float kForwardDistance = 2.0f;   ///< ボス前方距離
-    static constexpr float kScaleMin = 0.01f;         ///< スケール最小値
-    static constexpr float kScaleMax = 15.0f;         ///< スケール最大値
+    static constexpr float kForwardDistance = 2.0f;
+    static constexpr float kScaleMin = 0.01f;
+    static constexpr float kScaleMax = 15.0f;
 
-    float duration_ = 0.9f;      ///< 持続時間
-    float elapsedTime_ = 0.0f;   ///< 経過時間
-    bool isActive_ = false;      ///< アクティブフラグ
+    float duration_ = 0.9f;
+    float elapsedTime_ = 0.0f;
+    bool isActive_ = false;
 };

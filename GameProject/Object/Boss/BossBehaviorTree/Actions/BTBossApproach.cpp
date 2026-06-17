@@ -32,12 +32,11 @@ Tako::BTNodeStatus BTBossApproach::Execute(Tako::BTBlackboard* blackboard) {
 
     float deltaTime = blackboard->GetDeltaTime();
 
-    // 初回実行時の初期化
     if (isFirstExecute_) {
         InitializeApproach(boss, player);
         isFirstExecute_ = false;
 
-        // 既に目標距離内にいる場合は即座に成功
+        // 既に目標距離内なら即成功
         if (approachDuration_ <= 0.0f) {
             isFirstExecute_ = true;
             status_ = Tako::BTNodeStatus::Success;
@@ -45,30 +44,24 @@ Tako::BTNodeStatus BTBossApproach::Execute(Tako::BTBlackboard* blackboard) {
         }
     }
 
-    // 接近移動の更新
     UpdateApproachMovement(boss, deltaTime);
 
-    // 経過時間を更新
     elapsedTime_ += deltaTime;
 
-    // 終了判定（位置ベース）
     Vector3 currentPos = boss->GetTransform().translate;
     Vector3 diff = currentPos - targetPosition_;
     diff.y = 0.0f;  // 水平距離のみ
     float distanceToTarget = diff.Length();
 
     if (distanceToTarget < kArrivalThreshold) {
-        // 目標位置に到達
         boss->SetTranslate(targetPosition_);
 
-        // リセットして成功を返す
         isFirstExecute_ = true;
         elapsedTime_ = 0.0f;
         status_ = Tako::BTNodeStatus::Success;
         return Tako::BTNodeStatus::Success;
     }
 
-    // まだ接近中
     status_ = Tako::BTNodeStatus::Running;
     return Tako::BTNodeStatus::Running;
 }
@@ -81,16 +74,12 @@ void BTBossApproach::Reset() {
 }
 
 void BTBossApproach::InitializeApproach(Boss* boss, Player* player) {
-    // タイマーリセット
     elapsedTime_ = 0.0f;
 
-    // 開始位置を記録
     startPosition_ = boss->GetTransform().translate;
 
-    // プレイヤー位置を取得
     Vector3 playerPos = player->GetTransform().translate;
 
-    // プレイヤーへの方向ベクトル
     Vector3 toPlayer = playerPos - startPosition_;
     toPlayer.y = 0.0f;  // 水平面のみ
     float distance = toPlayer.Length();
@@ -98,30 +87,29 @@ void BTBossApproach::InitializeApproach(Boss* boss, Player* player) {
     if (distance > kDirectionEpsilon) {
         Vector3 direction = toPlayer.Normalize();
 
-        // プレイヤー方向を向く
         float angle = atan2f(direction.x, direction.z);
         boss->SetRotate(Vector3(0.0f, angle, 0.0f));
 
-        // 目標位置 = プレイヤー位置から targetDistance_ 手前
+        // 目標位置 = プレイヤーから targetDistance_ 手前
         float approachDistance = distance - targetDistance_;
         if (approachDistance > 0.0f) {
             targetPosition_ = startPosition_ + direction * approachDistance;
             targetPosition_ = BossMovement::ClampToBounds(targetPosition_, BossMovement::CalcStageBounds());
 
-            // 実際の移動距離から所要時間を計算
+            // Clamp 後の実移動距離から所要時間を算出
             Vector3 actualMove = targetPosition_ - startPosition_;
             actualMove.y = 0.0f;
             float actualDistance = actualMove.Length();
             approachDuration_ = actualDistance / approachSpeed_;
         }
         else {
-            // 既に目標距離内にいる
+            // 既に目標距離内
             targetPosition_ = startPosition_;
             approachDuration_ = 0.0f;
         }
     }
     else {
-        // プレイヤーとほぼ同じ位置
+        // プレイヤーとほぼ同位置
         targetPosition_ = startPosition_;
         approachDuration_ = 0.0f;
     }
@@ -131,13 +119,11 @@ void BTBossApproach::UpdateApproachMovement(Boss* boss, float deltaTime) {
     deltaTime; // 未使用警告抑制
 
     if (approachDuration_ > 0.0f) {
-        // 接近中の移動
         float t = elapsedTime_ / approachDuration_;
 
-        // clamp to [0, 1] - これにより elapsedTime_ > approachDuration_ でも t=1.0 となる
+        // 超過しても t=1.0 で頭打ち
         t = std::clamp(t, 0.0f, 1.0f);
 
-        // イージング（加速→減速）: smoothstep
         t = Ease::SmoothStep(t);
 
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);

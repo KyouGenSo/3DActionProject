@@ -11,9 +11,8 @@
 class Boss;
 
 /// <summary>
-/// ボスのエリア攻撃アクションノード
-/// フェーズ2の矩形境界を 4 象限に分割し、ランダムに 1〜3 象限を攻撃する。
-/// 攻撃範囲を Decal で表示 → 点滅警告 → 攻撃発動（コライダー + パーティクル）
+/// フェーズ2エリアを4象限に分割し、ランダムに1〜3象限を攻撃する。
+/// プレイヤーのいる象限は確定で含める。
 /// </summary>
 class BTBossAreaAttack : public AttackNode {
 public:
@@ -40,95 +39,72 @@ public:
 
 private:
     /// <summary>
-    /// 固有攻撃ロジック本体
+    /// Warning → Blinking → Attack → Recovery のフェーズを進行させる
     /// </summary>
-    /// <param name= "blackboard">BTBlackboardへのポインタ</param>
-    /// <param name= "boss">攻撃を行うBossへのポインタ</param>
-    /// <param name= "deltaTime">1フレームの経過時間</param>
-    /// <returns> Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    /// <param name="blackboard">未使用</param>
+    /// <param name="boss">攻撃させるボス</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
+    /// <returns>全フェーズ完了で Success、進行中は Running</returns>
     Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
-    /// <summary>
-    /// 固有初期化処理
-    /// </summary>
-    /// <param name= "blackboard">BTBlackboardへのポインタ</param>
-    /// <param name= "boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
-    /// <summary>
-    ///　固有クリーンアップ処理
-    /// </summary>
     void OnCleanup() override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ適用
-    /// </summary>
-    /// <param name= "params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ抽出処理
-    /// </summary>
-    /// <param name= "out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
-    /// <summary>
-    /// 固有のImGuiデバッグ表示
-    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
 private:
     /// <summary>
-    ///　攻撃対象の象限をランダムに選択して activeQuadrants_ を更新する
+    /// 攻撃象限をランダム選択して activeQuadrants_ を更新（プレイヤー象限は確定）
     /// </summary>
-    /// <param name= "blackboard">BTBlackboardへのポインタ</param>
     void SelectRandomQuadrants(Tako::BTBlackboard* blackboard);
 
     /// <summary>
-    ///　プレイヤーがどの象限にいるかを取得する
+    /// プレイヤーがボス基準でどの象限にいるか判定する
     /// </summary>
-    /// <param name= "blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
+    /// <returns>象限インデックス 0..3（zIndex*2 + xIndex）</returns>
     int GetPlayerQuadrant(Tako::BTBlackboard* blackboard) const;
 
     /// <summary>
-    ///　象限インデックスからその象限の中心座標を計算して返す
+    /// 指定象限の中心ワールド座標を求める
     /// </summary>
-    /// <param name= "quadrantIndex">象限インデックス（0〜3）</param>
-    /// <param name= "bossPos">ボスの現在位置</param>
+    /// <param name="quadrantIndex">象限インデックス 0..3</param>
+    /// <param name="bossPos">象限分割の原点となるボス位置</param>
+    /// <returns>象限中心のワールド座標</returns>
     Tako::Vector3 GetQuadrantCenter(int quadrantIndex, const Tako::Vector3& bossPos) const;
 
     /// <summary>
-    /// 点滅フェーズの更新処理
+    /// 点滅フェーズの Decal アルファを sin で更新する
     /// </summary>
-    /// <param name= "phaseElapsed">点滅フェーズの経過時間</param>
+    /// <param name="phaseElapsed">点滅フェーズ開始からの経過秒</param>
     void UpdateBlinkingPhase(float phaseElapsed);
 
     /// <summary>
-    /// 攻撃フェーズの開始処理
+    /// 攻撃開始: Decal 非表示、コライダーとエミッタを有効化する
     /// </summary>
-    /// <param name= "boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="boss">エミッタ取得元のボス</param>
     void BeginAttackPhase(Boss* boss);
 
     /// <summary>
-    /// 攻撃フェーズの終了処理
+    /// 攻撃終了: Decal・コライダー・エミッタを停止する
     /// </summary>
-    /// <param name= "boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="boss">エミッタ取得元のボス</param>
     void EndAttackPhase(Boss* boss);
 
     //=========================================================================================
     // 定数
     //=========================================================================================
 
-    // 象限の数は固定で4つ（右上、右下、左下、左上）
     static constexpr int   kQuadrantCount = 4;
-    // 攻撃範囲の基本アルファ値
     static constexpr float kDecalBaseAlpha = 0.3f;
-    // 攻撃範囲表示の点滅アルファ最小値
     static constexpr float kBlinkAlphaMin = 0.15f;
-    // 攻撃範囲表示の点滅幅（kBlinkAlphaMin からの増加分）
-    static constexpr float kBlinkAlphaAmplitude = 0.55f;
-    // 攻撃コライダーの高さ(Y座標)
+    static constexpr float kBlinkAlphaAmplitude = 0.55f;  ///< kBlinkAlphaMin からの増加分
     static constexpr float kColliderHeight = 10.0f;
 
     //=========================================================================================

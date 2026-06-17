@@ -13,7 +13,7 @@ using namespace Tako;
 
 PauseMenu::~PauseMenu()
 {
-    // リサイズコールバックを解除（ダングリングポインタ防止）
+    // ダングリングポインタ防止
     if (winApp_ && onResizeId_ != 0) {
         winApp_->UnregisterOnResizeFunc(onResizeId_);
     }
@@ -28,14 +28,12 @@ void PauseMenu::Initialize()
     overlaySprite_->SetSize({ static_cast<float>(WinApp::clientWidth),  static_cast<float>(WinApp::clientHeight) });
     overlaySprite_->SetColor({ 0.0f, 0.0f, 0.0f, 0.5f });
 
-    // タイトルスプライト（PAUSE 表示）
     titleSprite_ = std::make_unique<Sprite>();
     titleSprite_->Initialize("PauseMenu_Text.dds");
     titleSprite_->SetPos({ 960.0f, 200.0f });
     titleSprite_->SetSize({ 400.0f, 100.0f });
     titleSprite_->SetAnchorPoint({ 0.5f, 0.5f });
 
-    // ボタンスプライト初期化
     const char* buttonTextures[kButtonCount] = {
         "PauseButton_Resume.dds",
         "PauseButton_Title.dds",
@@ -91,10 +89,8 @@ void PauseMenu::Initialize()
     ketteiSprite_->SetPos({ 1518.0f, 1000.0f });
     ketteiSprite_->SetSize({ 150.0f, 50.0f });
 
-    // 初期選択状態を設定
     Reset();
 
-    // リサイズコールバック登録
     winApp_ = WinApp::GetInstance();
     if (winApp_) {
         onResizeId_ = winApp_->RegisterOnResizeFunc(
@@ -113,10 +109,9 @@ PauseMenu::Action PauseMenu::Update()
 {
     Input* input = Input::GetInstance();
 
-    // オーバーレイサイズを画面サイズに合わせる
+    // 画面サイズに合わせる
     overlaySprite_->SetSize({ static_cast<float>(WinApp::clientWidth),  static_cast<float>(WinApp::clientHeight) });
 
-    // 入力状態を取得（描画用）
     isDPadUpPressed_ = input->PushButton(GamepadButton::DPad_Up);
     isDPadDownPressed_ = input->PushButton(GamepadButton::DPad_Down);
     isAPressed_ = input->PushButton(GamepadButton::A);
@@ -131,7 +126,6 @@ PauseMenu::Action PauseMenu::Update()
         UpdateButtonColors();
     }
 
-    // A ボタンで決定
     if (input->TriggerButton(GamepadButton::A)) {
         switch (selectedIndex_) {
         case 0: return Action::Resume;
@@ -140,7 +134,6 @@ PauseMenu::Action PauseMenu::Update()
         }
     }
 
-    // スプライト更新
     overlaySprite_->Update();
     titleSprite_->Update();
     for (auto& button : buttonSprites_) {
@@ -159,23 +152,18 @@ PauseMenu::Action PauseMenu::Update()
 
 void PauseMenu::Draw()
 {
-    // 背景オーバーレイ
     overlaySprite_->Draw();
 
-    // タイトル
     titleSprite_->Draw();
 
-    // ボタン
     for (auto& button : buttonSprites_) {
         button->Draw();
     }
 
     // === 操作説明 UI ===
 
-    // 選択テキスト
     sentakuSprite_->Draw();
 
-    // DPAD（入力に応じて切り替え）
     if (isDPadUpPressed_) {
         dpadUpSprite_->Draw();
     } else if (isDPadDownPressed_) {
@@ -184,10 +172,8 @@ void PauseMenu::Draw()
         dpadGuideSprite_->Draw();
     }
 
-    // 決定テキスト
     ketteiSprite_->Draw();
 
-    // A ボタン（入力に応じて切り替え）
     if (isAPressed_) {
         aButtonDownSprite_->Draw();
     } else {
@@ -205,10 +191,8 @@ void PauseMenu::UpdateButtonColors()
 {
     for (int i = 0; i < kButtonCount; ++i) {
         if (i == selectedIndex_) {
-            // 選択中は白
             buttonSprites_[i]->SetColor({ kSelectedColorR, kSelectedColorG, kSelectedColorB, 1.0f });
         } else {
-            // 非選択はグレー
             buttonSprites_[i]->SetColor({ kUnselectedColorR, kUnselectedColorG, kUnselectedColorB, 1.0f });
         }
     }
@@ -216,38 +200,30 @@ void PauseMenu::UpdateButtonColors()
 
 void PauseMenu::OnResize(const Vector2& newSize)
 {
-    // スケールファクターを計算
     float scaleX = newSize.x / kBaseWidth;
     float scaleY = newSize.y / kBaseHeight;
 
-    // オーバーレイは画面全体にフィット
     overlaySprite_->SetPos({ 0.0f, 0.0f });
 
-    // タイトルスプライト（中央配置）
     titleSprite_->SetPos({ 960.0f * scaleX, 200.0f * scaleY });
 
-    // ボタンスプライト
     const float buttonY[kButtonCount] = { 400.0f, 550.0f, 700.0f };
     for (int i = 0; i < kButtonCount; ++i) {
         buttonSprites_[i]->SetPos({ 960.0f * scaleX, buttonY[i] * scaleY });
     }
 
-    // DPAD 操作ガイドスプライト
     dpadGuideSprite_->SetPos({ 323.0f * scaleX, 869.0f * scaleY });
 
     dpadUpSprite_->SetPos({ 323.0f * scaleX, 869.0f * scaleY });
 
     dpadDownSprite_->SetPos({ 323.0f * scaleX, 869.0f * scaleY });
 
-    // A ボタンスプライト
     aButtonUpSprite_->SetPos({ 1565.0f * scaleX, 948.0f * scaleY });
 
     aButtonDownSprite_->SetPos({ 1565.0f * scaleX, 948.0f * scaleY });
 
-    // 選択テキスト
     sentakuSprite_->SetPos({ 460.0f * scaleX, 910.0f * scaleY });
 
-    // 決定テキスト
     ketteiSprite_->SetPos({ 1518.0f * scaleX, 1000.0f * scaleY });
 }
 
@@ -255,7 +231,6 @@ void PauseMenu::DrawImGui()
 {
 #ifdef _DEBUG
     if (ImGui::TreeNode("PauseMenu")) {
-        // 現在の状態表示
         ImGui::Text("Selected Index: %d", selectedIndex_);
         ImGui::Text("Input States:");
         ImGui::Text("  DPad Up: %s", isDPadUpPressed_ ? "Pressed" : "Released");
@@ -264,19 +239,16 @@ void PauseMenu::DrawImGui()
 
         ImGui::Separator();
 
-        // 背景オーバーレイ
         if (ImGui::TreeNode("Overlay Sprite")) {
             overlaySprite_->DrawImGui();
             ImGui::TreePop();
         }
 
-        // タイトルスプライト
         if (ImGui::TreeNode("Title Sprite (PAUSE)")) {
             titleSprite_->DrawImGui();
             ImGui::TreePop();
         }
 
-        // ボタンスプライト
         if (ImGui::TreeNode("Button Sprites")) {
             const char* buttonNames[kButtonCount] = { "Resume", "Title", "Exit" };
             for (int i = 0; i < kButtonCount; ++i) {
@@ -288,7 +260,6 @@ void PauseMenu::DrawImGui()
             ImGui::TreePop();
         }
 
-        // DPAD 操作ガイド
         if (ImGui::TreeNode("DPAD Guide Sprites")) {
             if (ImGui::TreeNode("DPAD Neutral")) {
                 dpadGuideSprite_->DrawImGui();
@@ -305,7 +276,6 @@ void PauseMenu::DrawImGui()
             ImGui::TreePop();
         }
 
-        // A ボタンスプライト
         if (ImGui::TreeNode("A Button Sprites")) {
             if (ImGui::TreeNode("A Button Up")) {
                 aButtonUpSprite_->DrawImGui();
@@ -318,7 +288,6 @@ void PauseMenu::DrawImGui()
             ImGui::TreePop();
         }
 
-        // テキストスプライト
         if (ImGui::TreeNode("Text Sprites")) {
             if (ImGui::TreeNode("Kettei (決定)")) {
                 ketteiSprite_->DrawImGui();

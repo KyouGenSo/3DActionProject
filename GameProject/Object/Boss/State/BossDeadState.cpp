@@ -9,18 +9,18 @@ BossDeadState::BossDeadState()
 void BossDeadState::Enter(Boss* boss)
 {
 	(void)boss;
-	// 死亡演出開始（現状は特別な演出なし）
+	// 死亡演出なし
 }
 
 void BossDeadState::Update(Boss* boss, float deltaTime)
 {
 	(void)boss;
 	(void)deltaTime;
-	// 死亡中は何もしない（シーン遷移は GameScene 側で管理）
+	// シーン遷移は GameScene 側で管理
 }
 
 void BossDeadState::Exit(Boss* boss)
 {
 	(void)boss;
-	// 復活時のクリーンアップ（デバッグ用）
+	// 復活（デバッグ用）時のクリーンアップ
 }

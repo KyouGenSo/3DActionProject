@@ -29,36 +29,30 @@ void ClearEffectManager::Update(float deltaTime)
         return;
     }
 
-    // タイマー更新
     timer_ += deltaTime;
 
-    // ボス位置にエミッター位置を設定
     if (target_) {
         Tako::Vector3 bossPos = target_->GetTranslate();
         emitterManager_->SetEmitterPosition("clear_slash", bossPos);
     }
 
-    // フェーズに応じた処理
     switch (phase_) {
     case Phase::SlashBuildup:
-        // 開始遅延後に斬撃エフェクト開始
         if (timer_ > params_.startDelay) {
             emitterManager_->SetEmitterActive("clear_slash", true);
             emitterManager_->SetEmitterCount("clear_slash", currentSlashCount_);
             emitterManager_->SetEmitterRadius("clear_slash", currentSlashRadius_);
 
-            // ボスシェイク
             if (target_) {
                 target_->StartShake(params_.shakeDuration);
             }
 
-            // 斬撃数と半径を増加
             if (currentSlashCount_ < params_.slashMaxCount || currentSlashRadius_ < params_.slashMaxRadius) {
                 currentSlashCount_ += params_.slashCountIncrement;
                 currentSlashRadius_ += params_.slashRadiusIncrement;
             }
             else {
-                // 最大値到達で爆発フェーズに遷移
+                // 数・半径とも最大に達したら爆発へ
                 emitterManager_->SetEmitterActive("clear_slash", false);
                 phase_ = Phase::Explosion;
             }
@@ -66,12 +60,10 @@ void ClearEffectManager::Update(float deltaTime)
         break;
 
     case Phase::Explosion:
-        // 爆発エフェクト発火
         if (!explosionFired_) {
             if (target_) {
                 target_->StartShake(params_.shakeDuration);
 
-                // ボス位置に爆発エミッターを配置
                 Tako::Vector3 bossPos = target_->GetTranslate();
                 emitterManager_->SetEmitterPosition("over2", bossPos);
             }
@@ -82,7 +74,6 @@ void ClearEffectManager::Update(float deltaTime)
         break;
 
     case Phase::ScaleDown:
-        // ボススケールの減少
         if (target_) {
             Tako::Vector3 newScale = target_->GetScale() -
                 Tako::Vector3(params_.scaleDecreaseRate, params_.scaleDecreaseRate, params_.scaleDecreaseRate) * deltaTime;
@@ -91,7 +82,6 @@ void ClearEffectManager::Update(float deltaTime)
             newScale.z = std::max<float>(newScale.z, 0.0f);
             target_->SetScale(newScale);
 
-            // スケールが0になったら完了
             if (newScale.x <= 0.0f) {
                 phase_ = Phase::Complete;
                 isComplete_ = true;

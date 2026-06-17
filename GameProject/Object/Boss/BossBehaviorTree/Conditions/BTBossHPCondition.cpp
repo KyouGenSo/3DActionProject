@@ -10,14 +10,12 @@ BTBossHPCondition::BTBossHPCondition() {
 }
 
 Tako::BTNodeStatus BTBossHPCondition::Execute(Tako::BTBlackboard* blackboard) {
-    // ボスを取得
     Boss* boss = blackboard->GetPtr<Boss>("boss");
     if (!boss) {
         status_ = Tako::BTNodeStatus::Failure;
         return Tako::BTNodeStatus::Failure;
     }
 
-    // 現在の HP をパーセンテージに変換
     float currentHp = boss->GetHp();
     float currentPercent = (currentHp / Boss::GetMaxHp()) * 100.0f;
 
@@ -69,12 +67,10 @@ nlohmann::json BTBossHPCondition::ExtractParameters() const {
 bool BTBossHPCondition::DrawImGui() {
     bool changed = false;
 
-    // HP 閾値の編集（パーセンテージ）
     if (ImGui::DragFloat("HP Threshold %##hp", &thresholdPercent_, 1.0f, 0.0f, 100.0f, "%.1f%%")) {
         changed = true;
     }
 
-    // 比較タイプの選択
     int comp = static_cast<int>(comparison_);
     const char* compItems[] = { "Less (<)", "Less Or Equal (<=)", "Greater (>)", "Greater Or Equal (>=)" };
     if (ImGui::Combo("Comparison##hp", &comp, compItems, IM_ARRAYSIZE(compItems))) {

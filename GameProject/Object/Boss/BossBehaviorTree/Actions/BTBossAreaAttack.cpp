@@ -30,7 +30,7 @@ Tako::BTNodeStatus BTBossAreaAttack::OnExecute(Tako::BTBlackboard* /*blackboard*
     const float blinkEnd = warningEnd + blinkDuration_;
     const float attackEnd = blinkEnd + attackDuration_;
 
-    // Warning は OnInitialize で設定した固定アルファで表示
+    // Warning フェーズは OnInitialize の固定アルファのまま表示
 
     if (elapsedTime_ < blinkEnd) {
         UpdateBlinkingPhase(elapsedTime_ - warningEnd);
@@ -66,7 +66,6 @@ void BTBossAreaAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) 
 
     totalDuration_ = warningDuration_ + blinkDuration_ + attackDuration_ + recoveryTime_;
 
-    // ランダムに攻撃象限を選択（プレイヤー象限を確定枠として含める）
     SelectRandomQuadrants(blackboard);
 
     Vector3 bossPos = boss->GetTransform().translate;
@@ -75,7 +74,6 @@ void BTBossAreaAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) 
     for (int i = 0; i < kQuadrantCount; ++i) {
         Vector3 center = GetQuadrantCenter(i, bossPos);
 
-        // Decal の生成
         quadrantDecals_[i] = std::make_unique<Decal>();
         quadrantDecals_[i]->Initialize();
         quadrantDecals_[i]->SetShape(DecalShape::Rectangle);
@@ -90,7 +88,6 @@ void BTBossAreaAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) 
             quadrantDecals_[i]->SetVisible(false);
         }
 
-        // コライダー
         colliderTransforms_[i].translate = center;
         colliderTransforms_[i].rotate = Vector3(0.0f, 0.0f, 0.0f);
         colliderTransforms_[i].scale = Vector3(1.0f, 1.0f, 1.0f);
@@ -104,7 +101,6 @@ void BTBossAreaAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) 
         CollisionManager::GetInstance()->AddCollider(quadrantColliders_[i].get());
     }
 
-    // パーティクルエミッタ初期化
     EmitterManager* emitterMgr = boss->GetEmitterManager();
     if (emitterMgr && !particlesInitialized_) {
         for (int i = 0; i < kQuadrantCount; ++i) {

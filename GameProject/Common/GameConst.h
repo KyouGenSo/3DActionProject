@@ -1,29 +1,23 @@
 #pragma once
 
 /// <summary>
-/// ゲーム全体で使用する定数定義
-/// 変更頻度が極めて低い固定値のみを定義
-/// 調整が必要なパラメータは GlobalVariables を使用すること
+/// 固定値の定数。調整が必要なパラメータは GlobalVariables を使う
 /// </summary>
 namespace GameConst {
 
-    /// <summary>
-    /// ステージのの範囲
-    /// </summary>
+    // ステージ範囲
     inline constexpr float kStageXMin = -100.0f;
     inline constexpr float kStageXMax = 100.0f;
     inline constexpr float kStageZMin = -140.0f;
     inline constexpr float kStageZMax = 60.0f;
 
     /// <summary>
-    /// 方向ベクトルの有効判定閾値
-    /// これより小さい長さのベクトルは無効とみなす
+    /// これより短いベクトルは方向なしとみなす閾値
     /// </summary>
     inline constexpr float kDirectionEpsilon = 0.01f;
 
     /// <summary>
-    /// エリア境界からのマージン
-    /// ボスがステージ端に近づきすぎないための距離
+    /// ボスがステージ端に寄りすぎないためのエリア境界マージン
     /// </summary>
     inline constexpr float kAreaMargin = 10.0f;
 

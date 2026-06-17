@@ -10,22 +10,19 @@ using namespace Tako;
 
 void MoveState::Enter(Player* player)
 {
-	// モデルの歩行アニメーションを再生
-  // TODO: アニメーション作成後に実装
+	// TODO: アニメーション作成後に実装
 	// player->GetModel()->PlayAnimation("Walk");
 	moveTime_ = 0.0f;
 }
 
 void MoveState::Update(Player* player, float deltaTime)
 {
-	// 通常速度で移動
 	player->Move(1.0f);
 	moveTime_ += deltaTime;
 }
 
 void MoveState::Exit(Player* player)
 {
-	// 歩行状態終了時の処理
 	moveTime_ = 0.0f;
 }
 
@@ -33,41 +30,36 @@ void MoveState::HandleInput(Player* player)
 {
 	InputHandler* input = player->GetInputHandler();
 	if (!input) return;
-	
+
 	PlayerStateMachine* stateMachine = player->GetStateMachine();
 	if (!stateMachine) return;
-	
-	// 優先度順に状態遷移をチェック
-	
-	// パリィ
+
+	// 上から優先順に遷移判定
+
 	if (input->IsParrying() && player->CanParry())
 	{
 		stateMachine->ChangeState("Parry");
 		return;
 	}
-	
-	// 攻撃
+
 	if (input->IsAttacking())
 	{
 		stateMachine->ChangeState("Attack");
 		return;
 	}
-	
-	// 射撃
+
     if (input->IsShooting() && player->CanShoot())
 	{
 		stateMachine->ChangeState("Shoot");
 		return;
 	}
-	
-	// ダッシュ（クールダウン中は不可）
+
 	if (input->IsDashing() && player->CanDash())
 	{
 		stateMachine->ChangeState("Dash");
 		return;
 	}
-	
-	// 移動入力がなければ Idle へ
+
 	if (!input->IsMoving())
 	{
 		stateMachine->ChangeState("Idle");
@@ -81,10 +73,8 @@ void MoveState::DrawImGui(Player* player)
 	ImGui::Text("=== Move State Details ===");
 	ImGui::Separator();
 
-	// 移動時間
 	ImGui::Text("Move Time: %.2f seconds", moveTime_);
 
-	// 移動速度情報
 	if (player) {
 		ImGui::Text("Current Speed: %.2f", player->GetSpeed());
 		const Vector3& velocity = player->GetVelocity();
@@ -92,7 +82,6 @@ void MoveState::DrawImGui(Player* player)
 		ImGui::Text("Velocity Magnitude: %.2f", velocity.Length());
 	}
 
-	// 移動方向
 	if (ImGui::TreeNode("Movement Direction")) {
 		InputHandler* input = player->GetInputHandler();
 		if (input && input->IsMoving()) {
@@ -104,14 +93,12 @@ void MoveState::DrawImGui(Player* player)
 		ImGui::TreePop();
 	}
 
-	// アニメーション情報
 	if (ImGui::TreeNode("Animation Info")) {
 		ImGui::Text("Animation: Walk");
 		ImGui::Text("TODO: Add walk/run animation blending");
 		ImGui::TreePop();
 	}
 
-	// 利用可能なアクション
 	if (ImGui::TreeNode("Available Actions")) {
 		ImGui::BulletText("Press Space to Dash");
 		ImGui::BulletText("Press Z to Attack");

@@ -7,7 +7,6 @@
 #include <format>
 
 CameraAnimationCurveEditor::CameraAnimationCurveEditor() {
-    // カーブ色の初期化
     curveColors_[static_cast<int>(CurveType::POSITION_X)] = IM_COL32(255, 100, 100, 255);
     curveColors_[static_cast<int>(CurveType::POSITION_Y)] = IM_COL32(100, 255, 100, 255);
     curveColors_[static_cast<int>(CurveType::POSITION_Z)] = IM_COL32(100, 100, 255, 255);
@@ -16,9 +15,9 @@ CameraAnimationCurveEditor::CameraAnimationCurveEditor() {
     curveColors_[static_cast<int>(CurveType::ROTATION_Z)] = IM_COL32(100, 200, 255, 255);
     curveColors_[static_cast<int>(CurveType::FOV)] = IM_COL32(255, 255, 100, 255);
 
-    // 初期状態では POSITION_X のみ表示（タブ選択で切り替わる）
+    // 初期は POSITION_X のみ表示（タブ選択で切り替え）
     for (int i = 0; i < static_cast<int>(CurveType::COUNT); ++i) {
-        curveVisible_[i] = (i == 0);  // POSITION_X のみ
+        curveVisible_[i] = (i == 0);
     }
 }
 
@@ -37,7 +36,6 @@ void CameraAnimationCurveEditor::Draw(const std::vector<int>& selectedKeyframes)
     ImGui::Text("Curve Editor");
     ImGui::Separator();
 
-    // カーブ選択タブ
     const char* curveNames[] = { "Pos X", "Pos Y", "Pos Z", "Rot X", "Rot Y", "Rot Z", "FOV" };
     static int selectedTab = 0;
     if (ImGui::BeginTabBar("CurveTypes")) {
@@ -45,7 +43,7 @@ void CameraAnimationCurveEditor::Draw(const std::vector<int>& selectedKeyframes)
             if (ImGui::BeginTabItem(curveNames[i])) {
                 selectedTab = i;
                 SetActiveCurve(static_cast<CurveType>(i));
-                // 選択されたカーブのみ可視に設定
+                // 選択タブのカーブのみ可視
                 for (int j = 0; j < static_cast<int>(CurveType::COUNT); ++j) {
                     SetCurveVisible(static_cast<CurveType>(j), j == i);
                 }
@@ -55,13 +53,10 @@ void CameraAnimationCurveEditor::Draw(const std::vector<int>& selectedKeyframes)
         ImGui::EndTabBar();
     }
 
-    // イージングプリセット
     DrawEasingPresets();
 
-    // グラフエリア
     DrawGraphArea();
 
-    // カーブプロパティ
     DrawCurveProperties();
 }
 
@@ -78,27 +73,22 @@ void CameraAnimationCurveEditor::DrawGraphArea() {
     graphPos_ = ImGui::GetCursorScreenPos();
     ImVec2 graphMax = ImVec2(graphPos_.x + graphSize_.x, graphPos_.y + graphSize_.y);
 
-    // 背景
     drawList->AddRectFilled(graphPos_, graphMax, IM_COL32(30, 30, 30, 255));
 
-    // グリッド描画
     if (showGrid_) {
         DrawGrid();
     }
 
-    // 軸描画
     if (showAxes_) {
         DrawAxes();
     }
 
-    // カーブ描画
     for (int i = 0; i < static_cast<int>(CurveType::COUNT); ++i) {
         if (curveVisible_[i]) {
             DrawCurve(static_cast<CurveType>(i));
         }
     }
 
-    // マウス入力処理
     HandleMouseInput();
 
     ImGui::EndChild();
@@ -107,8 +97,8 @@ void CameraAnimationCurveEditor::DrawGraphArea() {
 void CameraAnimationCurveEditor::DrawGrid() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-    // 時間グリッド（垂直線）
-    float timeStep = 1.0f;  // 1秒ごと
+    // 時間グリッド（垂直線、1秒ごと）
+    float timeStep = 1.0f;
     for (float t = 0; t <= timeRange_; t += timeStep) {
         ImVec2 p = ValueToGraph(t, 0);
         if (p.x >= graphPos_.x && p.x <= graphPos_.x + graphSize_.x) {
@@ -119,7 +109,7 @@ void CameraAnimationCurveEditor::DrawGrid() {
         }
     }
 
-    // 値グリッド（水平線）
+    // 値グリッド（水平線、範囲を10分割）
     float valueStep = (valueRangeMax_ - valueRangeMin_) / 10.0f;
     for (float v = valueRangeMin_; v <= valueRangeMax_; v += valueStep) {
         ImVec2 p = ValueToGraph(0, v);
@@ -135,14 +125,14 @@ void CameraAnimationCurveEditor::DrawGrid() {
 void CameraAnimationCurveEditor::DrawAxes() {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
 
-    // X 軸（時間）
+    // X 軸（時間 = 値0の水平線）
     ImVec2 xAxisStart = ValueToGraph(0, 0);
     ImVec2 xAxisEnd = ValueToGraph(timeRange_, 0);
     if (xAxisStart.y >= graphPos_.y && xAxisStart.y <= graphPos_.y + graphSize_.y) {
         drawList->AddLine(xAxisStart, xAxisEnd, IM_COL32(100, 100, 100, 255), 2.0f);
     }
 
-    // Y 軸（値）
+    // Y 軸（値 = 時刻0の垂直線）
     ImVec2 yAxisStart = ValueToGraph(0, valueRangeMin_);
     ImVec2 yAxisEnd = ValueToGraph(0, valueRangeMax_);
     if (yAxisStart.x >= graphPos_.x && yAxisStart.x <= graphPos_.x + graphSize_.x) {
@@ -156,7 +146,7 @@ void CameraAnimationCurveEditor::DrawCurve(CurveType curveType) {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     ImU32 color = curveColors_[static_cast<int>(curveType)];
 
-    // キーフレーム間の補間カーブを描画
+    // 各キーフレーム区間を解像度分のポイント列にサンプリング
     std::vector<ImVec2> points;
 
     for (size_t i = 0; i < animation_->GetKeyframeCount() - 1; ++i) {
@@ -166,12 +156,10 @@ void CameraAnimationCurveEditor::DrawCurve(CurveType curveType) {
         float v1 = GetCurveValue(kf1, curveType);
         float v2 = GetCurveValue(kf2, curveType);
 
-        // 補間曲線を描画（解像度分のポイントを生成）
         for (int j = 0; j <= curveResolution_; ++j) {
             float t = static_cast<float>(j) / curveResolution_;
             float time = kf1.time + (kf2.time - kf1.time) * t;
 
-            // イージング適用
             float easedT = ApplyEasing(t, kf1.interpolation);
             float value = v1 + (v2 - v1) * easedT;
 
@@ -183,14 +171,12 @@ void CameraAnimationCurveEditor::DrawCurve(CurveType curveType) {
         }
     }
 
-    // カーブを描画
     if (points.size() > 1) {
         for (size_t i = 0; i < points.size() - 1; ++i) {
             drawList->AddLine(points[i], points[i + 1], color, 2.0f);
         }
     }
 
-    // キーポイントを描画
     for (size_t i = 0; i < animation_->GetKeyframeCount(); ++i) {
         const CameraKeyframe& kf = animation_->GetKeyframe(i);
         float value = GetCurveValue(kf, curveType);
@@ -216,7 +202,6 @@ void CameraAnimationCurveEditor::DrawKeyPoint(int index, float x, float y, bool 
     drawList->AddCircleFilled(ImVec2(x, y), radius, fillColor);
     drawList->AddCircle(ImVec2(x, y), radius, borderColor, 0, 2.0f);
 
-    // 値表示
     if (showValues_ && isSelected) {
         const CameraKeyframe& kf = animation_->GetKeyframe(index);
         float value = GetCurveValue(kf, activeCurve_);
@@ -231,12 +216,10 @@ void CameraAnimationCurveEditor::DrawEasingPresets() {
 
     const char* easingNames[] = { "Linear", "Ease In", "Ease Out", "Ease In-Out" };
 
-    // ドロップダウンメニュー（選択のみ、適用はボタンで行う）
     ImGui::PushItemWidth(120.0f);
     ImGui::Combo("##EasingPreset", &selectedEasingIndex_, easingNames, 4);
     ImGui::PopItemWidth();
 
-    // 適用ボタン
     ImGui::SameLine();
     if (ImGui::Button("Apply")) {
         if (selectedKeyPoint_ >= 0 && selectedKeyPoint_ < static_cast<int>(animation_->GetKeyframeCount())) {
@@ -251,18 +234,15 @@ void CameraAnimationCurveEditor::DrawCurveProperties() {
     ImGui::Separator();
     ImGui::Text("Curve Properties");
 
-    // 表示設定
     ImGui::Checkbox("Show Grid", &showGrid_);
     ImGui::SameLine();
     ImGui::Checkbox("Show Axes", &showAxes_);
     ImGui::SameLine();
     ImGui::Checkbox("Show Values", &showValues_);
 
-    // ズーム・パン
     ImGui::DragFloat("Zoom X", &zoomX_, 0.01f, 0.1f, 10.0f);
     ImGui::DragFloat("Zoom Y", &zoomY_, 0.01f, 0.1f, 10.0f);
 
-    // 範囲設定
     ImGui::DragFloat("Time Range", &timeRange_, 0.1f, 1.0f, 60.0f);
     ImGui::DragFloat2("Value Range", &valueRangeMin_, 0.1f);
 }
@@ -270,15 +250,12 @@ void CameraAnimationCurveEditor::DrawCurveProperties() {
 void CameraAnimationCurveEditor::HandleMouseInput() {
     ImVec2 mousePos = ImGui::GetMousePos();
 
-    // グラフエリア内かチェック
     if (mousePos.x < graphPos_.x || mousePos.x > graphPos_.x + graphSize_.x ||
         mousePos.y < graphPos_.y || mousePos.y > graphPos_.y + graphSize_.y) {
         return;
     }
 
-    // クリック処理
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-        // キーポイントのヒットテスト
         selectedKeyPoint_ = -1;
         for (size_t i = 0; i < animation_->GetKeyframeCount(); ++i) {
             const CameraKeyframe& kf = animation_->GetKeyframe(i);
@@ -300,22 +277,18 @@ void CameraAnimationCurveEditor::HandleMouseInput() {
         }
     }
 
-    // ドラッグ処理
     if (isDragging_ && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
         if (selectedKeyPoint_ >= 0 && selectedKeyPoint_ < static_cast<int>(animation_->GetKeyframeCount())) {
             float time, value;
             GraphToValue(mousePos, time, value);
 
-            // グリッドスナップ
             if (enableGridSnap_) {
                 SnapToGrid(time, value);
             }
 
-            // 時間と値の制限
             time = std::max<float>(0.0f, std::min<float>(time, animation_->GetDuration()));
             value = std::max<float>(valueRangeMin_, std::min<float>(value, valueRangeMax_));
 
-            // キーフレームを更新
             CameraKeyframe kf = animation_->GetKeyframe(selectedKeyPoint_);
             kf.time = time;
             SetCurveValue(kf, activeCurve_, value);
@@ -323,12 +296,11 @@ void CameraAnimationCurveEditor::HandleMouseInput() {
         }
     }
 
-    // リリース処理
     if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
         isDragging_ = false;
     }
 
-    // ホイール（ズーム）
+    // ホイールで両軸同時ズーム
     if (ImGui::GetIO().MouseWheel != 0) {
         float zoomDelta = ImGui::GetIO().MouseWheel * 0.1f;
         zoomX_ = std::max<float>(0.1f, std::min<float>(10.0f, zoomX_ + zoomDelta));

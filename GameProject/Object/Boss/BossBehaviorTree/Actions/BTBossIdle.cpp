@@ -24,26 +24,21 @@ Tako::BTNodeStatus BTBossIdle::Execute(Tako::BTBlackboard* blackboard) {
 
     float deltaTime = blackboard->GetDeltaTime();
 
-    // 初回実行時の初期化
     if (isFirstExecute_) {
         elapsedTime_ = 0.0f;
         isFirstExecute_ = false;
     }
 
-    // プレイヤーの方向を向く
     LookAtPlayer(blackboard, deltaTime);
 
-    // 経過時間を更新
     elapsedTime_ += deltaTime;
 
-    // 待機時間が経過したら成功を返す
     if (elapsedTime_ >= idleDuration_) {
-        isFirstExecute_ = true;  // 次回実行時のためにリセット
+        isFirstExecute_ = true;
         status_ = Tako::BTNodeStatus::Success;
         return Tako::BTNodeStatus::Success;
     }
 
-    // まだ待機中
     status_ = Tako::BTNodeStatus::Running;
     return Tako::BTNodeStatus::Running;
 }
@@ -69,29 +64,25 @@ void BTBossIdle::LookAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime) {
     if (toPlayer.Length() > kDirectionEpsilon) {
         toPlayer.Normalize();
 
-        // 向きたい角度を計算
         float targetAngle = atan2f(toPlayer.x, toPlayer.z);
 
-        // 現在の角度
         float currentAngle = boss->GetTransform().rotate.y;
 
-        // 角度差を計算（-π～πの範囲に正規化）
+        // 角度差を -π～π に正規化
         constexpr float kPi = static_cast<float>(std::numbers::pi);
         constexpr float kTwoPi = 2.0f * kPi;
         float angleDiff = targetAngle - currentAngle;
         while (angleDiff > kPi) angleDiff -= kTwoPi;
         while (angleDiff < -kPi) angleDiff += kTwoPi;
 
-        // スムーズに回転（回転速度を調整）
         float rotationAmount = angleDiff * rotationSpeed_ * deltaTime;
 
-        // 回転量を制限（急激な回転を防ぐ）
+        // 急激な回転を防ぐため1フレームの回転量を制限
         float maxRotationPerFrame = rotationSpeed_ * deltaTime;
         if (fabs(rotationAmount) > maxRotationPerFrame) {
             rotationAmount = (rotationAmount > 0) ? maxRotationPerFrame : -maxRotationPerFrame;
         }
 
-        // 回転を適用
         Transform transform = boss->GetTransform();
         transform.rotate.y += rotationAmount;
         boss->SetTransform(transform);

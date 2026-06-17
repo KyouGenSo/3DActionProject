@@ -5,61 +5,39 @@ class Boss;
 class Player;
 
 /// <summary>
-/// ボス近接攻撃用コライダークラス
-/// プレイヤーへのダメージ処理を管理
+/// ボス近接攻撃のダメージ判定
 /// </summary>
 class BossMeleeAttackCollider : public Tako::OBBCollider {
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
-    /// <param name="boss">このコライダーを所有するボス</param>
     BossMeleeAttackCollider(Boss* boss);
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     ~BossMeleeAttackCollider() = default;
 
     /// <summary>
-    /// 衝突開始時のコールバック
-    /// プレイヤーに接触した場合ダメージを与える
+    /// プレイヤー初回命中時のみ、パリィ中なら成功扱い、否なら damage_ を適用
     /// </summary>
     /// <param name="other">衝突相手のコライダー</param>
     void OnCollisionEnter(Tako::Collider* other) override;
 
     /// <summary>
-    /// 衝突継続中のコールバック
+    /// 何もしない。ダメージは初回ヒットの1回のみで継続ヒットしない
     /// </summary>
-    /// <param name="other">衝突相手のコライダー</param>
+    /// <param name="other">衝突相手のコライダー（未使用）</param>
     void OnCollisionStay(Tako::Collider* other) override;
 
     /// <summary>
-    /// コライダーの状態をリセット
-    /// 次の攻撃に備えてヒットフラグをクリア
+    /// 多重ヒット防止フラグをクリアし、次の攻撃で再びヒット可能にする
     /// </summary>
     void Reset();
 
-    /// <summary>
-    /// ダメージ量を設定
-    /// </summary>
-    /// <param name="damage">設定するダメージ量</param>
     void SetDamage(float damage) { damage_ = damage; }
 
-    /// <summary>
-    /// ダメージ量を取得
-    /// </summary>
-    /// <returns>現在のダメージ量</returns>
     float GetDamage() const { return damage_; }
 
-    /// <summary>
-    /// プレイヤーにヒットしたかどうかを取得
-    /// </summary>
-    /// <returns>ヒット済みなら true</returns>
     bool HasHitPlayer() const { return hasHitPlayer_; }
 
 private:
-    Boss* boss_ = nullptr;           ///< このコライダーを所有するボス
-    float damage_ = 10.0f;           ///< 攻撃ダメージ量
-    bool hasHitPlayer_ = false;      ///< 多重ヒット防止フラグ
+    Boss* boss_ = nullptr;
+    float damage_ = 10.0f;
+    bool hasHitPlayer_ = false;      ///< 多重ヒット防止
 };

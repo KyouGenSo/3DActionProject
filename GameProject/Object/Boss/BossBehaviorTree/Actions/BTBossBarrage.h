@@ -6,9 +6,8 @@
 class Boss;
 
 /// <summary>
-/// ボスの弾幕攻撃アクションノード
-/// ステージ中央に移動し、周囲にランダムな方向でランダムな弾を一定時間撃ちまくる。
-/// 通常弾（速い）と貫通弾（遅い）を混ぜて発射する。
+/// ステージ中央へ移動し、全方位へ弾を一定時間ばらまく。
+/// 通常弾（速い）と貫通弾（遅い）を penetratingRatio_ で混ぜる。
 /// </summary>
 class BTBossBarrage : public AttackNode {
 public:
@@ -39,36 +38,20 @@ public:
 
 protected:
     /// <summary>
-    /// 固有攻撃ロジック本体（中央移動 → チャージ → 弾幕発射 → 硬直の制御）
+    /// Move → Charge → Firing → Recovery のフェーズを進行させる
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
-    /// <returns>Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    /// <param name="blackboard">未使用</param>
+    /// <param name="boss">移動・発射させるボス</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
+    /// <returns>全フェーズ完了で Success、進行中は Running</returns>
     Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
-    /// <summary>
-    /// 固有初期化処理（totalDuration の算出、開始/目標位置の確定、チャージエフェクト起動）
-    /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ適用
-    /// </summary>
-    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ抽出処理
-    /// </summary>
-    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
-    /// <summary>
-    /// 固有のImGuiデバッグ表示
-    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
@@ -76,16 +59,15 @@ private:
     static constexpr float kDirectionEpsilon = 0.001f;
 
     /// <summary>
-    /// 移動フェーズの更新処理（startPosition_ から targetPosition_ へイージング移動）
+    /// ステージ中央へイージング移動し、進行方向へ旋回する
     /// </summary>
-    /// <param name="boss">移動対象のBossへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <param name="boss">移動・旋回させるボス</param>
+    /// <param name="deltaTime">未使用</param>
     void UpdateMove(Boss* boss, float deltaTime);
 
     /// <summary>
-    /// 通常弾/貫通弾を penetratingRatio_ に応じてランダムに選択し、ランダムな水平方向へ1発発射
+    /// 通常弾/貫通弾を penetratingRatio_ で抽選し、ランダムな水平方向へ1発発射
     /// </summary>
-    /// <param name="boss">弾を発射するBossへのポインタ</param>
     void FireRandomBullet(Boss* boss);
 
     //=========================================================================================

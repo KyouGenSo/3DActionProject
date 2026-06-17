@@ -6,63 +6,43 @@ namespace Tako {
 }
 
 /// <summary>
-/// ボスフェーズ2境界線パーティクル管理クラス
-/// 戦闘エリアの境界線を表示するエミッター4個を制御
+/// 戦闘エリア境界線を表示するエミッター4個を制御（フェーズ2で表示）
 /// </summary>
 class BossBorderParticleManager
 {
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
-    /// <param name="emitterManager">エミッターマネージャー（依存注入）</param>
     explicit BossBorderParticleManager(Tako::EmitterManager* emitterManager, float areaSize);
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     ~BossBorderParticleManager() = default;
 
     /// <summary>
-    /// 更新処理
+    /// フェーズ2のときだけ境界線を有効化し、ボス周囲に追従させる
     /// </summary>
-    /// <param name="bossPhase">ボスの現在フェーズ</param>
-    /// <param name="bossPosition">ボスの位置</param>
+    /// <param name="bossPhase">ボスの現在フェーズ。2 のとき境界線を表示</param>
+    /// <param name="bossPosition">追従先のボス位置（XZ のみ使用、Y は0固定）</param>
     void Update(int bossPhase, const Tako::Vector3& bossPosition);
 
     /// <summary>
-    /// 境界線エミッターの有効/無効を設定
+    /// 4方向の境界線エミッターを一括で表示/非表示する
     /// </summary>
-    /// <param name="active">有効にするなら true</param>
+    /// <param name="active">true で表示、false で非表示</param>
     void SetActive(bool active);
 
-    /// <summary>
-    /// 境界線エミッターがアクティブか
-    /// </summary>
-    /// <returns>アクティブなら true</returns>
     bool IsActive() const { return isActive_; }
 
-    /// <summary>
-    /// 戦闘エリアサイズを設定
-    /// </summary>
-    /// <param name="params">パラメータ</param>
     void SetAreaSize(float areaSize) { areaSize_ = areaSize; }
 
-    /// <summary>
-    /// 戦闘エリアサイズを取得
-    /// </summary>
-    /// <returns>現在のパラメータ</returns>
     float GetAreaSize() const { return areaSize_; }
 
 private:
     /// <summary>
-    /// エミッター位置をボス位置に追従させる
+    /// 4方向のエミッターをボスの XZ から areaSize_ だけ離した位置に配置する
     /// </summary>
-    /// <param name="bossPosition">ボスの位置</param>
+    /// <param name="bossPosition">基準となるボス位置（Y は0に固定して使用）</param>
     void UpdatePositions(const Tako::Vector3& bossPosition);
 
 private:
-    Tako::EmitterManager* emitterManager_ = nullptr;  ///< エミッターマネージャー
-    bool isActive_ = false;                           ///< エミッターアクティブ状態
-    float areaSize_ = 0.0f;                           ///< 戦闘エリアサイズ
+    Tako::EmitterManager* emitterManager_ = nullptr;
+    bool isActive_ = false;
+    float areaSize_ = 0.0f;
 };

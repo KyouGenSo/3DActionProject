@@ -3,29 +3,27 @@
 #include <algorithm>
 
 /// <summary>
-/// 動的移動範囲管理構造体
-/// オブジェクトの移動可能範囲を制限するために使用
-/// ヘッダーオンリー実装
+/// XZ 平面上の移動可能範囲。マーカー値で無効状態を表す
 /// </summary>
 struct DynamicBoundary
 {
     /// <summary>
-    /// 境界無効化マーカー値
+    /// 未設定（無効）を表す番兵値
     /// </summary>
     static constexpr float kDisabledMarker = 9999.0f;
 
-    float xMin = -kDisabledMarker;  ///< X 座標の最小値
-    float xMax = kDisabledMarker;   ///< X 座標の最大値
-    float zMin = -kDisabledMarker;  ///< Z 座標の最小値
-    float zMax = kDisabledMarker;   ///< Z 座標の最大値
+    float xMin = -kDisabledMarker;
+    float xMax = kDisabledMarker;
+    float zMin = -kDisabledMarker;
+    float zMax = kDisabledMarker;
 
     /// <summary>
-    /// 境界を直接設定
+    /// XZ 各軸の最小・最大値を直接指定して境界を設定
     /// </summary>
-    /// <param name="minX">X 座標の最小値</param>
-    /// <param name="maxX">X 座標の最大値</param>
-    /// <param name="minZ">Z 座標の最小値</param>
-    /// <param name="maxZ">Z 座標の最大値</param>
+    /// <param name="minX">X 軸の最小値</param>
+    /// <param name="maxX">X 軸の最大値</param>
+    /// <param name="minZ">Z 軸の最小値</param>
+    /// <param name="maxZ">Z 軸の最大値</param>
     void Set(float minX, float maxX, float minZ, float maxZ)
     {
         xMin = minX;
@@ -35,11 +33,11 @@ struct DynamicBoundary
     }
 
     /// <summary>
-    /// 中心点と範囲から境界を設定
+    /// 中心と片側範囲(xRange/zRange)から境界を設定
     /// </summary>
-    /// <param name="center">中心座標</param>
-    /// <param name="xRange">X 方向の範囲（片側）</param>
-    /// <param name="zRange">Z 方向の範囲（片側）</param>
+    /// <param name="center">境界の中心位置（Y は未使用）</param>
+    /// <param name="xRange">中心から X 方向への片側幅</param>
+    /// <param name="zRange">中心から Z 方向への片側幅</param>
     void SetFromCenter(const Tako::Vector3& center, float xRange, float zRange)
     {
         xMin = center.x - xRange;
@@ -48,9 +46,6 @@ struct DynamicBoundary
         zMax = center.z + zRange;
     }
 
-    /// <summary>
-    /// 境界をクリア（無効化）
-    /// </summary>
     void Clear()
     {
         xMin = -kDisabledMarker;
@@ -60,21 +55,19 @@ struct DynamicBoundary
     }
 
     /// <summary>
-    /// 境界が有効か（設定されているか）
+    /// いずれかの値がマーカー値でなければ有効
     /// </summary>
-    /// <returns>有効なら true</returns>
     bool IsEnabled() const
     {
-        // いずれかの値がマーカー値でなければ有効
         return xMin > -kDisabledMarker || xMax < kDisabledMarker ||
             zMin > -kDisabledMarker || zMax < kDisabledMarker;
     }
 
     /// <summary>
-    /// 位置を境界内にクランプ
+    /// 位置を境界内に収める（X・Z のみclamp、Y は元の値を維持）
     /// </summary>
-    /// <param name="position">クランプする位置</param>
-    /// <returns>クランプ後の位置</returns>
+    /// <param name="position">対象位置</param>
+    /// <returns>境界内に収めた位置</returns>
     Tako::Vector3 Clamp(const Tako::Vector3& position) const
     {
         Tako::Vector3 result = position;
@@ -84,9 +77,9 @@ struct DynamicBoundary
     }
 
     /// <summary>
-    /// 位置が境界内にあるか
+    /// 位置が境界内（XZ）にあるかを判定
     /// </summary>
-    /// <param name="position">判定する位置</param>
+    /// <param name="position">対象位置（Y は未使用）</param>
     /// <returns>境界内なら true</returns>
     bool Contains(const Tako::Vector3& position) const
     {

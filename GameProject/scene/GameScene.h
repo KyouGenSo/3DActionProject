@@ -18,7 +18,6 @@
 #include <memory>
 #include <vector>
 
-// Tako namespace の前方宣言
 namespace Tako {
     class Object3d;
     class EmitterManager;
@@ -28,144 +27,94 @@ namespace Tako {
     enum class DecalShape;
 }
 
-// GameProject 前方宣言
 class CameraManager;
 class ThirdPersonController;
 class TopDownController;
 class CameraAnimationController;
 
 /// <summary>
-/// ゲームメインシーンクラス
-/// プレイヤーとボスの戦闘、ゲームプレイの中核を管理
+/// ゲームメインシーン。プレイヤーとボスの戦闘を管理
 /// </summary>
 class GameScene : public Tako::BaseScene
 {
 public: // メンバ関数
 
-    /// <summary>
-    /// 初期化
-    /// </summary>
     void Initialize() override;
 
-    /// <summary>
-    /// 終了処理
-    /// </summary>
     void Finalize() override;
 
-    /// <summary>
-    /// 更新
-    /// </summary>
     void Update() override;
 
-    /// <summary>
-    /// 描画
-    /// </summary>
     void Draw() override;
     void DrawWithoutEffect() override;
 
-    /// <summary>
-    /// ImGui の描画
-    /// </summary>
     void DrawImGui() override;
 
     /// <summary>
-    /// カメラモードの更新処理
+    /// フェーズに応じてカメラモードと移動制限を切り替え
     /// </summary>
     void UpdateCameraMode();
 
     /// <summary>
-    /// 入力処理の更新
+    /// アニメーション再生中・デバッグカメラ中は入力をリセット
     /// </summary>
     void UpdateInput();
 
-    /// <summary>
-    /// デバッグ用オプション初期化
-    /// </summary>
     void InitializeDebugOption();
 
-    /// <summary>
-    /// ポストエフェクト初期化
-    /// </summary>
     void InitializePostEffect();
 
-    /// <summary>
-    /// Object3d 初期化
-    /// </summary>
     void InitializeObject3d();
 
-    /// <summary>
-    /// カメラシステム初期化
-    /// </summary>
     void InitializeCameraSystem();
 
-    /// <summary>
-    /// 衝突判定マスクの設定
-    /// </summary>
     void SetCollisionMask();
 
-    /// <summary>
-    /// エミッターマネージャー初期化
-    /// </summary>
     void InitializeEmitterManger();
 
-    /// <summary>
-    /// エフェクトマネージャー初期化
-    /// </summary>
     void InitializeEffectManager();
 
-    /// <summary>
-    /// カメラアニメーションの設定
-    /// </summary>
     void SetCameraAnimation();
 
-    /// <summary>
-    /// ポーズ状態のチェックと切り替え
-    /// </summary>
     void CheckPause();
 
-    /// <summary>
-    /// ポーズメニューの更新処理
-    /// </summary>
     void UpdatePause();
 
 private: // メンバ変数
 
-    std::unique_ptr<Tako::SkyBox> skyBox_;                      // スカイボックス（環境マップ）
+    std::unique_ptr<Tako::SkyBox> skyBox_;
 
-    std::unique_ptr<Tako::Object3d> ground_;                    // 地面オブジェクト
+    std::unique_ptr<Tako::Object3d> ground_;
 
-    std::unique_ptr<Player> player_;                            // プレイヤーキャラクター
+    std::unique_ptr<Player> player_;
 
-    std::unique_ptr<Boss> boss_;                                // ボスキャラクター
+    std::unique_ptr<Boss> boss_;
 
-    std::unique_ptr<InputHandler> inputHandler_;                // 入力ハンドラー
+    std::unique_ptr<InputHandler> inputHandler_;
 
-    // Camera system components
-    CameraManager* cameraManager_ = nullptr;                    // カメラシステム管理
-    ThirdPersonController* thirdPersonController_ = nullptr;    // 三人称視点コントローラー
-    TopDownController* topDownController_ = nullptr;            // トップダウン視点コントローラー
-    CameraAnimationController* animationController_ = nullptr;  // カメラアニメーションコントローラー
-    bool cameraMode_ = false;                                   // カメラモード (true: ThirdPerson, false: TopDown)
+    CameraManager* cameraManager_ = nullptr;
+    ThirdPersonController* thirdPersonController_ = nullptr;
+    TopDownController* topDownController_ = nullptr;
+    CameraAnimationController* animationController_ = nullptr;
+    bool cameraMode_ = false;                                   ///< true: ThirdPerson, false: TopDown
 
-    Tako::Transform groundUvTransform_{};                       // 地面の UV トランスフォーム（テクスチャスクロール等に使用）
+    Tako::Transform groundUvTransform_{};
 
-    std::unique_ptr<Tako::EmitterManager> emitterManager_;      // パーティクルエミッター管理
-    std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;// パーティクル用フォースフィールド管理
+    std::unique_ptr<Tako::EmitterManager> emitterManager_;
+    std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;
 
-    std::unique_ptr<ProjectileManager> projectileManager_;      // 弾（プロジェクタイル）集約管理
+    std::unique_ptr<ProjectileManager> projectileManager_;
 
-    bool isStart_ = false;                                      // ゲーム開始フラグ
+    bool isStart_ = false;
 
-    bool isDebug_ = false;                                      // デバッグモードフラグ
+    bool isDebug_ = false;
 
-    // エフェクトマネージャー
-    std::unique_ptr<OverEffectManager> overEffectManager_;           // ゲームオーバー演出管理
-    std::unique_ptr<ClearEffectManager> clearEffectManager_;         // ゲームクリア演出管理
-    std::unique_ptr<BossBorderParticleManager> bossBorderManager_;   // ボーダーパーティクル管理
-    std::unique_ptr<DashEffectManager> dashEffectManager_;           // ダッシュエフェクト管理
+    std::unique_ptr<OverEffectManager> overEffectManager_;
+    std::unique_ptr<ClearEffectManager> clearEffectManager_;
+    std::unique_ptr<BossBorderParticleManager> bossBorderManager_;
+    std::unique_ptr<DashEffectManager> dashEffectManager_;
 
-    // UI マネージャー
-    std::unique_ptr<ControllerUI> controllerUI_;                     // コントローラー UI 表示
-    std::unique_ptr<PauseMenu> pauseMenu_;                           // ポーズメニュー
-    bool isPaused_ = false;                                          // ポーズ中フラグ
+    std::unique_ptr<ControllerUI> controllerUI_;
+    std::unique_ptr<PauseMenu> pauseMenu_;
+    bool isPaused_ = false;
 };

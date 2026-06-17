@@ -2,8 +2,7 @@
 #include "BossState.h"
 
 /// <summary>
-/// ボスの死亡状態
-/// HP=0で永続遷移し、死亡演出を管理
+/// HP=0 で遷移する死亡状態（復帰なし）
 /// </summary>
 class BossDeadState : public BossState {
 public:

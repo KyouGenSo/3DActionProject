@@ -3,49 +3,36 @@
 #include <json.hpp>
 
 /// <summary>
-/// カメラアニメーションのキーフレーム構造体
-/// 時間軸上の特定ポイントでのカメラ状態を保持
+/// カメラアニメーションのキーフレーム（時間軸上の1点でのカメラ状態）
 /// </summary>
 struct CameraKeyframe {
-    /// <summary>
-    /// 補間タイプ
-    /// </summary>
     enum class InterpolationType {
-        LINEAR,         ///< 線形補間
-        EASE_IN,        ///< 緩やかに開始
-        EASE_OUT,       ///< 緩やかに終了
-        EASE_IN_OUT,    ///< 両端で緩やか
-        CUBIC_BEZIER    ///< カスタムベジェカーブ
+        LINEAR,
+        EASE_IN,
+        EASE_OUT,
+        EASE_IN_OUT,
+        CUBIC_BEZIER
     };
 
-    /// <summary>
-    /// 座標系タイプ
-    /// </summary>
     enum class CoordinateType {
-        WORLD,          ///< ワールド座標系
-        TARGET_RELATIVE ///< ターゲット相対座標系（ターゲットからのオフセット）
+        WORLD,
+        TARGET_RELATIVE ///< ターゲットからのオフセット
     };
 
-    float time = 0.0f;                                             ///< キーフレームの時刻（秒）
+    float time = 0.0f;                                             ///< 秒
 
-    Tako::Vector3 position = { 0.0f, 0.0f, 0.0f };                      ///< カメラ位置（WORLD モード）またはオフセット（TARGET_RELATIVE モード）
+    Tako::Vector3 position = { 0.0f, 0.0f, 0.0f };                      ///< WORLD では位置、TARGET_RELATIVE ではオフセット
 
-    Tako::Vector3 rotation = { 0.0f, 0.0f, 0.0f };                      ///< カメラ回転（オイラー角、ラジアン）
+    Tako::Vector3 rotation = { 0.0f, 0.0f, 0.0f };                      ///< オイラー角、ラジアン
 
-    float fov = 0.45f;                                             ///< 視野角（ラジアン）
+    float fov = 0.45f;                                             ///< ラジアン
 
     InterpolationType interpolation = InterpolationType::LINEAR;   ///< このキーフレームから次への補間方法
 
-    CoordinateType coordinateType = CoordinateType::WORLD;         ///< 座標系タイプ（デフォルトはワールド座標）
+    CoordinateType coordinateType = CoordinateType::WORLD;
 
-    /// <summary>
-    /// デフォルトコンストラクタ
-    /// </summary>
     CameraKeyframe() = default;
 
-    /// <summary>
-    /// パラメータ指定コンストラクタ
-    /// </summary>
     CameraKeyframe(float t, const Tako::Vector3& pos, const Tako::Vector3& rot, float f,
         InterpolationType interp = InterpolationType::LINEAR,
         CoordinateType coordType = CoordinateType::WORLD)
@@ -53,9 +40,7 @@ struct CameraKeyframe {
     }
 };
 
-/// <summary>
-/// JSON 変換用のヘルパー関数
-/// </summary>
+// JSON 変換
 namespace nlohmann {
     template <>
     struct adl_serializer<CameraKeyframe::CoordinateType> {
@@ -79,7 +64,7 @@ namespace nlohmann {
                 type = CameraKeyframe::CoordinateType::TARGET_RELATIVE;
             }
             else {
-                type = CameraKeyframe::CoordinateType::WORLD; // デフォルト
+                type = CameraKeyframe::CoordinateType::WORLD;
             }
         }
     };
@@ -124,7 +109,7 @@ namespace nlohmann {
                 type = CameraKeyframe::InterpolationType::CUBIC_BEZIER;
             }
             else {
-                type = CameraKeyframe::InterpolationType::LINEAR; // デフォルト
+                type = CameraKeyframe::InterpolationType::LINEAR;
             }
         }
     };
@@ -158,7 +143,7 @@ namespace nlohmann {
             keyframe.fov = j.at("fov").get<float>();
             keyframe.interpolation = j.at("interpolation").get<CameraKeyframe::InterpolationType>();
 
-            // coordinateType が存在しない場合は WORLD をデフォルトとする
+            // 旧フォーマット互換: coordinateType 欠落時は WORLD
             if (j.contains("coordinateType")) {
                 keyframe.coordinateType = j.at("coordinateType").get<CameraKeyframe::CoordinateType>();
             }

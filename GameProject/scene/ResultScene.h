@@ -11,8 +11,7 @@ class Sprite;
 }
 
 /// <summary>
-/// 結果シーンクラス
-/// クリア / ゲームオーバーの結果表示を管理。タイトルテクスチャの差し替えで両用途を兼ねる
+/// クリア/ゲームオーバー結果画面。テクスチャ差し替えで両用途を兼ねる
 /// </summary>
 class ResultScene : public Tako::BaseScene
 {

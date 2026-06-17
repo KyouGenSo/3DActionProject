@@ -16,12 +16,13 @@ using namespace Tako;
 namespace {
     constexpr float kPi = 3.14159265358979323846f;
 
-    /// <summary>v 番目の渦点の基準角度（0, π/2, π, 3π/2）</summary>
+    /// <summary>
+    /// v 番目の渦点の基準角度（0, π/2, π, 3π/2）
+    /// </summary>
     inline float BaseAngleFor(int v) {
         return static_cast<float>(v) * (kPi * 0.5f);
     }
 
-    /// <summary>preset スロット名のヘルパ</summary>
     inline const std::string& PresetNameForSlot(
         int slot,
         const std::string& attractName,
@@ -50,17 +51,12 @@ Tako::BTNodeStatus BTBossVortexTempest::OnExecute(Tako::BTBlackboard* blackboard
     Player* player = blackboard->GetPtr<Player>("player");
     elapsedTime_ += deltaTime;
 
-    //=================================================================
-    // フェーズ境界の計算
-    //=================================================================
     const float warningEnd = warningTime_;
     const float expandEnd = warningEnd + expandTime_;
     const float sustainEnd = expandEnd + sustainTime_;
     const float decayEnd = sustainEnd + decayTime_;
 
-    //=================================================================
-    // 強度マルチプライヤ（フェーズ別に 0〜1 の係数を計算）
-    //=================================================================
+    // フェーズ別の強度係数（0〜1）
     float strengthMul = 0.0f;
     bool isFinished = false;
 
@@ -77,7 +73,7 @@ Tako::BTNodeStatus BTBossVortexTempest::OnExecute(Tako::BTBlackboard* blackboard
     else if (elapsedTime_ < decayEnd) {
         const float t = (elapsedTime_ - sustainEnd) / std::max<float>(decayTime_, 0.0001f);
         strengthMul = 1.0f - std::clamp(t, 0.0f, 1.0f);
-        // Phase 3 突入で硬直に入る（プレイヤーがスタンを取れる隙）
+        // 終息フェーズで硬直に入る（プレイヤーがスタンを取れる隙）
         EnterAttackRecovery(boss);
     }
     else {
@@ -85,8 +81,8 @@ Tako::BTNodeStatus BTBossVortexTempest::OnExecute(Tako::BTBlackboard* blackboard
     }
 
     if (isFinished) {
-        // 攻撃成功終了：累積した未適用 DoT を最後に一括 flush。
-        // Reset（中断）経路ではこの flush を意図的に行わず、攻撃終了後の不自然な遅延ダメージを防ぐ。
+        // 累積した未適用 DoT を一括 flush。
+        // Reset（中断）経路では flush せず、攻撃終了後の不自然な遅延ダメージを防ぐ。
         if (player && pendingDamage_ > 0.0f) {
             player->OnHit(pendingDamage_);
             pendingDamage_ = 0.0f;
@@ -94,13 +90,9 @@ Tako::BTNodeStatus BTBossVortexTempest::OnExecute(Tako::BTBlackboard* blackboard
         return FinishAttack();
     }
 
-    //=================================================================
-    // 4 渦点の公転位置更新 + 12 ForceField 更新 + 4 エミッター追従 + 4 デカール追従
-    //=================================================================
     const Vector3 bossPos = boss->GetTransform().translate;
     Vector3 vortexPositions[kVortexCount];
 
-    // デカールアルファをフェーズに応じて算出
     float decalAlpha = 0.0f;
     if (elapsedTime_ < warningEnd) {
         // Phase 0 予兆：sin 点滅
@@ -108,11 +100,10 @@ Tako::BTNodeStatus BTBossVortexTempest::OnExecute(Tako::BTBlackboard* blackboard
         decalAlpha = kBlinkAlphaMin + kBlinkAlphaAmplitude * sinValue;
     }
     else if (elapsedTime_ < sustainEnd) {
-        // Phase 1-2: 固定アルファ
         decalAlpha = kDecalBaseAlpha;
     }
     else {
-        // Phase 3: 線形フェードアウト
+        // 終息：線形フェードアウト
         const float t = (elapsedTime_ - sustainEnd) / std::max<float>(decayTime_, 0.0001f);
         decalAlpha = kDecalBaseAlpha * (1.0f - std::clamp(t, 0.0f, 1.0f));
     }
@@ -124,7 +115,6 @@ Tako::BTNodeStatus BTBossVortexTempest::OnExecute(Tako::BTBlackboard* blackboard
         const Vector3 vortexPos = bossPos + offset * orbitRadius_;
         vortexPositions[v] = vortexPos;
 
-        // 各渦点で 3 力場を更新
         for (int s = 0; s < kFieldsPerVortex; ++s) {
             if (loadedFields_[v][s].index < 0) continue;
 
@@ -137,21 +127,18 @@ Tako::BTNodeStatus BTBossVortexTempest::OnExecute(Tako::BTBlackboard* blackboard
             ffm->UpdateForceField(static_cast<uint32_t>(loadedFields_[v][s].index), updated);
         }
 
-        // 渦エミッター追従
         if (cachedEmitterManager_) {
             cachedEmitterManager_->SetEmitterPosition(MakeVortexEmitterName(v), vortexPos);
         }
 
-        // 地面マーカーデカール追従 + アルファ更新（Y=0 固定で地面に貼り付け）
+        // 地面マーカーデカール: Y=0 固定で地面に貼り付け
         if (vortexDecals_[v]) {
             vortexDecals_[v]->SetTranslate(Vector3(vortexPos.x, 0.0f, vortexPos.z));
             vortexDecals_[v]->SetColor(Vector4(1.0f, 0.2f, 0.1f, decalAlpha));
         }
     }
 
-    //=================================================================
-    // DoT 判定（持続フェーズと終息フェーズで適用、累積バッファ + Tick 方式）
-    //=================================================================
+    // DoT 判定（展開完了後に適用、累積バッファ + Tick 方式）
     if (player && elapsedTime_ >= expandEnd) {
         const Vector3 playerPos = player->GetTransform().translate;
         const float dotRadius = loadedFields_[0][kSlotAttract].base.radius;

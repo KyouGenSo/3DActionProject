@@ -6,20 +6,20 @@
 class Boss;
 
 /// <summary>
-/// ボスの離脱アクションノード
-/// プレイヤーを向いたまま後方にイージング移動で離れる。
-/// 実装本体は BossRetreatExecutor に委譲し、本クラスは BT ノードとしての制御 (初回検知、
-/// BTNodeStatus 返却、JSON プリセット永続化) のみを担う。
+/// プレイヤーを向いたまま後方へイージング移動で離脱。移動本体は BossRetreatExecutor へ委譲。
 /// </summary>
 class BTBossRetreat : public Tako::BTNode {
 public:
     BTBossRetreat();
     virtual ~BTBossRetreat() = default;
 
+    /// <summary>
+    /// プレイヤーから離れる方向へ移動。
+    /// </summary>
+    /// <returns>ボス/プレイヤー不在で Failure、目標距離到達で Success、移動中は Running</returns>
     Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
     void Reset() override;
 
-    // パラメータアクセス (Executor へ委譲)
     float GetRetreatSpeed()   const { return executor_.GetParameters().retreatSpeed; }
     float GetTargetDistance() const { return executor_.GetParameters().targetDistance; }
     void  SetRetreatSpeed(float speed) {
@@ -48,7 +48,7 @@ public:
 #endif
 
 private:
-    Boss*                boss_           = nullptr;  ///< Blackboard から取得したボス参照
-    BossRetreatExecutor  executor_       {};         ///< 移動ロジック本体
-    bool                 isFirstExecute_ = true;     ///< 初回実行フラグ
+    Boss*                boss_           = nullptr;
+    BossRetreatExecutor  executor_       {};
+    bool                 isFirstExecute_ = true;
 };

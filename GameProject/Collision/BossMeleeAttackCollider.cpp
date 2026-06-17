@@ -8,7 +8,6 @@ using namespace Tako;
 
 BossMeleeAttackCollider::BossMeleeAttackCollider(Boss* boss)
     : boss_(boss) {
-    // GlobalVariables から値を取得
     GlobalVariables* gv = GlobalVariables::GetInstance();
     damage_ = gv->GetValueFloat("BossMeleeAttackCollider", "Damage");
 
@@ -21,25 +20,22 @@ void BossMeleeAttackCollider::OnCollisionEnter(Collider* other) {
 
     uint32_t typeID = other->GetTypeID();
 
-    // プレイヤーとの衝突判定
     if (typeID == static_cast<uint32_t>(CollisionTypeId::PLAYER)) {
         Player* player = static_cast<Player*>(other->GetOwner());
 
-        // パリィ判定
         if (player->IsParrying()) {
             player->OnParrySuccess();
             hasHitPlayer_ = true;
             return;
         }
 
-        // 通常ダメージ
         player->OnHit(damage_);
         hasHitPlayer_ = true;
     }
 }
 
 void BossMeleeAttackCollider::OnCollisionStay(Collider* other) {
-    // 継続ヒットは行わない（1回のみダメージ）
+    // ダメージは1回のみ。継続ヒットなし
     (void)other;
 }
 

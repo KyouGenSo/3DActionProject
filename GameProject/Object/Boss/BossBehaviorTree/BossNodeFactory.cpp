@@ -61,7 +61,7 @@ void BossNodeFactory::RegisterAll() {
   });
   reg->RegisterNode<BTBossApproach>("BTBossApproach", Tako::NodeMeta{
     "Approach", Tako::NodeCategory::Action,
-    Tako::NodeColor(0.4f, 0.9f, 0.4f, 1.0f), false  // 明るい緑 (移動系)
+    Tako::NodeColor(0.4f, 0.9f, 0.4f, 1.0f), false  // 明るい緑
   });
   reg->RegisterNode<BTBossRetreat>("BTBossRetreat", Tako::NodeMeta{
     "Retreat", Tako::NodeCategory::Action,
@@ -69,31 +69,31 @@ void BossNodeFactory::RegisterAll() {
   });
   reg->RegisterNode<BTBossBarrage>("BTBossBarrage", Tako::NodeMeta{
     "Barrage", Tako::NodeCategory::Action,
-    Tako::NodeColor(0.7f, 0.2f, 0.9f, 1.0f), false  // 紫 (弾幕攻撃)
+    Tako::NodeColor(0.7f, 0.2f, 0.9f, 1.0f), false  // 紫
   });
   reg->RegisterNode<BTBossAreaAttack>("BTBossAreaAttack", Tako::NodeMeta{
     "Area Attack", Tako::NodeCategory::Action,
-    Tako::NodeColor(0.9f, 0.1f, 0.1f, 1.0f), false  // 赤 (エリア攻撃)
+    Tako::NodeColor(0.9f, 0.1f, 0.1f, 1.0f), false  // 赤
   });
   reg->RegisterNode<BTBossMeteorRain>("BTBossMeteorRain", Tako::NodeMeta{
     "Meteor Rain", Tako::NodeCategory::Action,
-    Tako::NodeColor(0.9f, 0.5f, 0.0f, 1.0f), false  // オレンジ (メテオ攻撃)
+    Tako::NodeColor(0.9f, 0.5f, 0.0f, 1.0f), false  // オレンジ
   });
   reg->RegisterNode<BTBossSlashAttack>("BTBossSlashAttack", Tako::NodeMeta{
     "Slash Attack", Tako::NodeCategory::Action,
-    Tako::NodeColor(0.8f, 0.1f, 0.6f, 1.0f), false  // マゼンタ (斬撃攻撃)
+    Tako::NodeColor(0.8f, 0.1f, 0.6f, 1.0f), false  // マゼンタ
   });
   reg->RegisterNode<BTBossRepelShockwave>("BTBossRepelShockwave", Tako::NodeMeta{
     "Repel Shockwave", Tako::NodeCategory::Action,
-    Tako::NodeColor(0.4f, 0.7f, 1.0f, 1.0f), false  // 水色 (衝撃波)
+    Tako::NodeColor(0.4f, 0.7f, 1.0f, 1.0f), false  // 水色
   });
   reg->RegisterNode<BTBossVortexTempest>("BTBossVortexTempest", Tako::NodeMeta{
     "Vortex Tempest", Tako::NodeCategory::Action,
-    Tako::NodeColor(0.6f, 0.3f, 0.9f, 1.0f), false  // 紫 (渦・嵐)
+    Tako::NodeColor(0.6f, 0.3f, 0.9f, 1.0f), false  // 紫
   });
   reg->RegisterNode<BTBossTeleport>("BTBossTeleport", Tako::NodeMeta{
     "Teleport", Tako::NodeCategory::Action,
-    Tako::NodeColor(0.5f, 0.9f, 0.9f, 1.0f), false  // 水色 (瞬間移動)
+    Tako::NodeColor(0.5f, 0.9f, 0.9f, 1.0f), false  // 水色
   });
 
   // ========================================================================

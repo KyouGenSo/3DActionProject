@@ -23,8 +23,6 @@ Tako::BTNodeStatus AttackNode::Execute(Tako::BTBlackboard* blackboard) {
         elapsedTime_ = 0.0f;
         cachedBoss_ = boss;
         cachedEmitterManager_ = boss->GetEmitterManager();
-        // isBypassRecoveryGuard ON 時は攻撃開始時から常時スタン可能化
-        // （Recovery 状態と無関係にプレイヤー近接で Stunned へ遷移するようになる）
         if (isBypassRecoveryGuard_) {
             boss->SetForceVulnerable(true);
         }
@@ -49,10 +47,8 @@ void AttackNode::Reset() {
     }
     enteredRecovery_ = false;
 
-    // 派生クラスの後始末
     OnCleanup();
 
-    // 共通フラグ初期化
     elapsedTime_ = 0.0f;
     isFirstExecute_ = true;
     cachedBoss_ = nullptr;
@@ -66,7 +62,6 @@ void AttackNode::EnterAttackRecovery(Boss* boss) {
 }
 
 Tako::BTNodeStatus AttackNode::FinishAttack() {
-    // Recovery / ForceVulnerable 解除
     if (cachedBoss_) {
         if (enteredRecovery_) {
             cachedBoss_->ExitRecovery();

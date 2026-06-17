@@ -3,9 +3,7 @@
 #include "Vector4.h"
 
 /// <summary>
-/// ボスのフェーズ移行スタン状態
-/// HP 閾値到達で強制遷移し、プレイヤーの近接攻撃を待つ
-/// 被弾でフェーズ2へ移行し Normal に復帰
+/// HP 閾値で遷移し近接被弾を待つフェーズ移行スタン。被弾でフェーズ2へ移行し Normal へ復帰
 /// </summary>
 class BossPhaseTransitionStunState : public BossState {
 public:
@@ -22,6 +20,5 @@ private:
 	float flashDuration_ = 0.03f;
 	Tako::Vector4 stunFlashColor_ = { 1.0f, 1.0f, 0.0f, 1.0f };
 
-	// 状態管理
 	float flashTimer_ = 0.0f;
 };

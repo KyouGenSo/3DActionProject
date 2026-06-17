@@ -10,9 +10,8 @@ class Boss;
 namespace Tako { class WinApp; }
 
 /// <summary>
-/// コントローラー UI 表示クラス
-/// ゲームパッドの入力状態を視覚的に表示
-/// ボタン押下で Up/Down 切り替え、スティック方向に応じたスプライト切り替えを行う
+/// ゲームパッドの入力状態を表示する UI。
+/// ボタン押下で Up/Down、スティック方向でスプライトを切り替える
 /// </summary>
 class ControllerUI
 {
@@ -20,66 +19,42 @@ public:
     ControllerUI() = default;
     ~ControllerUI();
 
-    /// <summary>
-    /// 初期化
-    /// 全スプライトのロードと初期位置設定
-    /// </summary>
     void Initialize();
 
-    /// <summary>
-    /// 更新
-    /// 入力状態に応じてスプライト切り替えフラグを更新
-    /// </summary>
     void Update();
 
-    /// <summary>
-    /// 描画
-    /// 現在の入力状態に応じたスプライトを描画
-    /// </summary>
     void Draw();
 
-    /// <summary>
-    /// ImGui でパラメータ調整
-    /// 各スプライトの位置・サイズ等を調整可能
-    /// </summary>
     void DrawImGui();
 
     /// <summary>
-    /// ボスへの参照を設定（フェーズ判定用）
+    /// フェーズ判定用にボス参照を設定
     /// </summary>
-    /// <param name="boss">ボスへのポインタ</param>
     void SetBoss(Boss* boss) { boss_ = boss; }
 
-    /// <summary>
-    /// ポーズ状態を設定
-    /// </summary>
-    /// <param name="isPaused">ポーズ中かどうか</param>
     void SetIsPaused(bool isPaused) { isPaused_ = isPaused; }
 
 private:
     /// <summary>
-    /// スティック入力から方向インデックス(0-7)を取得
+    /// スティック入力を8方向のインデックスへ量子化する
     /// </summary>
-    /// <param name="stick">スティック入力ベクトル</param>
-    /// <returns>方向インデックス (0:上, 1:左上, 2:左, 3:左下, 4:下, 5:右下, 6:右, 7:右上)</returns>
+    /// <param name="stick">スティック入力。x=左右(右が正)、y=上下(上が正)</param>
+    /// <returns>上を0とし時計回りに増える方向インデックス (0:上, 1:右上, 2:右, 3:右下, 4:下, 5:左下, 6:左, 7:左上)。デッドゾーン未満は0</returns>
     int GetStickDirectionIndex(const Tako::Vector2& stick) const;
 
     /// <summary>
-    /// ウィンドウリサイズ時のコールバック
-    /// 全スプライトの位置・サイズを新しいウィンドウサイズに合わせて再計算
+    /// リサイズに合わせて全スプライトの位置・サイズを再計算
     /// </summary>
-    /// <param name="newSize">新しいウィンドウサイズ</param>
     void OnResize(const Tako::Vector2& newSize);
 
 private:
 
-    // 基準解像度定数（UI 設計時の想定解像度）
+    // UI 設計時の想定解像度
     static constexpr float kBaseWidth = 1920.0f;
     static constexpr float kBaseHeight = 1080.0f;
 
-    // リサイズコールバック管理
-    Tako::WinApp* winApp_ = nullptr;   ///< WinApp への参照
-    uint32_t onResizeId_ = 0;          ///< 登録されたコールバックの ID
+    Tako::WinApp* winApp_ = nullptr;
+    uint32_t onResizeId_ = 0;          ///< 登録したコールバックの ID
 
     // ボタンスプライト（Up/Down 各4ボタン）
     std::unique_ptr<Tako::Sprite> aButtonUpSprite_;
@@ -111,13 +86,12 @@ private:
     bool isBPressed_ = false;
     bool isXPressed_ = false;
     bool isYPressed_ = false;
-    int leftStickDir_ = 0;   ///< 左スティック方向インデックス (0-7)
-    int rightStickDir_ = 0;  ///< 右スティック方向インデックス (0-7)
+    int leftStickDir_ = 0;   ///< 0-7
+    int rightStickDir_ = 0;  ///< 0-7
 
-    // デッドゾーン閾値（スティック入力がこの値未満なら無視）
+    // スティック入力がこの値未満なら無視
     float stickDeadzone_ = 0.3f;
 
-    // 状態参照用
-    Boss* boss_ = nullptr;  ///< ボスへの参照（フェーズ判定用）
-    bool isPaused_ = false; ///< ポーズ状態
+    Boss* boss_ = nullptr;  ///< フェーズ判定用
+    bool isPaused_ = false;
 };

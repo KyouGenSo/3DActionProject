@@ -57,7 +57,6 @@ void Boss::InitializeStateMachine()
 
 void Boss::InitializeModel()
 {
-    // ボス本体の3Dモデルの初期化
     model_ = std::make_unique<Object3d>();
     model_->Initialize();
     model_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
@@ -68,25 +67,23 @@ void Boss::InitializeModel()
     transform_.scale = Vector3(1.0f, 1.0f, 1.0f);
     model_->SetTransform(transform_);
 
-    // 近接攻撃用ブロックの初期化
     meleeAttackBlock_ = std::make_unique<Object3d>();
     meleeAttackBlock_->Initialize();
     meleeAttackBlock_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
     meleeAttackBlock_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
 
-    // 反発衝撃波エフェクト用スフィアの初期化（半径1の単位球、SetScale で動的サイズ調整）
+    // 半径1の単位球、SetScale で動的サイズ調整
     repelShockwaveSphere_ = std::make_unique<Object3d>();
     repelShockwaveSphere_->Initialize();
     repelShockwaveSphere_->SetModel(PrimitiveBuilder::CreateSphere({ .radius = 1.0f, .lonDiv = 32, .latDiv = 16 }));
     repelShockwaveSphere_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 0.3f));
     repelShockwaveSphere_->SetEnableLighting(false);
     repelShockwaveSphere_->SetScale({ 0.0f, 0.0f, 0.0f });
-    repelShockwaveSphere_->SetTransparent(true);  // 両面描画 + 深度書き込み無効で球全体が透けて見える
+    repelShockwaveSphere_->SetTransparent(true);  // 両面描画 + 深度書き込み無効で球全体が透ける
 }
 
 void Boss::InitializeHealth()
 {
-    // HP バー UI の初期化（2段バー：フェーズ1=青、フェーズ2=赤）
     hpBar_.InitializeDual(
         EnginePaths::TexturePath("white.dds"),
         Vector2(500.0f, 30.0f),
@@ -96,7 +93,6 @@ void Boss::InitializeHealth()
         Vector4{ 1.0f, 0.3f, 0.3f, 1.0f }   // フェーズ2: 赤
     );
 
-    // フェーズマネージャーの初期化
     phaseManager_.Initialize(kMaxHp, kPhase2Threshold, kPhase2InitialHp);
 }
 
@@ -104,7 +100,7 @@ void Boss::InitializeColliders()
 {
     GlobalVariables* gv = GlobalVariables::GetInstance();
 
-    // 本体コライダーの初期化
+    // 本体コライダー
     float bodySize = gv->GetValueFloat("Boss", "BodyColliderSize");
     bodyCollider_ = std::make_unique<OBBCollider>();
     bodyCollider_->SetTransform(&transform_);
@@ -114,7 +110,7 @@ void Boss::InitializeColliders()
     bodyCollider_->SetOwner(this);
     CollisionManager::GetInstance()->AddCollider(bodyCollider_.get());
 
-    // 近接攻撃コライダーの初期化
+    // 近接攻撃コライダー
     float meleeColliderSizeX = gv->GetValueFloat("BossMeleeAttackCollider", "ColliderSizeX");
     float meleeColliderSizeY = gv->GetValueFloat("BossMeleeAttackCollider", "ColliderSizeY");
     float meleeColliderSizeZ = gv->GetValueFloat("BossMeleeAttackCollider", "ColliderSizeZ");
@@ -211,7 +207,6 @@ void Boss::InitializeAI()
 
 void Boss::Finalize()
 {
-    // Collider を削除
     if (bodyCollider_) {
         CollisionManager::GetInstance()->RemoveCollider(bodyCollider_.get());
     }
@@ -232,7 +227,6 @@ void Boss::Finalize()
     }
 
 #ifdef _DEBUG
-    // ノードエディタクリーンアップ
     if (nodeEditor_) {
         nodeEditor_->Finalize();
         nodeEditor_.reset();
@@ -242,13 +236,10 @@ void Boss::Finalize()
 
 void Boss::Update(float deltaTime)
 {
-    // HP バーの更新（2段バー）
     hpBar_.UpdateDual(hp_, kMaxHp, kPhase2Threshold, phaseManager_.GetPhase());
 
-    // フェーズとライフの更新
     phaseManager_.Update(hp_);
 
-    // 死亡判定 → Dead 状態へ遷移
     if (phaseManager_.IsDead() && stateMachine_->GetCurrentStateName() != "Dead") {
         stateMachine_->ChangeState("Dead");
     }
@@ -258,7 +249,6 @@ void Boss::Update(float deltaTime)
         stateMachine_->Update(deltaTime);
 
 #ifdef _DEBUG
-        // エディタが有効な場合、実行中のノードをハイライト
         if (stateMachine_->GetCurrentStateName() == "Normal" &&
             nodeEditor_ && showNodeEditor_ && behaviorTree_) {
             Tako::BTNodePtr currentNode = behaviorTree_->GetCurrentRunningNode();
@@ -269,23 +259,21 @@ void Boss::Update(float deltaTime)
 #endif
     }
 
-    // boss_aura エミッタは「硬直 or スタン or フェーズ移行スタン or テレポート中」のいずれかで無効
+    // 硬直・スタン・フェーズ移行スタン・テレポートのいずれかで aura を無効
     SetAuraEmitterActive(!isInRecovery_ && !IsStunned() && !isTeleporting_);
 
-    // ヒットエフェクトの更新
     static const Vector4 kOriginalColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
     hitFlashEffect_.Update(deltaTime, model_.get(), kOriginalColor);
 
-    // シェイクエフェクトの更新
     shakeEffect_.Update(deltaTime);
 
-    // モデルの更新（シェイクオフセットを適用）
+    // シェイクオフセットを適用したトランスフォームで描画
     Transform renderTransform = transform_;
     renderTransform.translate += shakeEffect_.GetOffset();
     model_->SetTransform(renderTransform);
     model_->Update();
 
-    // 反発衝撃波スフィアの更新（表示中のみ位置をボスに追従）
+    // 表示中のみ位置をボスに追従
     if (repelShockwaveSphereVisible_ && repelShockwaveSphere_) {
         repelShockwaveSphere_->SetTranslate(transform_.translate);
         repelShockwaveSphere_->Update();
@@ -296,12 +284,10 @@ void Boss::Draw()
 {
     model_->Draw();
 
-    // 攻撃ブロックの描画（表示フラグが true の時のみ）
     if (meleeAttackBlockVisible_ && meleeAttackBlock_) {
         meleeAttackBlock_->Draw();
     }
 
-    // 反発衝撃波スフィアの描画（表示フラグが true の時のみ）
     if (repelShockwaveSphereVisible_ && repelShockwaveSphere_) {
         repelShockwaveSphere_->Draw();
     }
@@ -311,7 +297,6 @@ void Boss::DrawShadow()
 {
     model_->Draw();
 
-    // 攻撃ブロックの描画（表示フラグが true の時のみ）
     if (meleeAttackBlockVisible_ && meleeAttackBlock_) {
         meleeAttackBlock_->Draw();
     }
@@ -331,27 +316,22 @@ void Boss::DrawSprite()
 
 void Boss::OnHit(float damage, float shakeIntensityOverride)
 {
-    // フェーズ変更処理（準備完了なら変更）
     phaseManager_.ConsumePhaseChangeRequest();
 
     hp_ -= damage;
     hp_ = std::max<float>(hp_, 0.0f);
 
-    // フェーズ移行スタン条件チェック
+    // 閾値到達でフェーズ移行スタン発動。HP は閾値に固定
     if (phaseManager_.GetPhase() == 1 &&
         hp_ <= kPhaseTransitionStunThreshold &&
         !hasTriggeredPhaseTransitionStun_) {
-        // HP を固定
         hp_ = kPhaseTransitionStunThreshold;
-        // フェーズ移行スタンを発動
         TriggerPhaseTransitionStun();
     }
 
-    // ヒットフラッシュエフェクト開始（白く光る）
     float hitEffectDuration = GlobalVariables::GetInstance()->GetValueFloat("Boss", "HitEffectDuration");
     hitFlashEffect_.Start(Vector4(1.0f, 1.0f, 1.0f, 1.0f), hitEffectDuration);
 
-    // シェイクエフェクト開始
     StartShake(shakeIntensityOverride);
 }
 
@@ -364,18 +344,14 @@ void Boss::DrawImGui()
 {
 #ifdef _DEBUG
 
-    // ===== 基本ステータス =====
     ImGui::SeparatorText("Basic Status");
 
-    // HP 表示（数値 + プログレスバー）
     ImGui::Text("HP: %.1f / %.1f (%.1f%%)", hp_, kMaxHp, (hp_ / kMaxHp) * 100.0f);
     ImGui::ProgressBar(hp_ / kMaxHp, ImVec2(-1.0f, 0.0f), "");
 
-    // ライフ、フェーズ
     ImGui::Text("Life: %d", phaseManager_.GetLife());
     ImGui::Text("Phase: %d", phaseManager_.GetPhase());
 
-    // 状態フラグ（警告は赤色でハイライト）
     if (phaseManager_.IsDead()) {
         ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Dead: YES");
     }
@@ -390,14 +366,12 @@ void Boss::DrawImGui()
         ImGui::Text("Paused: NO");
     }
 
-    // ステートマシン状態
     if (stateMachine_) {
         ImGui::Text("State: %s", stateMachine_->GetCurrentStateName().c_str());
     }
 
     ImGui::Text("Ready to Change Phase: %s", phaseManager_.IsReadyToChangePhase() ? "YES" : "NO");
 
-    // ===== 座標情報（折りたたみ可能） =====
     if (ImGui::CollapsingHeader("Transform")) {
         ImGui::Text("Position: (%.2f, %.2f, %.2f)",
             transform_.translate.x, transform_.translate.y, transform_.translate.z);
@@ -406,14 +380,12 @@ void Boss::DrawImGui()
         ImGui::Text("Scale: (%.2f, %.2f, %.2f)",
             transform_.scale.x, transform_.scale.y, transform_.scale.z);
 
-        // 初期位置の調整
         ImGui::Separator();
         ImGui::Text("Initial Position (for respawn):");
         ImGui::DragFloat("Initial Y", &initialY_, 0.1f, 0.0f, 10.0f);
         ImGui::DragFloat("Initial Z", &initialZ_, 1.0f, -50.0f, 50.0f);
     }
 
-    // ===== シェイクエフェクト（折りたたみ可能） =====
     if (ImGui::CollapsingHeader("Shake Effect")) {
         ImGui::Text("Is Shaking: %s", shakeEffect_.IsActive() ? "YES" : "NO");
         ImGui::Text("Timer: %.3f / %.3f", shakeEffect_.GetTimer(), shakeEffect_.GetDuration());
@@ -437,7 +409,6 @@ void Boss::DrawImGui()
         }
     }
 
-    // ===== セクション6: コライダー（折りたたみ可能） =====
     if (ImGui::CollapsingHeader("Collider")) {
         if (bodyCollider_) {
             ImGui::Text("Active: %s", bodyCollider_->IsActive() ? "Yes" : "No");
@@ -454,13 +425,10 @@ void Boss::DrawImGui()
         }
     }
 
-    // ===== ビヘイビアツリー =====
     ImGui::SeparatorText("Behavior Tree");
 
-    // ビヘイビアツリーの制御
     if (behaviorTree_) {
         ImGui::SameLine();
-        // ノードエディタを開く
         if (nodeEditor_) {
             ImGui::SameLine();
             if (ImGui::Button("Node Editor")) {
@@ -468,7 +436,6 @@ void Boss::DrawImGui()
                 nodeEditor_->SetVisible(showNodeEditor_);
             }
 
-            // エディタのツリーを BehaviorTree に適用
             ImGui::SameLine();
             if (ImGui::Button("Apply Editor Tree")) {
                 Tako::BTNodePtr runtimeTree = nodeEditor_->BuildRuntimeTree();
@@ -479,13 +446,11 @@ void Boss::DrawImGui()
         }
     }
 
-    // HP 操作
     float tempHp = hp_;
     if (ImGui::SliderFloat("Set HP", &tempHp, 0.0f, kMaxHp)) {
         hp_ = std::clamp(tempHp, 0.0f, kMaxHp);
     }
 
-    // フェーズ切り替え
     ImVec2 buttonSize(ImGui::GetContentRegionAvail().x * 0.48f, 0);
     if (ImGui::Button("Set Phase 1", buttonSize)) {
         SetPhase(1);
@@ -498,15 +463,12 @@ void Boss::DrawImGui()
         hp_ = kPhase2InitialHp;
     }
 
-    // 一時停止トグル
     ImGui::Spacing();
     ImGui::Checkbox("Pause Boss", &isPause_);
 
-    // 死亡/復活コントロール
     ImGui::Spacing();
     ImVec2 fullButtonSize(ImGui::GetContentRegionAvail().x * 0.48f, 0);
 
-    // Kill ボタン（赤色）
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.8f, 0.2f, 0.2f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 0.3f, 0.3f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.6f, 0.1f, 0.1f, 1.0f));
@@ -517,7 +479,6 @@ void Boss::DrawImGui()
 
     ImGui::SameLine();
 
-    // Revive ボタン（緑色）
     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.2f, 0.8f, 0.2f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.3f, 1.0f, 0.3f, 1.0f));
     ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.6f, 0.1f, 1.0f));
@@ -527,7 +488,6 @@ void Boss::DrawImGui()
     }
     ImGui::PopStyleColor(3);
 
-    // ノードエディタの更新
     if (nodeEditor_ && showNodeEditor_) {
         nodeEditor_->Update();
     }
@@ -631,13 +591,11 @@ void Boss::ResetActionState() {
 }
 
 void Boss::OnMeleeAttackHit(float damage, const Vector3& knockbackDir, bool isKnockbackCombo) {
-    // ダッシュ中は無視
     if (isDashing_) return;
 
     const std::string& currentState = stateMachine_->GetCurrentStateName();
 
     if (currentState == "Stunned") {
-        // スタン中: ダメージのみ（+ 4コンボ目ならノックバック有効化）
         OnHit(damage, 1.0f);
         if (isKnockbackCombo) {
             auto* stunnedState = static_cast<BossStunnedState*>(
@@ -649,18 +607,14 @@ void Boss::OnMeleeAttackHit(float damage, const Vector3& knockbackDir, bool isKn
     }
 
     if (currentState == "PhaseTransitionStun") {
-        // フェーズ移行スタン中: フェーズ2へ移行
         CompletePhaseTransition();
         CameraManager::GetInstance()->StartShake(0.3f);
         return;
     }
 
     if (currentState == "Normal") {
-        // isInRecovery_: 攻撃後の硬直中（既存仕様の隙）
-        // forceVulnerable_: AttackNode が isBypassRecoveryGuard で立てる強制脆弱化フラグ
-        // どちらか true ならスタン誘発、両方 false なら攻撃を中断して離脱
+        // 硬直中 or 強制脆弱ならダメージ + スタン、それ以外は離脱
         if (isInRecovery_ || forceVulnerable_) {
-            // 硬直中 or 強制脆弱: ダメージ + スタンへ遷移
             OnHit(damage, 1.0f);
             CameraManager::GetInstance()->StartShake(0.3f);
             pendingStunDirection_ = knockbackDir;
@@ -668,7 +622,6 @@ void Boss::OnMeleeAttackHit(float damage, const Vector3& knockbackDir, bool isKn
             stateMachine_->ChangeState("Stunned");
         }
         else {
-            // 非硬直: 離脱へ遷移
             stateMachine_->ChangeState("Retreating");
         }
         return;
@@ -681,18 +634,14 @@ void Boss::TriggerPhaseTransitionStun() {
     }
     hasTriggeredPhaseTransitionStun_ = true;
 
-    // ステートマシンで PhaseTransitionStun 状態へ遷移
     stateMachine_->ChangeState("PhaseTransitionStun");
 }
 
 void Boss::CompletePhaseTransition() {
-    // HP を100に設定
     hp_ = kPhase2InitialHp;
-
-    // フェーズ2に移行
     phaseManager_.SetPhase(2);
 
-    // Normal へ復帰（PhaseTransitionStunState::Exit()でパーティクル無効化）
+    // Normal へ復帰（PhaseTransitionStunState::Exit() でパーティクル無効化）
     stateMachine_->ChangeState("Normal");
 }
 

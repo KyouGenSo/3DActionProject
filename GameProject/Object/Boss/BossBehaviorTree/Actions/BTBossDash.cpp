@@ -27,35 +27,27 @@ Tako::BTNodeStatus BTBossDash::Execute(Tako::BTBlackboard* blackboard) {
 
     float deltaTime = blackboard->GetDeltaTime();
 
-    // 初回実行時の初期化
     if (isFirstExecute_) {
         InitializeDash(boss);
         isFirstExecute_ = false;
-        boss->SetDashing(true);  // ダッシュ開始
+        boss->SetDashing(true);
     }
 
-    // ダッシュ移動の更新
     UpdateDashMovement(boss, deltaTime);
 
-    // 経過時間を更新
     elapsedTime_ += deltaTime;
 
-    // ダッシュが完了したか確認
     if (elapsedTime_ >= dashDuration_) {
-        // 最終位置に設定
         boss->SetTranslate(targetPosition_);
 
-        // ダッシュ終了
         boss->SetDashing(false);
 
-        // リセットして成功を返す
         isFirstExecute_ = true;
         elapsedTime_ = 0.0f;
         status_ = Tako::BTNodeStatus::Success;
         return Tako::BTNodeStatus::Success;
     }
 
-    // まだダッシュ中
     status_ = Tako::BTNodeStatus::Running;
     return Tako::BTNodeStatus::Running;
 }
@@ -64,43 +56,34 @@ void BTBossDash::Reset() {
     Tako::BTNode::Reset();
     elapsedTime_ = 0.0f;
     isFirstExecute_ = true;
-    // 注意: Reset 時は boss 参照がないため、SetDashing(false)は呼べない
-    // BehaviorTree のリセット時にも安全に動作するよう
-    // BTBossDash 自体は状態を保持しない設計とする
+    // boss 参照がないため SetDashing(false) は呼べない。状態を保持しない設計で安全。
 }
 
 void BTBossDash::InitializeDash(Boss* boss) {
-    // タイマーリセット
     elapsedTime_ = 0.0f;
 
-    // 開始位置を記録
     startPosition_ = boss->GetTransform().translate;
 
-    // ランダムな方向を生成
     RandomEngine* rng = RandomEngine::GetInstance();
 
-    // XZ 平面上のランダムな方向を取得（Y=0で正規化済み）
+    // Y=0 で正規化済みの XZ 方向
     dashDirection_ = rng->GetRandomDirectionXZ();
 
-    // ランダムなダッシュ距離を取得
     float dashDistance = rng->GetFloat(minDistance_, maxDistance_);
 
-    // 目標位置を計算
     targetPosition_ = startPosition_ + dashDirection_ * dashDistance;
 
-    // エリア内に収まるよう調整 (Phase 2 では戦闘エリアが狭まる)
+    // Phase 2 では戦闘エリアが狭まるためエリア内に収める
     targetPosition_ = BossMovement::ClampToBounds(targetPosition_, BossMovement::CalcAreaBounds(boss));
 
-    // ダッシュ方向を再計算（エリア制限後）
+    // Clamp 後の方向で再計算
     dashDirection_ = targetPosition_ - startPosition_;
     float actualDistance = dashDirection_.Length();
     if (actualDistance > kDirectionEpsilon) {
         dashDirection_ = dashDirection_.Normalize();
-        // ダッシュ時間を調整（距離に応じて）
         dashDuration_ = actualDistance / dashSpeed_;
     }
 
-    // ダッシュ方向を向く
     if (dashDirection_.Length() > kDirectionEpsilon) {
         float angle = atan2f(dashDirection_.x, dashDirection_.z);
         boss->SetRotate(Vector3(0.0f, angle, 0.0f));
@@ -110,16 +93,13 @@ void BTBossDash::InitializeDash(Boss* boss) {
 void BTBossDash::UpdateDashMovement(Boss* boss, float deltaTime) {
     deltaTime; // 未使用警告抑制
     if (elapsedTime_ < dashDuration_) {
-        // ダッシュ中の移動
         float t = elapsedTime_ / dashDuration_;
 
-        // イージング（加速→減速）
         t = Ease::SmoothStep(t);
 
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);
         boss->SetTranslate(newPosition);
 
-        // ダッシュエフェクト的な表現（少し振動させる）
         float vibration = sinf(elapsedTime_ * vibrationFreq_) * vibrationAmp_;
         Vector3 currentPos = boss->GetTransform().translate;
         currentPos.y += vibration;

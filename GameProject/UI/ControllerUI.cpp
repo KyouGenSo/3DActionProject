@@ -15,7 +15,7 @@ using namespace Tako;
 
 ControllerUI::~ControllerUI()
 {
-    // リサイズコールバックを解除（ダングリングポインタ防止）
+    // ダングリングポインタ防止
     if (winApp_ && onResizeId_ != 0) {
         winApp_->UnregisterOnResizeFunc(onResizeId_);
     }
@@ -23,7 +23,7 @@ ControllerUI::~ControllerUI()
 
 void ControllerUI::Initialize()
 {
-    // ボタンスプライト初期化（Up 状態）
+    // ボタンスプライト初期化
     aButtonUpSprite_ = std::make_unique<Sprite>();
     aButtonUpSprite_->Initialize("button/A_Button_Up.dds");
     aButtonUpSprite_->SetPos({ 1565.0f, 948.0f });
@@ -103,7 +103,7 @@ void ControllerUI::Initialize()
     idouSprite_->SetPos({ 450.0f, 892.0f });
     idouSprite_->SetSize({ 150.0f, 50.0f });
 
-    // ポーズ操作ヒント初期化（HP バーの下、画面左上付近）
+    // ポーズ操作ヒント初期化
     pauseHintIconSprite_ = std::make_unique<Sprite>();
     pauseHintIconSprite_->Initialize("button/Menu_Button_Up.dds");
     pauseHintIconSprite_->SetPos({ 30.0f, 157.0f });
@@ -133,19 +133,16 @@ void ControllerUI::Update()
 {
     Input* input = Input::GetInstance();
 
-    // ボタン状態更新
     isAPressed_ = input->PushButton(GamepadButton::A);
     isBPressed_ = input->PushButton(GamepadButton::B);
     isXPressed_ = input->PushButton(GamepadButton::X);
     isYPressed_ = input->PushButton(GamepadButton::Y);
 
-    // スティック方向更新
     Vector2 leftStick = input->GetLeftStick();
     Vector2 rightStick = input->GetRightStick();
     leftStickDir_ = GetStickDirectionIndex(leftStick);
     rightStickDir_ = GetStickDirectionIndex(rightStick);
 
-    // ボタンスプライトの更新
     aButtonUpSprite_->Update();
     aButtonDownSprite_->Update();
     bButtonUpSprite_->Update();
@@ -155,53 +152,47 @@ void ControllerUI::Update()
     yButtonUpSprite_->Update();
     yButtonDownSprite_->Update();
 
-    // ジョイスティックスプライトの更新
     for (int i = 0; i < 8; ++i) {
         lJoystickSprites_[i]->Update();
         rJoystickSprites_[i]->Update();
     }
 
-    // アクションアイコンの更新
     kougekiSprite_->Update();
     dashSprite_->Update();
     parrySprite_->Update();
     shagekiSprite_->Update();
     idouSprite_->Update();
 
-    // ポーズ操作ヒントの更新
     pauseHintIconSprite_->Update();
     pauseHintTextSprite_->Update();
 }
 
 int ControllerUI::GetStickDirectionIndex(const Vector2& stick) const
 {
-    // スティック入力の大きさを計算
     float magnitude = std::sqrt(stick.x * stick.x + stick.y * stick.y);
 
-    // デッドゾーン判定：入力が閾値未満ならデフォルト方向（上）
+    // デッドゾーン未満は上(0)を返す
     if (magnitude < stickDeadzone_) {
         return 0;
     }
 
-    // 角度計算
-    // atan2(x, y)で「上」を0度基準に変換
-    // 上→左上→左→左下→下→右下→右→右上
+    // atan2(x, y) で「上」を0度基準にする
     float angle = DirectX::XMConvertToDegrees(std::atan2(stick.x, stick.y));
 
-    // 22.5度オフセットを加えて、境界を方向の「間」に配置
+    // 境界を方向の「間」に置くため 22.5度オフセット
     angle += 22.5f;
     if (angle < 0.0f) {
         angle += 360.0f;
     }
 
-    // 8方向に分類（各方向45度ずつ）
+    // 45度ずつ8方向に分類
     int index = static_cast<int>(angle / 45.0f) % 8;
     return index;
 }
 
 void ControllerUI::Draw()
 {
-    // ポーズ中はポーズ操作ヒントのみ描画（操作説明 UI は PauseMenu が描画）
+    // ポーズ中の操作説明 UI は PauseMenu 側が描画する
     if (isPaused_) {
         pauseHintIconSprite_->Draw();
         pauseHintTextSprite_->Draw();
@@ -210,10 +201,8 @@ void ControllerUI::Draw()
 
     // === 以下、通常時の描画 ===
 
-    // フェーズ2判定（ボス参照が有効かつフェーズ2の場合）
     bool isPhase2 = boss_ && boss_->GetPhase() == 2;
 
-    // ボタン描画（押されているかどうかで切り替え）
     if (isAPressed_) {
         aButtonDownSprite_->Draw();
     } else {
@@ -238,27 +227,23 @@ void ControllerUI::Draw()
         yButtonUpSprite_->Draw();
     }
 
-    // 左ジョイスティック描画（常に表示）
     lJoystickSprites_[leftStickDir_]->Draw();
 
-    // 右ジョイスティック描画（フェーズ2以外で表示）
+    // 右ジョイスティックと射撃はフェーズ2では非表示
     if (!isPhase2) {
         rJoystickSprites_[rightStickDir_]->Draw();
     }
 
-    // アクションアイコン描画
     kougekiSprite_->Draw();
     dashSprite_->Draw();
     parrySprite_->Draw();
 
-    // 射撃アイコン描画（フェーズ2以外で表示）
     if (!isPhase2) {
         shagekiSprite_->Draw();
     }
 
     idouSprite_->Draw();
 
-    // ポーズ操作ヒント描画（通常時も表示）
     pauseHintIconSprite_->Draw();
     pauseHintTextSprite_->Draw();
 }
@@ -379,34 +364,27 @@ void ControllerUI::DrawImGui()
 
 void ControllerUI::OnResize(const Vector2& newSize)
 {
-    // スケールファクターを計算
     float scaleX = newSize.x / kBaseWidth;
     float scaleY = newSize.y / kBaseHeight;
 
-    // A ボタン
     aButtonUpSprite_->SetPos({ 1565.0f * scaleX, 948.0f * scaleY });
     aButtonDownSprite_->SetPos({ 1565.0f * scaleX, 948.0f * scaleY });
 
-    // B ボタン
     bButtonUpSprite_->SetPos({ 1640.0f * scaleX, 869.0f * scaleY });
     bButtonDownSprite_->SetPos({ 1640.0f * scaleX, 869.0f * scaleY });
 
-    // X ボタン
     xButtonUpSprite_->SetPos({ 1488.0f * scaleX, 869.0f * scaleY });
     xButtonDownSprite_->SetPos({ 1488.0f * scaleX, 869.0f * scaleY });
 
-    // Y ボタン
     yButtonUpSprite_->SetPos({ 1565.0f * scaleX, 803.0f * scaleY });
     yButtonDownSprite_->SetPos({ 1565.0f * scaleX, 803.0f * scaleY });
 
-    // ジョイスティック（8方向）
     for (int i = 0; i < 8; ++i) {
         lJoystickSprites_[i]->SetPos({ 323.0f * scaleX, 869.0f * scaleY });
 
         rJoystickSprites_[i]->SetPos({ 791.0f * scaleX, 869.0f * scaleY });
     }
 
-    // アクションアイコン
     kougekiSprite_->SetPos({ 1349.0f * scaleX, 871.0f * scaleY });
 
     dashSprite_->SetPos({ 1518.0f * scaleX, 997.0f * scaleY });
@@ -417,7 +395,6 @@ void ControllerUI::OnResize(const Vector2& newSize)
 
     idouSprite_->SetPos({ 450.0f * scaleX, 892.0f * scaleY });
 
-    // ポーズ操作ヒント
     pauseHintIconSprite_->SetPos({ 30.0f * scaleX, 157.0f * scaleY });
 
     pauseHintTextSprite_->SetPos({ 124.0f * scaleX, 120.0f * scaleY });

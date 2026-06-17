@@ -8,54 +8,35 @@
 #ifdef _DEBUG
 
 /// <summary>
-/// カメラアニメーションの編集履歴管理
-/// アンドゥ/リドゥ機能を提供
+/// カメラアニメーション編集のアンドゥ/リドゥ履歴
 /// </summary>
 class CameraAnimationHistory {
 public:
-    /// <summary>
-    /// 操作タイプ
-    /// </summary>
     enum class ActionType {
-        ADD_KEYFRAME,       ///< キーフレーム追加
-        DELETE_KEYFRAME,    ///< キーフレーム削除
-        EDIT_KEYFRAME,      ///< キーフレーム編集
-        MOVE_KEYFRAME,      ///< キーフレーム移動
-        BULK_EDIT,          ///< 一括編集
-        CLEAR_ALL           ///< 全消去
+        ADD_KEYFRAME,
+        DELETE_KEYFRAME,
+        EDIT_KEYFRAME,
+        MOVE_KEYFRAME,
+        BULK_EDIT,
+        CLEAR_ALL
     };
 
     /// <summary>
-    /// 編集アクションの基底クラス
+    /// 編集操作1件を表す基底クラス（Execute / Undo を実装）
     /// </summary>
     class Action {
     public:
         virtual ~Action() = default;
 
-        /// <summary>
-        /// アクションの実行
-        /// </summary>
         virtual void Execute(CameraAnimation* animation) = 0;
 
-        /// <summary>
-        /// アクションの取り消し
-        /// </summary>
         virtual void Undo(CameraAnimation* animation) = 0;
 
-        /// <summary>
-        /// アクションのタイプを取得
-        /// </summary>
         virtual ActionType GetType() const = 0;
 
-        /// <summary>
-        /// アクションの説明を取得
-        /// </summary>
         virtual std::string GetDescription() const = 0;
     };
 
-    /// <summary>
-    /// キーフレーム追加アクション
-    /// </summary>
     class AddKeyframeAction : public Action {
     public:
         AddKeyframeAction(const CameraKeyframe& keyframe, size_t index)
@@ -72,9 +53,6 @@ public:
         size_t index_;
     };
 
-    /// <summary>
-    /// キーフレーム削除アクション
-    /// </summary>
     class DeleteKeyframeAction : public Action {
     public:
         DeleteKeyframeAction(const CameraKeyframe& keyframe, size_t index)
@@ -91,11 +69,14 @@ public:
         size_t index_;
     };
 
-    /// <summary>
-    /// キーフレーム編集アクション
-    /// </summary>
     class EditKeyframeAction : public Action {
     public:
+        /// <summary>
+        /// キーフレーム編集アクション。Execute で newKf、Undo で oldKf を適用
+        /// </summary>
+        /// <param name="index">対象キーフレームの添字</param>
+        /// <param name="oldKf">編集前の内容</param>
+        /// <param name="newKf">編集後の内容</param>
         EditKeyframeAction(size_t index, const CameraKeyframe& oldKf, const CameraKeyframe& newKf)
             : index_(index), oldKeyframe_(oldKf), newKeyframe_(newKf) {
         }
@@ -112,99 +93,71 @@ public:
     };
 
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
     CameraAnimationHistory();
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     ~CameraAnimationHistory();
 
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="animation">対象のアニメーション</param>
     void Initialize(CameraAnimation* animation);
 
     /// <summary>
-    /// アクションの記録と実行
+    /// アクションを実行して履歴に積む
     /// </summary>
     void ExecuteAction(std::unique_ptr<Action> action);
 
     /// <summary>
-    /// キーフレーム追加を記録
+    /// 追加済みキーフレームを履歴に記録（実行はしない）
     /// </summary>
+    /// <param name="index">追加されたキーフレームの添字。範囲外なら記録しない</param>
     void RecordAdd(size_t index);
 
     /// <summary>
-    /// キーフレーム削除を記録
+    /// 削除済みキーフレームを履歴に記録（実行はしない）
     /// </summary>
+    /// <param name="index">削除されたキーフレームの添字</param>
+    /// <param name="keyframe">削除前のキーフレーム内容（Undo 復元用）</param>
     void RecordDelete(size_t index, const CameraKeyframe& keyframe);
 
     /// <summary>
-    /// キーフレーム編集を記録
+    /// 編集済みキーフレームを履歴に記録（実行はしない）
     /// </summary>
+    /// <param name="index">編集されたキーフレームの添字。範囲外なら記録しない</param>
+    /// <param name="oldKf">編集前の内容（Undo 復元用）</param>
+    /// <param name="newKf">編集後の内容（Redo 適用用）</param>
     void RecordEdit(size_t index, const CameraKeyframe& oldKf, const CameraKeyframe& newKf);
 
-    /// <summary>
-    /// アンドゥ実行
-    /// </summary>
     void Undo();
 
-    /// <summary>
-    /// リドゥ実行
-    /// </summary>
     void Redo();
 
-    /// <summary>
-    /// アンドゥ可能か
-    /// </summary>
     bool CanUndo() const { return currentIndex_ > 0; }
 
-    /// <summary>
-    /// リドゥ可能か
-    /// </summary>
     bool CanRedo() const { return currentIndex_ < history_.size(); }
 
-    /// <summary>
-    /// 履歴のクリア
-    /// </summary>
     void Clear();
 
-    /// <summary>
-    /// 最大履歴数の設定
-    /// </summary>
     void SetMaxHistorySize(size_t size) { maxHistorySize_ = size; }
 
-    /// <summary>
-    /// 現在の履歴数を取得
-    /// </summary>
     size_t GetHistorySize() const { return history_.size(); }
 
-    /// <summary>
-    /// 現在の履歴インデックスを取得
-    /// </summary>
     size_t GetCurrentIndex() const { return currentIndex_; }
 
     /// <summary>
-    /// 履歴情報の取得（デバッグ用）
+    /// 履歴の一覧文字列（デバッグ用）
     /// </summary>
     std::string GetHistoryInfo() const;
 
 private:
     /// <summary>
-    /// 履歴サイズの制限
+    /// maxHistorySize_ を超えた古い履歴を切り詰める
     /// </summary>
     void LimitHistorySize();
 
 private:
-    CameraAnimation* animation_ = nullptr;                   ///< 対象アニメーション
-    std::vector<std::unique_ptr<Action>> history_;          ///< アクション履歴
-    size_t currentIndex_ = 0;                               ///< 現在の履歴位置
-    size_t maxHistorySize_ = 100;                           ///< 最大履歴数
-    bool isExecuting_ = false;                              ///< アクション実行中フラグ
+    CameraAnimation* animation_ = nullptr;
+    std::vector<std::unique_ptr<Action>> history_;
+    size_t currentIndex_ = 0;                               ///< 次に Redo する位置
+    size_t maxHistorySize_ = 100;
+    bool isExecuting_ = false;                              ///< 再帰記録を防ぐフラグ
 };
 
 #endif // _DEBUG

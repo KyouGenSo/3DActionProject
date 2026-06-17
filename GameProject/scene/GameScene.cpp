@@ -49,25 +49,20 @@ void GameScene::Initialize()
     /// ================================== ///
 
     /// ----------------------エンジンクラス初期化---------------------------------------------------------///
-    // CollisionManager の初期化
     CollisionManager::GetInstance()->Initialize();
 
-    // EmitterManager の生成
     emitterManager_ = std::make_unique<EmitterManager>(GPUParticle::GetInstance());
 
-    // ForceFieldManager の生成（シーンプリセット統合保存のため EmitterManager に連携）
+    // シーンプリセット統合保存のため EmitterManager に連携
     forceFieldManager_ = std::make_unique<ForceFieldManager>(GPUParticle::GetInstance());
     emitterManager_->SetForceFieldManager(forceFieldManager_.get());
 
-    // Input Handler の初期化
     inputHandler_ = std::make_unique<InputHandler>();
     inputHandler_->Initialize();
 
-    // コントローラー UI の初期化
     controllerUI_ = std::make_unique<ControllerUI>();
     controllerUI_->Initialize();
 
-    // ポーズメニューの初期化
     pauseMenu_ = std::make_unique<PauseMenu>();
     pauseMenu_->Initialize();
 
@@ -76,41 +71,30 @@ void GameScene::Initialize()
     InitializeDebugOption();
 
     /// ----------------------シーンの描画設定---------------------------------------------------------///
-    // GlobalVariables を取得
     GlobalVariables* gvScene = GlobalVariables::GetInstance();
-    // シャドウマッピンの最大描画距離の設定
     float shadowMaxDist = gvScene->GetValueFloat("GameScene", "ShadowMaxDistance");
     ShadowRenderer::GetInstance()->SetMaxShadowDistance(shadowMaxDist);
-    // 平行光源の方向の設定
     float lightZ = gvScene->GetValueFloat("GameScene", "DirectionalLightZ");
     Object3dBasic::GetInstance()->SetDirectionalLightDirection(Vector3(0.0f, -1.0f, lightZ));
 
 
-    // 3D オブジェクトの初期化
     InitializeObject3d();
 
-    // カメラシステムの初期化
     InitializeCameraSystem();
 
-    // エミッターマネージャーの初期化
     InitializeEmitterManger();
 
-    // エフェクトマネージャーの初期化
     InitializeEffectManager();
 
-    // 衝突マスクの設定
     SetCollisionMask();
 
-    // カメラアニメーション設定
     SetCameraAnimation();
 }
 
 void GameScene::Finalize()
 {
 #ifdef _DEBUG
-    // ゲームオブジェクトの登録解除
     DebugUIManager::GetInstance()->ClearGameObjects();
-    // AnimationEditor のクリーンアップ
     CameraDebugUI::CleanupAnimationEditor();
 #endif
 
@@ -153,18 +137,17 @@ void GameScene::Update()
 
 #endif
 
-    // ポーズ中でも入力は更新（メニュー操作に必要、かつポーズトグル判定の前に実行する必要がある）
+    // ポーズトグル判定の前に実行する必要があるため、ポーズ中でも更新する
     inputHandler_->Update();
 
     CheckPause();
 
-    // ポーズ中はメニュー更新のみ
     if (isPaused_) {
         UpdatePause();
         return;
     }
 
-    // ゲーム開始演出終了後、ボスの一時停止を解除
+    // 開始演出が終わったらボスの一時停止を解除
     if (animationController_->GetPlayState() != CameraAnimation::PlayState::PLAYING && !isStart_) {
         isStart_ = true;
         boss_->SetIsPause(false);
@@ -191,13 +174,10 @@ void GameScene::Update()
         overEffectManager_->Start();
     }
 
-    // カメラモードの更新
     UpdateCameraMode();
 
-    // 入力の更新
     UpdateInput();
 
-    // オブジェクトの更新処理
     skyBox_->Update();
     ground_->Update();
     player_->Update();
@@ -205,41 +185,34 @@ void GameScene::Update()
     controllerUI_->Update();
     cameraManager_->Update(FrameTimer::GetInstance()->GetDeltaTime());
 
-    // ボス・プレイヤーが貯めた弾リクエストを ProjectileManager に流し、生成させる
+    // ボス・プレイヤーが貯めた弾リクエストを ProjectileManager に渡して生成
     projectileManager_->SpawnBossBullets(boss_->ConsumePendingBullets());
     projectileManager_->SpawnPenetratingBossBullets(boss_->ConsumePendingPenetratingBullets());
     projectileManager_->SpawnPlayerBullets(player_->ConsumePendingBullets());
 
-    // プロジェクタイル（弾）の更新＆非アクティブ弾の削除
     float deltaTime = FrameTimer::GetInstance()->GetDeltaTime();
     projectileManager_->Update(deltaTime);
 
-    // ダッシュエフェクトの更新
     bool isDashing = false;
     if (player_ && player_->GetStateMachine() && player_->GetStateMachine()->GetCurrentState()) {
         isDashing = (player_->GetStateMachine()->GetCurrentState()->GetName() == "Dash");
     }
     dashEffectManager_->Update(deltaTime, player_->GetTranslate(), isDashing);
 
-    // ボーダーパーティクルの更新
     bossBorderManager_->Update(boss_->GetPhase(), boss_->GetTranslate());
 
-    // エミッターマネージャーの更新
     emitterManager_->Update();
 
-    // ゲームオーバー演出の更新
     overEffectManager_->Update(deltaTime);
     if (overEffectManager_->IsComplete()) {
         SceneManager::GetInstance()->ChangeScene("over", "Fade", 0.3f);
     }
 
-    // ゲームクリア演出の更新
     clearEffectManager_->Update(deltaTime);
     if (clearEffectManager_->IsComplete()) {
         SceneManager::GetInstance()->ChangeScene("clear", "Fade", 0.3f);
     }
 
-    // 衝突判定の実行
     CollisionManager::GetInstance()->CheckAllCollisions();
 }
 
@@ -262,13 +235,11 @@ void GameScene::Draw()
     }
 
     //------------------背景 Sprite の描画------------------//
-    // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 
 
     //-------------------Model の描画-------------------//
-    // 3D モデル共通描画設定
     Object3dBasic::GetInstance()->SetCommonRenderSetting();
 
     ground_->Draw();
@@ -276,13 +247,11 @@ void GameScene::Draw()
     boss_->Draw();
 
     //------------------前景 Sprite の描画------------------//
-    // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 
 
 #ifdef _DEBUG
-    // コライダーのデバッグ描画
     CollisionManager::GetInstance()->DrawColliders();
 #endif
 
@@ -295,28 +264,24 @@ void GameScene::DrawWithoutEffect()
     /// ================================== ///
 
     //------------------背景 Sprite の描画------------------//
-    // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 
 
     //-------------------Model の描画-------------------//
-     // 3D モデル共通描画設定
     Object3dBasic::GetInstance()->SetCommonRenderSetting();
 
 
 
     //------------------前景 Sprite の描画------------------//
-    // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
     player_->DrawSprite();
     boss_->DrawSprite();
 
-    // コントローラー UI 描画
     controllerUI_->Draw();
 
-    // ポーズメニュー描画（最前面）
+    // 最前面に描画
     if (isPaused_) {
         pauseMenu_->Draw();
     }
@@ -337,12 +302,12 @@ void GameScene::UpdateCameraMode()
 
     if (boss_->GetPhase() == 1) {
         cameraMode_ = false;
-        // フェーズ1: 動的制限を解除（ステージ全体を移動可能）
+        // 移動制限を解除しステージ全体を移動可能にする
         player_->ClearDynamicBounds();
     }
     else if (boss_->GetPhase() == 2) {
         cameraMode_ = true;
-        // フェーズ2: ボス中心の戦闘エリアに移動制限
+        // ボス中心の戦闘エリアに移動制限
         Vector3 bossPos = boss_->GetTransform().translate;
         player_->SetDynamicBoundsFromCenter(bossPos, GameConst::kBossPhase2AreaSize, GameConst::kBossPhase2AreaSize);
     }
@@ -354,14 +319,12 @@ void GameScene::UpdateCameraMode()
         cameraManager_->ActivateController("TopDown");
     }
 
-    // カメラモードを Player に設定
     player_->SetMode(cameraMode_);
 
 }
 
 void GameScene::UpdateInput()
 {
-    // 入力更新は Update()冒頭で実行済み
     // カメラアニメーション再生中やデバッグカメラ操作中は入力をリセット
     if (animationController_->GetPlayState() == CameraAnimation::PlayState::PLAYING
 #ifdef  _DEBUG
@@ -380,33 +343,26 @@ void GameScene::InitializeDebugOption()
     Draw2D::GetInstance()->SetDebug(false);
     GPUParticle::GetInstance()->SetIsDebug(false);
 
-    // DebugUIManager にシーン名を設定
     DebugUIManager::GetInstance()->SetSceneName("GameScene");
 
-    // ゲームオブジェクトを DebugUIManager に登録
     DebugUIManager::GetInstance()->RegisterGameObject("Player",
         [this]() { if (player_) player_->DrawImGui(); });
     DebugUIManager::GetInstance()->RegisterGameObject("Boss",
         [this]() { if (boss_) boss_->DrawImGui(); });
 
-    // CameraSystem デバッグ UI 登録
     DebugUIManager::GetInstance()->RegisterGameObject("CameraSystem",
         []() { CameraDebugUI::Draw(); });
 
-    // CameraAnimationEditor デバッグ UI 登録
     DebugUIManager::GetInstance()->RegisterGameObject("CameraAnimationEditor",
         []() {
             CameraDebugUI::DrawAnimationEditorOnly();
-            // 更新処理も呼び出す
             CameraDebugUI::UpdateAnimationEditor(
                 FrameTimer::GetInstance()->GetDeltaTime());
         });
 
-    // コントローラー UI の DebugUI 登録
     DebugUIManager::GetInstance()->RegisterGameObject("ControllerUI",
         [this]() { if (controllerUI_) controllerUI_->DrawImGui(); });
 
-    // ポーズメニューの DebugUI 登録
     DebugUIManager::GetInstance()->RegisterGameObject("PauseMenu",
         [this]() { if (pauseMenu_) pauseMenu_->DrawImGui(); });
 
@@ -417,7 +373,6 @@ void GameScene::InitializeDebugOption()
 
 void GameScene::InitializePostEffect()
 {
-    // PostEffect の初期化
     RGBSplitParam rgbParam{
         .redOffset = Vector2(-0.01f, 0.0f),
         .greenOffset = Vector2(0.01f, 0.0f),
@@ -432,15 +387,12 @@ void GameScene::InitializePostEffect()
 
 void GameScene::InitializeObject3d()
 {
-    // SkyBox の初期化
     skyBox_ = std::make_unique<SkyBox>();
     skyBox_->Initialize(EnginePaths::TexturePath("my_skybox.dds"));
 
-    // 床モデルの UV 変換設定
     groundUvTransform_.translate = Vector3(0.0f, 0.0f, 0.0f);
     groundUvTransform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
     groundUvTransform_.scale = Vector3(100.0f, 100.0f, 100.0f);
-    // 床モデルの初期化
     ground_ = std::make_unique<Object3d>();
     ground_->Initialize();
     ground_->SetModel("ground_black.gltf");
@@ -456,20 +408,16 @@ void GameScene::InitializeObject3d()
     //-----------Boss の初期化--------------------//
     boss_ = std::make_unique<Boss>();
     boss_->Initialize();
-    // ボスにプレイヤーの参照を設定
     boss_->SetPlayer(player_.get());
-    // ゲーム開始時の演出が終わるまで一時停止状態に設定
+    // 開始演出が終わるまで一時停止
     boss_->SetIsPause(true);
-    // プレイヤーにボスの参照を設定
     player_->SetBoss(boss_.get());
 
-    // コントローラー UI にボス参照を設定（フェーズ判定用）
     controllerUI_->SetBoss(boss_.get());
 }
 
 void GameScene::InitializeCameraSystem()
 {
-    // カメラマネージャーの初期化
     cameraManager_ = CameraManager::GetInstance();
     cameraManager_->Initialize((*Object3dBasic::GetInstance()->GetCamera()));
 
@@ -477,7 +425,7 @@ void GameScene::InitializeCameraSystem()
     auto tpController = std::make_unique<ThirdPersonController>();
     thirdPersonController_ = tpController.get();
     thirdPersonController_->SetTarget(&player_->GetTransform());
-    // ボスをセカンダリターゲットとして設定し、注視機能を有効化
+    // ボスをセカンダリターゲットにして注視を有効化
     thirdPersonController_->SetSecondaryTarget(&boss_->GetTransform());
     thirdPersonController_->EnableLookAtTarget(true);
     cameraManager_->RegisterController("ThirdPerson", std::move(tpController));
@@ -498,7 +446,6 @@ void GameScene::InitializeCameraSystem()
 
 void GameScene::SetCollisionMask()
 {
-    // CollisionManager を取得
     CollisionManager* collisionManager = CollisionManager::GetInstance();
 
     collisionManager->SetCollisionMask(
@@ -534,20 +481,18 @@ void GameScene::SetCollisionMask()
 
 void GameScene::InitializeEmitterManger()
 {
-    // シーンのエミッターをまとめて読み込む
     emitterManager_->LoadScenePreset("gamescene_preset");
 
-    // ボスフェーズ2用の境界線初期状態は無効化（ボスフェーズ2まで非表示）
+    // フェーズ2まで境界線は非表示
     emitterManager_->SetEmitterActive("boss_border_left", false);
     emitterManager_->SetEmitterActive("boss_border_right", false);
     emitterManager_->SetEmitterActive("boss_border_front", false);
     emitterManager_->SetEmitterActive("boss_border_back", false);
 
-    // ボス近接攻撃予兆エフェクトの読み込みと初期化
+    // ボス近接攻撃予兆エフェクト
     emitterManager_->LoadPreset("boss_attack_sign", "boss_melee_attack_sign");
     emitterManager_->SetEmitterActive("boss_melee_attack_sign", false);
 
-    // ボスのフェーズチェンジエフェクトの読み込み
     emitterManager_->LoadPreset("can_attack_sign", "can_attack_sign");
 
     // ===== Phase1 リパルス・ショックウェーブ用エミッター =====
@@ -563,25 +508,20 @@ void GameScene::InitializeEmitterManger()
         emitterManager_->SetEmitterActive(emitterName, false);
     }
 
-    // ボスに EmitterManager を設定
     boss_->SetEmitterManager(emitterManager_.get());
 
-    // ボスモデルをスポーン形状とする MeshEmitter "boss_aura" を初期化
+    // ボスモデルをスポーン形状とする MeshEmitter
     boss_->InitializeAuraEmitter();
 
-    // テレポート演出用 MeshEmitter "boss_particle_body" を初期化
+    // テレポート演出用 MeshEmitter
     boss_->InitializeBodyParticleEmitter();
 
-    // ボスに ForceFieldManager を設定
     boss_->SetForceFieldManager(forceFieldManager_.get());
 
-    // プレイヤーに ForceFieldManager を設定
     player_->SetForceFieldManager(forceFieldManager_.get());
 
-    // プレイヤーに EmitterManager を設定
     player_->SetEmitterManager(emitterManager_.get());
 
-    // パリィエフェクトの初期状態を設定
     emitterManager_->LoadPreset("parry_true", "parry_effect");
     emitterManager_->SetEmitterActive("parry_effect", false);
     emitterManager_->SetEmitterActive("parry_success", false);
@@ -589,25 +529,20 @@ void GameScene::InitializeEmitterManger()
 
 void GameScene::InitializeEffectManager()
 {
-    // ゲームオーバー演出マネージャー
     overEffectManager_ = std::make_unique<OverEffectManager>(emitterManager_.get());
     overEffectManager_->SetTarget(player_.get());
 
-    // ゲームクリア演出マネージャー
     clearEffectManager_ = std::make_unique<ClearEffectManager>(emitterManager_.get());
     clearEffectManager_->SetTarget(boss_.get());
 
-    // ボーダーパーティクルマネージャー
     bossBorderManager_ = std::make_unique<BossBorderParticleManager>(emitterManager_.get(), GameConst::kBossPhase2AreaSize);
 
-    // ダッシュエフェクトマネージャー
     dashEffectManager_ = std::make_unique<DashEffectManager>(emitterManager_.get());
     dashEffectManager_->InitializePosition(player_->GetTranslate());
 
-    // プロジェクタイル（弾）管理マネージャー
     projectileManager_ = std::make_unique<ProjectileManager>(emitterManager_.get());
 
-    // プレイヤー弾が ForceField の影響を受けるよう ForceFieldManager を注入
+    // プレイヤー弾を ForceField の影響下に置く
     projectileManager_->SetForceFieldManager(forceFieldManager_.get());
 }
 
@@ -619,18 +554,16 @@ void GameScene::SetCameraAnimation()
     animationController_->SwitchAnimation("game_start");
     animationController_->Play();
 
-    // オーバー演出アニメーションの読み込みと設定
     animationController_->LoadAnimationFromFile("over_anim");
     animationController_->SetAnimationTargetByName("over_anim", player_->GetTransformPtr());
 
-    // クリア演出アニメーションの読み込みと設定
     animationController_->LoadAnimationFromFile("clear_anim");
     animationController_->SetAnimationTargetByName("clear_anim", boss_->GetTransformPtr());
 }
 
 void GameScene::CheckPause()
 {
-    // ポーズ入力チェック（ゲーム開始後、演出中以外、生存中のみ）
+    // ゲーム開始後、演出中以外、生存中のみポーズ可能
     if (isStart_ && !player_->IsDead() && !boss_->IsDead() &&
         animationController_->GetPlayState() != CameraAnimation::PlayState::PLAYING) {
         if (inputHandler_->IsPaused()) {

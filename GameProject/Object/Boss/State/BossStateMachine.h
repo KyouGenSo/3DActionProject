@@ -7,59 +7,38 @@ class Boss;
 class BossState;
 
 /// <summary>
-/// ボス状態管理マシン
-/// 外部イベント駆動の状態（スタン・離脱等）を管理
-/// AI 意思決定は BehaviorTree に委譲
+/// 外部イベント駆動の状態（スタン・離脱等）を管理。AI 意思決定は BehaviorTree が担う
 /// </summary>
 class BossStateMachine {
 public:
-	/// <summary>
-	/// コンストラクタ
-	/// </summary>
-	/// <param name="boss">管理対象のボス</param>
 	BossStateMachine(Boss* boss);
 
-	/// <summary>
-	/// デストラクタ
-	/// </summary>
 	~BossStateMachine();
 
-	/// <summary>
-	/// 更新処理
-	/// </summary>
-	/// <param name="deltaTime">前フレームからの経過時間</param>
 	void Update(float deltaTime);
 
 	/// <summary>
-	/// 状態を名前で変更
+	/// 指定名のステートへ遷移。未登録名・現在と同じステートなら何もしない（Exit→Enter を呼ぶ）
 	/// </summary>
-	/// <param name="stateName">遷移先の状態名</param>
+	/// <param name="stateName">遷移先のステート登録名</param>
 	void ChangeState(const std::string& stateName);
 
 	/// <summary>
-	/// 状態を登録
+	/// ステートを登録名に紐付けて保持。同名は上書き
 	/// </summary>
-	/// <param name="name">状態名</param>
-	/// <param name="state">状態インスタンス</param>
+	/// <param name="name">遷移時に使う登録名</param>
+	/// <param name="state">所有権を移すステート実体</param>
 	void RegisterState(const std::string& name, std::unique_ptr<BossState> state);
 
-	/// <summary>
-	/// 現在の状態を取得
-	/// </summary>
-	/// <returns>現在の状態ポインタ</returns>
 	BossState* GetCurrentState() const { return currentState_; }
 
-	/// <summary>
-	/// 現在の状態名を取得
-	/// </summary>
-	/// <returns>現在の状態名</returns>
 	const std::string& GetCurrentStateName() const;
 
 	/// <summary>
-	/// 名前で状態を取得
+	/// 登録名からステート実体を取得
 	/// </summary>
-	/// <param name="name">取得する状態名</param>
-	/// <returns>状態ポインタ（見つからない場合は nullptr）</returns>
+	/// <param name="name">ステート登録名</param>
+	/// <returns>該当ステート。未登録なら nullptr</returns>
 	BossState* GetState(const std::string& name) const;
 
 private:

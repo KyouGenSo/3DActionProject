@@ -22,13 +22,12 @@ BTBossSlashAttack::~BTBossSlashAttack() {
 }
 
 Tako::BTNodeStatus BTBossSlashAttack::OnExecute(Tako::BTBlackboard* /*blackboard*/, Boss* boss, float deltaTime) {
-    // フェーズ管理: Warning → Blinking → Attack → Recovery
     const float warningEnd = warningDuration_;
     const float blinkEnd = warningEnd + blinkDuration_;
     const float attackEnd = blinkEnd + attackDuration_;
 
     if (elapsedTime_ < warningEnd) {
-        // Warning フェーズでは Decal を固定アルファで表示（OnInitialize で設定済み）
+        // Warning: Decal を固定アルファで表示（OnInitialize で設定済み）
     }
     else if (elapsedTime_ < blinkEnd) {
         UpdateBlinkingPhase(elapsedTime_ - warningEnd);
@@ -44,7 +43,7 @@ Tako::BTNodeStatus BTBossSlashAttack::OnExecute(Tako::BTBlackboard* /*blackboard
             EndAttackPhase(boss);
             hasEndedAttack_ = true;
         }
-        // Recovery 突入（多重呼び出しは Helper がガード）
+        // 多重呼び出しは Helper がガード
         EnterAttackRecovery(boss);
     }
 
@@ -65,10 +64,9 @@ void BTBossSlashAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss)
 
     totalDuration_ = warningDuration_ + blinkDuration_ + attackDuration_ + recoveryTime_;
 
-    // プレイヤー位置を取得・確定（発動時の位置を使い続ける）
+    // 発動時のプレイヤー位置を着弾点として固定
     Vector3 targetPos = blackboard->GetPtr<Player>("player")->GetTransform().translate;
 
-    // Decal の生成（Circle 形状）
     float diameter = attackRadius_ * 2.0f;
     slashDecal_ = std::make_unique<Decal>();
     slashDecal_->Initialize();
@@ -79,7 +77,6 @@ void BTBossSlashAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss)
     slashDecal_->SetColor(Vector4(1.0f, 0.2f, 0.1f, kDecalBaseAlpha));
     slashDecal_->SetVisible(true);
 
-    // コライダー
     colliderTransform_.translate = targetPos;
     colliderTransform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
     colliderTransform_.scale = Vector3(1.0f, 1.0f, 1.0f);
@@ -92,7 +89,6 @@ void BTBossSlashAttack::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss)
     slashCollider_->SetActive(false);
     CollisionManager::GetInstance()->AddCollider(slashCollider_.get());
 
-    // パーティクルエミッタ初期化
     EmitterManager* emitterMgr = boss->GetEmitterManager();
     if (emitterMgr && !particleInitialized_) {
         emitterName_ = "slash_attack_0";

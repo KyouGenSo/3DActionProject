@@ -10,12 +10,10 @@ void BossPhaseManager::Initialize(float maxHp, float phase2Threshold, float phas
 
 void BossPhaseManager::Update(float currentHp)
 {
-    // フェーズ2への移行準備
     if (currentHp <= phase2Threshold_ && phase_ == 1) {
         isReadyToChangePhase_ = true;
     }
 
-    // 死亡判定
     if (currentHp <= 0.0f && life_ > 0) {
         life_--;
 

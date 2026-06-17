@@ -14,182 +14,108 @@ class CameraAnimationCurveEditor;
 class CameraAnimationHistory;
 
 /// <summary>
-/// 高度なカメラアニメーションエディター
-/// プロフェッショナルなアニメーション編集機能を提供
+/// タイムライン・カーブ・インスペクターを統合したカメラアニメーション編集 UI
 /// </summary>
 class CameraAnimationEditor {
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
     CameraAnimationEditor();
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     ~CameraAnimationEditor();
 
-    /// <summary>
-    /// 初期化
-    /// </summary>
-    /// <param name="animation">編集対象のアニメーション</param>
-    /// <param name="camera">カメラ</param>
     void Initialize(CameraAnimation* animation, Tako::Camera* camera);
 
     /// <summary>
-    /// 初期化（CameraAnimationController 使用）
+    /// コントローラー経由で初期化（複数アニメーション管理）
     /// </summary>
-    /// <param name="controller">アニメーションコントローラー</param>
-    /// <param name="camera">カメラ</param>
     void Initialize(class CameraAnimationController* controller, Tako::Camera* camera);
 
-    /// <summary>
-    /// エディター UI の描画
-    /// </summary>
     void Draw();
 
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    /// <param name="deltaTime">前フレームからの経過時間</param>
     void Update(float deltaTime);
 
-    /// <summary>
-    /// キーボードショートカット処理
-    /// </summary>
     void ProcessShortcuts();
 
-    /// <summary>
-    /// エディターを開く
-    /// </summary>
     void Open() { isOpen_ = true; }
 
-    /// <summary>
-    /// エディターを閉じる
-    /// </summary>
     void Close() { isOpen_ = false; }
 
-    /// <summary>
-    /// エディターが開いているか
-    /// </summary>
     bool IsOpen() const { return isOpen_; }
 
     /// <summary>
-    /// ターゲットトランスフォームを設定
+    /// 相対座標の基準ターゲットを設定。アニメーションとコントローラーにも反映
     /// </summary>
-    /// <param name="target">ターゲットトランスフォーム</param>
-    /// <param name="name">ターゲット名（表示用）</param>
+    /// <param name="target">基準 Transform（nullptr で解除）</param>
+    /// <param name="name">表示用の名前。空なら target の有無に応じて "Target"/"None"</param>
     void SetTarget(const Tako::Transform* target, const std::string& name = "");
 
-    /// <summary>
-    /// ターゲットトランスフォームを取得
-    /// </summary>
     const Tako::Transform* GetTarget() const { return targetTransform_; }
 
 private:
-    /// <summary>
-    /// メインメニューバーの描画
-    /// </summary>
     void DrawMenuBar();
 
-    /// <summary>
-    /// アニメーション選択 UI の描画
-    /// </summary>
     void DrawAnimationSelector();
 
-    /// <summary>
-    /// タイムラインパネルの描画
-    /// </summary>
     void DrawTimelinePanel();
 
-    /// <summary>
-    /// インスペクターパネルの描画
-    /// </summary>
     void DrawInspectorPanel();
 
-    /// <summary>
-    /// カーブエディターパネルの描画
-    /// </summary>
     void DrawCurveEditorPanel();
 
-    /// <summary>
-    /// ステータスバーの描画
-    /// </summary>
     void DrawStatusBar();
 
-    /// <summary>
-    /// 再生コントロールの描画
-    /// </summary>
     void DrawPlaybackControls();
 
     /// <summary>
-    /// グリッドスナップの処理
+    /// 時刻をグリッド間隔へ丸める
     /// </summary>
-    /// <param name="time">入力時間</param>
-    /// <returns>スナップ後の時間</returns>
+    /// <param name="time">入力時刻（秒）</param>
+    /// <returns>スナップ有効時は丸めた時刻、無効時は time をそのまま返す</returns>
     float SnapToGrid(float time) const;
 
-    /// <summary>
-    /// コピー処理
-    /// </summary>
     void CopySelectedKeyframes();
 
-    /// <summary>
-    /// ペースト処理
-    /// </summary>
     void PasteKeyframes();
 
-    /// <summary>
-    /// 削除処理
-    /// </summary>
     void DeleteSelectedKeyframes();
 
-    /// <summary>
-    /// アンドゥ処理
-    /// </summary>
     void Undo();
 
-    /// <summary>
-    /// リドゥ処理
-    /// </summary>
     void Redo();
 
 private:
-    // エディター状態
-    bool isOpen_ = false;                        ///< エディターが開いているか
+    bool isOpen_ = false;
 
     // 編集対象
-    CameraAnimation* animation_ = nullptr;       ///< 編集中のアニメーション
-    Tako::Camera* camera_ = nullptr;                   ///< カメラ
-    class CameraAnimationController* controller_ = nullptr; ///< アニメーションコントローラー（複数管理用）
+    CameraAnimation* animation_ = nullptr;
+    Tako::Camera* camera_ = nullptr;
+    class CameraAnimationController* controller_ = nullptr; ///< 複数アニメーション管理用
 
     // UI コンポーネント
-    std::unique_ptr<CameraAnimationTimeline> timeline_;     ///< タイムラインコンポーネント
-    std::unique_ptr<CameraAnimationCurveEditor> curveEditor_; ///< カーブエディター
-    std::unique_ptr<CameraAnimationHistory> history_;        ///< 編集履歴
+    std::unique_ptr<CameraAnimationTimeline> timeline_;
+    std::unique_ptr<CameraAnimationCurveEditor> curveEditor_;
+    std::unique_ptr<CameraAnimationHistory> history_;
 
     // 選択状態
-    std::vector<int> selectedKeyframes_;         ///< 選択中のキーフレームインデックス
-    int hoveredKeyframe_ = -1;                   ///< ホバー中のキーフレーム
+    std::vector<int> selectedKeyframes_;
+    int hoveredKeyframe_ = -1;
 
     // ドラッグ状態
-    bool isDragging_ = false;                    ///< ドラッグ中か
-    std::vector<float> dragStartTimes_;          ///< ドラッグ開始時の各キーフレーム時間
+    bool isDragging_ = false;
+    std::vector<float> dragStartTimes_;          ///< ドラッグ開始時の各キーフレーム時刻
 
     // タイムライン設定
-    float gridSnapInterval_ = 0.1f;              ///< グリッドスナップ間隔
-    bool enableGridSnap_ = true;                 ///< グリッドスナップ有効化
+    float gridSnapInterval_ = 0.1f;              ///< 秒
+    bool enableGridSnap_ = true;
 
-    // コピーバッファ
-    std::vector<CameraKeyframe> clipboard_;      ///< コピーしたキーフレーム
+    std::vector<CameraKeyframe> clipboard_;
 
     // プレビュー機能
-    bool enablePreview_ = false;                  ///< プレビューモード有効化
-    std::string previousControllerName_;         ///< プレビュー前のコントローラー名
+    bool enablePreview_ = false;
+    std::string previousControllerName_;         ///< プレビュー復帰先のコントローラー名
 
     // ターゲット設定
-    const Tako::Transform* targetTransform_ = nullptr;  ///< ターゲットトランスフォーム
-    std::string targetName_ = "None";            ///< ターゲット名（表示用）
+    const Tako::Transform* targetTransform_ = nullptr;
+    std::string targetName_ = "None";            ///< 表示用
 };
 
 #endif // _DEBUG

@@ -11,206 +11,161 @@
 #include <memory>
 
 /// <summary>
-/// タイトルシーンクラス
-/// タイトル画面の演出、UI 表示、ゲーム開始処理を管理
+/// タイトル画面の演出・UI・ゲーム開始処理を管理
 /// </summary>
 class TitleScene : public Tako::BaseScene
 {
 public: // メンバ関数
 
-	/// <summary>
-	/// 初期化
-	/// </summary>
 	void Initialize() override;
 
-	/// <summary>
-	/// 終了処理
-	/// </summary>
 	void Finalize() override;
 
-	/// <summary>
-	/// 更新
-	/// </summary>
 	void Update() override;
 
-	/// <summary>
-	/// 描画
-	/// </summary>
 	void Draw() override;
 	void DrawWithoutEffect() override;
 
-	/// <summary>
-	/// ImGui の描画
-	/// </summary>
 	void DrawImGui() override;
 
-	/// <summary>
-	/// タイトルテキストアニメーションを再生
-	/// </summary>
 	void PlayTitleAnimation();
 
-	/// <summary>
-	/// タイトルテキストアニメーションを停止
-	/// </summary>
 	void StopTitleAnimation();
 
-	/// <summary>
-	/// タイトルテキストアニメーションをリセット
-	/// </summary>
 	void ResetTitleAnimation();
 
 private: // メンバ関数
 
 	// === 初期化系関数 === //
 
-	/// <summary>
-	/// デバッグ UI の初期化
-	/// GlobalVariables にタイトルシーンのパラメータグループを登録
-	/// </summary>
 	void InitializeDebugUI();
 
-	/// <summary>
-	/// カメラの初期化
-	/// カメラ位置と注視点を設定
-	/// </summary>
 	void InitializeCamera();
 
 	/// <summary>
-	/// ポストエフェクトの初期化
-	/// RGBSplit と Vignette エフェクトのパラメータを設定
+	/// RGBSplit と Vignette のパラメータを設定
 	/// </summary>
 	void InitializePostEffects();
 
 	/// <summary>
-	/// スプライトの初期化
-	/// 背景、タイトルテキスト、スタートボタンなどの UI 要素を作成
+	/// 背景・タイトルテキスト・スタートボタンを生成
 	/// </summary>
 	void InitializeSprites();
 
-	/// <summary>
-	/// パーティクルの初期化
-	/// エミッターマネージャーの設定とエフェクト用パーティクルの準備
-	/// </summary>
 	void InitializeParticles();
 
 	// === 更新系関数 === //
 
 	/// <summary>
-	/// ウィンドウリサイズ処理
-	/// スプライトの位置やサイズを新しいウィンドウサイズに合わせて調整
+	/// ウィンドウサイズに合わせてスプライト位置・サイズを調整
 	/// </summary>
 	void UpdateWindowResize();
 
 	/// <summary>
-	/// スタートボタンの点滅アニメーション更新
-	/// sin カーブを使用してアルファ値を滑らかに変化させる
+	/// sin カーブでアルファ値を変化させ点滅させる
 	/// </summary>
 	void UpdateStartButtonBlink();
 
 	/// <summary>
-	/// タイトルテキストアニメーション更新
-	/// フレームアニメーション（0〜9のスプライトを順次表示）を制御
+	/// 10枚のスプライトを順次表示するフレームアニメーション
 	/// </summary>
 	void UpdateTitleTextAnimation();
 
 	/// <summary>
-	/// slash パーティクルアニメーション更新
-	/// タイトルテキストアニメーションと同期してパーティクル発生量を増加
+	/// タイトルアニメーションと同期しパーティクル発生量を増加
 	/// </summary>
 	void UpdateSlashParticleAnimation();
 
 	/// <summary>
-	/// タイトルエフェクトアニメーション更新
-	/// タイトルテキストの拡大フェードアウトエフェクトを制御
+	/// タイトルテキストの拡大フェードアウト
 	/// </summary>
 	void UpdateTitleEffectAnimation();
 
 	/// <summary>
-	/// 入力処理
-	/// スペースキーまたは A ボタンでゲームシーンへ遷移
+	/// スペース/A ボタンでゲームシーンへ遷移
 	/// </summary>
 	void UpdateInput();
 
 private: // メンバ変数
 
-	std::unique_ptr<Tako::EmitterManager> emitterManager_;  ///< パーティクルエミッター管理
-	std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;  ///< パーティクル用フォースフィールド管理
+	std::unique_ptr<Tako::EmitterManager> emitterManager_;
+	std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;
 
-	std::unique_ptr<Tako::Sprite> titleBG_;  ///< 背景スプライト
+	std::unique_ptr<Tako::Sprite> titleBG_;
 
-	std::vector<std::unique_ptr<Tako::Sprite>> titleTextSprites_;  ///< タイトルテキストアニメーション用スプライト（10フレーム分）
+	std::vector<std::unique_ptr<Tako::Sprite>> titleTextSprites_;  ///< 10フレーム分
 
-	std::unique_ptr<Tako::Sprite> startButtonText_;  ///< スタートボタンスプライト（点滅アニメーション対象）
+	std::unique_ptr<Tako::Sprite> startButtonText_;
 
-	std::unique_ptr<Tako::Sprite> titleTextEffect_;  ///< タイトルテキストエフェクト用スプライト（拡大フェードアウト用）
+	std::unique_ptr<Tako::Sprite> titleTextEffect_;  ///< 拡大フェードアウト用
 
-	Tako::RGBSplitParam rgbSplitParam_{};  ///< RGBSplit ポストエフェクトのパラメータ
-	Tako::VignetteParam vignetteParam_{};  ///< Vignette ポストエフェクトのパラメータ
+	Tako::RGBSplitParam rgbSplitParam_{};
+	Tako::VignetteParam vignetteParam_{};
 
-	float offsetY = CameraConfig::HIDDEN_Y;  ///< カメラ非表示用 Y 方向オフセット
+	float offsetY = CameraConfig::HIDDEN_Y;
 
 	// === カメラ位置用変数 === //
-	float cameraY_ = 9.0f;  ///< カメラ Y 座標
-	float cameraZ_ = -34.0f;  ///< カメラ Z 座標
+	float cameraY_ = 9.0f;
+	float cameraZ_ = -34.0f;
 
 	// === UI 位置・サイズ用変数 === //
-	float titleTextWidth_ = 500.0f;  ///< タイトルテキスト幅
-	float titleTextHeight_ = 200.0f;  ///< タイトルテキスト高さ
-	float titleTextY_ = 100.0f;  ///< タイトルテキスト Y 座標
-	float startButtonBottomOffset_ = 250.0f;  ///< スタートボタン下端からのオフセット
-	float sceneTransitionProgress_ = 0.9f;  ///< シーン遷移トリガー進行度
+	float titleTextWidth_ = 500.0f;
+	float titleTextHeight_ = 200.0f;
+	float titleTextY_ = 100.0f;
+	float startButtonBottomOffset_ = 250.0f;
+	float sceneTransitionProgress_ = 0.9f;  ///< シーン遷移トリガーの進行度 0.0-1.0
 
 	// === タイトルテキストアニメーション制御用変数 === //
-	int currentFrame_ = 0;  ///< 現在表示中のフレーム番号（0〜9）
+	int currentFrame_ = 0;  ///< 0〜9
 
-	int frameCounter_ = 0;  ///< フレームカウンター（アニメーション速度制御用）
+	int frameCounter_ = 0;
 
-	int animationSpeed_ = 1;  ///< アニメーション速度（何フレームごとに切り替えるか）
+	int animationSpeed_ = 1;  ///< 何フレームごとに切り替えるか
 
-	bool isPlaying_ = false;  ///< アニメーション再生中フラグ
+	bool isPlaying_ = false;
 
-	bool isLoop_ = false;  ///< ループ再生フラグ
+	bool isLoop_ = false;
 
-	bool animationComplete_ = false;  ///< アニメーション完了フラグ
+	bool animationComplete_ = false;
 
 	// === スタートボタン点滅アニメーション用変数 === //
-	float blinkTimer_ = 0.0f;  ///< 点滅用タイマー（経過時間）
+	float blinkTimer_ = 0.0f;
 
-	float blinkSpeed_ = 1.2f;  ///< 点滅速度（周期の速さ）
+	float blinkSpeed_ = 1.2f;
 
-	float blinkMinAlpha_ = 0.0f;  ///< 点滅の最小アルファ値（完全透明）
+	float blinkMinAlpha_ = 0.0f;
 
-	float blinkMaxAlpha_ = 1.0f;  ///< 点滅の最大アルファ値（完全不透明）
+	float blinkMaxAlpha_ = 1.0f;
 
-	bool isButtonBlinking_ = true;  ///< 点滅アニメーション有効フラグ
+	bool isButtonBlinking_ = true;
 
 	// === タイトルテキスト拡大エフェクト用変数 === //
-	bool isEffectPlaying_ = false;  ///< エフェクト再生中フラグ
+	bool isEffectPlaying_ = false;
 
-	float effectTimer_ = 0.0f;  ///< エフェクト経過時間タイマー
+	float effectTimer_ = 0.0f;
 
-	float effectDuration_ = 1.5f;  ///< エフェクトの持続時間（秒）
+	float effectDuration_ = 1.5f;  ///< 秒
 
-	float effectScale_ = 1.0f;  ///< 現在のスケール値
+	float effectScale_ = 1.0f;
 
-	float effectMaxScale_ = 1.5f;  ///< 最終スケール値（拡大の上限）
+	float effectMaxScale_ = 1.5f;
 
-	float effectAlpha_ = 0.5f;  ///< 現在のアルファ値
+	float effectAlpha_ = 0.5f;
 
-	float effectInitialAlpha_ = 0.5f;  ///< 初期アルファ値
+	float effectInitialAlpha_ = 0.5f;
 
-	bool effectTriggered_ = false;  ///< エフェクト開始トリガー（一度だけ実行）
+	bool effectTriggered_ = false;  ///< 一度だけ実行するためのフラグ
 
 	// === slash パーティクルエミッターアニメーション用変数 === //
-	bool isSlashEmitterAnimating_ = false;  ///< アニメーション中フラグ
+	bool isSlashEmitterAnimating_ = false;
 
-	float slashEmitterAnimTimer_ = 0.0f;  ///< アニメーション経過時間タイマー
+	float slashEmitterAnimTimer_ = 0.0f;
 
-	float slashEmitterAnimDuration_ = 2.5f;  ///< アニメーション持続時間（タイトルテキストと同期：10フレーム * animationSpeed / 60fps）
+	float slashEmitterAnimDuration_ = 2.5f;  ///< タイトルテキストと同期：10フレーム * animationSpeed / 60fps
 
-	uint32_t slashEmitterStartCount_ = 1;  ///< Count 値のアニメーション開始値（初期発生数）
-	uint32_t slashEmitterEndCount_ = 300;  ///< Count 値のアニメーション終了値（最大発生数）
+	uint32_t slashEmitterStartCount_ = 1;
+	uint32_t slashEmitterEndCount_ = 300;
 
-	float slashEmitterStartFreq_ = 1.0f;  ///< Frequency 値のアニメーション開始値（初期発生頻度）
-	float slashEmitterEndFreq_ = 0.001f;  ///< Frequency 値のアニメーション終了値（最終発生頻度）
+	float slashEmitterStartFreq_ = 1.0f;
+	float slashEmitterEndFreq_ = 0.001f;
 };

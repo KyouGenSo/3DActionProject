@@ -26,13 +26,12 @@ void MeleeAttackCollider::OnCollisionStay(Collider* other) {
         if (enemy && !detectedEnemy_) {
             detectedEnemy_ = enemy;
             if (canDamage) {
-                // ノックバック方向を計算（プレイヤー → ボス）
+                // ノックバック方向（プレイヤー→ボス）。水平面のみ
                 Tako::Vector3 knockbackDir = enemy->GetTransform().translate - player_->GetTransform().translate;
                 knockbackDir.y = 0.0f;
                 if (knockbackDir.Length() > 0.01f) {
                     knockbackDir = knockbackDir.Normalize();
                 }
-                // ボス側で状態に応じた判定を行う
                 enemy->OnMeleeAttackHit(attackDamage_, knockbackDir, knockbackEnabled_);
                 canDamage = false;
             }

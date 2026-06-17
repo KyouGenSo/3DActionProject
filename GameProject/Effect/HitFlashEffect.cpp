@@ -18,11 +18,9 @@ void HitFlashEffect::Update(float deltaTime, Object3d* target, const Vector4& or
     timer_ += deltaTime;
 
     if (timer_ <= duration_) {
-        // フラッシュ色を適用
         target->SetMaterialColor(flashColor_);
     }
     else {
-        // 元の色に戻してエフェクト終了
         isActive_ = false;
         target->SetMaterialColor(originalColor);
     }

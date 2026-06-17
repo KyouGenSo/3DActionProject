@@ -28,20 +28,16 @@ void OverEffectManager::Update(float deltaTime)
         return;
     }
 
-    // タイマー更新
     timer_ += deltaTime;
 
-    // プレイヤー位置にエミッター位置を設定
     if (target_) {
         Tako::Vector3 playerPos = target_->GetTranslate();
         emitterManager_->SetEmitterPosition("over1", playerPos);
         emitterManager_->SetEmitterPosition("over2", playerPos);
     }
 
-    // フェーズに応じた処理
     switch (phase_) {
     case Phase::WaitEmit1:
-        // 第1エミッター発火
         if (timer_ > params_.emit1Time && !emit1Fired_) {
             emitterManager_->CreateTemporaryEmitterFrom("over1", "over1_temp", 0.5f);
             emit1Fired_ = true;
@@ -50,7 +46,6 @@ void OverEffectManager::Update(float deltaTime)
         break;
 
     case Phase::WaitEmit2:
-        // 第2エミッター発火
         if (timer_ > params_.emit2Time && !emit2Fired_) {
             emitterManager_->CreateTemporaryEmitterFrom("over2", "over2_temp", 0.1f);
             emit2Fired_ = true;
@@ -59,7 +54,6 @@ void OverEffectManager::Update(float deltaTime)
         break;
 
     case Phase::ScaleDown:
-        // プレイヤースケールの減少
         if (target_) {
             Tako::Vector3 newScale = target_->GetScale() -
                 Tako::Vector3(params_.scaleDecreaseRate, params_.scaleDecreaseRate, params_.scaleDecreaseRate) * deltaTime;
@@ -69,7 +63,6 @@ void OverEffectManager::Update(float deltaTime)
             target_->SetScale(newScale);
         }
 
-        // 演出総時間経過で完了
         if (timer_ > params_.totalTime) {
             phase_ = Phase::Complete;
             isComplete_ = true;

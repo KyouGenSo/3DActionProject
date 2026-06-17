@@ -14,12 +14,10 @@ BTBossWideShoot::BTBossWideShoot() {
 }
 
 Tako::BTNodeStatus BTBossWideShoot::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
-    // チャージフェーズ：プレイヤーの方向を向く
     if (elapsedTime_ < chargeTime_) {
         AimAtPlayer(blackboard, deltaTime);
         bulletSignEffect_.Update(boss, deltaTime);
     }
-    // 発射フェーズ
     else if (currentSweep_ < sweepCount_) {
         if (!hasEndedEffect_) {
             bulletSignEffect_.End(boss);
@@ -36,7 +34,6 @@ Tako::BTNodeStatus BTBossWideShoot::OnExecute(Tako::BTBlackboard* blackboard, Bo
                 currentSweep_++;
                 firedInSweep_ = 0;
 
-                // 全スイープ完了で硬直フェーズ開始
                 if (currentSweep_ >= sweepCount_) {
                     EnterAttackRecovery(boss);
                 }
@@ -63,7 +60,6 @@ void BTBossWideShoot::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
     firedInSweep_ = 0;
     hasEndedEffect_ = false;
 
-    // firingDuration から fireInterval を算出
     int totalBullets = bulletsPerSweep_ * sweepCount_;
     if (totalBullets > 0) {
         fireInterval_ = firingDuration_ / static_cast<float>(totalBullets);
@@ -73,7 +69,7 @@ void BTBossWideShoot::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
 
     bulletSignEffect_.Start(boss, chargeTime_);
 
-    // 基準方向を計算（プレイヤー方向）
+    // 基準方向 = プレイヤー方向（XZ 平面）
     Player* player = blackboard->GetPtr<Player>("player");
     if (player) {
         Vector3 playerPos = player->GetTransform().translate;

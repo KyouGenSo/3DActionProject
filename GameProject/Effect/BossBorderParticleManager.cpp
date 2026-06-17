@@ -8,19 +8,15 @@ BossBorderParticleManager::BossBorderParticleManager(Tako::EmitterManager* emitt
 
 void BossBorderParticleManager::Update(int bossPhase, const Tako::Vector3& bossPosition)
 {
-    // ボスフェーズ2の境界線パーティクル制御
     bool shouldShowBorder = (bossPhase == 2);
 
     if (shouldShowBorder && !isActive_) {
-        // フェーズ2突入時：境界線を有効化
         SetActive(true);
     }
     else if (!shouldShowBorder && isActive_) {
-        // フェーズ1に戻った時：境界線を無効化
         SetActive(false);
     }
 
-    // アクティブ中はボスの移動に追従
     if (isActive_) {
         UpdatePositions(bossPosition);
     }
@@ -42,7 +38,7 @@ void BossBorderParticleManager::SetActive(bool active)
 
 void BossBorderParticleManager::UpdatePositions(const Tako::Vector3& bossPosition)
 {
-    // Y 座標を0に固定してボス周囲に配置
+    // Y を0に固定し、ボスの XZ 周囲4方向に配置
     Tako::Vector3 basePos = Tako::Vector3(bossPosition.x, 0.0f, bossPosition.z);
     float areaSize = areaSize_;
 

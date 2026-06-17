@@ -9,100 +9,69 @@
 #include <memory>
 
 /// <summary>
-/// カメラアニメーションクラス
-/// キーフレーム間の補間によって滑らかなカメラ動作を実現
+/// キーフレーム間補間でカメラを動かすアニメーション
 /// </summary>
 class CameraAnimation {
 public:
-    /// <summary>
-    /// 再生状態
-    /// </summary>
     enum class PlayState {
-        STOPPED,    ///< 停止中
-        PLAYING,    ///< 再生中
-        PAUSED      ///< 一時停止中
+        STOPPED,
+        PLAYING,
+        PAUSED
     };
 
-    /// <summary>
-    /// アニメーション開始モード
-    /// </summary>
     enum class StartMode {
-        JUMP_CUT,        ///< 即座に最初のキーフレームにジャンプ
+        JUMP_CUT,        ///< 即座に最初のキーフレームへ
         SMOOTH_BLEND     ///< 現在位置から最初のキーフレームまで補間
     };
 
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
     CameraAnimation();
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     ~CameraAnimation();
 
-    /// <summary>
-    /// カメラのセット
-    /// </summary>
-    /// <param name="camera">アニメーションを適用するカメラ</param>
     void SetCamera(Tako::Camera* camera) { camera_ = camera; }
 
     /// <summary>
-    /// ターゲットトランスフォームのセット
+    /// 相対座標の基準ターゲット（nullptr で解除）
     /// </summary>
-    /// <param name="target">相対座標の基準となるターゲット（nullptr で解除）</param>
     void SetTarget(const Tako::Transform* target) { targetTransform_ = target; }
 
-    /// <summary>
-    /// 更新処理
-    /// </summary>
-    /// <param name="deltaTime">前フレームからの経過時間（秒）</param>
     void Update(float deltaTime);
 
     /// <summary>
-    /// キーフレームの追加
+    /// キーフレームを追加。時刻順にソートし総時間を更新
     /// </summary>
     /// <param name="keyframe">追加するキーフレーム</param>
     void AddKeyframe(const CameraKeyframe& keyframe);
 
     /// <summary>
-    /// 現在のカメラ状態からキーフレームを追加
+    /// 現在のカメラ状態から指定時刻のキーフレームを生成して追加。camera_ 未設定時は何もしない
     /// </summary>
-    /// <param name="time">キーフレームの時刻</param>
-    /// <param name="interpolation">補間タイプ</param>
+    /// <param name="time">キーフレーム時刻（秒）</param>
+    /// <param name="interpolation">このキーフレームから次への補間方法</param>
     void AddKeyframeFromCurrentCamera(float time,
         CameraKeyframe::InterpolationType interpolation = CameraKeyframe::InterpolationType::LINEAR);
 
     /// <summary>
-    /// キーフレームの削除
+    /// 指定 index のキーフレームを削除し総時間を更新。範囲外は無視
     /// </summary>
-    /// <param name="index">削除するキーフレームのインデックス</param>
+    /// <param name="index">削除するキーフレームの添字</param>
     void RemoveKeyframe(size_t index);
 
     /// <summary>
-    /// キーフレームの編集
+    /// 指定 index のキーフレームを置換。時刻順に再ソートし総時間を更新。範囲外は無視
     /// </summary>
-    /// <param name="index">編集するキーフレームのインデックス</param>
-    /// <param name="keyframe">新しいキーフレームデータ</param>
+    /// <param name="index">置換するキーフレームの添字</param>
+    /// <param name="keyframe">新しい内容</param>
     void EditKeyframe(size_t index, const CameraKeyframe& keyframe);
 
-    /// <summary>
-    /// すべてのキーフレームをクリア
-    /// </summary>
     void ClearKeyframes();
 
-    /// <summary>
-    /// 再生開始
-    /// </summary>
     void Play();
 
-    /// <summary>
-    /// 一時停止
-    /// </summary>
     void Pause();
 
     /// <summary>
-    /// 停止（時間を0にリセット）
+    /// 停止し時間を0に戻す
     /// </summary>
     void Stop();
 
@@ -112,94 +81,44 @@ public:
     void StopWithoutRestore();
 
     /// <summary>
-    /// 現在時刻をリセット
+    /// 現在時刻のみ0に戻す（状態はそのまま）
     /// </summary>
     void Reset();
 
-    /// <summary>
-    /// JSON ファイルから読み込み
-    /// </summary>
-    /// <param name="filepath">JSON ファイルパス</param>
     bool LoadFromJson(const std::string& filepath);
 
-    /// <summary>
-    /// JSON ファイルに保存
-    /// </summary>
-    /// <param name="filepath">保存先ファイルパス</param>
     bool SaveToJson(const std::string& filepath) const;
 
 #ifdef _DEBUG
-    /// <summary>
-    /// ImGui でのデバッグ表示
-    /// </summary>
     void DrawImGui();
 #endif
 
     //-----------------------------------------Getter-----------------------------------------//
 
-    /// <summary>
-    /// キーフレーム数を取得
-    /// </summary>
     [[nodiscard]] size_t GetKeyframeCount() const { return keyframes_.size(); }
 
-    /// <summary>
-    /// 指定インデックスのキーフレームを取得
-    /// </summary>
     [[nodiscard]] const CameraKeyframe& GetKeyframe(size_t index) const { return keyframes_[index]; }
 
-    /// <summary>
-    /// アニメーションの総時間を取得
-    /// </summary>
     [[nodiscard]] float GetDuration() const { return duration_; }
 
-    /// <summary>
-    /// 現在の再生時間を取得
-    /// </summary>
     [[nodiscard]] float GetPlaybackTime() const { return currentTime_; }
 
-    /// <summary>
-    /// 再生状態を取得
-    /// </summary>
     [[nodiscard]] PlayState GetPlayState() const { return playState_; }
 
-    /// <summary>
-    /// ループ設定を取得
-    /// </summary>
     [[nodiscard]] bool IsLooping() const { return isLooping_; }
 
-    /// <summary>
-    /// アニメーション名を取得
-    /// </summary>
     [[nodiscard]] const std::string& GetAnimationName() const { return animationName_; }
 
-    /// <summary>
-    /// 現在キーフレームを編集中か判定
-    /// </summary>
     [[nodiscard]] bool IsEditingKeyframe() const;
 
-    /// <summary>
-    /// 選択中のキーフレームインデックスを取得
-    /// </summary>
     [[nodiscard]] int GetSelectedKeyframeIndex() const;
 
-    /// <summary>
-    /// ターゲットトランスフォームを取得
-    /// </summary>
     [[nodiscard]] const Tako::Transform* GetTarget() const { return targetTransform_; }
 
-    /// <summary>
-    /// 開始モードを取得
-    /// </summary>
     [[nodiscard]] StartMode GetStartMode() const { return startMode_; }
 
-    /// <summary>
-    /// ブレンド時間を取得
-    /// </summary>
     [[nodiscard]] float GetBlendDuration() const { return blendDuration_; }
 
-    /// <summary>
-    /// ブレンド中かを判定
-    /// </summary>
     [[nodiscard]] bool IsBlending() const { return isBlending_; }
 
     /// <summary>
@@ -209,141 +128,116 @@ public:
 
     //-----------------------------------------Setter-----------------------------------------//
 
-    /// <summary>
-    /// ループ設定
-    /// </summary>
     void SetLooping(bool loop) { isLooping_ = loop; }
 
-    /// <summary>
-    /// 再生速度の設定
-    /// </summary>
     void SetPlaySpeed(float speed) { playSpeed_ = speed; }
 
-    /// <summary>
-    /// アニメーション名の設定
-    /// </summary>
     void SetAnimationName(const std::string& name) { animationName_ = name; }
 
     /// <summary>
-    /// 現在時刻の設定（シーク）
+    /// 現在時刻を設定（シーク）
     /// </summary>
     void SetCurrentTime(float time);
 
     /// <summary>
-    /// 指定したキーフレームをカメラに適用
+    /// キーフレームをカメラに適用（index 省略時は選択中キーフレーム）
     /// </summary>
-    /// <param name="index">適用するキーフレームのインデックス（省略時は選択中のキーフレーム）</param>
     void ApplyKeyframeToCamera(int index = -1);
 
-    /// <summary>
-    /// 開始モードの設定
-    /// </summary>
-    /// <param name="mode">開始モード</param>
     void SetStartMode(StartMode mode) { startMode_ = mode; }
 
-    /// <summary>
-    /// ブレンド時間の設定
-    /// </summary>
-    /// <param name="duration">ブレンド時間（秒）</param>
     void SetBlendDuration(float duration) { blendDuration_ = duration; }
 
 private:
-    /// <summary>
-    /// キーフレームを時間でソート
-    /// </summary>
     void SortKeyframes();
 
-    /// <summary>
-    /// アニメーションの総時間を更新
-    /// </summary>
     void UpdateDuration();
 
     /// <summary>
-    /// 現在時刻に対応する2つのキーフレームを検索
+    /// time を挟む前後キーフレームの index を求める
     /// </summary>
-    /// <param name="time">検索時刻</param>
-    /// <param name="prevIndex">前のキーフレームインデックス（出力）</param>
-    /// <param name="nextIndex">次のキーフレームインデックス（出力）</param>
-    /// <returns>キーフレームが見つかったか</returns>
+    /// <param name="time">対象時刻（秒）</param>
+    /// <param name="prevIndex">出力。time 以下で最大時刻のキーフレーム添字</param>
+    /// <param name="nextIndex">出力。prevIndex の次の添字。末尾超過時はループなら0、非ループなら prevIndex</param>
+    /// <returns>キーフレームが2個以上あれば true、未満なら false</returns>
     bool FindKeyframeIndices(float time, size_t& prevIndex, size_t& nextIndex) const;
 
     /// <summary>
-    /// キーフレーム間の補間
+    /// prev/next を係数 t で補間しカメラに適用。座標系は prev 側を採用
     /// </summary>
-    /// <param name="prev">前のキーフレーム</param>
-    /// <param name="next">次のキーフレーム</param>
-    /// <param name="t">補間係数（0.0～1.0）</param>
+    /// <param name="prev">補間元キーフレーム</param>
+    /// <param name="next">補間先キーフレーム</param>
+    /// <param name="t">補間係数（0.0～1.0、イージング適用後）。位置/FOVは線形、回転は Slerp</param>
     void InterpolateKeyframes(const CameraKeyframe& prev, const CameraKeyframe& next, float t);
 
     /// <summary>
-    /// イージング関数の適用
+    /// 補間係数 t にイージングを適用
     /// </summary>
-    /// <param name="t">元の補間係数</param>
-    /// <param name="type">補間タイプ</param>
-    /// <returns>イージング適用後の補間係数</returns>
+    /// <param name="t">入力係数（0.0～1.0）</param>
+    /// <param name="type">補間方法。CUBIC_BEZIER は線形にフォールバック</param>
+    /// <returns>イージング後の係数</returns>
     float ApplyEasing(float t, CameraKeyframe::InterpolationType type) const;
 
     /// <summary>
-    /// オイラー角をクォータニオンに変換
+    /// オイラー角からクォータニオンへ変換（回転順序 Y*X*Z）
     /// </summary>
     /// <param name="euler">オイラー角（ラジアン）</param>
-    /// <returns>クォータニオン</returns>
+    /// <returns>対応するクォータニオン</returns>
     Tako::Quaternion EulerToQuaternion(const Tako::Vector3& euler) const;
 
     /// <summary>
-    /// クォータニオンをオイラー角に変換
+    /// クォータニオンからオイラー角へ変換
     /// </summary>
-    /// <param name="q">クォータニオン</param>
-    /// <returns>オイラー角（ラジアン）</returns>
+    /// <param name="q">入力クォータニオン</param>
+    /// <returns>オイラー角（ラジアン）。ジンバルロック時は y を±π/2に固定</returns>
     Tako::Vector3 QuaternionToEuler(const Tako::Quaternion& q) const;
 
     /// <summary>
-    /// 選択解除時の処理（カメラを元の値に戻す）
+    /// 選択解除しカメラを元の値に戻す
     /// </summary>
     void ClearDeselectState();
 
     /// <summary>
-    /// キーフレームをカメラに直接適用（内部用）
+    /// 座標系を解決しキーフレームをカメラへ直接適用
     /// </summary>
     void ApplyKeyframeDirectly(const CameraKeyframe& kf);
 
 private:
-    std::string animationName_ = "Untitled";  ///< アニメーション名
+    std::string animationName_ = "Untitled";
 
-    std::vector<CameraKeyframe> keyframes_;  ///< キーフレーム配列
+    std::vector<CameraKeyframe> keyframes_;
 
-    Tako::Camera* camera_ = nullptr;  ///< アニメーション対象のカメラ
+    Tako::Camera* camera_ = nullptr;
 
-    const Tako::Transform* targetTransform_ = nullptr;  ///< ターゲットトランスフォーム（相対座標の基準）
+    const Tako::Transform* targetTransform_ = nullptr;  ///< 相対座標の基準
 
-    float currentTime_ = 0.0f;  ///< 現在の再生時間（秒）
+    float currentTime_ = 0.0f;  ///< 秒
 
-    float duration_ = 0.0f;  ///< アニメーションの総時間（秒）
+    float duration_ = 0.0f;  ///< 秒
 
-    float playSpeed_ = 1.0f;  ///< 再生速度（1.0が標準）
+    float playSpeed_ = 1.0f;  ///< 1.0 が標準
 
-    PlayState playState_ = PlayState::STOPPED;  ///< 再生状態
+    PlayState playState_ = PlayState::STOPPED;
 
-    bool isLooping_ = false;  ///< ループ再生フラグ
+    bool isLooping_ = false;
 
-    StartMode startMode_ = StartMode::JUMP_CUT;  ///< 開始モード
-    float blendDuration_ = 0.5f;                 ///< ブレンド時間（秒）
-    float blendProgress_ = 0.0f;                 ///< ブレンド進行度（0.0～1.0）
-    bool isBlending_ = false;                    ///< ブレンド中フラグ
+    StartMode startMode_ = StartMode::JUMP_CUT;
+    float blendDuration_ = 0.5f;                 ///< 秒
+    float blendProgress_ = 0.0f;                 ///< 0.0～1.0
+    bool isBlending_ = false;
 
     // ブレンド開始時のカメラ状態
-    Tako::Vector3 blendStartPosition_;  ///< ブレンド開始時の位置
-    Tako::Vector3 blendStartRotation_;  ///< ブレンド開始時の回転
-    float blendStartFov_;         ///< ブレンド開始時の FOV
+    Tako::Vector3 blendStartPosition_;
+    Tako::Vector3 blendStartRotation_;
+    float blendStartFov_;
 
-    // FOV 復元用
-    float originalFov_;           ///< アニメーション開始前の元の FOV 値
-    bool hasOriginalFov_;         ///< 元の FOV が保存されているかのフラグ
+    float originalFov_;           ///< アニメーション開始前の FOV
+    bool hasOriginalFov_;
 
 #ifdef _DEBUG
-    int selectedKeyframeIndex_ = -1;  ///< ImGui 用：選択中のキーフレームインデックス
-    bool showTimeline_ = true;  ///< ImGui 用：タイムライン表示フラグ
-    bool autoSortKeyframes_ = true;  ///< ImGui 用：キーフレーム自動ソートフラグ
-    CameraKeyframe tempKeyframe_;  ///< 編集用の一時キーフレーム
+    int selectedKeyframeIndex_ = -1;
+    bool showTimeline_ = true;
+    bool autoSortKeyframes_ = true;
+    CameraKeyframe tempKeyframe_;  ///< 編集用の一時バッファ
 #endif
 };

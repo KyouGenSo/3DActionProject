@@ -14,162 +14,82 @@ namespace Tako
 
 
 /// <summary>
-/// プロジェクタイル（弾）基底クラス
-/// 移動と生存時間の管理のみを担当
-/// 衝突判定は派生クラスで実装
+/// 弾の基底クラス。移動と生存時間のみ管理し、衝突判定は派生クラスで実装する。
 /// </summary>
 class Projectile {
 public:
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
     Projectile();
 
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     virtual ~Projectile();
 
     /// <summary>
-    /// 初期化
+    /// 弾を発射位置と速度で初期化し、アクティブ化する。
     /// </summary>
-    /// <param name="position">初期位置</param>
-    /// <param name="velocity">初期速度</param>
+    /// <param name="position">発射位置（ワールド座標）</param>
+    /// <param name="velocity">速度ベクトル（毎秒の移動量）</param>
     virtual void Initialize(const Tako::Vector3& position, const Tako::Vector3& velocity);
 
-    /// <summary>
-    /// 更新
-    /// </summary>
-    /// <param name="deltaTime">前フレームからの経過時間</param>
     virtual void Update(float deltaTime);
 
-    /// <summary>
-    /// 描画
-    /// </summary>
     virtual void Draw();
 
-    /// <summary>
-    /// アクティブかどうか
-    /// </summary>
     bool IsActive() const { return isActive_; }
 
-    /// <summary>
-    /// アクティブ状態を設定
-    /// </summary>
     void SetActive(bool active) { isActive_ = active; }
 
-    /// <summary>
-    /// ダメージ量を取得
-    /// </summary>
     float GetDamage() const { return damage_; }
 
-    /// <summary>
-    /// ダメージ量を設定
-    /// </summary>
     void SetDamage(float damage) { damage_ = damage; }
 
-    /// <summary>
-    /// 速度を取得
-    /// </summary>
     const Tako::Vector3& GetVelocity() const { return velocity_; }
 
-    /// <summary>
-    /// 速度を設定
-    /// </summary>
     void SetVelocity(const Tako::Vector3& velocity) { velocity_ = velocity; }
 
-    /// <summary>
-    /// Transform を取得
-    /// </summary>
     const Tako::Transform& GetTransform() const { return transform_; }
 
-    /// <summary>
-    /// Transform 参照を取得（コライダー設定用）
-    /// </summary>
     Tako::Transform* GetTransformPtr() { return &transform_; }
 
-    /// <summary>
-    /// モデルを取得
-    /// </summary>
     Tako::Object3d* GetModel() const { return model_.get(); }
 
 protected:
-    /// <summary>
-    /// 生存時間を更新
-    /// </summary>
     void UpdateLifetime(float deltaTime);
 
-    /// <summary>
-    /// 移動処理
-    /// </summary>
     virtual void Move(float deltaTime);
 
     /// <summary>
-    /// デフォルトモデルを設定
-    /// sphere.gltf を試し、なければ white_cube.gltf を使用
+    /// sphere.gltf を試し、なければ white_cube.gltf を使う。
     /// </summary>
     void SetDefaultModel();
 
     /// <summary>
-    /// エミッターを有効化し位置を設定
+    /// 弾本体のエミッターを有効化し、指定位置へ移動する。
     /// </summary>
-    /// <param name="position">エミッターの位置</param>
+    /// <param name="position">エミッターを配置するワールド座標</param>
     void ActivateBulletEmitter(const Tako::Vector3& position);
 
     /// <summary>
-    /// エミッター終了処理
-    /// 爆発エフェクトを生成し、エミッターを削除
+    /// 爆発エフェクトを一時生成し、弾と爆発のエミッターを削除する。
     /// </summary>
     void FinalizeEmitters();
 
 protected:
-    /// <summary>
-    /// 3D モデルオブジェクト（描画用）
-    /// </summary>
     std::unique_ptr<Tako::Object3d> model_;
 
-    /// <summary>
-    /// 座標変換情報
-    /// </summary>
     Tako::Transform transform_{};
 
-    /// <summary>
-    /// アクティブフラグ
-    /// </summary>
     bool isActive_ = false;
 
-    /// <summary>
-    /// 速度ベクトル
-    /// </summary>
     Tako::Vector3 velocity_;
 
-    /// <summary>
-    /// ダメージ量
-    /// </summary>
     float damage_ = 10.0f;
 
-    /// <summary>
-    /// 生存時間
-    /// </summary>
     float lifeTime_ = 5.0f;
 
-    /// <summary>
-    /// 経過時間
-    /// </summary>
     float elapsedTime_ = 0.0f;
 
-    /// <summary>
-    /// エミッターマネージャーへのポインタ
-    /// </summary>
     Tako::EmitterManager* emitterManager_ = nullptr;
 
-    /// <summary>
-    /// 弾丸エミッター名
-    /// </summary>
     std::string bulletEmitterName_;
 
-    /// <summary>
-    /// 爆発エミッター名
-    /// </summary>
     std::string explodeEmitterName_;
 };

@@ -6,7 +6,6 @@
 
 using namespace Tako;
 
-// シングルトンインスタンス
 std::unique_ptr<CameraManager> CameraManager::instance_ = nullptr;
 
 CameraManager* CameraManager::GetInstance() {
@@ -22,7 +21,6 @@ void CameraManager::Initialize(Camera* camera) {
     nameToIndex_.clear();
     needsSort_ = false;
 
-    // シェイクパラメータの読み込み
     LoadShakeParameters();
 }
 
@@ -32,7 +30,6 @@ void CameraManager::Finalize() {
     nameToIndex_.clear();
     camera_ = nullptr;
 
-    // シングルトンインスタンスを削除
     instance_.reset();
 }
 
@@ -41,21 +38,16 @@ void CameraManager::Update(float deltaTime) {
         return;
     }
 
-    // ソートが必要な場合は実行
     if (needsSort_) {
         SortControllersByPriority();
     }
 
-    // 最高優先度のアクティブなコントローラーを取得
     ICameraController* activeController = GetActiveController();
     if (activeController) {
         activeController->Update(deltaTime);
     }
 
-    // シェイクエフェクトの更新
     UpdateShake(deltaTime);
-
-    // シェイクオフセットをカメラ位置に適用
     ApplyShakeOffset();
 }
 
@@ -65,18 +57,15 @@ void CameraManager::RegisterController(const std::string& name,
         return;
     }
 
-    // 既存のコントローラーを削除
+    // 同名の既存コントローラーを置き換え
     RemoveController(name);
 
-    // カメラを設定
     controller->SetCamera(camera_);
 
-    // 新しいエントリを追加
     size_t newIndex = controllers_.size();
     controllers_.push_back({ name, std::move(controller) });
     nameToIndex_[name] = newIndex;
 
-    // ソートが必要
     needsSort_ = true;
 }
 
@@ -96,11 +85,10 @@ bool CameraManager::RemoveController(const std::string& name) {
 
     size_t indexToRemove = it->second;
 
-    // コントローラーを削除
     controllers_.erase(controllers_.begin() + indexToRemove);
     nameToIndex_.erase(it);
 
-    // インデックスマップを更新
+    // 削除でずれた後続インデックスを振り直す
     nameToIndex_.clear();
     for (size_t i = 0; i < controllers_.size(); ++i) {
         nameToIndex_[controllers_[i].name] = i;
@@ -111,7 +99,6 @@ bool CameraManager::RemoveController(const std::string& name) {
 
 bool CameraManager::ActivateController(const std::string& name) {
     if (GetActiveControllerName() == name) {
-        // 既にアクティブなので何もしない
         return true;
     }
 
@@ -172,10 +159,9 @@ std::string CameraManager::GetDebugInfo() const {
 }
 
 void CameraManager::SortControllersByPriority() {
-    // 優先度でソート（降順）
+    // 優先度降順（operator< が降順を定義）
     std::sort(controllers_.begin(), controllers_.end());
 
-    // インデックスマップを再構築
     nameToIndex_.clear();
     for (size_t i = 0; i < controllers_.size(); ++i) {
         nameToIndex_[controllers_[i].name] = i;
@@ -185,7 +171,7 @@ void CameraManager::SortControllersByPriority() {
 }
 
 int CameraManager::FindHighestPriorityActiveController() const {
-    // 既にソート済みなので、最初に見つかったアクティブなコントローラーが最高優先度
+    // ソート済みなので最初のアクティブが最高優先度
     for (size_t i = 0; i < controllers_.size(); ++i) {
         if (controllers_[i].controller->IsActive()) {
             return static_cast<int>(i);
@@ -215,10 +201,9 @@ void CameraManager::UpdateShake(float deltaTime) {
         return;
     }
 
-    // 減衰係数（1.0→0.0へ線形減衰）
+    // 経過に応じて 1.0→0.0 へ線形減衰
     float decay = 1.0f - (shakeTimer_ / shakeDuration_);
 
-    // ランダムオフセット生成
     RandomEngine* rng = RandomEngine::GetInstance();
     shakeOffset_.x = rng->GetFloat(-currentShakeIntensity_, currentShakeIntensity_) * decay;
     shakeOffset_.y = rng->GetFloat(-currentShakeIntensity_, currentShakeIntensity_) * decay;

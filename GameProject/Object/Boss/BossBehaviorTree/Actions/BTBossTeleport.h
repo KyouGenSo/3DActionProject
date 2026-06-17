@@ -12,23 +12,11 @@ namespace Tako {
 class Boss;
 
 /// <summary>
-/// ボスを瞬間移動させる行動ノード。
-/// フェードアウト → 位置瞬時更新 → フェードイン の 3 フェーズで実行する。
-/// フェード中は boss_particle_body MeshEmitter を発火させてディゾルブ演出を作る。
-/// テレポート先は固定座標 or ステージ全域内のランダム座標から選択可能。
+/// フェードアウト → 瞬間移動 → フェードイン で移動。フェード中は body MeshEmitter でディゾルブ演出。
+/// テレポート先は固定座標かステージ内ランダムから選択。EnterAttackRecovery は呼ばない（硬直なし仕様）。
 /// </summary>
-/// <remarks>
-/// 内部フェーズ:
-///   Phase 0 (0 〜 fadeOutDuration_)                       alpha 1 → 0、body emitter ON
-///   Phase 1 (fadeOutDuration_ 到達)                       alpha = 0、body emitter OFF、座標瞬時更新
-///   Phase 2 (〜 fadeOutDuration_ + fadeInDuration_)       alpha 0 → 1、body emitter ON
-///   Phase 3 (完了)                                        body emitter OFF、FinishAttack で Success
-///
-/// AttackNode を継承するが EnterAttackRecovery は呼ばない (硬直なし仕様)。
-/// </remarks>
 class BTBossTeleport : public AttackNode {
 public:
-    /// <summary>テレポート先決定モード</summary>
     enum class TeleportMode : int {
         Fixed            = 0,  ///< 固定座標 (targetPositionX/Y/Z)
         RandomFromBoss   = 1,  ///< ボス現在位置を中心にランダム
@@ -40,52 +28,46 @@ public:
 
 protected:
     /// <summary>
-    /// フェーズ制御本体 (fade-out / teleport / fade-in / cleanup)
+    /// フェードアウト→瞬間移動→フェードインのフェーズ制御。
     /// </summary>
+    /// <returns>完了フェーズで FinishAttack の結果、進行中は Running</returns>
     Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
-    /// <summary>
-    /// 目標座標の決定 + マテリアル状態のキャッシュ + 半透明モード有効化
-    /// </summary>
     void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
-    /// <summary>
-    /// マテリアル状態を復帰し、body emitter を OFF にする (中断時の safety)
-    /// </summary>
     void OnCleanup() override;
 
-    /// <summary>JSON パラメータ適用</summary>
     void OnApplyParameters(const nlohmann::json& params) override;
 
-    /// <summary>JSON パラメータ抽出</summary>
     void OnExtractParameters(nlohmann::json& out) const override;
 
 #ifdef _DEBUG
-    /// <summary>インスペクター UI 描画</summary>
     bool OnDrawImGui() override;
 #endif
 
 private:
     /// <summary>
-    /// model のマテリアルカラーのアルファ成分を更新 (RGB は originalMaterialColor_ を維持)
+    /// アルファのみ更新、RGB は originalMaterialColor_ を維持
     /// </summary>
+    /// <param name="model">対象モデル</param>
+    /// <param name="alpha">不透明度（0.0=透明〜1.0=不透明）</param>
     void UpdateModelAlpha(Tako::Object3d* model, float alpha) const;
 
     //======================== パラメータ ========================
-    float fadeOutDuration_ = 0.3f;                  ///< フェードアウト時間 (秒)
-    float fadeInDuration_  = 0.3f;                  ///< フェードイン時間 (秒)
-    TeleportMode mode_ = TeleportMode::RandomFromBoss; ///< テレポート先決定モード
-    float targetPositionX_ = 0.0f;                  ///< Fixed 用 X
-    float targetPositionY_ = 0.0f;                  ///< Fixed 用 Y
-    float targetPositionZ_ = 0.0f;                  ///< Fixed 用 Z
-    float randomMinDistance_ = 10.0f;               ///< RandomFromBoss 最小距離
-    float randomMaxDistance_ = 30.0f;               ///< RandomFromBoss 最大距離
-    float playerRandomMinDistance_ = 10.0f;         ///< RandomFromPlayer 最小距離
-    float playerRandomMaxDistance_ = 30.0f;         ///< RandomFromPlayer 最大距離
+    float fadeOutDuration_ = 0.3f;                  ///< 秒
+    float fadeInDuration_  = 0.3f;                  ///< 秒
+    TeleportMode mode_ = TeleportMode::RandomFromBoss;
+    float targetPositionX_ = 0.0f;                  ///< Fixed 用
+    float targetPositionY_ = 0.0f;                  ///< Fixed 用
+    float targetPositionZ_ = 0.0f;                  ///< Fixed 用
+    float randomMinDistance_ = 10.0f;               ///< RandomFromBoss 用
+    float randomMaxDistance_ = 30.0f;               ///< RandomFromBoss 用
+    float playerRandomMinDistance_ = 10.0f;         ///< RandomFromPlayer 用
+    float playerRandomMaxDistance_ = 30.0f;         ///< RandomFromPlayer 用
 
     //======================== ランタイム状態 ========================
-    Tako::Vector3 targetTeleportPosition_{};        ///< OnInitialize で確定するテレポート先
-    bool teleportFired_ = false;                    ///< Phase 1 の瞬間移動を実行したか
-    Tako::Vector4 originalMaterialColor_{1.0f, 0.0f, 0.0f, 0.0f}; ///< OnInitialize 時の material color
-    bool originalTransparentState_ = false;         ///< OnInitialize 時の SetTransparent 状態
+    Tako::Vector3 targetTeleportPosition_{};        ///< OnInitialize で確定
+    bool teleportFired_ = false;
+    Tako::Vector4 originalMaterialColor_{1.0f, 0.0f, 0.0f, 0.0f}; ///< OnInitialize 時の値
+    bool originalTransparentState_ = false;         ///< OnInitialize 時の値
 };

@@ -3,58 +3,31 @@
 #include "BTBlackboard.h"
 
 /// <summary>
-/// フェーズ条件ノード
-/// 現在のボスフェーズを指定した値と比較して成功/失敗を返す
+/// 現在のボスフェーズを指定値と比較する条件ノード
 /// </summary>
 class BTBossPhaseCondition : public Tako::BTNode {
 public:
-    /// <summary>
-    /// 比較タイプ
-    /// </summary>
     enum class Comparison {
-        Equal = 0,           // フェーズが一致
-        NotEqual = 1,        // フェーズが不一致
-        GreaterOrEqual = 2,  // フェーズが以上
-        LessOrEqual = 3      // フェーズが以下
+        Equal = 0,
+        NotEqual = 1,
+        GreaterOrEqual = 2,
+        LessOrEqual = 3
     };
 
-    /// <summary>
-    /// コンストラクタ
-    /// </summary>
     BTBossPhaseCondition();
-
-    /// <summary>
-    /// デストラクタ
-    /// </summary>
     virtual ~BTBossPhaseCondition() = default;
 
     /// <summary>
-    /// ノードの実行
+    /// 現在のボスフェーズが targetPhase に対する比較条件を満たすかを判定する
     /// </summary>
-    /// <param name="blackboard">ブラックボード</param>
-    /// <returns>実行結果</returns>
+    /// <param name="blackboard">"boss" ポインタを保持するブラックボード</param>
+    /// <returns>比較条件を満たせば Success。満たさない、または boss が未設定なら Failure</returns>
     Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
-
-    /// <summary>
-    /// ノードのリセット
-    /// </summary>
     void Reset() override;
-
-    /// <summary>
-    /// JSON からパラメータを適用
-    /// </summary>
-    /// <param name="params">パラメータ JSON</param>
     void ApplyParameters(const nlohmann::json& params) override;
-
-    /// <summary>
-    /// パラメータを JSON として抽出
-    /// </summary>
     nlohmann::json ExtractParameters() const override;
 
 #ifdef _DEBUG
-    /// <summary>
-    /// ImGui でパラメータ編集 UI を描画
-    /// </summary>
     bool DrawImGui() override;
 #endif
 
@@ -67,15 +40,12 @@ public:
 
 private:
     /// <summary>
-    /// 比較条件を評価
+    /// 現在フェーズと targetPhase_ を comparison_ に従って比較する
     /// </summary>
-    /// <param name="currentPhase">現在のフェーズ</param>
-    /// <returns>条件を満たしていれば true</returns>
+    /// <param name="currentPhase">現在のボスフェーズ（1 or 2）</param>
+    /// <returns>比較条件を満たせば true</returns>
     bool EvaluateCondition(uint32_t currentPhase) const;
 
-    // 目標フェーズ
     uint32_t targetPhase_ = 2;
-
-    // 比較タイプ
     Comparison comparison_ = Comparison::Equal;
 };

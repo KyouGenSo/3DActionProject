@@ -16,14 +16,12 @@ using namespace Tako;
 uint32_t PlayerBullet::id = 0;
 
 PlayerBullet::PlayerBullet(EmitterManager* emitterManager) {
-    // GlobalVariables から値を取得
     GlobalVariables* gv = GlobalVariables::GetInstance();
 
-    // 弾のパラメータ設定（デフォルト値を使用、GlobalVariables に未登録の場合に備える）
     damage_ = gv->GetValueFloat("PlayerBullet", "Damage");
     lifeTime_ = gv->GetValueFloat("PlayerBullet", "Lifetime");
 
-    // デフォルト値の設定（GlobalVariables に登録されていない場合）
+    // GlobalVariables 未登録時のフォールバック
     if (damage_ <= 0.0f) {
         damage_ = 10.0f;
     }
@@ -31,10 +29,8 @@ PlayerBullet::PlayerBullet(EmitterManager* emitterManager) {
         lifeTime_ = 3.0f;
     }
 
-    // エミッターマネージャーの設定
     emitterManager_ = emitterManager;
 
-    // エフェクトプリセットをロード
     if (emitterManager_) {
         bulletEmitterName_ = std::format("player_bullet{}", id);
         explodeEmitterName_ = std::format("player_bullet_explode{}", id);
@@ -42,7 +38,6 @@ PlayerBullet::PlayerBullet(EmitterManager* emitterManager) {
         emitterManager_->SetEmitterActive(bulletEmitterName_, false);
         emitterManager_->LoadPreset("player_bullet_explode", explodeEmitterName_);
         emitterManager_->SetEmitterActive(explodeEmitterName_, false);
-        // 弾本体に上乗せする追加エフェクト
         effectEmitterName_ = std::format("player_bullet_effect{}", id);
         emitterManager_->LoadPreset("player_bullet_effect", effectEmitterName_);
         emitterManager_->SetEmitterActive(effectEmitterName_, false);
@@ -51,33 +46,27 @@ PlayerBullet::PlayerBullet(EmitterManager* emitterManager) {
     id++;
 
     if (id > kIdResetThreshold) {
-        id = 0; // ID のリセット
+        id = 0;
     }
 }
 
 PlayerBullet::~PlayerBullet() = default;
 
 void PlayerBullet::Initialize(const Vector3& position, const Vector3& velocity) {
-    // 親クラスの初期化
     Projectile::Initialize(position, velocity);
 
-    // モデルをロード
     Projectile::SetDefaultModel();
     model_->Update();
 
-    // スケールを設定（パーティクル描画のため0に設定）
     transform_.scale = Vector3(kInitialScale, kInitialScale, kInitialScale);
 
-    // エミッターを有効化
     Projectile::ActivateBulletEmitter(position);
 
-    // 追加エフェクトエミッタを起動 + 初期位置同期
     if (emitterManager_) {
         emitterManager_->SetEmitterActive(effectEmitterName_, true);
         emitterManager_->SetEmitterPosition(effectEmitterName_, position);
     }
 
-    // コライダーの設定
     if (!collider_) {
         collider_ = std::make_unique<BulletCollider>(this,
             static_cast<uint32_t>(CollisionTypeId::BOSS),
@@ -95,7 +84,7 @@ void PlayerBullet::Initialize(const Vector3& position, const Vector3& velocity) 
     GlobalVariables* gv = GlobalVariables::GetInstance();
     float colliderRadius = gv->GetValueFloat("PlayerBullet", "ColliderRadius");
     if (colliderRadius <= 0.0f) {
-        colliderRadius = 0.5f; // デフォルト値
+        colliderRadius = 0.5f;
     }
 
     collider_->SetTransform(&transform_);
@@ -106,22 +95,19 @@ void PlayerBullet::Initialize(const Vector3& position, const Vector3& velocity) 
     collider_->SetActive(true);
     collider_->Reset();
 
-    // CollisionManager に登録
     CollisionManager::GetInstance()->AddCollider(collider_.get());
 }
 
 void PlayerBullet::Finalize() {
-    // CollisionManager から削除
     if (collider_) {
         CollisionManager::GetInstance()->RemoveCollider(collider_.get());
     }
 
-    // 追加エフェクトエミッタは一時化せず即時破棄 (爆発演出は explode 側で完結)
+    // 追加エフェクトは一時化せず即時破棄（爆発演出は explode 側で完結）
     if (emitterManager_) {
         emitterManager_->RemoveEmitter(effectEmitterName_);
     }
 
-    // エミッター終了処理
     Projectile::FinalizeEmitters();
 }
 
@@ -130,23 +116,20 @@ void PlayerBullet::Update(float deltaTime) {
         return;
     }
 
-    // ForceField を弾速度に反映（GPU パーティクルと同じ力場を CPU 駆動の弾にも作用させる）
+    // GPU パーティクルと同じ力場を CPU 駆動の弾にも作用させる
     if (forceFieldManager_) {
         const Vector3 force = forceFieldManager_->EvaluateForceAt(
             transform_.translate, GameForceField::AffectBullets);
         velocity_ += force * deltaTime;
     }
 
-    // 親クラスの更新処理（生存時間更新 → 移動）
     Projectile::Update(deltaTime);
 
-    // 速度が極端に下がったら非アクティブ化（Repel 攻撃などで吹き飛ばされて減速したケース）
-    // LengthSquared を使い sqrt 計算を回避
+    // 減速時に消滅（Repel 攻撃で吹き飛ばされたケース）。sqrt 回避のため2乗比較
     if (velocity_.LengthSquared() < kMinSpeedSquared) {
         isActive_ = false;
     }
 
-    // 軌跡エフェクト位置を同期
     if (emitterManager_) {
         emitterManager_->SetEmitterPosition(bulletEmitterName_, transform_.translate);
         emitterManager_->SetEmitterPosition(explodeEmitterName_, transform_.translate);

@@ -9,7 +9,6 @@ void ShakeEffect::Start(float intensity, float duration)
     isActive_ = true;
     timer_ = 0.0f;
 
-    // 0以下の場合はデフォルト値を使用
     intensity_ = (intensity > 0.0f) ? intensity : defaultIntensity_;
     duration_ = (duration > 0.0f) ? duration : defaultDuration_;
 }
@@ -28,10 +27,9 @@ void ShakeEffect::Update(float deltaTime)
         return;
     }
 
-    // 減衰係数（1.0→0.0へ線形減衰）
+    // 経過に応じて 1.0→0.0 へ線形減衰させる係数
     float decay = Vec3::Lerp(1.0f, 0.0f, timer_ / duration_);
 
-    // ランダムオフセット生成
     RandomEngine* rng = RandomEngine::GetInstance();
     offset_.x = rng->GetFloat(-intensity_, intensity_) * decay;
     offset_.y = rng->GetFloat(-intensity_, intensity_) * decay;

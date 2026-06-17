@@ -40,7 +40,6 @@ Player::Player()
     , targetAngle_(0.0f)
     , mode_(false)
 {
-    // 動的制限を初期化（無効化）
     ClearDynamicBounds();
 }
 
@@ -62,15 +61,13 @@ void Player::Initialize()
 
     model_->SetTransform(transform_);
 
-    // HP バー UI の初期化
     hpBar_.Initialize(
         EnginePaths::TexturePath("white.dds"),
         Vector2(500.0f, 30.0f),
         0.35f,  // 画面 X 比率
         0.05f,  // 画面 Y 比率
-        Vector4{ 0.3f, 1.0f, 0.3f, 1.0f });  // 緑色
+        Vector4{ 0.3f, 1.0f, 0.3f, 1.0f });
 
-    // State Machine の初期化
     stateMachine_ = std::make_unique<PlayerStateMachine>(this);
     stateMachine_->RegisterState("Idle", std::make_unique<IdleState>());
     stateMachine_->RegisterState("Move", std::make_unique<MoveState>());
@@ -81,10 +78,8 @@ void Player::Initialize()
     stateMachine_->ChangeState("Idle");
     stateMachine_->Initialize();
 
-    // Collider の初期化
     SetupColliders();
 
-    // 攻撃ブロックの初期化
     attackBlock_ = std::make_unique<Object3d>();
     attackBlock_->Initialize();
     attackBlock_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
@@ -92,7 +87,6 @@ void Player::Initialize()
 
 void Player::Finalize()
 {
-    // Collider を削除
     if (bodyCollider_) {
         CollisionManager::GetInstance()->RemoveCollider(bodyCollider_.get());
     }
@@ -129,14 +123,11 @@ void Player::SyncGlobalVariables()
 
 void Player::UpdateCombat(float deltaTime)
 {
-    // クールダウンの更新
     parryCooldown_.Update(deltaTime);
     dashCooldown_.Update(deltaTime);
 
-    // 死亡判定
     if (hp_ <= 0.0f) isDead_ = true;
 
-    // HP バーの更新
     hpBar_.Update(hp_, kMaxHp);
 }
 
@@ -155,7 +146,7 @@ void Player::UpdateStateMachine(float deltaTime)
 
 void Player::UpdateTransform()
 {
-    // 実効的な制限を計算（静的制限と動的制限の交差）
+    // 静的制限と動的制限の交差をとった実効制限
     DynamicBoundary effectiveBounds;
     effectiveBounds.Set(
         std::max<float>(GameConst::kStageXMin, dynamicBounds_.xMin),
@@ -163,41 +154,34 @@ void Player::UpdateTransform()
         std::max<float>(GameConst::kStageZMin, dynamicBounds_.zMin),
         std::min<float>(GameConst::kStageZMax, dynamicBounds_.zMax));
 
-    // 位置制限適用
     transform_.translate = effectiveBounds.Clamp(transform_.translate);
 }
 
 void Player::UpdatePhysics(float deltaTime)
 {
-    // ForceField の外力を速度に反映（PlayerBullet と同じパターン、AffectPlayer マスクでクエリ）
     if (forceFieldManager_) {
         const Vector3 force = forceFieldManager_->EvaluateForceAt(
             transform_.translate, GameForceField::AffectPlayer);
         externalVelocity_ += force * deltaTime; // 加速度 → 速度
     }
-    // 外力を位置に反映
     transform_.translate.x += externalVelocity_.x * deltaTime;
     transform_.translate.z += externalVelocity_.z * deltaTime;
-    // 外力減衰
     externalVelocity_ *= kExternalVelocityDamping;
 }
 
 void Player::UpdateVisuals(float deltaTime)
 {
-    // ヒットエフェクトの更新
     static const Vector4 kOriginalColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
     hitFlashEffect_.Update(deltaTime, model_.get(), kOriginalColor);
 
-    // シェイクエフェクトの更新
     shakeEffect_.Update(deltaTime);
 
-    // モデルの更新（シェイクオフセットを適用）
+    // シェイクオフセットを加えた描画用 Transform
     Transform renderTransform = transform_;
     renderTransform.translate += shakeEffect_.GetOffset();
     model_->SetTransform(renderTransform);
     model_->Update();
 
-    // 攻撃ブロックの更新（表示中のみ）
     if (attackBlockVisible_ && attackBlock_) {
         attackBlock_->Update();
     }
@@ -207,7 +191,6 @@ void Player::Draw()
 {
     model_->Draw();
 
-    // 攻撃ブロックの描画（表示中のみ）
     if (attackBlockVisible_ && attackBlock_) {
         attackBlock_->Draw();
     }
@@ -229,17 +212,15 @@ void Player::Move(float speedMultiplier, bool isApplyDirCalulate)
     Vector2 moveDir = inputHandlerPtr_->GetMoveDirection();
     if (moveDir.Length() < deadzone) return;
 
-    // 3D ベクトルに変換
     velocity_ = { moveDir.x, 0.0f, moveDir.y };
     velocity_ = velocity_.Normalize() * speed_ * speedMultiplier;
 
-    // カメラモードに応じて移動方向を調整
+    // カメラ相対の移動にするため入力をカメラ Y 回転で変換
     if (mode_ && camera_) {
         Matrix4x4 rotationMatrix = Mat4x4::MakeRotateY(camera_->GetRotateY());
         velocity_ = Mat4x4::TransformNormal(rotationMatrix, velocity_);
     }
 
-    // 位置を更新
     transform_.translate += velocity_;
 
     // 移動方向を向く
@@ -253,7 +234,6 @@ void Player::MoveToTarget(Boss* target, float deltaTime)
 {
     if (!target) return;
 
-    // 初回呼び出し時の初期化
     if (!attackMover_.IsInitialized()) {
         Vector3 startPos = transform_.translate;
         Vector3 targetPos = target->GetTransform().translate;
@@ -264,15 +244,13 @@ void Player::MoveToTarget(Boss* target, float deltaTime)
         if (distance > attackMinDist_ && distance > kDirectionEpsilon) {
             Vector3 direction = toTarget.Normalize();
 
-            // 目標位置 = ターゲット位置から attackMinDist_ 手前
+            // 目標位置 = ターゲットから attackMinDist_ 手前
             float moveDistance = distance - attackMinDist_;
             Vector3 moveTargetPos = startPos + direction * moveDistance;
             moveTargetPos.y = startPos.y;
 
-            // イージングムーバーを初期化
             attackMover_.InitializeWithSpeed(startPos, moveTargetPos, attackMoveSpeed_);
 
-            // ターゲット方向を向く
             targetAngle_ = std::atan2(direction.x, direction.z);
         }
         else {
@@ -281,10 +259,8 @@ void Player::MoveToTarget(Boss* target, float deltaTime)
         }
     }
 
-    // イージング移動
     transform_.translate = attackMover_.Update(deltaTime);
 
-    // 回転の補間
     transform_.rotate.y = Vec3::LerpShortAngle(transform_.rotate.y, targetAngle_, attackMoveRotationLerp_);
 }
 
@@ -307,7 +283,7 @@ void Player::SetupColliders()
     float meleeZ = gv->GetValueFloat("Player", "MeleeColliderZ");
     float meleeOffsetZ = gv->GetValueFloat("Player", "MeleeColliderOffsetZ");
 
-    // 本体の Collider
+    // 本体
     bodyCollider_ = std::make_unique<OBBCollider>();
     bodyCollider_->SetTransform(&transform_);
     bodyCollider_->SetSize(Vector3(bodySize, bodySize, bodySize));
@@ -315,14 +291,13 @@ void Player::SetupColliders()
     bodyCollider_->SetTypeID(static_cast<uint32_t>(CollisionTypeId::PLAYER));
     bodyCollider_->SetOwner(this);
 
-    // 攻撃範囲の Collider
+    // 攻撃範囲
     meleeAttackCollider_ = std::make_unique<MeleeAttackCollider>(this);
     meleeAttackCollider_->SetTransform(&transform_);
     meleeAttackCollider_->SetSize(Vector3(meleeX, meleeY, meleeZ));
     meleeAttackCollider_->SetOffset(Vector3(0.0f, 0.0f, meleeOffsetZ));
     meleeAttackCollider_->SetActive(false);
 
-    // CollisionManager に登録
     CollisionManager* collisionManager = CollisionManager::GetInstance();
     collisionManager->AddCollider(bodyCollider_.get());
     collisionManager->AddCollider(meleeAttackCollider_.get());
@@ -339,9 +314,8 @@ void Player::UpdateCollider()
 
     if (!meleeAttackCollider_) return;
 
-    // 攻撃状態の時のみ前方に配置
+    // 攻撃中のみ前方に配置
     if (meleeAttackCollider_->IsActive()) {
-        // プレイヤーの回転行列を作成（Y 軸回転のみ）
         Matrix4x4 rotationMatrix = Mat4x4::MakeRotateY(transform_.rotate.y);
         meleeAttackCollider_->SetOrientation(rotationMatrix);
 
@@ -357,16 +331,13 @@ void Player::UpdateCollider()
 
 void Player::LookAtBoss()
 {
-    // ボスへの方向ベクトルを計算
     Vector3 toTarget = targetEnemy_->GetTransform().translate - transform_.translate;
     toTarget.y = 0.0f;  // Y 軸は無視
 
-    if (toTarget.Length() < 0.01f) return;  // 距離が近すぎる場合はスキップ
+    if (toTarget.Length() < 0.01f) return;
 
-    // 目標角度を計算
     float targetAngle = std::atan2(toTarget.x, toTarget.z);
 
-    // スムーズに補間して回転
     transform_.rotate.y = Vec3::LerpShortAngle(transform_.rotate.y, targetAngle, bossLookatLerp_);
 }
 
@@ -377,22 +348,19 @@ void Player::OnHit(float damage)
     hp_ -= damage;
     hp_ = std::max<float>(hp_, 0.0f);
 
-    // ヒットフラッシュエフェクト開始（赤く光る）
     hitFlashEffect_.Start(Vector4(1.0f, 0.0f, 0.0f, 1.0f), 0.05f);
 
-    // シェイクエフェクト開始（強度0.5）
     shakeEffect_.Start(0.5f);
 
-    // DamageFeedback でカメラシェイク、振動、Vignette を一括発生
+    // カメラシェイク、振動、Vignette
     DamageFeedback::TriggerHitFeedback();
 }
 
 void Player::DrawImGui()
 {
 #ifdef _DEBUG
-    static int selectedTab = 0;  // タブの選択状態を保持
+    static int selectedTab = 0;
 
-    // タブバー開始
     if (ImGui::BeginTabBar("PlayerDebugTabs", ImGuiTabBarFlags_None)) {
 
         // ========== General タブ ==========
@@ -426,27 +394,22 @@ void Player::DrawImGui()
         if (ImGui::BeginTabItem("States")) {
             selectedTab = 1;
 
-            // 現在のステート情報
             if (stateMachine_) {
                 PlayerState* currentState = stateMachine_->GetCurrentState();
                 if (currentState) {
-                    // 現在のアクティブステート名を強調表示
                     ImGui::TextColored(ImVec4(0.0f, 1.0f, 0.0f, 1.0f), "Active State: %s", currentState->GetName().c_str());
                 }
 
                 ImGui::Separator();
 
-                // 全ステート詳細表示（新機能）
                 if (ImGui::TreeNode("All States Details")) {
-                    static std::string selectedStateName = "Idle";  // 選択中のステート名を保持
+                    static std::string selectedStateName = "Idle";
 
-                    // ステート選択コンボボックス
                     auto stateNames = stateMachine_->GetAllStateNames();
                     if (ImGui::BeginCombo("Select State", selectedStateName.c_str())) {
                         for (const auto& name : stateNames) {
                             bool isSelected = (selectedStateName == name);
 
-                            // 現在アクティブなステートには★マークを付ける
                             std::string displayName = name;
                             if (currentState && currentState->GetName() == name) {
                                 displayName = name + " [ACTIVE]";
@@ -464,10 +427,9 @@ void Player::DrawImGui()
 
                     ImGui::Separator();
 
-                    // 選択されたステートの詳細表示
                     PlayerState* selectedState = stateMachine_->GetState(selectedStateName);
                     if (selectedState) {
-                        // 現在のステートなら緑色、そうでなければ青色でヘッダー表示
+                        // 現在のステートは緑、他は青
                         if (currentState && currentState->GetName() == selectedStateName) {
                             ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.1f, 0.4f, 0.1f, 1.0f));
                         }
@@ -477,7 +439,6 @@ void Player::DrawImGui()
 
                         if (ImGui::CollapsingHeader((selectedStateName + " State Details").c_str(),
                             ImGuiTreeNodeFlags_DefaultOpen)) {
-                            // 選択されたステートの DrawImGui を呼び出し
                             selectedState->DrawImGui(this);
                         }
                         ImGui::PopStyleColor();
@@ -488,7 +449,6 @@ void Player::DrawImGui()
 
                 ImGui::Separator();
 
-                // ステート手動切り替え（デバッグ用）
                 if (ImGui::TreeNode("Manual State Change")) {
                     if (ImGui::Button("Idle")) stateMachine_->ChangeState("Idle");
                     ImGui::SameLine();
@@ -521,12 +481,10 @@ void Player::DrawImGui()
                         bodyCollider_->SetActive(isActive);
                     }
 
-                    // 実際の中心座標（読み取り専用）
                     Vector3 actualCenter = bodyCollider_->GetCenter();
                     ImGui::Text("Actual Center: (%.2f, %.2f, %.2f)",
                         actualCenter.x, actualCenter.y, actualCenter.z);
 
-                    // オフセット（調整可能）
                     Vector3 offset = bodyCollider_->GetOffset();
                     if (ImGui::DragFloat3("Offset", &offset.x, 0.1f)) {
                         bodyCollider_->SetOffset(offset);
@@ -546,18 +504,15 @@ void Player::DrawImGui()
                     bool isActive = meleeAttackCollider_->IsActive();
                     ImGui::Text("Active: %s", isActive ? "YES" : "NO");
 
-                    // 実際の中心座標（読み取り専用）
                     Vector3 actualCenter = meleeAttackCollider_->GetCenter();
                     ImGui::Text("Actual Center: (%.2f, %.2f, %.2f)",
                         actualCenter.x, actualCenter.y, actualCenter.z);
 
-                    // オフセット（調整可能）
                     Vector3 offset = meleeAttackCollider_->GetOffset();
                     if (ImGui::DragFloat3("Offset", &offset.x, 0.1f)) {
                         meleeAttackCollider_->SetOffset(offset);
                     }
 
-                    // サイズ（調整可能）
                     Vector3 size = meleeAttackCollider_->GetSize();
                     if (ImGui::DragFloat3("Size", &size.x, 0.1f, 0.1f, 50.0f)) {
                         meleeAttackCollider_->SetSize(size);
@@ -585,7 +540,6 @@ void Player::DrawImGui()
                 ImGui::TreePop();
             }
 
-            // Initial Position (調整用)
             if (ImGui::TreeNode("Initial Position")) {
                 ImGui::DragFloat("Initial Y", &initialY_, 0.1f, 0.0f, 10.0f);
                 ImGui::DragFloat("Initial Z", &initialZ_, 1.0f, -200.0f, 0.0f);
@@ -627,10 +581,8 @@ void Player::DrawImGui()
                 center.x += 50;
                 center.y += 50;
 
-                // Draw circle
                 draw_list->AddCircle(center, 40, IM_COL32(100, 100, 100, 255));
 
-                // Draw direction arrow
                 float arrowX = cosf(angle) * 35;
                 float arrowY = sinf(angle) * 35;
                 draw_list->AddLine(center,
@@ -670,10 +622,8 @@ void Player::DrawImGui()
             ImGui::Separator();
             if (ImGui::Button("Show Model Debug Info")) isDisModelDebugInfo_ = !isDisModelDebugInfo_;
 
-            // Animation Control (TODO)
             if (ImGui::TreeNode("Animation Control")) {
                 ImGui::Text("TODO: Animation system integration");
-                // 将来的にアニメーション制御 UI を追加
                 ImGui::TreePop();
             }
 
@@ -761,12 +711,10 @@ void Player::StartDashCooldown()
 
 void Player::OnParrySuccess()
 {
-    // HP 回復
     GlobalVariables* gv = GlobalVariables::GetInstance();
     float healAmount = gv->GetValueFloat("ParryState", "ParrySuccessHealAmount");
     hp_ = std::min<float>(hp_ + healAmount, kMaxHp);
 
-    // DamageFeedback でパリィ成功エフェクトを一括発生
     Vector3 effectPos = GetFrontPosition(2.0f);
     DamageFeedback::TriggerParryFeedback(effectPos, emitterManager_);
 }

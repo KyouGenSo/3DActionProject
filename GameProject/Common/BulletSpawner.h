@@ -4,9 +4,7 @@
 #include "BulletSpawnRequest.h"
 
 /// <summary>
-/// 弾生成リクエスト管理クラス
-/// Player/Boss 等のオブジェクトが弾の生成を GameScene に要求する際に使用
-/// コンポジション方式で使用する（継承不要）
+/// 弾生成リクエストを蓄積し、GameScene 側でまとめて消費するためのキュー
 /// </summary>
 class BulletSpawner
 {
@@ -15,33 +13,22 @@ public:
     ~BulletSpawner() = default;
 
     /// <summary>
-    /// 弾生成リクエストを追加
+    /// 弾生成リクエストをキューに追加する
     /// </summary>
-    /// <param name="position">弾の発射位置</param>
-    /// <param name="velocity">弾の速度ベクトル</param>
+    /// <param name="position">生成位置（ワールド座標）</param>
+    /// <param name="velocity">初速度ベクトル</param>
     void RequestSpawn(const Tako::Vector3& position, const Tako::Vector3& velocity);
 
     /// <summary>
-    /// 保留中の弾生成リクエストを取得して消費
+    /// 保留中リクエストを move で返し、内部を空にする
     /// </summary>
-    /// <returns>弾生成リクエストのリスト（move で返される）</returns>
+    /// <returns>蓄積されていた全リクエスト</returns>
     std::vector<BulletSpawnRequest> Consume();
 
-    /// <summary>
-    /// 保留中のリクエストがあるか
-    /// </summary>
-    /// <returns>保留中のリクエストがある場合 true</returns>
     bool HasPending() const { return !pendingBullets_.empty(); }
 
-    /// <summary>
-    /// 保留中のリクエスト数を取得
-    /// </summary>
-    /// <returns>保留中のリクエスト数</returns>
     size_t GetPendingCount() const { return pendingBullets_.size(); }
 
-    /// <summary>
-    /// 保留中のリクエストをクリア
-    /// </summary>
     void Clear() { pendingBullets_.clear(); }
 
 private:

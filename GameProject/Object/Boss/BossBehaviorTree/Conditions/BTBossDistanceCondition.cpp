@@ -14,7 +14,6 @@ BTBossDistanceCondition::BTBossDistanceCondition() {
 }
 
 Tako::BTNodeStatus BTBossDistanceCondition::Execute(Tako::BTBlackboard* blackboard) {
-    // ボスとプレイヤーを取得
     Boss* boss = blackboard->GetPtr<Boss>("boss");
     Player* player = blackboard->GetPtr<Player>("player");
 
@@ -23,16 +22,14 @@ Tako::BTNodeStatus BTBossDistanceCondition::Execute(Tako::BTBlackboard* blackboa
         return Tako::BTNodeStatus::Failure;
     }
 
-    // 位置を取得
     Vector3 bossPos = boss->GetTransform().translate;
     Vector3 playerPos = player->GetTransform().translate;
 
-    // 水平距離を計算（Y 軸を無視）
+    // 水平距離（Y 軸を無視）
     Vector3 diff = playerPos - bossPos;
     diff.y = 0.0f;
     float distance = diff.Length();
 
-    // 範囲内チェック: minDistance_ <= distance <= maxDistance_
     if (distance >= minDistance_ && distance <= maxDistance_) {
         status_ = Tako::BTNodeStatus::Success;
         return Tako::BTNodeStatus::Success;
@@ -66,7 +63,6 @@ nlohmann::json BTBossDistanceCondition::ExtractParameters() const {
 bool BTBossDistanceCondition::DrawImGui() {
     bool changed = false;
 
-    // 最小距離の編集
     if (ImGui::DragFloat("Min Distance##dist", &minDistance_, 0.5f, 0.0f, 100.0f, "%.1f")) {
         // min が max を超えないように
         if (minDistance_ > maxDistance_) {
@@ -75,7 +71,6 @@ bool BTBossDistanceCondition::DrawImGui() {
         changed = true;
     }
 
-    // 最大距離の編集
     if (ImGui::DragFloat("Max Distance##dist", &maxDistance_, 0.5f, 0.0f, 100.0f, "%.1f")) {
         // max が min を下回らないように
         if (maxDistance_ < minDistance_) {
@@ -84,7 +79,6 @@ bool BTBossDistanceCondition::DrawImGui() {
         changed = true;
     }
 
-    // 補助テキスト
     ImGui::TextDisabled("Success if: %.1f <= distance <= %.1f", minDistance_, maxDistance_);
 
     return changed;

@@ -14,23 +14,20 @@ BTBossShoot::BTBossShoot() {
 }
 
 Tako::BTNodeStatus BTBossShoot::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
-    // プレイヤーの方向を向く（射撃準備中）
     if (elapsedTime_ < chargeTime_) {
         FacePlayerInstant(blackboard);
         bulletSignEffect_.Update(boss, deltaTime);
     }
 
-    // 弾を発射
     if (elapsedTime_ >= chargeTime_ && !hasFired_) {
         bulletSignEffect_.End(boss);
         FireBullets(blackboard);
         hasFired_ = true;
-        EnterAttackRecovery(boss);  // 硬直フェーズ開始
+        EnterAttackRecovery(boss);
     }
 
     elapsedTime_ += deltaTime;
 
-    // 状態終了チェック
     if (elapsedTime_ >= totalDuration_) {
         return FinishAttack();
     }

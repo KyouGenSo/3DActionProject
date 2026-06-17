@@ -29,8 +29,8 @@ void InputHandler::Update()
 {
   Input* input = Input::GetInstance();
 
-  moveDirection_ = Vector2(0.0f, 0.0f); // 0で初期化
-  aimDirection_ = Vector2(0.0f, 0.0f); // 0で初期化
+  moveDirection_ = Vector2(0.0f, 0.0f);
+  aimDirection_ = Vector2(0.0f, 0.0f);
 
   // 移動入力（左スティック + キーボード）
   if (input->IsConnect()) moveDirection_ += input->GetLeftStick();
@@ -47,11 +47,10 @@ void InputHandler::Update()
     }
   }
 
-  // 各アクションの入力状態を更新
   isMoving_ = !input->LStickInDeadZone() || moveDirection_.Length() > 0.0f;
   isDashing_ = input->TriggerKey(DIK_SPACE) || input->TriggerButton(GamepadButton::A);
   isAttacking_ = input->TriggerKey(DIK_Z) || input->TriggerButton(GamepadButton::X);
-  isShooting_ = hasRightStickInput;  // 右スティック入力で射撃判定
+  isShooting_ = hasRightStickInput;
   isParrying_ = input->TriggerKey(DIK_F) || input->TriggerButton(GamepadButton::B);
   isPaused_ = input->TriggerKey(DIK_ESCAPE) || input->TriggerButton(GamepadButton::Start);
 }

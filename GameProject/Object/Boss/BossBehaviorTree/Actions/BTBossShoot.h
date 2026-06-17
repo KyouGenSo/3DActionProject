@@ -6,7 +6,7 @@
 class Boss;
 
 /// <summary>
-/// ボスの射撃アクションノード（チャージ → 扇状複数発射 → 硬直）
+/// プレイヤー方向へ扇状に複数弾を一斉発射する。
 /// </summary>
 class BTBossShoot : public AttackNode {
 private:
@@ -17,7 +17,6 @@ public:
     BTBossShoot();
     virtual ~BTBossShoot() = default;
 
-    /// パラメータ取得・設定
     [[nodiscard]] float GetChargeTime() const { return chargeTime_; }
     void SetChargeTime(float time) { chargeTime_ = time; }
 
@@ -35,69 +34,49 @@ public:
 
 protected:
     /// <summary>
-    /// 固有攻撃ロジック本体（チャージ → 扇状複数発射 → 硬直の制御）
+    /// チャージ後に一斉発射し硬直へ。総時間経過で終了。
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
-    /// <returns>Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    /// <returns>総時間到達で FinishAttack の結果、未到達は Running</returns>
     Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
-    /// <summary>
-    /// 固有初期化処理（totalDuration の算出と予兆エフェクト起動）
-    /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ適用
-    /// </summary>
-    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ抽出処理
-    /// </summary>
-    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 
 #ifdef _DEBUG
-    /// <summary>
-    /// 固有のImGuiデバッグ表示
-    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
 private:
     /// <summary>
-    /// 扇状に bulletCount_ 発の弾を一斉発射する
+    /// プレイヤー方向を中心に bulletCount_ 発を扇状に一斉発射する。
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
     void FireBullets(Tako::BTBlackboard* blackboard);
 
     /// <summary>
-    /// 基準方向と角度オフセットから弾の進行方向ベクトルを算出する
+    /// 基準方向を XZ 平面で回転させた発射方向を返す。
     /// </summary>
-    /// <param name="baseDirection">基準となる正規化済み方向ベクトル</param>
-    /// <param name="angleOffset">基準方向からの角度オフセット（ラジアン）</param>
-    /// <returns>計算された弾の進行方向ベクトル</returns>
+    /// <param name="baseDirection">基準方向（正規化済み）</param>
+    /// <param name="angleOffset">回転角（ラジアン）</param>
+    /// <returns>正規化された発射方向</returns>
     Tako::Vector3 CalculateBulletDirection(const Tako::Vector3& baseDirection, float angleOffset);
 
     //=========================================================================================
     // パラメータ
     //=========================================================================================
-    float chargeTime_ = 0.9f;        ///< 射撃前の準備時間
-    float recoveryTime_ = 0.5f;      ///< 射撃後の硬直時間
-    float totalDuration_ = 1.0f;     ///< 状態の総時間（OnInitialize で算出）
-    float bulletSpeed_ = 20.0f;      ///< 弾の速度
-    float spreadAngle_ = 0.2618f;    ///< 扇状発射の角度（ラジアン、約 15 度）
-    int   bulletCount_ = 3;          ///< 発射する弾数
+    float chargeTime_ = 0.9f;
+    float recoveryTime_ = 0.5f;
+    float totalDuration_ = 1.0f;     ///< OnInitialize で算出
+    float bulletSpeed_ = 20.0f;
+    float spreadAngle_ = 0.2618f;    ///< ラジアン、約 15 度
+    int   bulletCount_ = 3;
 
     //=========================================================================================
     // ランタイム状態
     //=========================================================================================
-    bool hasFired_ = false;          ///< 弾が発射済みか
+    bool hasFired_ = false;
 
     //=========================================================================================
     // 演出

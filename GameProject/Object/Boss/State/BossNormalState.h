@@ -2,8 +2,7 @@
 #include "BossState.h"
 
 /// <summary>
-/// ボスの通常状態
-/// BehaviorTree が AI 意思決定を行い、各行動を実行する
+/// 通常状態。BehaviorTree が行動を駆動する
 /// </summary>
 class BossNormalState : public BossState {
 public:

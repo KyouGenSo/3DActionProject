@@ -20,7 +20,6 @@ void HPBarUI::Initialize(
 
     Vector2 screenPos = CalculateScreenPosition();
 
-    // バースプライトの初期化
     barSprite_ = std::make_unique<Sprite>();
     barSprite_->Initialize(texture);
     barSprite_->SetSize(baseSize_);
@@ -28,7 +27,6 @@ void HPBarUI::Initialize(
     barSprite_->SetColor(barColor);
     barSprite_->SetPos(screenPos);
 
-    // 背景スプライトの初期化
     bgSprite_ = std::make_unique<Sprite>();
     bgSprite_->Initialize(texture);
     bgSprite_->SetSize(baseSize_);
@@ -53,7 +51,6 @@ void HPBarUI::InitializeDual(
 
     Vector2 screenPos = CalculateScreenPosition();
 
-    // フェーズ1バースプライトの初期化
     barSprite_ = std::make_unique<Sprite>();
     barSprite_->Initialize(texture);
     barSprite_->SetSize(baseSize_);
@@ -61,7 +58,6 @@ void HPBarUI::InitializeDual(
     barSprite_->SetColor(bar1Color);
     barSprite_->SetPos(screenPos);
 
-    // フェーズ2バースプライトの初期化
     bar2Sprite_ = std::make_unique<Sprite>();
     bar2Sprite_->Initialize(texture);
     bar2Sprite_->SetSize(baseSize_);
@@ -69,7 +65,6 @@ void HPBarUI::InitializeDual(
     bar2Sprite_->SetColor(bar2Color);
     bar2Sprite_->SetPos(screenPos);
 
-    // 背景スプライトの初期化
     bgSprite_ = std::make_unique<Sprite>();
     bgSprite_->Initialize(texture);
     bgSprite_->SetSize(baseSize_);
@@ -87,7 +82,6 @@ void HPBarUI::Update(float currentValue, float maxValue)
 
     Vector2 screenPos = CalculateScreenPosition();
 
-    // バーのサイズを更新
     barSprite_->SetSize(Vector2(baseSize_.x * ratio, baseSize_.y));
     barSprite_->SetPos(screenPos);
     barSprite_->Update();

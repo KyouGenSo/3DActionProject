@@ -10,7 +10,6 @@ void BulletSignEffect::Start(Boss* boss, float duration) {
     elapsedTime_ = 0.0f;
     isActive_ = true;
 
-    // エミッター初期化
     Vector3 emitterPos = CalculateEmitterPosition(boss);
     boss->SetBulletSignEmitterPosition(emitterPos);
     boss->SetBulletSignEmitterScaleRangeX(kScaleMin);
@@ -22,12 +21,10 @@ void BulletSignEffect::Update(Boss* boss, float deltaTime) {
 
     elapsedTime_ += deltaTime;
 
-    // スケール補間: 0.01 → 7.0
     float t = elapsedTime_ / duration_;
     if (t > 1.0f) t = 1.0f;
     float scale = Vec3::Lerp(kScaleMin, kScaleMax, t);
 
-    // エミッター更新
     boss->SetBulletSignEmitterScaleRangeX(scale);
     boss->SetBulletSignEmitterPosition(CalculateEmitterPosition(boss));
 }

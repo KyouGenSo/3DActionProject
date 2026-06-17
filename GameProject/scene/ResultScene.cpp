@@ -33,11 +33,9 @@ void ResultScene::Initialize()
     ///              初期化処理              ///
     /// ================================== ///
 
-    // カメラの回転と位置を設定
     (*Object3dBasic::GetInstance()->GetCamera())->SetRotate(Vector3(0.2f, 0.0f, 0.0f));
     (*Object3dBasic::GetInstance()->GetCamera())->SetTranslate(Vector3(0.0f, cameraHiddenY_, -34.0f));
 
-    // sprite の初期化
     backGround_ = std::make_unique<Sprite>();
     backGround_->Initialize(EnginePaths::TexturePath("black.dds"));
     backGround_->SetPos(Vector2(0.f, 0.f));
@@ -87,28 +85,22 @@ void ResultScene::Draw()
     ///              描画処理               ///
     /// ================================== ///
     //------------------背景 Sprite の描画------------------//
-    // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
-    // 背景スプライト描画
     backGround_->Draw();
 
 
     //-------------------Model の描画-------------------//
-    // 3D モデル共通描画設定
     Object3dBasic::GetInstance()->SetCommonRenderSetting();
 
 
 
 
     //------------------前景 Sprite の描画------------------//
-    // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
-    // タイトルスプライト描画
     titleText_->Draw();
 
-    // プレスボタンテキストスプライト描画
     pressButtonText_->Draw();
 
 }
@@ -120,14 +112,12 @@ void ResultScene::DrawWithoutEffect()
     /// ================================== ///
 
     //------------------背景 Sprite の描画------------------//
-    // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 
 
 
     //-------------------Model の描画-------------------//
-    // 3D モデル共通描画設定
     Object3dBasic::GetInstance()->SetCommonRenderSetting();
 
 
@@ -135,7 +125,6 @@ void ResultScene::DrawWithoutEffect()
 
 
     //------------------前景 Sprite の描画------------------//
-    // スプライト共通描画設定
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
 
 

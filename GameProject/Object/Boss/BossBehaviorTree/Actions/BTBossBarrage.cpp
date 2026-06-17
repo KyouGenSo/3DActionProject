@@ -23,15 +23,12 @@ Tako::BTNodeStatus BTBossBarrage::OnExecute(Tako::BTBlackboard* /*blackboard*/, 
     const float chargeEnd = moveEnd + chargeTime_;
     const float firingEnd = chargeEnd + firingDuration_;
 
-    // Phase: Move（ステージ中央への移動）
     if (elapsedTime_ < moveEnd) {
         UpdateMove(boss, deltaTime);
     }
-    // Phase: Charge（射撃予兆）
     else if (elapsedTime_ < chargeEnd) {
         bulletSignEffect_.Update(boss, deltaTime);
     }
-    // Phase: Firing（弾幕発射）
     else if (elapsedTime_ < firingEnd) {
         if (!hasEndedEffect_) {
             bulletSignEffect_.End(boss);
@@ -44,7 +41,6 @@ Tako::BTNodeStatus BTBossBarrage::OnExecute(Tako::BTBlackboard* /*blackboard*/, 
             timeSinceLastFire_ = 0.0f;
         }
     }
-    // Phase: Recovery（硬直）— 突入時に EnterAttackRecovery を 1 度だけ実行（多重呼び出しは Helper がガード）
     else {
         EnterAttackRecovery(boss);
     }
@@ -77,7 +73,6 @@ void BTBossBarrage::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* boss)
 void BTBossBarrage::UpdateMove(Boss* boss, float /*deltaTime*/) {
     if (elapsedTime_ < moveDuration_) {
         float t = elapsedTime_ / moveDuration_;
-        // イージング（加速→減速）
         t = Ease::SmoothStep(t);
 
         Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);

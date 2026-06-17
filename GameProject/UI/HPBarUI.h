@@ -7,8 +7,7 @@
 #include "Sprite.h"
 
 /// <summary>
-/// HP バー UI クラス
-/// HP バーの初期化・更新・描画を一元管理
+/// HP バーの初期化・更新・描画を管理
 /// </summary>
 class HPBarUI
 {
@@ -17,14 +16,14 @@ public:
     ~HPBarUI() = default;
 
     /// <summary>
-    /// 初期化（単一バー）
+    /// 単一バー（前景バー＋背景）を生成し初期化する
     /// </summary>
-    /// <param name="texture">テクスチャファイル名</param>
-    /// <param name="size">バーのサイズ</param>
-    /// <param name="screenXRatio">画面 X 座標（画面幅に対する比率）</param>
-    /// <param name="screenYRatio">画面 Y 座標（画面高さに対する比率）</param>
-    /// <param name="barColor">バーの色</param>
-    /// <param name="bgColor">背景の色</param>
+    /// <param name="texture">バー・背景に共通で使うテクスチャ名</param>
+    /// <param name="size">バーの基準サイズ（ピクセル）。HP満タン時の幅</param>
+    /// <param name="screenXRatio">表示位置X。画面幅に対する比率(0.0-1.0)</param>
+    /// <param name="screenYRatio">表示位置Y。画面高さに対する比率(0.0-1.0)</param>
+    /// <param name="barColor">前景バーの色(RGBA)</param>
+    /// <param name="bgColor">背景バーの色(RGBA)。既定は不透明白</param>
     void Initialize(
         const std::string& texture,
         const Tako::Vector2& size,
@@ -34,15 +33,15 @@ public:
         const Tako::Vector4& bgColor = Tako::Vector4{ 1.f, 1.f, 1.f, 1.0f });
 
     /// <summary>
-    /// 初期化（2段バー、Boss フェーズ用）
+    /// 2段重ねバー（Boss フェーズ用）を生成し初期化する
     /// </summary>
-    /// <param name="texture">テクスチャファイル名</param>
-    /// <param name="size">バーのサイズ</param>
-    /// <param name="screenXRatio">画面 X 座標（画面幅に対する比率）</param>
-    /// <param name="screenYRatio">画面 Y 座標（画面高さに対する比率）</param>
-    /// <param name="bar1Color">フェーズ1バーの色</param>
-    /// <param name="bar2Color">フェーズ2バーの色</param>
-    /// <param name="bgColor">背景の色</param>
+    /// <param name="texture">バー・背景に共通で使うテクスチャ名</param>
+    /// <param name="size">バーの基準サイズ（ピクセル）</param>
+    /// <param name="screenXRatio">表示位置X。画面幅に対する比率(0.0-1.0)</param>
+    /// <param name="screenYRatio">表示位置Y。画面高さに対する比率(0.0-1.0)</param>
+    /// <param name="bar1Color">フェーズ1で減少する手前バーの色(RGBA)</param>
+    /// <param name="bar2Color">フェーズ2で減少する奥バーの色(RGBA)</param>
+    /// <param name="bgColor">背景バーの色(RGBA)。既定は不透明白</param>
     void InitializeDual(
         const std::string& texture,
         const Tako::Vector2& size,
@@ -53,58 +52,42 @@ public:
         const Tako::Vector4& bgColor = Tako::Vector4{ 1.f, 1.f, 1.f, 1.0f });
 
     /// <summary>
-    /// 更新（単一バー用）
+    /// 現在値/最大値の比率でバー幅を更新する
     /// </summary>
-    /// <param name="currentValue">現在の値</param>
-    /// <param name="maxValue">最大値</param>
+    /// <param name="currentValue">現在値。maxValue で割った比率は0.0-1.0にクランプ</param>
+    /// <param name="maxValue">最大値。0以下なら比率0扱い</param>
     void Update(float currentValue, float maxValue);
 
     /// <summary>
-    /// 更新（2段バー用、Boss フェーズ用）
+    /// フェーズに応じて2段バーの幅を更新する
     /// </summary>
-    /// <param name="currentHp">現在 HP</param>
-    /// <param name="maxHp">最大 HP</param>
-    /// <param name="phase2Threshold">フェーズ2開始閾値</param>
-    /// <param name="phase">現在のフェーズ（1 or 2）</param>
+    /// <param name="currentHp">現在HP</param>
+    /// <param name="maxHp">最大HP</param>
+    /// <param name="phase2Threshold">フェーズ2開始HP閾値。これ以上が手前バー、以下が奥バーの担当</param>
+    /// <param name="phase">現在のフェーズ（1: 手前バー減少 / 2: 手前バー0幅・奥バー減少）</param>
     void UpdateDual(float currentHp, float maxHp, float phase2Threshold, uint32_t phase);
 
-    /// <summary>
-    /// 描画
-    /// </summary>
     void Draw();
 
-    /// <summary>
-    /// 画面位置を設定
-    /// </summary>
-    /// <param name="screenXRatio">画面 X 座標（画面幅に対する比率）</param>
-    /// <param name="screenYRatio">画面 Y 座標（画面高さに対する比率）</param>
+    /// <param name="screenXRatio">画面幅に対する比率</param>
+    /// <param name="screenYRatio">画面高さに対する比率</param>
     void SetPosition(float screenXRatio, float screenYRatio);
 
-    /// <summary>
-    /// バーの色を設定
-    /// </summary>
-    /// <param name="color">新しい色</param>
     void SetBarColor(const Tako::Vector4& color);
 
-    /// <summary>
-    /// アンカーポイントを設定
-    /// </summary>
-    /// <param name="anchor">アンカーポイント（0,0:左上 1,1:右下）</param>
+    /// <param name="anchor">0,0:左上 1,1:右下</param>
     void SetAnchorPoint(const Tako::Vector2& anchor);
 
 private:
-    /// <summary>
-    /// 画面座標を計算
-    /// </summary>
     Tako::Vector2 CalculateScreenPosition() const;
 
-    std::unique_ptr<Tako::Sprite> barSprite_;    ///< バースプライト
-    std::unique_ptr<Tako::Sprite> bar2Sprite_;   ///< 2段目バースプライト（Dual 用）
-    std::unique_ptr<Tako::Sprite> bgSprite_;     ///< 背景スプライト
+    std::unique_ptr<Tako::Sprite> barSprite_;
+    std::unique_ptr<Tako::Sprite> bar2Sprite_;   ///< 2段目（Dual 用）
+    std::unique_ptr<Tako::Sprite> bgSprite_;
 
-    Tako::Vector2 baseSize_;     ///< 基本サイズ
-    float screenXRatio_ = 0.5f;  ///< 画面 X 比率
-    float screenYRatio_ = 0.05f; ///< 画面 Y 比率
+    Tako::Vector2 baseSize_;
+    float screenXRatio_ = 0.5f;
+    float screenYRatio_ = 0.05f;
 
-    bool isDualBar_ = false;     ///< 2段バーモードか
+    bool isDualBar_ = false;
 };

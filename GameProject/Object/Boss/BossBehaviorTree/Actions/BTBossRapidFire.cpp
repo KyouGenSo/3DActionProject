@@ -15,35 +15,28 @@ BTBossRapidFire::BTBossRapidFire() {
 }
 
 Tako::BTNodeStatus BTBossRapidFire::OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) {
-    // フェーズ1: チャージ中（プレイヤーに照準）
     if (elapsedTime_ < chargeTime_) {
         FacePlayerInstant(blackboard);
         bulletSignEffect_.Update(boss, deltaTime);
     }
-    // フェーズ2: 連続発射中（追尾しながら発射）
     else if (firedCount_ < bulletCount_) {
-        // 最初の発射開始時にエフェクト終了
         if (bulletSignEffect_.IsActive()) {
             bulletSignEffect_.End(boss);
         }
 
-        // 発射中もプレイヤー方向を追尾
         FacePlayerInstant(blackboard);
 
-        // 発射間隔チェック
         timeSinceLastFire_ += deltaTime;
         if (timeSinceLastFire_ >= fireInterval_) {
             FireBullet(blackboard);
             firedCount_++;
             timeSinceLastFire_ = 0.0f;
 
-            // 最後の弾を発射したら硬直フェーズ開始
             if (firedCount_ >= bulletCount_) {
                 EnterAttackRecovery(boss);
             }
         }
     }
-    // フェーズ3: 硬直中（何もしない）
 
     elapsedTime_ += deltaTime;
 
@@ -60,7 +53,6 @@ void BTBossRapidFire::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* bos
     firedCount_ = 0;
     // 即座に 1 発目を撃てるよう発射タイマを満タンに
     timeSinceLastFire_ = fireInterval_;
-    // totalDuration: チャージ + 発射全体 + 硬直
     totalDuration_ = chargeTime_ + (fireInterval_ * static_cast<float>(bulletCount_)) + recoveryTime_;
     bulletSignEffect_.Start(boss, chargeTime_);
 }

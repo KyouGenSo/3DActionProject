@@ -16,7 +16,6 @@ BossStunnedState::BossStunnedState()
 
 void BossStunnedState::Enter(Boss* boss)
 {
-	// タイマーリセット
 	elapsedTime_ = 0.0f;
 	flashTimer_ = 0.0f;
 	knockbackTimer_ = 0.0f;
@@ -26,11 +25,10 @@ void BossStunnedState::Enter(Boss* boss)
 
 	startPosition_ = boss->GetTransform().translate;
 
-	// ノックバック情報をボスから取得
 	Vector3 knockbackDir = boss->GetPendingStunDirection();
 	bool withKnockback = boss->GetPendingStunWithKnockback();
 
-	// ノックバック無効時は移動をスキップ（その場でスタン）
+	// ノックバック無効時は移動せずその場でスタン
 	if (!withKnockback) {
 		targetPosition_ = startPosition_;
 		knockbackComplete_ = true;
@@ -39,9 +37,8 @@ void BossStunnedState::Enter(Boss* boss)
 		return;
 	}
 
-	// 方向が有効かチェック
+	// 方向無効時はボス後方へフォールバック
 	if (knockbackDir.Length() < kDirectionEpsilon) {
-		// フォールバック: ボスの後方に下がる
 		float angle = boss->GetTransform().rotate.y;
 		knockbackDir = Vector3(-sinf(angle), 0.0f, -cosf(angle));
 	}
@@ -49,11 +46,9 @@ void BossStunnedState::Enter(Boss* boss)
 	knockbackDir.y = 0.0f;
 	knockbackDir = knockbackDir.Normalize();
 
-	// 目標位置を計算
 	targetPosition_ = startPosition_ + knockbackDir * knockbackDistance_;
 	targetPosition_ = BossMovement::ClampToBounds(targetPosition_, BossMovement::CalcStageBounds());
 
-	// 初回フラッシュを即座に開始
 	UpdateFlash(boss);
 }
 
@@ -61,7 +56,7 @@ void BossStunnedState::Update(Boss* boss, float deltaTime)
 {
 	elapsedTime_ += deltaTime;
 
-	// 中途ノックバック有効化（4コンボ目ヒット）
+	// 4コンボ目ヒットによる中途ノックバック有効化
 	if (pendingKnockbackEnable_) {
 		pendingKnockbackEnable_ = false;
 		knockbackWasSkipped_ = false;
@@ -81,21 +76,18 @@ void BossStunnedState::Update(Boss* boss, float deltaTime)
 		targetPosition_ = BossMovement::ClampToBounds(targetPosition_, BossMovement::CalcStageBounds());
 	}
 
-	// ノックバック処理
 	if (!knockbackComplete_) {
 		knockbackTimer_ += deltaTime;
 		UpdateKnockback(boss, deltaTime);
 	}
 
-	// 色点滅処理（スタン中継続）
 	flashTimer_ += deltaTime;
 	if (flashTimer_ >= flashInterval_) {
 		flashTimer_ = 0.0f;
 		UpdateFlash(boss);
 	}
 
-	// スタン終了判定
-	// フェーズ移行スタン中はタイムアウトしない（被弾で PhaseTransitionStunState に遷移済み）
+	// フェーズ移行スタン中はタイムアウトしない（被弾で PhaseTransitionStunState へ遷移済み）
 	if (elapsedTime_ >= stunDuration_ && knockbackComplete_) {
 		boss->GetStateMachine()->ChangeState("Normal");
 	}
@@ -103,7 +95,6 @@ void BossStunnedState::Update(Boss* boss, float deltaTime)
 
 void BossStunnedState::Exit(Boss* boss)
 {
-	// 状態リセット
 	elapsedTime_ = 0.0f;
 	flashTimer_ = 0.0f;
 	knockbackTimer_ = 0.0f;
@@ -131,7 +122,6 @@ void BossStunnedState::UpdateKnockback(Boss* boss, float deltaTime)
 	float t = knockbackTimer_ / knockbackDuration_;
 	t = std::clamp(t, 0.0f, 1.0f);
 
-	// イージング（加速→減速）: smoothstep
 	t = Ease::SmoothStep(t);
 
 	Vector3 newPosition = Vector3::Lerp(startPosition_, targetPosition_, t);

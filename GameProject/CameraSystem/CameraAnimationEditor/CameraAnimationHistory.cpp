@@ -3,7 +3,6 @@
 #include "CameraAnimationHistory.h"
 #include <format>
 
-// AddKeyframeAction 実装
 void CameraAnimationHistory::AddKeyframeAction::Execute(CameraAnimation* animation) {
     animation->AddKeyframe(keyframe_);
 }
@@ -12,7 +11,6 @@ void CameraAnimationHistory::AddKeyframeAction::Undo(CameraAnimation* animation)
     animation->RemoveKeyframe(index_);
 }
 
-// DeleteKeyframeAction 実装
 void CameraAnimationHistory::DeleteKeyframeAction::Execute(CameraAnimation* animation) {
     animation->RemoveKeyframe(index_);
 }
@@ -21,7 +19,6 @@ void CameraAnimationHistory::DeleteKeyframeAction::Undo(CameraAnimation* animati
     animation->AddKeyframe(keyframe_);
 }
 
-// EditKeyframeAction 実装
 void CameraAnimationHistory::EditKeyframeAction::Execute(CameraAnimation* animation) {
     animation->EditKeyframe(index_, newKeyframe_);
 }
@@ -30,7 +27,6 @@ void CameraAnimationHistory::EditKeyframeAction::Undo(CameraAnimation* animation
     animation->EditKeyframe(index_, oldKeyframe_);
 }
 
-// CameraAnimationHistory 実装
 CameraAnimationHistory::CameraAnimationHistory() {
     history_.reserve(maxHistorySize_);
 }
@@ -49,22 +45,18 @@ void CameraAnimationHistory::ExecuteAction(std::unique_ptr<Action> action) {
         return;
     }
 
-    // 実行中フラグを立てる（無限ループ防止）
     isExecuting_ = true;
 
-    // 現在位置より後の履歴を削除
+    // 新規分岐: 現在位置より後の Redo 履歴を破棄
     if (currentIndex_ < history_.size()) {
         history_.erase(history_.begin() + currentIndex_, history_.end());
     }
 
-    // アクションを実行
     action->Execute(animation_);
 
-    // 履歴に追加
     history_.push_back(std::move(action));
     currentIndex_ = history_.size();
 
-    // 履歴サイズ制限
     LimitHistorySize();
 
     isExecuting_ = false;
@@ -78,7 +70,7 @@ void CameraAnimationHistory::RecordAdd(size_t index) {
     auto action = std::make_unique<AddKeyframeAction>(
         animation_->GetKeyframe(index), index);
 
-    // ExecuteAction は使わない（既に追加済みのため）
+    // 既に追加済みなので記録のみ（Execute しない）
     if (currentIndex_ < history_.size()) {
         history_.erase(history_.begin() + currentIndex_, history_.end());
     }
@@ -94,7 +86,7 @@ void CameraAnimationHistory::RecordDelete(size_t index, const CameraKeyframe& ke
 
     auto action = std::make_unique<DeleteKeyframeAction>(keyframe, index);
 
-    // ExecuteAction は使わない（既に削除済みのため）
+    // 既に削除済みなので記録のみ（Execute しない）
     if (currentIndex_ < history_.size()) {
         history_.erase(history_.begin() + currentIndex_, history_.end());
     }
@@ -110,7 +102,7 @@ void CameraAnimationHistory::RecordEdit(size_t index, const CameraKeyframe& oldK
 
     auto action = std::make_unique<EditKeyframeAction>(index, oldKf, newKf);
 
-    // ExecuteAction は使わない（既に編集済みのため）
+    // 既に編集済みなので記録のみ（Execute しない）
     if (currentIndex_ < history_.size()) {
         history_.erase(history_.begin() + currentIndex_, history_.end());
     }

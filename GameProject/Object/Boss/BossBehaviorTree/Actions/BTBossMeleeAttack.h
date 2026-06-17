@@ -6,8 +6,7 @@
 class Boss;
 
 /// <summary>
-/// ボスの近接攻撃アクションノード
-/// 準備 → 攻撃 → 硬直の 3 フェーズ（コンボ時は 3 連撃 + 間隔）で武器ブロックを振る。
+/// 武器ブロックを振る近接攻撃。コンボ抽選で 1 撃または 3 連撃。
 /// </summary>
 class BTBossMeleeAttack : public AttackNode {
 private:
@@ -46,94 +45,75 @@ public:
 
 protected:
     /// <summary>
-    /// 固有攻撃ロジック本体（Prepare → Execute → (Interval →) Recovery のフェーズ制御）
+    /// Prepare → Execute →（コンボ時 Interval）→ Recovery の状態機械を進行させる
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
-    /// <returns>Tako::BTNodeStatus::Running（攻撃継続中） / Tako::BTNodeStatus::Success（攻撃完了）</returns>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
+    /// <param name="boss">攻撃させるボス</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
+    /// <returns>Recovery 完了で Success、それ以外は Running</returns>
     Tako::BTNodeStatus OnExecute(Tako::BTBlackboard* blackboard, Boss* boss, float deltaTime) override;
 
-    /// <summary>
-    /// 固有初期化処理（コンボ抽選、totalDuration の算出、武器ブロックの生成と初期姿勢の設定）
-    /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
     void OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) override;
 
-    /// <summary>
-    /// 固有クリーンアップ処理（武器ブロック解放とフェーズ状態のリセット）
-    /// </summary>
     void OnCleanup() override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ適用
-    /// </summary>
-    /// <param name="params">適用するjsonパラメータ</param>
     void OnApplyParameters(const nlohmann::json& params) override;
 
-    /// <summary>
-    /// 固有のjsonパラメータ抽出処理
-    /// </summary>
-    /// <param name="out">抽出したパラメータを格納するjsonオブジェクトへの参照</param>
     void OnExtractParameters(nlohmann::json& out) const override;
 #ifdef _DEBUG
-    /// <summary>
-    /// 固有のImGuiデバッグ表示
-    /// </summary>
     bool OnDrawImGui() override;
 #endif
 
 private:
     /// <summary>
-    /// プレイヤー方向へボスを徐々に旋回させる
+    /// プレイヤー方向へ徐々に旋回
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
     void AimAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
-    /// 準備フェーズの更新処理（プレイヤー追尾と突進初期化）
+    /// 準備フェーズ: プレイヤーを向き、ブロック位置と予兆エミッタを更新する
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
     void ProcessPreparePhase(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
-    /// 攻撃実行フェーズの更新処理（突進移動とブロック振り回し）
+    /// 突進移動とブロック振り回し
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
     void ProcessExecutePhase(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
-    /// 硬直フェーズの開始処理（Boss を硬直状態へ遷移させる）
+    /// 硬直フェーズ（現状は何もしない）
     /// </summary>
-    /// <param name="boss">攻撃を行うBossへのポインタ</param>
+    /// <param name="boss">対象のボス</param>
     void ProcessRecoveryPhase(Boss* boss);
 
     /// <summary>
-    /// コンボ間隔フェーズの更新処理（次の攻撃までの待機とプレイヤー追尾）
+    /// コンボ間隔フェーズ: プレイヤー方向へ旋回し続ける
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
-    /// <param name="deltaTime">1フレームの経過時間</param>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
+    /// <param name="deltaTime">前フレームからの経過秒</param>
     void ProcessIntervalPhase(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
-    /// 現在のコンボ段に応じた振り方向と初期角度を設定する
+    /// コンボ段に応じた振り方向と初期角度を設定
     /// </summary>
     void InitializeSwingForCurrentCombo();
 
     /// <summary>
-    /// 現在のブロック角度に基づき武器ブロックの位置・姿勢を更新する
+    /// blockAngle_ に基づき武器ブロックの位置・姿勢を更新
     /// </summary>
-    /// <param name="boss">武器ブロックを保有するBossへのポインタ</param>
+    /// <param name="boss">武器ブロックを持つボス</param>
     void UpdateBlockPosition(Boss* boss);
 
     /// <summary>
-    /// 突進の開始位置・目標位置・方向ベクトルを算出して初期化する
+    /// 突進の開始/目標位置と方向を算出
     /// </summary>
-    /// <param name="blackboard">BTBlackboardへのポインタ</param>
+    /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
     void InitializeRush(Tako::BTBlackboard* blackboard);
 
     //=========================================================================================

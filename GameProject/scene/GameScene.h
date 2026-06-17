@@ -37,8 +37,7 @@ class CameraAnimationController;
 /// </summary>
 class GameScene : public Tako::BaseScene
 {
-public: // メンバ関数
-
+public: //メンバー関数
     void Initialize() override;
 
     void Finalize() override;
@@ -80,41 +79,43 @@ public: // メンバ関数
 
     void UpdatePause();
 
-private: // メンバ変数
-
-    std::unique_ptr<Tako::SkyBox> skyBox_;
-
+private: //メンバー変数
+    //シーンオブジェクト
+    std::unique_ptr<Tako::SkyBox>   skyBox_;
     std::unique_ptr<Tako::Object3d> ground_;
+    std::unique_ptr<Player>         player_;
+    std::unique_ptr<Boss>           boss_;
+    std::unique_ptr<InputHandler>   inputHandler_;
 
-    std::unique_ptr<Player> player_;
+    //カメラ
+    CameraManager*             cameraManager_         = nullptr;
+    ThirdPersonController*     thirdPersonController_ = nullptr;
+    TopDownController*         topDownController_     = nullptr;
+    CameraAnimationController* animationController_   = nullptr;
+    bool                       cameraMode_            = false;    ///< true: ThirdPerson, false: TopDown
 
-    std::unique_ptr<Boss> boss_;
-
-    std::unique_ptr<InputHandler> inputHandler_;
-
-    CameraManager* cameraManager_ = nullptr;
-    ThirdPersonController* thirdPersonController_ = nullptr;
-    TopDownController* topDownController_ = nullptr;
-    CameraAnimationController* animationController_ = nullptr;
-    bool cameraMode_ = false;                                   ///< true: ThirdPerson, false: TopDown
-
+    //地面UV
     Tako::Transform groundUvTransform_{};
 
-    std::unique_ptr<Tako::EmitterManager> emitterManager_;
+    //エミッター・フォースフィールド
+    std::unique_ptr<Tako::EmitterManager>    emitterManager_;
     std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;
 
+    //弾管理
     std::unique_ptr<ProjectileManager> projectileManager_;
 
+    //状態
     bool isStart_ = false;
-
     bool isDebug_ = false;
 
-    std::unique_ptr<OverEffectManager> overEffectManager_;
-    std::unique_ptr<ClearEffectManager> clearEffectManager_;
+    //エフェクト管理
+    std::unique_ptr<OverEffectManager>         overEffectManager_;
+    std::unique_ptr<ClearEffectManager>        clearEffectManager_;
     std::unique_ptr<BossBorderParticleManager> bossBorderManager_;
-    std::unique_ptr<DashEffectManager> dashEffectManager_;
+    std::unique_ptr<DashEffectManager>         dashEffectManager_;
 
+    //UI・ポーズ
     std::unique_ptr<ControllerUI> controllerUI_;
-    std::unique_ptr<PauseMenu> pauseMenu_;
-    bool isPaused_ = false;
+    std::unique_ptr<PauseMenu>    pauseMenu_;
+    bool                          isPaused_     = false;
 };

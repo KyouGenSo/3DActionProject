@@ -6,7 +6,7 @@
 /// 非硬直中の被弾で遷移する離脱状態。移動は BossRetreatExecutor に委譲し、完了後 Normal へ復帰
 /// </summary>
 class BossRetreatingState : public BossState {
-public:
+public: //メンバー関数
     BossRetreatingState();
     ~BossRetreatingState() override = default;
 
@@ -14,6 +14,6 @@ public:
     void Update(Boss* boss, float deltaTime) override;
     void Exit(Boss* boss) override;
 
-private:
+private: //メンバー変数
     BossRetreatExecutor executor_;
 };

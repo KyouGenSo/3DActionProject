@@ -15,29 +15,42 @@ class Boss;
 /// プレイヤーのいる象限は確定で含める。
 /// </summary>
 class BTBossAreaAttack : public AttackNode {
-public:
+private: //定数
+    static constexpr int   kQuadrantCount       = 4;
+    static constexpr float kDecalBaseAlpha      = 0.3f;
+    static constexpr float kBlinkAlphaMin       = 0.15f;
+    static constexpr float kBlinkAlphaAmplitude = 0.55f;  ///< kBlinkAlphaMin からの増加分
+    static constexpr float kColliderHeight      = 10.0f;
+
+public: //メンバー関数
     BTBossAreaAttack();
     virtual ~BTBossAreaAttack();
 
-    // パラメータ取得・設定
-    float GetWarningDuration() const { return warningDuration_; }
+    //==================================
+    //Setter
+    //==================================
     void  SetWarningDuration(float time) { warningDuration_ = time; }
-    float GetBlinkDuration() const { return blinkDuration_; }
     void  SetBlinkDuration(float time) { blinkDuration_ = time; }
-    float GetAttackDuration() const { return attackDuration_; }
     void  SetAttackDuration(float time) { attackDuration_ = time; }
-    float GetRecoveryTime() const { return recoveryTime_; }
     void  SetRecoveryTime(float time) { recoveryTime_ = time; }
-    int   GetMinQuadrants() const { return minQuadrants_; }
     void  SetMinQuadrants(int count) { minQuadrants_ = count; }
-    int   GetMaxQuadrants() const { return maxQuadrants_; }
     void  SetMaxQuadrants(int count) { maxQuadrants_ = count; }
-    float GetDamage() const { return damage_; }
     void  SetDamage(float damage) { damage_ = damage; }
-    float GetBlinkFrequency() const { return blinkFrequency_; }
     void  SetBlinkFrequency(float freq) { blinkFrequency_ = freq; }
 
-private:
+    //==================================
+    //Getter
+    //==================================
+    float GetWarningDuration() const { return warningDuration_; }
+    float GetBlinkDuration() const { return blinkDuration_; }
+    float GetAttackDuration() const { return attackDuration_; }
+    float GetRecoveryTime() const { return recoveryTime_; }
+    int   GetMinQuadrants() const { return minQuadrants_; }
+    int   GetMaxQuadrants() const { return maxQuadrants_; }
+    float GetDamage() const { return damage_; }
+    float GetBlinkFrequency() const { return blinkFrequency_; }
+
+private: //非公開関数
     /// <summary>
     /// Warning → Blinking → Attack → Recovery のフェーズを進行させる
     /// </summary>
@@ -58,7 +71,6 @@ private:
     bool OnDrawImGui() override;
 #endif
 
-private:
     /// <summary>
     /// 攻撃象限をランダム選択して activeQuadrants_ を更新（プレイヤー象限は確定）
     /// </summary>
@@ -97,43 +109,28 @@ private:
     /// <param name="boss">エミッタ取得元のボス</param>
     void EndAttackPhase(Boss* boss);
 
-    //=========================================================================================
-    // 定数
-    //=========================================================================================
-
-    static constexpr int   kQuadrantCount = 4;
-    static constexpr float kDecalBaseAlpha = 0.3f;
-    static constexpr float kBlinkAlphaMin = 0.15f;
-    static constexpr float kBlinkAlphaAmplitude = 0.55f;  ///< kBlinkAlphaMin からの増加分
-    static constexpr float kColliderHeight = 10.0f;
-
-    //=========================================================================================
-    // パラメータ
-    //=========================================================================================
+private: //メンバー変数
+    //パラメータ
     float warningDuration_ = 1.5f;
-    float blinkDuration_ = 1.0f;
-    float attackDuration_ = 0.5f;
-    float recoveryTime_ = 0.5f;
-    int   minQuadrants_ = 1;
-    int   maxQuadrants_ = 3;
-    float damage_ = 15.0f;
-    float blinkFrequency_ = 10.0f;
+    float blinkDuration_   = 1.0f;
+    float attackDuration_  = 0.5f;
+    float recoveryTime_    = 0.5f;
+    int   minQuadrants_    = 1;
+    int   maxQuadrants_    = 3;
+    float damage_          = 15.0f;
+    float blinkFrequency_  = 10.0f;
 
-    //=========================================================================================
-    // ランタイム状態
-    //=========================================================================================
-    float totalDuration_ = 0.0f;
-    bool  hasBegunAttack_ = false;
-    bool  hasEndedAttack_ = false;
+    //ランタイム状態
+    float                            totalDuration_     = 0.0f;
+    bool                             hasBegunAttack_    = false;
+    bool                             hasEndedAttack_    = false;
     std::array<bool, kQuadrantCount> activeQuadrants_{};
 
-    //=========================================================================================
-    // Decal / コライダー / パーティクル
-    //=========================================================================================
-    std::array<std::unique_ptr<Tako::Decal>, kQuadrantCount> quadrantDecals_;
+    //Decal / コライダー / パーティクル
+    std::array<std::unique_ptr<Tako::Decal>, kQuadrantCount>            quadrantDecals_;
     std::array<std::unique_ptr<BossAreaAttackCollider>, kQuadrantCount> quadrantColliders_;
-    std::array<Tako::Transform, kQuadrantCount> colliderTransforms_;
+    std::array<Tako::Transform, kQuadrantCount>                         colliderTransforms_;
 
-    bool particlesInitialized_ = false;
+    bool                                    particlesInitialized_ = false;
     std::array<std::string, kQuadrantCount> emitterNames_;
 };

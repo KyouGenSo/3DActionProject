@@ -11,7 +11,7 @@
 /// 補間カーブを視覚編集するエディター
 /// </summary>
 class CameraAnimationCurveEditor {
-public:
+public: //構造体
     enum class CurveType {
         POSITION_X,
         POSITION_Y,
@@ -30,38 +30,38 @@ public:
         BOTH
     };
 
-public:
-    CameraAnimationCurveEditor();
+private: //構造体
+    struct TangentData {
+        float leftLength = 0.3f;
+        float leftAngle = 0.0f;
+        float rightLength = 0.3f;
+        float rightAngle = 0.0f;
+        bool broken = false;                     ///< 左右タンジェントを分離
+    };
 
+public: //メンバー関数
+    CameraAnimationCurveEditor();
     ~CameraAnimationCurveEditor();
 
     void Initialize(CameraAnimation* animation);
-
     void Draw(const std::vector<int>& selectedKeyframes);
 
+    //==========================================================================
+    //Setter
+    //==========================================================================
     void SetActiveCurve(CurveType type) { activeCurve_ = type; }
-
     void SetCurveVisible(CurveType type, bool visible);
-
     void SetGridSnapEnabled(bool enable) { enableGridSnap_ = enable; }
 
-private:
+private: //非公開関数
     void DrawGraphArea();
-
     void DrawGrid();
-
     void DrawAxes();
-
     void DrawCurve(CurveType curveType);
-
     void DrawKeyPoint(int index, float x, float y, bool isSelected);
-
     void DrawTangentHandle(float centerX, float centerY, float handleX, float handleY, bool isLeft);
-
     void HandleMouseInput();
-
     void DrawCurveProperties();
-
     void DrawEasingPresets();
 
     /// <summary>
@@ -113,54 +113,47 @@ private:
     /// <param name="value">入出力。カーブ値。Y方向グリッド間隔へ丸める</param>
     void SnapToGrid(float& time, float& value) const;
 
-private:
+private: //メンバー変数
     CameraAnimation* animation_ = nullptr;
 
-    // グラフ設定
+    //グラフ設定
     ImVec2 graphPos_;
-    ImVec2 graphSize_ = ImVec2(600, 300);
-    float timeRange_ = 10.0f;
-    float valueRangeMin_ = -10.0f;
-    float valueRangeMax_ = 10.0f;
-    float zoomX_ = 1.0f;
-    float zoomY_ = 1.0f;
-    float panX_ = 0.0f;
-    float panY_ = 0.0f;
+    ImVec2 graphSize_     = ImVec2(600, 300);
+    float  timeRange_     = 10.0f;
+    float  valueRangeMin_ = -10.0f;
+    float  valueRangeMax_ = 10.0f;
+    float  zoomX_         = 1.0f;
+    float  zoomY_         = 1.0f;
+    float  panX_          = 0.0f;
+    float  panY_          = 0.0f;
 
-    // カーブ設定
-    CurveType activeCurve_ = CurveType::POSITION_X;
-    bool curveVisible_[static_cast<int>(CurveType::COUNT)];
-    ImU32 curveColors_[static_cast<int>(CurveType::COUNT)];
+    //カーブ設定
+    CurveType activeCurve_                                      = CurveType::POSITION_X;
+    bool      curveVisible_[static_cast<int>(CurveType::COUNT)];
+    ImU32     curveColors_[static_cast<int>(CurveType::COUNT)];
 
-    // 選択状態
-    int selectedKeyPoint_ = -1;
-    int selectedEasingIndex_ = 0;
-    HandleType selectedHandle_ = HandleType::NONE;
-    bool isDragging_ = false;
-    ImVec2 dragStartPos_;
-    float dragStartTime_;
-    float dragStartValue_;
+    //選択状態
+    int        selectedKeyPoint_    = -1;
+    int        selectedEasingIndex_ = 0;
+    HandleType selectedHandle_      = HandleType::NONE;
+    bool       isDragging_          = false;
+    ImVec2     dragStartPos_;
+    float      dragStartTime_;
+    float      dragStartValue_;
 
-    // グリッドスナップ
-    bool enableGridSnap_ = false;
-    float gridSnapIntervalX_ = 0.1f;             ///< 秒
+    //グリッドスナップ
+    bool  enableGridSnap_    = false;
+    float gridSnapIntervalX_ = 0.1f;   ///< 秒
     float gridSnapIntervalY_ = 1.0f;
 
-    // 表示設定
-    bool showGrid_ = true;
-    bool showAxes_ = true;
-    bool showTangents_ = true;
-    bool showValues_ = true;
-    int curveResolution_ = 50;                   ///< 1区間あたりの分割数
+    //表示設定
+    bool showGrid_        = true;
+    bool showAxes_        = true;
+    bool showTangents_    = true;
+    bool showValues_      = true;
+    int  curveResolution_ = 50;    ///< 1区間あたりの分割数
 
-    // タンジェント設定（将来的にベジェカーブ実装用）
-    struct TangentData {
-        float leftLength = 0.3f;
-        float leftAngle = 0.0f;
-        float rightLength = 0.3f;
-        float rightAngle = 0.0f;
-        bool broken = false;                     ///< 左右タンジェントを分離
-    };
+    //タンジェント設定（将来的にベジェカーブ実装用）
     std::vector<TangentData> tangents_;
 };
 

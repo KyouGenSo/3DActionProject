@@ -3,18 +3,17 @@
 
 #include "PlayerState.h"
 
+class Boss;
+
 /// <summary>
 /// 攻撃状態クラス（ターゲット検索→移動→攻撃、コンボ管理、先行入力対応）
 /// </summary>
 class AttackState : public PlayerState
 {
-    //=========================================================================================
-    // 定数
-    //=========================================================================================
-private:
+private: //定数
     static constexpr int kMaxComboCount = 4;
 
-private: // 構造体定義
+private: //構造体
     /// <summary>
     /// 攻撃ブロックの回転軸
     /// </summary>
@@ -35,18 +34,6 @@ private: // 構造体定義
         SwingAxis axis;
     };
 
-public:
-    AttackState() : PlayerState("Attack") {}
-
-    void Enter(Player* player) override;
-
-    void Update(Player* player, float deltaTime) override;
-
-    void Exit(Player* player) override;
-
-    void HandleInput(Player* player) override;
-
-private:
     /// <summary>
     /// 攻撃フェーズ
     /// </summary>
@@ -57,24 +44,29 @@ private:
         Recovery         ///< コンボ完走時のみ
     };
 
-    AttackPhase phase_ = SearchTarget;
-    class Boss* targetEnemy_ = nullptr;
-    float phaseTimer_ = 0.0f;                           ///< 各フェーズ共用
-    float maxSearchTime_ = 0.1f;
-    float maxMoveTime_ = 0.1f;
-    float recoveryTime_ = 0.5f;                         ///< コンボ完走時の硬直
+public: //メンバー関数
+    AttackState() : PlayerState("Attack") {}
 
-    int comboIndex_ = 0;                                ///< 0-3
-    int maxCombo_ = 4;
-    bool hasBufferedInput_ = false;                     ///< 先行入力フラグ
+    void Enter(Player* player) override;
+    void Update(Player* player, float deltaTime) override;
+    void Exit(Player* player) override;
+    void HandleInput(Player* player) override;
+    void DrawImGui(Player* player) override;
 
-    std::array<ComboData, kMaxComboCount> combos_{};
+    //==========================================
+    //Getter
+    //==========================================
+    AttackPhase GetPhase() const { return phase_; }
+    Boss* GetTargetEnemy() const { return targetEnemy_; }
+    float GetPhaseTimer() const { return phaseTimer_; }
+    int GetComboIndex() const { return comboIndex_; }
+    int GetMaxCombo() const { return maxCombo_; }
+    float GetMaxMoveTime() const { return maxMoveTime_; }
+    float GetRecoveryTime() const { return recoveryTime_; }
+    bool HasBufferedInput() const { return hasBufferedInput_; }
+    const ComboData& GetCurrentComboData() const { return combos_[comboIndex_]; }
 
-    // 攻撃ブロック回転制御
-    float blockAngle_ = 0.0f;
-    float blockRadius_ = 4.0f;                          ///< プレイヤーからの距離
-    float blockScale_ = 0.5f;
-
+private: //非公開関数
     void LoadComboData();
 
     /// <summary>
@@ -88,9 +80,7 @@ private:
     void TransitionToPhase(AttackPhase newPhase);
 
     void SearchForTarget(Player* player);
-
     void ProcessMoveToTarget(Player* player, float deltaTime);
-
     void ProcessExecuteAttack(Player* player, float deltaTime);
 
     /// <summary>
@@ -105,20 +95,24 @@ private:
     /// </summary>
     void UpdateBlockPosition(Player* player);
 
-public:
-    AttackPhase GetPhase() const { return phase_; }
+private: //メンバー変数
+    //フェーズ
+    AttackPhase phase_         = SearchTarget;
+    class Boss* targetEnemy_   = nullptr;
+    float       phaseTimer_    = 0.0f;          ///< 各フェーズ共用
+    float       maxSearchTime_ = 0.1f;
+    float       maxMoveTime_   = 0.1f;
+    float       recoveryTime_  = 0.5f;          ///< コンボ完走時の硬直
 
-    Boss* GetTargetEnemy() const { return targetEnemy_; }
+    //コンボ
+    int  comboIndex_       = 0;      ///< 0-3
+    int  maxCombo_         = 4;
+    bool hasBufferedInput_ = false;  ///< 先行入力フラグ
 
-    float GetPhaseTimer() const { return phaseTimer_; }
+    std::array<ComboData, kMaxComboCount> combos_{};
 
-    void DrawImGui(Player* player) override;
-
-    // DrawImGui 用のゲッター
-    int GetComboIndex() const { return comboIndex_; }
-    int GetMaxCombo() const { return maxCombo_; }
-    float GetMaxMoveTime() const { return maxMoveTime_; }
-    float GetRecoveryTime() const { return recoveryTime_; }
-    bool HasBufferedInput() const { return hasBufferedInput_; }
-    const ComboData& GetCurrentComboData() const { return combos_[comboIndex_]; }
+    //攻撃ブロック回転制御
+    float blockAngle_  = 0.0f;
+    float blockRadius_ = 4.0f;  ///< プレイヤーからの距離
+    float blockScale_  = 0.5f;
 };

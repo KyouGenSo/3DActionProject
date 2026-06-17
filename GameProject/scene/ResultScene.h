@@ -15,29 +15,27 @@ class Sprite;
 /// </summary>
 class ResultScene : public Tako::BaseScene
 {
-public: // メンバ関数
+public: //メンバー関数
+    /// <param name="titleTexture">中央に表示するタイトルテクスチャ名</param>
+    explicit ResultScene(const std::string& titleTexture);
 
-  /// <param name="titleTexture">中央に表示するタイトルテクスチャ名</param>
-  explicit ResultScene(const std::string& titleTexture);
+    void Initialize() override;
 
-  void Initialize() override;
+    void Finalize() override;
 
-  void Finalize() override;
+    void Update() override;
 
-  void Update() override;
+    void Draw() override;
+    void DrawWithoutEffect() override;
 
-  void Draw() override;
-  void DrawWithoutEffect() override;
+    void DrawImGui() override;
 
-  void DrawImGui() override;
-
-private: // メンバ変数
-
+private: //メンバー変数
     std::string titleTexture_;
 
     // sprite
-    std::unique_ptr<Tako::Sprite> backGround_ = nullptr;
-    std::unique_ptr<Tako::Sprite> titleText_ = nullptr;
+    std::unique_ptr<Tako::Sprite> backGround_      = nullptr;
+    std::unique_ptr<Tako::Sprite> titleText_       = nullptr;
     std::unique_ptr<Tako::Sprite> pressButtonText_ = nullptr;
 
     // カメラ非表示 Y 座標
@@ -45,6 +43,6 @@ private: // メンバ変数
 
     // UI 位置・サイズ用変数
     float titleTextHalfWidth_ = 250.0f;  ///< タイトルテキスト半幅（センタリング用）
-    float titleTextY_ = 300.0f;  ///< タイトルテキスト Y 座標
+    float titleTextY_         = 300.0f;  ///< タイトルテキスト Y 座標
     float buttonBottomOffset_ = 300.0f;  ///< ボタン下端からのオフセット
 };

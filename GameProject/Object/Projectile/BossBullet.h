@@ -18,15 +18,12 @@ class BulletCollider;
 /// </summary>
 class BossBullet : public Projectile
 {
-    //=========================================================================================
-    // 定数
-    //=========================================================================================
+private: //定数
     static constexpr uint32_t kIdResetThreshold = 10000;
     static constexpr float kInitialScale = 0.0f;
 
-public:
+public: //メンバー関数
     BossBullet(Tako::EmitterManager* emittermanager);
-
     ~BossBullet() override;
 
     /// <summary>
@@ -37,25 +34,23 @@ public:
     void Initialize(const Tako::Vector3& position, const Tako::Vector3& velocity) override;
 
     void Finalize();
-
     void Update(float deltaTime) override;
 
+    //=================================
+    //Getter
+    //=================================
     CollisionTypeId GetTypeId() const { return CollisionTypeId::BOSS_ATTACK; }
-
     BulletCollider* GetCollider() const { return collider_.get(); }
 
-private:
-    Tako::Vector3 rotationSpeed_;
-
+private: //メンバー変数
+    Tako::Vector3                   rotationSpeed_;
     std::unique_ptr<BulletCollider> collider_;
+    static uint32_t                 id;
+    std::string                     effectEmitterName_;  ///< 弾本体に上乗せする追加エフェクト
 
-    static uint32_t id;
-
-    std::string effectEmitterName_; ///< 弾本体に上乗せする追加エフェクト
-
-    // 調整可能パラメータ
+    //調整可能パラメータ
     float rotationSpeedMin_ = -10.0f;
     float rotationSpeedMax_ = 10.0f;
-    float yBoundaryMin_ = 0.0f; ///< これを下回ると消滅
-    float yBoundaryMax_ = 50.0f; ///< これを上回ると消滅
+    float yBoundaryMin_     = 0.0f;    ///< これを下回ると消滅
+    float yBoundaryMax_     = 50.0f;   ///< これを上回ると消滅
 };

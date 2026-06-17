@@ -19,24 +19,26 @@ enum class CameraControlPriority {
 /// カメラコントローラーインターフェース
 /// </summary>
 class ICameraController {
-public:
+public: //メンバー関数
     virtual ~ICameraController() = default;
 
     virtual void Update(float deltaTime) = 0;
-
-    virtual bool IsActive() const = 0;
-
-    virtual CameraControlPriority GetPriority() const = 0;
-
     virtual void Activate() = 0;
-
     virtual void Deactivate() = 0;
 
+    //===================================================================================
+    //Setter
+    //===================================================================================
     virtual void SetCamera(Tako::Camera* camera) { camera_ = camera; }
 
+    //===================================================================================
+    //Getter
+    //===================================================================================
+    virtual bool IsActive() const = 0;
+    virtual CameraControlPriority GetPriority() const = 0;
     Tako::Camera* GetCamera() const { return camera_; }
 
-protected:
+protected: //メンバー変数
     Tako::Camera* camera_ = nullptr;
     bool isActive_ = false;
 };
@@ -45,7 +47,10 @@ protected:
 /// ターゲット追従型コントローラーの基底クラス
 /// </summary>
 class TargetedCameraController : public ICameraController {
-public:
+public: //メンバー関数
+    //===================================================================================
+    //Setter
+    //===================================================================================
     virtual void SetTarget(const Tako::Transform* target) {
         primaryTarget_ = target;
     }
@@ -54,7 +59,7 @@ public:
         additionalTargets_ = targets;
     }
 
-protected:
+protected: //メンバー変数
     const Tako::Transform* primaryTarget_ = nullptr;
     std::vector<const Tako::Transform*> additionalTargets_;
 };

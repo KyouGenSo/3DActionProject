@@ -6,7 +6,7 @@
 /// 現在のボスフェーズを指定値と比較する条件ノード
 /// </summary>
 class BTBossPhaseCondition : public Tako::BTNode {
-public:
+public: //構造体
     enum class Comparison {
         Equal = 0,
         NotEqual = 1,
@@ -14,6 +14,7 @@ public:
         LessOrEqual = 3
     };
 
+public: //メンバー関数
     BTBossPhaseCondition();
     virtual ~BTBossPhaseCondition() = default;
 
@@ -31,14 +32,19 @@ public:
     bool DrawImGui() override;
 #endif
 
-    // Getters/Setters
-    uint32_t GetTargetPhase() const { return targetPhase_; }
+    //=================================
+    //Setter
+    //=================================
     void SetTargetPhase(uint32_t phase) { targetPhase_ = phase; }
-
-    Comparison GetComparison() const { return comparison_; }
     void SetComparison(Comparison comp) { comparison_ = comp; }
 
-private:
+    //=================================
+    //Getter
+    //=================================
+    uint32_t GetTargetPhase() const { return targetPhase_; }
+    Comparison GetComparison() const { return comparison_; }
+
+private: //非公開関数
     /// <summary>
     /// 現在フェーズと targetPhase_ を comparison_ に従って比較する
     /// </summary>
@@ -46,6 +52,7 @@ private:
     /// <returns>比較条件を満たせば true</returns>
     bool EvaluateCondition(uint32_t currentPhase) const;
 
-    uint32_t targetPhase_ = 2;
-    Comparison comparison_ = Comparison::Equal;
+private: //メンバー変数
+    uint32_t   targetPhase_ = 2;
+    Comparison comparison_  = Comparison::Equal;
 };

@@ -6,30 +6,33 @@
 /// </summary>
 class ParryState : public PlayerState
 {
-public:
-	ParryState() : PlayerState("Parry") {}
+public: //メンバー関数
+    ParryState() : PlayerState("Parry") {}
 
-	void Enter(Player* player) override;
+    void Enter(Player* player) override;
+    void Update(Player* player, float deltaTime) override;
+    void Exit(Player* player) override;
+    void HandleInput(Player* player) override;
 
-	void Update(Player* player, float deltaTime) override;
+    /// <summary>
+    /// パリィ成功時に攻撃へ遷移
+    /// </summary>
+    void OnParrySuccess(Player* player);
 
-	void Exit(Player* player) override;
+    void DrawImGui(Player* player) override;
 
-	void HandleInput(Player* player) override;
+    //===================================
+    //Setter
+    //===================================
+    void SetParryDuration(float duration) { parryDuration_ = duration; }
 
-	/// <summary>
-	/// パリィ成功時に攻撃へ遷移
-	/// </summary>
-	void OnParrySuccess(Player* player);
+    //===================================
+    //Getter
+    //===================================
+    float GetParryTimer() const { return parryTimer_; }
+    float GetParryDuration() const { return parryDuration_; }
 
-	void DrawImGui(Player* player) override;
-
-	float GetParryTimer() const { return parryTimer_; }
-	float GetParryDuration() const { return parryDuration_; }
-
-	void SetParryDuration(float duration) { parryDuration_ = duration; }
-
-private:
-	float parryTimer_          = 0.0f;
-	float parryDuration_       = 0.5f;          ///< 秒
+private: //メンバー変数
+    float parryTimer_    = 0.0f;
+    float parryDuration_ = 0.5f;          ///< 秒
 };

@@ -12,7 +12,7 @@
 /// キーフレーム間補間でカメラを動かすアニメーション
 /// </summary>
 class CameraAnimation {
-public:
+public: //構造体
     enum class PlayState {
         STOPPED,
         PLAYING,
@@ -24,16 +24,9 @@ public:
         SMOOTH_BLEND     ///< 現在位置から最初のキーフレームまで補間
     };
 
+public: //メンバー関数
     CameraAnimation();
-
     ~CameraAnimation();
-
-    void SetCamera(Tako::Camera* camera) { camera_ = camera; }
-
-    /// <summary>
-    /// 相対座標の基準ターゲット（nullptr で解除）
-    /// </summary>
-    void SetTarget(const Tako::Transform* target) { targetTransform_ = target; }
 
     void Update(float deltaTime);
 
@@ -67,7 +60,6 @@ public:
     void ClearKeyframes();
 
     void Play();
-
     void Pause();
 
     /// <summary>
@@ -86,52 +78,24 @@ public:
     void Reset();
 
     bool LoadFromJson(const std::string& filepath);
-
     bool SaveToJson(const std::string& filepath) const;
 
 #ifdef _DEBUG
     void DrawImGui();
 #endif
 
-    //-----------------------------------------Getter-----------------------------------------//
-
-    [[nodiscard]] size_t GetKeyframeCount() const { return keyframes_.size(); }
-
-    [[nodiscard]] const CameraKeyframe& GetKeyframe(size_t index) const { return keyframes_[index]; }
-
-    [[nodiscard]] float GetDuration() const { return duration_; }
-
-    [[nodiscard]] float GetPlaybackTime() const { return currentTime_; }
-
-    [[nodiscard]] PlayState GetPlayState() const { return playState_; }
-
-    [[nodiscard]] bool IsLooping() const { return isLooping_; }
-
-    [[nodiscard]] const std::string& GetAnimationName() const { return animationName_; }
-
-    [[nodiscard]] bool IsEditingKeyframe() const;
-
-    [[nodiscard]] int GetSelectedKeyframeIndex() const;
-
-    [[nodiscard]] const Tako::Transform* GetTarget() const { return targetTransform_; }
-
-    [[nodiscard]] StartMode GetStartMode() const { return startMode_; }
-
-    [[nodiscard]] float GetBlendDuration() const { return blendDuration_; }
-
-    [[nodiscard]] bool IsBlending() const { return isBlending_; }
+    //==========================================================================
+    //Setter
+    //==========================================================================
+    void SetCamera(Tako::Camera* camera) { camera_ = camera; }
 
     /// <summary>
-    /// ブレンド進行度を取得（0.0～1.0）
+    /// 相対座標の基準ターゲット（nullptr で解除）
     /// </summary>
-    [[nodiscard]] float GetBlendProgress() const { return blendProgress_; }
-
-    //-----------------------------------------Setter-----------------------------------------//
+    void SetTarget(const Tako::Transform* target) { targetTransform_ = target; }
 
     void SetLooping(bool loop) { isLooping_ = loop; }
-
     void SetPlaySpeed(float speed) { playSpeed_ = speed; }
-
     void SetAnimationName(const std::string& name) { animationName_ = name; }
 
     /// <summary>
@@ -145,12 +109,32 @@ public:
     void ApplyKeyframeToCamera(int index = -1);
 
     void SetStartMode(StartMode mode) { startMode_ = mode; }
-
     void SetBlendDuration(float duration) { blendDuration_ = duration; }
 
-private:
-    void SortKeyframes();
+    //==========================================================================
+    //Getter
+    //==========================================================================
+    [[nodiscard]] size_t GetKeyframeCount() const { return keyframes_.size(); }
+    [[nodiscard]] const CameraKeyframe& GetKeyframe(size_t index) const { return keyframes_[index]; }
+    [[nodiscard]] float GetDuration() const { return duration_; }
+    [[nodiscard]] float GetPlaybackTime() const { return currentTime_; }
+    [[nodiscard]] PlayState GetPlayState() const { return playState_; }
+    [[nodiscard]] bool IsLooping() const { return isLooping_; }
+    [[nodiscard]] const std::string& GetAnimationName() const { return animationName_; }
+    [[nodiscard]] bool IsEditingKeyframe() const;
+    [[nodiscard]] int GetSelectedKeyframeIndex() const;
+    [[nodiscard]] const Tako::Transform* GetTarget() const { return targetTransform_; }
+    [[nodiscard]] StartMode GetStartMode() const { return startMode_; }
+    [[nodiscard]] float GetBlendDuration() const { return blendDuration_; }
+    [[nodiscard]] bool IsBlending() const { return isBlending_; }
 
+    /// <summary>
+    /// ブレンド進行度を取得（0.0～1.0）
+    /// </summary>
+    [[nodiscard]] float GetBlendProgress() const { return blendProgress_; }
+
+private: //非公開関数
+    void SortKeyframes();
     void UpdateDuration();
 
     /// <summary>
@@ -202,42 +186,39 @@ private:
     /// </summary>
     void ApplyKeyframeDirectly(const CameraKeyframe& kf);
 
-private:
-    std::string animationName_ = "Untitled";
-
+private: //メンバー変数
+    //基本情報
+    std::string                 animationName_   = "Untitled";
     std::vector<CameraKeyframe> keyframes_;
+    Tako::Camera*               camera_          = nullptr;
+    const Tako::Transform*      targetTransform_ = nullptr;     ///< 相対座標の基準
 
-    Tako::Camera* camera_ = nullptr;
+    //再生状態
+    float     currentTime_ = 0.0f;                ///< 秒
+    float     duration_    = 0.0f;                ///< 秒
+    float     playSpeed_   = 1.0f;                ///< 1.0 が標準
+    PlayState playState_   = PlayState::STOPPED;
+    bool      isLooping_   = false;
 
-    const Tako::Transform* targetTransform_ = nullptr;  ///< 相対座標の基準
+    //ブレンド
+    StartMode startMode_     = StartMode::JUMP_CUT;
+    float     blendDuration_ = 0.5f;                 ///< 秒
+    float     blendProgress_ = 0.0f;                 ///< 0.0～1.0
+    bool      isBlending_    = false;
 
-    float currentTime_ = 0.0f;  ///< 秒
-
-    float duration_ = 0.0f;  ///< 秒
-
-    float playSpeed_ = 1.0f;  ///< 1.0 が標準
-
-    PlayState playState_ = PlayState::STOPPED;
-
-    bool isLooping_ = false;
-
-    StartMode startMode_ = StartMode::JUMP_CUT;
-    float blendDuration_ = 0.5f;                 ///< 秒
-    float blendProgress_ = 0.0f;                 ///< 0.0～1.0
-    bool isBlending_ = false;
-
-    // ブレンド開始時のカメラ状態
+    //ブレンド開始時のカメラ状態
     Tako::Vector3 blendStartPosition_;
     Tako::Vector3 blendStartRotation_;
-    float blendStartFov_;
+    float         blendStartFov_;
 
-    float originalFov_;           ///< アニメーション開始前の FOV
-    bool hasOriginalFov_;
+    //FOV 復元
+    float originalFov_;     ///< アニメーション開始前の FOV
+    bool  hasOriginalFov_;
 
 #ifdef _DEBUG
-    int selectedKeyframeIndex_ = -1;
-    bool showTimeline_ = true;
-    bool autoSortKeyframes_ = true;
-    CameraKeyframe tempKeyframe_;  ///< 編集用の一時バッファ
+    int            selectedKeyframeIndex_ = -1;
+    bool           showTimeline_          = true;
+    bool           autoSortKeyframes_     = true;
+    CameraKeyframe tempKeyframe_;                  ///< 編集用の一時バッファ
 #endif
 };

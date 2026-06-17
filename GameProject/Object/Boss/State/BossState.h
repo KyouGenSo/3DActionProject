@@ -7,7 +7,7 @@ class Boss;
 /// ボスステート基底（Enter/Update/Exit インターフェース）
 /// </summary>
 class BossState {
-public:
+public: //メンバー関数
 	BossState(const std::string& name) : stateName_(name) {}
 
 	virtual ~BossState() = default;
@@ -18,8 +18,11 @@ public:
 
 	virtual void Exit(Boss* boss) = 0;
 
+	//=============================
+	//Getter
+	//=============================
 	const std::string& GetName() const { return stateName_; }
 
-protected:
+protected: //メンバー変数
 	std::string stateName_;
 };

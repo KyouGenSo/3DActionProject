@@ -8,20 +8,8 @@ class Boss;
 /// プレイヤー近接攻撃の判定と敵へのダメージ処理
 /// </summary>
 class MeleeAttackCollider : public Tako::OBBCollider {
-private:
-    Player* player_ = nullptr;
-    Boss* detectedEnemy_ = nullptr;
-    bool canDamage = false;
-    float attackDamage_{};
-    bool knockbackEnabled_ = true;  ///< 4コンボ目のみ true
-
-#ifdef _DEBUG
-    int collisionCount_ = 0;
-#endif
-
-public:
+public: //メンバー関数
     MeleeAttackCollider(Player* player);
-
     virtual ~MeleeAttackCollider() = default;
 
     /// <summary>
@@ -40,8 +28,9 @@ public:
     /// </summary>
     void Damage();
 
-    Boss* GetDetectedEnemy() const { return detectedEnemy_; }
-
+    //====================================
+    //Setter
+    //====================================
     /// <summary>
     /// ノックバック有効フラグを設定（4コンボ目のみ true）
     /// </summary>
@@ -49,7 +38,23 @@ public:
 
     void SetAttackDamage(float damage) { attackDamage_ = damage; }
 
+    //====================================
+    //Getter
+    //====================================
+    Boss* GetDetectedEnemy() const { return detectedEnemy_; }
+
 #ifdef _DEBUG
     int GetCollisionCount() const { return collisionCount_; }
+#endif
+
+private: //メンバー変数
+    Player* player_           = nullptr;
+    Boss*   detectedEnemy_    = nullptr;
+    bool    canDamage         = false;
+    float   attackDamage_{};
+    bool    knockbackEnabled_ = true;     ///< 4コンボ目のみ true
+
+#ifdef _DEBUG
+    int collisionCount_ = 0;
 #endif
 };

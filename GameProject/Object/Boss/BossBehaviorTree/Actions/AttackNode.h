@@ -14,7 +14,7 @@ class Boss;
 /// ボス攻撃アクションノードの基底クラス。
 /// </summary>
 class AttackNode : public Tako::BTNode {
-public:
+public: //メンバー関数
     AttackNode();
     virtual ~AttackNode() = default;
 
@@ -35,8 +35,10 @@ public:
     bool DrawImGui() override;
 #endif
 
-protected:
-    //=================== 派生クラスが override するフック ===================
+protected: //非公開関数
+    //========================================================================================================
+    //派生クラスが override するフック
+    //========================================================================================================
 
     /// <summary>
     /// 攻撃ロジック本体。派生は elapsedTime_ += deltaTime も自分で行う。
@@ -65,7 +67,9 @@ protected:
     virtual bool OnDrawImGui() { return false; }
 #endif
 
-    //=================== 派生クラスが利用する Helper ===================
+    //========================================================================================================
+    //派生クラスが利用する Helper
+    //========================================================================================================
 
     /// <summary>
     /// Boss を硬直状態に遷移させる（多重呼び出しは enteredRecovery_ がガード）
@@ -95,19 +99,13 @@ protected:
     /// <returns>旋回に用いた正規化済み水平方向。旋回しなかった場合は零ベクトル</returns>
     Tako::Vector3 FacePlayerInstant(Tako::BTBlackboard* blackboard, float epsilon = GameConst::kDirectionEpsilon);
 
-protected:
-    //=================== 共通メンバ ===================
+protected: //メンバー変数
+    //共通メンバ
+    float elapsedTime_           = 0.0f;
+    bool  isFirstExecute_        = true;
+    bool  isBypassRecoveryGuard_ = false;  ///< true で攻撃中も常時スタン誘発可（Recovery 状態と無関係に近接でスタン）
+    bool  enteredRecovery_       = false;
 
-    float elapsedTime_ = 0.0f;
-
-    bool isFirstExecute_ = true;
-
-    /// true で攻撃中も常時スタン誘発可（Recovery 状態と無関係に近接でスタン）
-    bool isBypassRecoveryGuard_ = false;
-
-    bool enteredRecovery_ = false;
-
-    Boss* cachedBoss_ = nullptr;
-
+    Boss*                 cachedBoss_           = nullptr;
     Tako::EmitterManager* cachedEmitterManager_ = nullptr;
 };

@@ -9,12 +9,13 @@ class Player;
 /// プレイヤーから離れる離脱移動の実行器（壁回避付き）
 /// </summary>
 class BossRetreatExecutor {
-public:
+public: //構造体
     struct Parameters {
         float retreatSpeed   = 60.0f;
         float targetDistance = 55.0f;  ///< プレイヤーからの目標距離
     };
 
+public: //メンバー関数
     BossRetreatExecutor() = default;
     explicit BossRetreatExecutor(const Parameters& params) : params_(params) {}
 
@@ -33,13 +34,6 @@ public:
     void Tick(Boss* boss, float deltaTime);
 
     /// <summary>
-    /// 即時完了、または到達閾値以内なら true
-    /// </summary>
-    /// <param name="boss">現在位置を判定するボス</param>
-    /// <returns>移動不要 (retreatDuration_ <= 0)、または目標まで kArrivalThreshold 未満なら true</returns>
-    bool IsFinished(const Boss* boss) const;
-
-    /// <summary>
     /// ボス位置を目標へスナップ（到達時に呼ぶ）
     /// </summary>
     /// <param name="boss">目標位置に移動させるボス</param>
@@ -49,9 +43,6 @@ public:
     /// 内部状態をリセット（パラメータは保持）
     /// </summary>
     void Reset();
-
-    const Parameters& GetParameters() const { return params_; }
-    void SetParameters(const Parameters& params) { params_ = params; }
 
     void ApplyJson(const nlohmann::json& j);
 
@@ -64,7 +55,29 @@ public:
     bool DrawImGui(const char* idSuffix);
 #endif
 
-private:
+    //==========================================
+    //Setter
+    //==========================================
+    void SetParameters(const Parameters& params) { params_ = params; }
+
+    //==========================================
+    //Getter
+    //==========================================
+    const Parameters& GetParameters() const { return params_; }
+
+    /// <summary>
+    /// 即時完了、または到達閾値以内なら true
+    /// </summary>
+    /// <param name="boss">現在位置を判定するボス</param>
+    /// <returns>移動不要 (retreatDuration_ <= 0)、または目標まで kArrivalThreshold 未満なら true</returns>
+    bool IsFinished(const Boss* boss) const;
+
+private: //定数
+    static constexpr float kDirectionEpsilon   = 0.01f;   ///< 方向有効判定の閾値
+    static constexpr float kArrivalThreshold   = 0.5f;    ///< 到達判定の距離閾値
+    static constexpr float kMinRetreatDistance = 10.0f;   ///< 代替方向検討の最小移動距離
+
+private: //非公開関数
     /// <summary>
     /// 壁回避を含めた最適な離脱方向を選択。primary が kMinRetreatDistance 以上動けるならそれを返し、
     /// 不足時は左右90度・180度の候補から実移動距離が最大の方向を選ぶ
@@ -88,10 +101,7 @@ private:
                             const Tako::Vector3& direction,
                             float retreatDistance) const;
 
-    static constexpr float kDirectionEpsilon   = 0.01f;   ///< 方向有効判定の閾値
-    static constexpr float kArrivalThreshold   = 0.5f;    ///< 到達判定の距離閾値
-    static constexpr float kMinRetreatDistance = 10.0f;   ///< 代替方向検討の最小移動距離
-
+private: //メンバー変数
     Parameters    params_{};
     Tako::Vector3 startPosition_  {};
     Tako::Vector3 targetPosition_ {};

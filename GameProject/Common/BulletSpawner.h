@@ -8,7 +8,7 @@
 /// </summary>
 class BulletSpawner
 {
-public:
+public: //メンバー関数
     BulletSpawner() = default;
     ~BulletSpawner() = default;
 
@@ -25,12 +25,14 @@ public:
     /// <returns>蓄積されていた全リクエスト</returns>
     std::vector<BulletSpawnRequest> Consume();
 
-    bool HasPending() const { return !pendingBullets_.empty(); }
-
-    size_t GetPendingCount() const { return pendingBullets_.size(); }
-
     void Clear() { pendingBullets_.clear(); }
 
-private:
+    //============================
+    //Getter
+    //============================
+    bool HasPending() const { return !pendingBullets_.empty(); }
+    size_t GetPendingCount() const { return pendingBullets_.size(); }
+
+private: //メンバー変数
     std::vector<BulletSpawnRequest> pendingBullets_;
 };

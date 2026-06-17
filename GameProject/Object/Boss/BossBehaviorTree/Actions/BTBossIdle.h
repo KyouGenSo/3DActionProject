@@ -8,15 +8,11 @@ class Boss;
 /// プレイヤーを向きつつ idleDuration_ だけ待機する
 /// </summary>
 class BTBossIdle : public Tako::BTNode {
-    //=========================================================================================
-    // 定数
-    //=========================================================================================
-private:
+private: //定数
     static constexpr float kDirectionEpsilon = 0.01f;
 
-public:
+public: //メンバー関数
     BTBossIdle();
-
     virtual ~BTBossIdle() = default;
 
     /// <summary>
@@ -27,10 +23,6 @@ public:
     Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
 
     void Reset() override;
-
-    void SetIdleDuration(float duration) { idleDuration_ = duration; }
-
-    float GetIdleDuration() const { return idleDuration_; }
 
     void ApplyParameters(const nlohmann::json& params) override {
         if (params.contains("idleDuration")) {
@@ -44,7 +36,17 @@ public:
     bool DrawImGui() override;
 #endif
 
-private:
+    //================================
+    //Setter
+    //================================
+    void SetIdleDuration(float duration) { idleDuration_ = duration; }
+
+    //================================
+    //Getter
+    //================================
+    float GetIdleDuration() const { return idleDuration_; }
+
+private: //非公開関数
     /// <summary>
     /// プレイヤー方向へ rotationSpeed_ で旋回する（1フレームの回転量を制限）
     /// </summary>
@@ -52,12 +54,12 @@ private:
     /// <param name="deltaTime">前フレームからの経過秒</param>
     void LookAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime);
 
-
-    float idleDuration_ = 2.0f;
-
+private: //メンバー変数
+    //パラメータ
+    float idleDuration_  = 2.0f;
     float rotationSpeed_ = 5.0f;   ///< ラジアン/秒
 
-    float elapsedTime_ = 0.0f;
-
-    bool isFirstExecute_ = true;
+    //ランタイム状態
+    float elapsedTime_    = 0.0f;
+    bool  isFirstExecute_ = true;
 };

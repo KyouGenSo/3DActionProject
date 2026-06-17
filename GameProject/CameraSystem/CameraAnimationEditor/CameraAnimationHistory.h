@@ -11,7 +11,7 @@
 /// カメラアニメーション編集のアンドゥ/リドゥ履歴
 /// </summary>
 class CameraAnimationHistory {
-public:
+public: //構造体
     enum class ActionType {
         ADD_KEYFRAME,
         DELETE_KEYFRAME,
@@ -25,20 +25,20 @@ public:
     /// 編集操作1件を表す基底クラス（Execute / Undo を実装）
     /// </summary>
     class Action {
-    public:
+    public: //メンバー関数
         virtual ~Action() = default;
 
         virtual void Execute(CameraAnimation* animation) = 0;
-
         virtual void Undo(CameraAnimation* animation) = 0;
-
         virtual ActionType GetType() const = 0;
-
         virtual std::string GetDescription() const = 0;
     };
 
+    /// <summary>
+    /// キーフレーム追加アクション
+    /// </summary>
     class AddKeyframeAction : public Action {
-    public:
+    public: //メンバー関数
         AddKeyframeAction(const CameraKeyframe& keyframe, size_t index)
             : keyframe_(keyframe), index_(index) {
         }
@@ -48,13 +48,16 @@ public:
         ActionType GetType() const override { return ActionType::ADD_KEYFRAME; }
         std::string GetDescription() const override { return "Add Keyframe"; }
 
-    private:
+    private: //メンバー変数
         CameraKeyframe keyframe_;
-        size_t index_;
+        size_t         index_;
     };
 
+    /// <summary>
+    /// キーフレーム削除アクション
+    /// </summary>
     class DeleteKeyframeAction : public Action {
-    public:
+    public: //メンバー関数
         DeleteKeyframeAction(const CameraKeyframe& keyframe, size_t index)
             : keyframe_(keyframe), index_(index) {
         }
@@ -64,13 +67,16 @@ public:
         ActionType GetType() const override { return ActionType::DELETE_KEYFRAME; }
         std::string GetDescription() const override { return "Delete Keyframe"; }
 
-    private:
+    private: //メンバー変数
         CameraKeyframe keyframe_;
-        size_t index_;
+        size_t         index_;
     };
 
+    /// <summary>
+    /// キーフレーム編集アクション
+    /// </summary>
     class EditKeyframeAction : public Action {
-    public:
+    public: //メンバー関数
         /// <summary>
         /// キーフレーム編集アクション。Execute で newKf、Undo で oldKf を適用
         /// </summary>
@@ -86,15 +92,14 @@ public:
         ActionType GetType() const override { return ActionType::EDIT_KEYFRAME; }
         std::string GetDescription() const override { return "Edit Keyframe"; }
 
-    private:
-        size_t index_;
+    private: //メンバー変数
+        size_t         index_;
         CameraKeyframe oldKeyframe_;
         CameraKeyframe newKeyframe_;
     };
 
-public:
+public: //メンバー関数
     CameraAnimationHistory();
-
     ~CameraAnimationHistory();
 
     void Initialize(CameraAnimation* animation);
@@ -126,19 +131,20 @@ public:
     void RecordEdit(size_t index, const CameraKeyframe& oldKf, const CameraKeyframe& newKf);
 
     void Undo();
-
     void Redo();
-
-    bool CanUndo() const { return currentIndex_ > 0; }
-
-    bool CanRedo() const { return currentIndex_ < history_.size(); }
-
     void Clear();
 
+    //==========================================================================
+    //Setter
+    //==========================================================================
     void SetMaxHistorySize(size_t size) { maxHistorySize_ = size; }
 
+    //==========================================================================
+    //Getter
+    //==========================================================================
+    bool CanUndo() const { return currentIndex_ > 0; }
+    bool CanRedo() const { return currentIndex_ < history_.size(); }
     size_t GetHistorySize() const { return history_.size(); }
-
     size_t GetCurrentIndex() const { return currentIndex_; }
 
     /// <summary>
@@ -146,18 +152,18 @@ public:
     /// </summary>
     std::string GetHistoryInfo() const;
 
-private:
+private: //非公開関数
     /// <summary>
     /// maxHistorySize_ を超えた古い履歴を切り詰める
     /// </summary>
     void LimitHistorySize();
 
-private:
-    CameraAnimation* animation_ = nullptr;
+private: //メンバー変数
+    CameraAnimation*                     animation_      = nullptr;
     std::vector<std::unique_ptr<Action>> history_;
-    size_t currentIndex_ = 0;                               ///< 次に Redo する位置
-    size_t maxHistorySize_ = 100;
-    bool isExecuting_ = false;                              ///< 再帰記録を防ぐフラグ
+    size_t                               currentIndex_   = 0;        ///< 次に Redo する位置
+    size_t                               maxHistorySize_ = 100;
+    bool                                 isExecuting_    = false;    ///< 再帰記録を防ぐフラグ
 };
 
 #endif // _DEBUG

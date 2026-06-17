@@ -9,30 +9,41 @@ class Boss;
 /// 角度をスイープしながら連射する大範囲射撃。通常弾（速い）と貫通弾（遅い）を混ぜて発射する。
 /// </summary>
 class BTBossWideShoot : public AttackNode {
-public:
+private: //定数
+    static constexpr float kDirectionEpsilon = 0.001f;
+    static constexpr float kAngleEpsilon = 0.0001f;
+
+public: //メンバー関数
     BTBossWideShoot();
     virtual ~BTBossWideShoot() = default;
 
-    float GetChargeTime() const { return chargeTime_; }
-    void  SetChargeTime(float time) { chargeTime_ = time; }
-    float GetRecoveryTime() const { return recoveryTime_; }
-    void  SetRecoveryTime(float time) { recoveryTime_ = time; }
-    float GetFiringDuration() const { return firingDuration_; }
-    void  SetFiringDuration(float duration) { firingDuration_ = duration; }
-    float GetSweepAngle() const { return sweepAngle_; }
-    void  SetSweepAngle(float angle) { sweepAngle_ = angle; }
-    int   GetBulletsPerSweep() const { return bulletsPerSweep_; }
-    void  SetBulletsPerSweep(int count) { bulletsPerSweep_ = count; }
-    int   GetSweepCount() const { return sweepCount_; }
-    void  SetSweepCount(int count) { sweepCount_ = count; }
-    float GetNormalBulletSpeed() const { return normalBulletSpeed_; }
-    void  SetNormalBulletSpeed(float speed) { normalBulletSpeed_ = speed; }
-    float GetPenetratingBulletSpeed() const { return penetratingBulletSpeed_; }
-    void  SetPenetratingBulletSpeed(float speed) { penetratingBulletSpeed_ = speed; }
-    int   GetPenetratingCount() const { return penetratingCount_; }
-    void  SetPenetratingCount(int count) { penetratingCount_ = count; }
+    //==========================================
+    //Setter
+    //==========================================
+    void SetChargeTime(float time) { chargeTime_ = time; }
+    void SetRecoveryTime(float time) { recoveryTime_ = time; }
+    void SetFiringDuration(float duration) { firingDuration_ = duration; }
+    void SetSweepAngle(float angle) { sweepAngle_ = angle; }
+    void SetBulletsPerSweep(int count) { bulletsPerSweep_ = count; }
+    void SetSweepCount(int count) { sweepCount_ = count; }
+    void SetNormalBulletSpeed(float speed) { normalBulletSpeed_ = speed; }
+    void SetPenetratingBulletSpeed(float speed) { penetratingBulletSpeed_ = speed; }
+    void SetPenetratingCount(int count) { penetratingCount_ = count; }
 
-protected:
+    //==========================================
+    //Getter
+    //==========================================
+    float GetChargeTime() const { return chargeTime_; }
+    float GetRecoveryTime() const { return recoveryTime_; }
+    float GetFiringDuration() const { return firingDuration_; }
+    float GetSweepAngle() const { return sweepAngle_; }
+    int   GetBulletsPerSweep() const { return bulletsPerSweep_; }
+    int   GetSweepCount() const { return sweepCount_; }
+    float GetNormalBulletSpeed() const { return normalBulletSpeed_; }
+    float GetPenetratingBulletSpeed() const { return penetratingBulletSpeed_; }
+    int   GetPenetratingCount() const { return penetratingCount_; }
+
+protected: //メンバー関数
     /// <summary>
     /// チャージ→角度スイープ連射→硬直のフェーズ制御。総時間経過で終了。
     /// </summary>
@@ -44,14 +55,12 @@ protected:
     void OnApplyParameters(const nlohmann::json& params) override;
 
     void OnExtractParameters(nlohmann::json& out) const override;
+
 #ifdef _DEBUG
     bool OnDrawImGui() override;
 #endif
 
-private:
-    static constexpr float kDirectionEpsilon = 0.001f;
-    static constexpr float kAngleEpsilon = 0.0001f;
-
+private: //非公開関数
     void AimAtPlayer(Tako::BTBlackboard* blackboard, float deltaTime);
 
     /// <summary>
@@ -79,32 +88,27 @@ private:
     /// <returns>正規化された発射方向</returns>
     Tako::Vector3 CalculateBulletDirection(const Tako::Vector3& baseDirection, float angleOffset);
 
-    //=========================================================================================
-    // パラメータ
-    //=========================================================================================
-    float chargeTime_ = 0.8f;
-    float recoveryTime_ = 0.5f;
-    float firingDuration_ = 1.0f;   ///< 全体の発射時間（秒）
-    float fireInterval_ = 0.0f;     ///< OnInitialize で算出
-    float sweepAngle_ = 1.0472f;    ///< ラジアン、約 60 度
-    int   bulletsPerSweep_ = 12;
-    int   sweepCount_ = 2;
-    float normalBulletSpeed_ = 40.0f;
+private: //メンバー変数
+    //パラメータ
+    float chargeTime_             = 0.8f;
+    float recoveryTime_           = 0.5f;
+    float firingDuration_         = 1.0f;     ///< 全体の発射時間（秒）
+    float fireInterval_           = 0.0f;     ///< OnInitialize で算出
+    float sweepAngle_             = 1.0472f;  ///< ラジアン、約 60 度
+    int   bulletsPerSweep_        = 12;
+    int   sweepCount_             = 2;
+    float normalBulletSpeed_      = 40.0f;
     float penetratingBulletSpeed_ = 15.0f;
-    int   penetratingCount_ = 4;            ///< 1スイープあたり
+    int   penetratingCount_       = 4;        ///< 1スイープあたり
 
-    //=========================================================================================
-    // ランタイム状態
-    //=========================================================================================
-    float totalDuration_ = 0.0f;
-    float timeSinceLastFire_ = 0.0f;
-    int   currentSweep_ = 0;
-    int   firedInSweep_ = 0;
-    bool  hasEndedEffect_ = false;
+    //ランタイム状態
+    float         totalDuration_     = 0.0f;
+    float         timeSinceLastFire_ = 0.0f;
+    int           currentSweep_      = 0;
+    int           firedInSweep_      = 0;
+    bool          hasEndedEffect_    = false;
     Tako::Vector3 baseDirection_;
 
-    //=========================================================================================
-    // 演出
-    //=========================================================================================
+    //演出
     BulletSignEffect bulletSignEffect_;
 };

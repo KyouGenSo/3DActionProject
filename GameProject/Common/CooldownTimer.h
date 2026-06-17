@@ -1,8 +1,11 @@
 #pragma once
 
+/// <summary>
+/// 経過時間でカウントダウンするクールダウンタイマー
+/// </summary>
 class CooldownTimer
 {
-public:
+public: //メンバー関数
     CooldownTimer() = default;
     ~CooldownTimer() = default;
 
@@ -18,6 +21,11 @@ public:
     /// <param name="deltaTime">経過時間（秒）</param>
     void Update(float deltaTime);
 
+    void Reset();
+
+    //============================
+    //Getter
+    //============================
     /// <summary>
     /// クールダウンが完了したかを返す
     /// </summary>
@@ -35,9 +43,7 @@ public:
     /// </summary>
     float GetProgress() const;
 
-    void Reset();
-
-private:
+private: //メンバー変数
     float remainingTime_ = 0.0f;
-    float duration_ = 0.0f;
+    float duration_      = 0.0f;
 };

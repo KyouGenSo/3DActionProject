@@ -10,27 +10,21 @@
 /// プレイヤー後方から追従し、ボス注視機能を持つ三人称カメラ
 /// </summary>
 class ThirdPersonController : public TargetedCameraController {
-public:
+public: //メンバー関数
     ThirdPersonController();
-
     ~ThirdPersonController() override = default;
 
     void Update(float deltaTime) override;
-
-    bool IsActive() const override { return isActive_; }
-
-    CameraControlPriority GetPriority() const override {
-        return CameraControlPriority::FOLLOW_DEFAULT;
+    void Activate() override;
+    void Deactivate() override { isActive_ = false; }
+    void Reset();
+    void EnableLookAtTarget(bool enable) {
+        enableLookAtTarget_ = enable;
     }
 
-    void Activate() override;
-
-    void Deactivate() override { isActive_ = false; }
-
-    void Reset();
-
-    //==================== Setter ====================
-
+    //========================================================
+    //Setter
+    //========================================================
     void SetOffset(const Tako::Vector3& offset) {
         offset_ = offset;
         offsetOrigin_ = offset;
@@ -52,11 +46,14 @@ public:
         secondaryTarget_ = target;
     }
 
-    void EnableLookAtTarget(bool enable) {
-        enableLookAtTarget_ = enable;
-    }
+    //========================================================
+    //Getter
+    //========================================================
+    bool IsActive() const override { return isActive_; }
 
-    //==================== Getter ====================
+    CameraControlPriority GetPriority() const override {
+        return CameraControlPriority::FOLLOW_DEFAULT;
+    }
 
     const Tako::Vector3& GetOffset() const { return offset_; }
 
@@ -64,11 +61,9 @@ public:
         return interpolatedTargetPos_;
     }
 
-private:
+private: //非公開関数
     void ProcessInput(float deltaTime);
-
     void UpdateRotation();
-
     void UpdatePosition();
 
     /// <summary>
@@ -83,7 +78,7 @@ private:
     /// <returns>注視に必要な回転角（ラジアン、見下ろし角を加算）。ターゲット未設定なら現在のカメラ回転</returns>
     Tako::Vector3 CalculateLookAtRotation() const;
 
-private:
+private: //メンバー変数
     Tako::Input* input_ = nullptr;
 
     Tako::Vector3 interpolatedTargetPos_ = {};
@@ -99,11 +94,11 @@ private:
     float destinationAngleZ_ = 0.0f;  // ラジアン
 
     // DEFAULT_ROTATE_SPEED（度）をラジアンに変換
-    float rotateSpeed_ = CameraConfig::ThirdPerson::DEFAULT_ROTATE_SPEED * (std::numbers::pi_v<float> / 180.0f);
-    float followSmoothness_ = CameraConfig::FOLLOW_SMOOTHNESS;
-    float offsetLerpSpeed_ = CameraConfig::OFFSET_LERP_SPEED;
+    float rotateSpeed_       = CameraConfig::ThirdPerson::DEFAULT_ROTATE_SPEED * (std::numbers::pi_v<float> / 180.0f);
+    float followSmoothness_  = CameraConfig::FOLLOW_SMOOTHNESS;
+    float offsetLerpSpeed_   = CameraConfig::OFFSET_LERP_SPEED;
     float rotationLerpSpeed_ = CameraConfig::ROTATION_LERP_SPEED;
-    float standardFov_ = CameraConfig::STANDARD_FOV;
+    float standardFov_       = CameraConfig::STANDARD_FOV;
 
     bool isRotating_ = false;
 

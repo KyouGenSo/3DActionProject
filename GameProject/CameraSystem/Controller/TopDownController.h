@@ -7,27 +7,18 @@
 /// 俯瞰視点の固定角度カメラコントローラー
 /// </summary>
 class TopDownController : public TargetedCameraController {
-public:
+public: //メンバー関数
     TopDownController();
-
     ~TopDownController() override = default;
 
     void Update(float deltaTime) override;
-
-    bool IsActive() const override { return isActive_; }
-
-    CameraControlPriority GetPriority() const override {
-        return CameraControlPriority::FOLLOW_DEFAULT;
-    }
-
     void Activate() override;
-
     void Deactivate() override { isActive_ = false; }
-
     void Reset();
 
-    //==================== Setter ====================
-
+    //========================================================
+    //Setter
+    //========================================================
     void SetBaseHeight(float height) {
         baseHeight_ = height;
     }
@@ -46,7 +37,14 @@ public:
         followSmoothness_ = smoothness;
     }
 
-    //==================== Getter ====================
+    //========================================================
+    //Getter
+    //========================================================
+    bool IsActive() const override { return isActive_; }
+
+    CameraControlPriority GetPriority() const override {
+        return CameraControlPriority::FOLLOW_DEFAULT;
+    }
 
     float GetCurrentHeight() const { return currentHeight_; }
 
@@ -54,7 +52,7 @@ public:
         return interpolatedTargetPos_;
     }
 
-private:
+private: //非公開関数
     /// <summary>
     /// 複数ターゲットの中心点を算出
     /// </summary>
@@ -79,22 +77,22 @@ private:
 
     void UpdateCameraPosition();
 
-private:
+private: //メンバー変数
     Tako::Vector3 interpolatedTargetPos_ = {};
-    float currentHeight_ = CameraConfig::TopDown::BASE_HEIGHT;
-    float currentBackOffset_ = CameraConfig::TopDown::BASE_BACK_OFFSET;
+    float         currentHeight_         = CameraConfig::TopDown::BASE_HEIGHT;
+    float         currentBackOffset_     = CameraConfig::TopDown::BASE_BACK_OFFSET;
 
-    float baseHeight_ = CameraConfig::TopDown::BASE_HEIGHT;
+    float baseHeight_       = CameraConfig::TopDown::BASE_HEIGHT;
     float heightMultiplier_ = CameraConfig::TopDown::HEIGHT_MULTIPLIER;
-    float minHeight_ = CameraConfig::TopDown::MIN_HEIGHT;
-    float maxHeight_ = CameraConfig::TopDown::MAX_HEIGHT;
+    float minHeight_        = CameraConfig::TopDown::MIN_HEIGHT;
+    float maxHeight_        = CameraConfig::TopDown::MAX_HEIGHT;
 
     float cameraAngleX_ = CameraConfig::TopDown::DEFAULT_ANGLE_X;
 
-    float baseBackOffset_ = CameraConfig::TopDown::BASE_BACK_OFFSET;
+    float baseBackOffset_       = CameraConfig::TopDown::BASE_BACK_OFFSET;
     float backOffsetMultiplier_ = CameraConfig::TopDown::BACK_OFFSET_MULTIPLIER;
-    float minBackOffset_ = CameraConfig::TopDown::MIN_BACK_OFFSET;
-    float maxBackOffset_ = CameraConfig::TopDown::MAX_BACK_OFFSET;
+    float minBackOffset_        = CameraConfig::TopDown::MIN_BACK_OFFSET;
+    float maxBackOffset_        = CameraConfig::TopDown::MAX_BACK_OFFSET;
 
     float followSmoothness_ = CameraConfig::FOLLOW_SMOOTHNESS;
 

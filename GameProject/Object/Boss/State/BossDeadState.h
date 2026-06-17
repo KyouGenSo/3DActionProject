@@ -5,7 +5,7 @@
 /// HP=0 で遷移する死亡状態（復帰なし）
 /// </summary>
 class BossDeadState : public BossState {
-public:
+public: //メンバー関数
 	BossDeadState();
 	~BossDeadState() override = default;
 

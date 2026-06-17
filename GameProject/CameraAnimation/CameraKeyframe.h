@@ -19,17 +19,12 @@ struct CameraKeyframe {
         TARGET_RELATIVE ///< ターゲットからのオフセット
     };
 
-    float time = 0.0f;                                             ///< 秒
-
-    Tako::Vector3 position = { 0.0f, 0.0f, 0.0f };                      ///< WORLD では位置、TARGET_RELATIVE ではオフセット
-
-    Tako::Vector3 rotation = { 0.0f, 0.0f, 0.0f };                      ///< オイラー角、ラジアン
-
-    float fov = 0.45f;                                             ///< ラジアン
-
-    InterpolationType interpolation = InterpolationType::LINEAR;   ///< このキーフレームから次への補間方法
-
-    CoordinateType coordinateType = CoordinateType::WORLD;
+    float             time           = 0.0f;                       ///< 秒
+    Tako::Vector3     position       = { 0.0f, 0.0f, 0.0f };       ///< WORLD では位置、TARGET_RELATIVE ではオフセット
+    Tako::Vector3     rotation       = { 0.0f, 0.0f, 0.0f };       ///< オイラー角、ラジアン
+    float             fov            = 0.45f;                      ///< ラジアン
+    InterpolationType interpolation  = InterpolationType::LINEAR;  ///< このキーフレームから次への補間方法
+    CoordinateType    coordinateType = CoordinateType::WORLD;
 
     CameraKeyframe() = default;
 

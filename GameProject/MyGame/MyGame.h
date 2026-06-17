@@ -7,8 +7,7 @@
 /// </summary>
 class MyGame : public Tako::TakoFramework
 {
-public: // メンバ関数
-
+public: //メンバー関数
     void Initialize() override;
 
     void Finalize() override;
@@ -17,8 +16,7 @@ public: // メンバ関数
 
     void Draw() override;
 
-private: // プライベートメンバ関数
-
+private: //非公開関数
     void RegisterGlobalVariables();
 
     void RegisterInputVariables();
@@ -50,8 +48,4 @@ private: // プライベートメンバ関数
     void LoadJoystickTextures();
 
     void LoadActionIconTextures();
-
-private: // メンバ変数
-
-
 };

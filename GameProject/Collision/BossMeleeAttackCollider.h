@@ -8,9 +8,8 @@ class Player;
 /// ボス近接攻撃のダメージ判定
 /// </summary>
 class BossMeleeAttackCollider : public Tako::OBBCollider {
-public:
+public: //メンバー関数
     BossMeleeAttackCollider(Boss* boss);
-
     ~BossMeleeAttackCollider() = default;
 
     /// <summary>
@@ -30,14 +29,19 @@ public:
     /// </summary>
     void Reset();
 
+    //==========================
+    //Setter
+    //==========================
     void SetDamage(float damage) { damage_ = damage; }
 
+    //==========================
+    //Getter
+    //==========================
     float GetDamage() const { return damage_; }
-
     bool HasHitPlayer() const { return hasHitPlayer_; }
 
-private:
-    Boss* boss_ = nullptr;
-    float damage_ = 10.0f;
-    bool hasHitPlayer_ = false;      ///< 多重ヒット防止
+private: //メンバー変数
+    Boss* boss_         = nullptr;
+    float damage_       = 10.0f;
+    bool  hasHitPlayer_ = false;    ///< 多重ヒット防止
 };

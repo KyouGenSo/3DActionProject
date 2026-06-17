@@ -27,32 +27,29 @@ class InputHandler;
 class MeleeAttackCollider;
 class Boss;
 
+/// <summary>
+/// プレイヤーキャラクター。移動・戦闘・HP・状態遷移・当たり判定を統括する
+/// </summary>
 class Player
 {
-	//=========================================================================================
-	// 定数
-	//=========================================================================================
-private:
-	static constexpr float kVelocityEpsilon = 0.01f;
-	static constexpr float kBoundaryDisabled = 9999.0f;
-	static constexpr float kExternalVelocityDamping = 0.9f; ///< 毎フレーム乗算
+private: //定数
+    static constexpr float kVelocityEpsilon = 0.01f;
+    static constexpr float kBoundaryDisabled = 9999.0f;
+    static constexpr float kExternalVelocityDamping = 0.9f; ///< 毎フレーム乗算
     static constexpr float kMoveArrivalThreshold = 0.5f;
     static constexpr float kMoveEasingCoeffA = 3.0f;
     static constexpr float kMoveEasingCoeffB = 2.0f;
     static constexpr float kDirectionEpsilon = 0.01f;
+    static constexpr float kMaxHp = 100.0f;
 
-public: // メンバ関数
+public: //メンバー関数
     Player();
     ~Player();
 
     void Initialize();
-
     void Finalize();
-
     void Update();
-
     void Draw();
-
     void DrawSprite();
 
     /// <summary>
@@ -70,15 +67,9 @@ public: // メンバ関数
     void MoveToTarget(Boss* target, float deltaTime);
 
     void ResetMoveToTarget();
-
-    bool HasReachedTarget() const;
-
     void DrawImGui();
-
     void SetupColliders();
-
     void UpdateCollider();
-
     void LookAtBoss();
 
     /// <summary>
@@ -94,7 +85,12 @@ public: // メンバ関数
     /// </summary>
     void OnParrySuccess();
 
-    //-----------------------------弾生成リクエストシステム------------------------------//
+    void StartParryCooldown();
+    void StartDashCooldown();
+
+    //======================================================================================
+    //弾生成リクエスト
+    //======================================================================================
     /// <summary>
     /// 弾の生成リクエストを内部キューに積む（実際の生成は外部が後で行う）
     /// </summary>
@@ -108,15 +104,12 @@ public: // メンバ関数
     /// <returns>未処理の生成リクエスト一覧（取得後キューは空になる）</returns>
     std::vector<BulletSpawnRequest> ConsumePendingBullets();
 
-    //----------------------------------Setters-----------------------------------//
+    //======================================================================================
+    //Setter
+    //======================================================================================
     void SetSpeed(float speed) { speed_ = speed; }
-
     void SetBoss(Boss* target) { targetEnemy_ = target; }
-
     void SetShootingEnabled(bool enabled) { shootingEnabled_ = enabled; }
-
-    bool IsShootingEnabled() const { return shootingEnabled_; }
-
     void SetCamera(Tako::Camera* camera) { camera_ = camera; }
 
     /// <summary>
@@ -125,19 +118,12 @@ public: // メンバ関数
     void SetMode(bool mode) { mode_ = mode; }
 
     void SetTransform(const Tako::Transform& transform) { transform_ = transform; }
-
     void SetTranslate(const Tako::Vector3& translate) { transform_.translate = translate; }
-
     void SetRotate(const Tako::Vector3& rotate) { transform_.rotate = rotate; }
-
     void SetScale(const Tako::Vector3& scale) { transform_.scale = scale; }
-
     void SetHp(float hp) { hp_ = hp; if (hp_ < 0.f) hp_ = 0.f; }
-
     void SetInvincible(bool isInvincible) { isInvincible_ = isInvincible; }
-
     void SetInputHandler(InputHandler* inputHandler) { inputHandlerPtr_ = inputHandler; }
-
     void SetAttackBlockVisible(bool visible) { attackBlockVisible_ = visible; }
 
     /// <summary>
@@ -158,12 +144,17 @@ public: // メンバ関数
     void SetDynamicBoundsFromCenter(const Tako::Vector3& center, float xRange, float zRange);
 
     void SetEmitterManager(Tako::EmitterManager* emitterManager) { emitterManager_ = emitterManager; }
-
     void SetIsPause(bool isPause) { isPause_ = isPause; }
 
-    //----------------------------------Getters-----------------------------------//
-    float GetSpeed() const { return speed_; }
+    /// <summary>
+    /// ForceFieldManager を設定（非所有）
+    /// </summary>
+    void SetForceFieldManager(Tako::ForceFieldManager* manager) { forceFieldManager_ = manager; }
 
+    //======================================================================================
+    //Getter
+    //======================================================================================
+    float GetSpeed() const { return speed_; }
     Tako::Camera* GetCamera() const { return camera_; }
 
     /// <summary>
@@ -172,46 +163,33 @@ public: // メンバ関数
     bool GetMode() const { return mode_; }
 
     float GetHp() const { return hp_; }
-
     bool IsDead() const { return isDead_; }
+    bool IsInvincible() const { return isInvincible_; }
+    bool IsShootingEnabled() const { return shootingEnabled_; }
 
-    bool IsInvincible() const{ return isInvincible_; }
-
+    /// <summary>
+    /// 射撃可能か（死亡中・ボスフェーズ2では false）
+    /// </summary>
     bool CanShoot() const;
 
     const Tako::Transform& GetTransform() const { return transform_; }
-
     Tako::Transform* GetTransformPtr() { return &transform_; }
-
     Tako::Vector3 GetTranslate() const { return transform_.translate; }
-
     Tako::Vector3 GetRotate() const { return transform_.rotate; }
-
     Tako::Vector3 GetScale() const { return transform_.scale; }
-
     Tako::Object3d* GetModel() const { return model_.get(); }
-
     PlayerStateMachine* GetStateMachine() const { return stateMachine_.get(); }
-
     MeleeAttackCollider* GetMeleeAttackCollider() const { return meleeAttackCollider_.get(); }
-
     Tako::Object3d* GetAttackBlock() const { return attackBlock_.get(); }
-
     bool IsAttackBlockVisible() const { return attackBlockVisible_; }
-
     Tako::Vector3& GetVelocity() { return velocity_; }
-
-    InputHandler* GetInputHandler() { return inputHandlerPtr_; };
-
+    InputHandler* GetInputHandler() { return inputHandlerPtr_; }
     float GetAttackMinDistance() const { return attackMinDist_; }
-
     Tako::EmitterManager* GetEmitterManager() const { return emitterManager_; }
 
     /// <summary>
-    /// ForceFieldManager を設定（非所有）
+    /// 現在パリィ状態か
     /// </summary>
-    void SetForceFieldManager(Tako::ForceFieldManager* manager) { forceFieldManager_ = manager; }
-
     bool IsParrying() const;
 
     /// <summary>
@@ -220,15 +198,11 @@ public: // メンバ関数
     /// <returns>パリィクールダウンが完了していれば true</returns>
     bool CanParry() const;
 
-    void StartParryCooldown();
-
     /// <summary>
     /// ダッシュ可能か（クールダウン中は false）
     /// </summary>
     /// <returns>ダッシュクールダウンが完了していれば true</returns>
     bool CanDash() const;
-
-    void StartDashCooldown();
 
     /// <summary>
     /// 現在の向き（rotate.y）に沿って前方 offset だけ進めたワールド座標を返す
@@ -237,7 +211,12 @@ public: // メンバ関数
     /// <returns>プレイヤー位置を前方へ offset ずらしたワールド座標</returns>
     Tako::Vector3 GetFrontPosition(float offset) const;
 
-private:
+    /// <summary>
+    /// MoveToTarget の目標に到達したか
+    /// </summary>
+    bool HasReachedTarget() const;
+
+private: //非公開関数
     void SyncGlobalVariables();
 
     /// <summary>
@@ -259,69 +238,64 @@ private:
 
     void UpdateVisuals(float deltaTime);
 
-private: // メンバ変数
-
-    // 動的移動制限（ボス近接戦闘エリア）
+private: //メンバー変数
+    //動的移動制限（ボス近接戦闘エリア）
     DynamicBoundary dynamicBounds_;
 
+    //コア
     std::unique_ptr<Tako::Object3d> model_;
-    Tako::Camera* camera_ = nullptr;
-    Tako::Transform transform_{};
-    Tako::Vector3 velocity_{};
-    Tako::Vector3 externalVelocity_{};      ///< m/s、ForceField による反発
-    Tako::ForceFieldManager* forceFieldManager_ = nullptr; ///< 非所有
-    float speed_ = 0.5f;
-    float targetAngle_ = 0.f;
-    float hp_ = 100.f;
-    bool isDead_ = false;
+    Tako::Camera*                   camera_             = nullptr;
+    Tako::Transform                 transform_{};
+    Tako::Vector3                   velocity_{};
+    Tako::Vector3                   externalVelocity_{};            ///< m/s、ForceField による反発
+    Tako::ForceFieldManager*        forceFieldManager_  = nullptr;  ///< 非所有
+    float                           speed_              = 0.5f;
+    float                           targetAngle_        = 0.f;
+    float                           hp_                 = 100.f;
+    bool                            isDead_             = false;
 
-    bool mode_ = false;               ///< true: ThirdPerson, false: TopDown
+    //フラグ
+    bool mode_                = false;  ///< true: ThirdPerson, false: TopDown
     bool isDisModelDebugInfo_ = false;
+    bool isInvincible_        = false;
+    bool isPause_             = false;
+    bool shootingEnabled_     = true;   ///< false でフェーズ2射撃無効化
 
-    bool isInvincible_ = false;
-    bool isPause_ = false;
-    bool shootingEnabled_ = true;     ///< false でフェーズ2射撃無効化
-
-    // システム
+    //システム
     std::unique_ptr<PlayerStateMachine> stateMachine_;
-    InputHandler* inputHandlerPtr_;
-    Tako::EmitterManager* emitterManager_ = nullptr;
+    InputHandler*                       inputHandlerPtr_;
+    Tako::EmitterManager*               emitterManager_  = nullptr;
 
-    // Colliders
-    std::unique_ptr<Tako::OBBCollider> bodyCollider_;
+    //コライダー
+    std::unique_ptr<Tako::OBBCollider>   bodyCollider_;
     std::unique_ptr<MeleeAttackCollider> meleeAttackCollider_;
 
-    // 攻撃ブロック
-    std::unique_ptr<Tako::Object3d> attackBlock_;  ///< 攻撃時に表示される回転ブロック
-    bool attackBlockVisible_ = false;
+    //攻撃ブロック
+    std::unique_ptr<Tako::Object3d> attackBlock_;                 ///< 攻撃時に表示される回転ブロック
+    bool                            attackBlockVisible_ = false;
 
-    // 攻撃関連
-    Boss* targetEnemy_ = nullptr;
-    bool isAttackHit_ = false;
-    float attackMoveSpeed_ = 2.0f;
+    //攻撃
+    Boss*       targetEnemy_     = nullptr;
+    bool        isAttackHit_     = false;
+    float       attackMoveSpeed_ = 2.0f;
+    EasingMover attackMover_;                ///< MoveToTarget 用
 
-    EasingMover attackMover_;             ///< MoveToTarget 用
-
-    // クールダウン管理
+    //クールダウン
     CooldownTimer parryCooldown_;
     CooldownTimer dashCooldown_;
 
-    // 弾生成管理
+    //弾生成
     BulletSpawner bulletSpawner_;
 
-    // 調整可能パラメータ（ImGui 編集用）
-    float initialY_ = 2.5f;
-    float initialZ_ = -120.0f;
-    float attackMinDist_ = 5.0f;             ///< 攻撃開始距離
+    //調整パラメータ（ImGui 編集用）
+    float initialY_               = 2.5f;
+    float initialZ_               = -120.0f;
+    float attackMinDist_          = 5.0f;     ///< 攻撃開始距離
     float attackMoveRotationLerp_ = 0.3f;     ///< 攻撃移動中の回転補間速度
-    float bossLookatLerp_ = 1.15f;            ///< ボス視線追従補間速度
+    float bossLookatLerp_         = 1.15f;    ///< ボス視線追従補間速度
 
-    HPBarUI hpBar_;
-
-    static constexpr float kMaxHp = 100.0f;
-
-    // ===== エフェクト関連 =====
+    //UI・エフェクト
+    HPBarUI        hpBar_;
     HitFlashEffect hitFlashEffect_;
-    ShakeEffect shakeEffect_;
+    ShakeEffect    shakeEffect_;
 };
-

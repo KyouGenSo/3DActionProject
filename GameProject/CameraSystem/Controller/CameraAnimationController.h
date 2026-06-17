@@ -8,19 +8,17 @@
 /// アニメーション再生を優先度システムで管理するカメラコントローラー
 /// </summary>
 class CameraAnimationController : public ICameraController {
-public:
+public: //メンバー関数
     CameraAnimationController();
-
     ~CameraAnimationController() override = default;
 
     void Update(float deltaTime) override;
-
     void Activate() override;
-
     void Deactivate() override;
 
-    //==================== アニメーション制御 ====================
-
+    //========================================================================================
+    //アニメーション制御
+    //========================================================================================
     /// <summary>
     /// 現在のアニメーションに JSON を読み込む（後方互換用）
     /// </summary>
@@ -29,11 +27,8 @@ public:
     bool LoadAnimation(const std::string& name);
 
     void Play();
-
     void Pause();
-
     void Stop();
-
     void Reset();
 
     /// <summary>
@@ -52,8 +47,9 @@ public:
     void SetAnimationStartModeByName(const std::string& animationName,
         CameraAnimation::StartMode mode, float blendDuration = 0.5f);
 
-    //==================== キーフレーム管理 ====================
-
+    //========================================================================================
+    //キーフレーム管理
+    //========================================================================================
     void AddKeyframe(const CameraKeyframe& keyframe);
 
     /// <summary>
@@ -66,11 +62,11 @@ public:
         CameraKeyframe::InterpolationType::LINEAR);
 
     void RemoveKeyframe(size_t index);
-
     void ClearKeyframes();
 
-    //==================== アニメーション管理 ====================
-
+    //========================================================================================
+    //アニメーション管理
+    //========================================================================================
     /// <summary>
     /// 空のアニメーションを新規作成
     /// </summary>
@@ -122,8 +118,9 @@ public:
     /// <returns>保存成功で true。該当アニメーションが無ければ false</returns>
     bool SaveAnimationToFile(const std::string& name);
 
-    //==================== Setter ====================
-
+    //========================================================================================
+    //Setter
+    //========================================================================================
     void SetCamera(Tako::Camera* camera) override;
 
     /// <param name="target">相対座標の基準（nullptr で解除）</param>
@@ -137,13 +134,12 @@ public:
     void SetCurrentAnimationTarget(const Tako::Transform* target);
 
     void SetLooping(bool loop);
-
     void SetPlaySpeed(float speed);
-
     void SetAnimationName(const std::string& name);
 
-    //==================== Getter ====================
-
+    //========================================================================================
+    //Getter
+    //========================================================================================
     bool IsActive() const override;
 
     CameraControlPriority GetPriority() const override {
@@ -156,11 +152,8 @@ public:
     CameraAnimation* GetAnimation(const std::string& name);
 
     std::vector<std::string> GetAnimationList() const;
-
     size_t GetAnimationCount() const { return animations_.size(); }
-
     const std::string& GetCurrentAnimationName() const { return currentAnimationName_; }
-
     CameraAnimation::PlayState GetPlayState() const;
 
     /// <returns>現在のアニメーションの長さ（秒）。無ければ 0</returns>
@@ -174,7 +167,7 @@ public:
     /// <returns>未設定の場合 nullptr</returns>
     const Tako::Transform* GetAnimationTarget() const;
 
-private:
+private: //メンバー変数
     std::map<std::string, std::unique_ptr<CameraAnimation>> animations_;
 
     std::string currentAnimationName_ = "Default";

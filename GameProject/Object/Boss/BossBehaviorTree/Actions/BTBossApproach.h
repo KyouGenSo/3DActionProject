@@ -10,16 +10,12 @@ class Player;
 /// プレイヤー方向へイージング移動で接近し、一定距離で停止する
 /// </summary>
 class BTBossApproach : public Tako::BTNode {
-    //=========================================================================================
-    // 定数
-    //=========================================================================================
-private:
+private: //定数
     static constexpr float kDirectionEpsilon = 0.01f;
     static constexpr float kArrivalThreshold = 0.5f;
 
-public:
+public: //メンバー関数
     BTBossApproach();
-
     virtual ~BTBossApproach() = default;
 
     /// <summary>
@@ -30,12 +26,6 @@ public:
     Tako::BTNodeStatus Execute(Tako::BTBlackboard* blackboard) override;
 
     void Reset() override;
-
-    // パラメータ取得・設定
-    float GetApproachSpeed() const { return approachSpeed_; }
-    void SetApproachSpeed(float speed) { approachSpeed_ = speed; }
-    float GetTargetDistance() const { return targetDistance_; }
-    void SetTargetDistance(float distance) { targetDistance_ = distance; }
 
     void ApplyParameters(const nlohmann::json& params) override {
         if (params.contains("approachSpeed")) {
@@ -52,7 +42,19 @@ public:
     bool DrawImGui() override;
 #endif
 
-private:
+    //====================================
+    //Setter
+    //====================================
+    void SetApproachSpeed(float speed) { approachSpeed_ = speed; }
+    void SetTargetDistance(float distance) { targetDistance_ = distance; }
+
+    //====================================
+    //Getter
+    //====================================
+    float GetApproachSpeed() const { return approachSpeed_; }
+    float GetTargetDistance() const { return targetDistance_; }
+
+private: //非公開関数
     /// <summary>
     /// 開始/目標位置とエリア制限後の所要時間を算出し、プレイヤー方向へ旋回する
     /// </summary>
@@ -67,18 +69,15 @@ private:
     /// <param name="deltaTime">未使用</param>
     void UpdateApproachMovement(Boss* boss, float deltaTime);
 
-    //=========================================================================================
-    // メンバ変数
-    //=========================================================================================
-private:
-    // パラメータ
-    float approachSpeed_ = 80.0f;
-    float targetDistance_ = 12.0f;     ///< プレイヤーからの停止距離
+private: //メンバー変数
+    //パラメータ
+    float approachSpeed_  = 80.0f;
+    float targetDistance_ = 12.0f;  ///< プレイヤーからの停止距離
 
-    // 状態管理
+    //状態管理
     Tako::Vector3 startPosition_;
     Tako::Vector3 targetPosition_;
-    float elapsedTime_ = 0.0f;
-    float approachDuration_ = 0.0f;    ///< 距離から動的計算
-    bool isFirstExecute_ = true;
+    float         elapsedTime_      = 0.0f;
+    float         approachDuration_ = 0.0f;  ///< 距離から動的計算
+    bool          isFirstExecute_   = true;
 };

@@ -10,7 +10,7 @@ class Boss;
 /// </summary>
 class ClearEffectManager : public TransitionEffectBase
 {
-public:
+public: //構造体
     enum class Phase {
         Idle,
         SlashBuildup,
@@ -29,8 +29,8 @@ public:
         float shakeDuration = 0.4f;              ///< 秒
     };
 
+public: //メンバー関数
     explicit ClearEffectManager(Tako::EmitterManager* emitterManager);
-
     ~ClearEffectManager() override = default;
 
     /// <summary>
@@ -49,19 +49,23 @@ public:
     /// </summary>
     void Reset() override;
 
+    //==================================
+    //Setter
+    //==================================
     void SetTarget(Boss* boss) { target_ = boss; }
-
     void SetParams(const Params& params) { params_ = params; }
 
+    //==================================
+    //Getter
+    //==================================
     const Params& GetParams() const { return params_; }
-
     Phase GetPhase() const { return phase_; }
 
-private:
-    Boss* target_ = nullptr;
-    Phase phase_ = Phase::Idle;
-    uint32_t currentSlashCount_ = 1;
-    float currentSlashRadius_ = 2.0f;
-    bool explosionFired_ = false;
-    Params params_;
+private: //メンバー変数
+    Boss*    target_             = nullptr;
+    Phase    phase_              = Phase::Idle;
+    uint32_t currentSlashCount_  = 1;
+    float    currentSlashRadius_ = 2.0f;
+    bool     explosionFired_     = false;
+    Params   params_;
 };

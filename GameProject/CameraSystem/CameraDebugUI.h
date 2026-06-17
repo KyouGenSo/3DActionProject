@@ -12,15 +12,11 @@
 /// カメラシステムの ImGui デバッグ UI
 /// </summary>
 class CameraDebugUI {
-public:
+public: //メンバー関数
     static void Draw();
-
     static void DrawManagerInfo();
-
     static void DrawFirstPersonControllerInfo(ThirdPersonController* controller);
-
     static void DrawTopDownControllerInfo(TopDownController* controller);
-
     static void DrawAnimationInfo(CameraAnimation* animation);
 
     /// <summary>
@@ -29,24 +25,20 @@ public:
     static void DrawAnimationEditorOnly();
 
     static void InitializeAnimationEditor();
-
     static void CleanupAnimationEditor();
-
     static void UpdateAnimationEditor(float deltaTime);
 
-private:
+private: //非公開関数
     static void DrawControllerSwitcher();
-
     static void DrawCameraState();
 
-private:
-
+private: //メンバー変数
     static bool showManagerInfo_;
     static bool showControllerInfo_;
     static bool showAnimationInfo_;
 
     static std::unique_ptr<CameraAnimationEditor> animationEditor_;
-    static bool useAdvancedEditor_;
+    static bool                                   useAdvancedEditor_;
 };
 
 #endif // _DEBUG

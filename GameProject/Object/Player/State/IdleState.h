@@ -6,19 +6,15 @@
 /// </summary>
 class IdleState : public PlayerState
 {
-public:
-	IdleState() : PlayerState("Idle") {}
+public: //メンバー関数
+    IdleState() : PlayerState("Idle") {}
 
-	void Enter(Player* player) override;
+    void Enter(Player* player) override;
+    void Update(Player* player, float deltaTime) override;
+    void Exit(Player* player) override;
+    void HandleInput(Player* player) override;
+    void DrawImGui(Player* player) override;
 
-	void Update(Player* player, float deltaTime) override;
-
-	void Exit(Player* player) override;
-
-	void HandleInput(Player* player) override;
-
-	void DrawImGui(Player* player) override;
-
-private:
-	float idleTime_ = 0.0f;
+private: //メンバー変数
+    float idleTime_ = 0.0f;
 };

@@ -10,7 +10,7 @@ namespace Tako {
 /// </summary>
 class HitFlashEffect
 {
-public:
+public: //メンバー関数
     HitFlashEffect() = default;
     ~HitFlashEffect() = default;
 
@@ -29,15 +29,17 @@ public:
     /// <param name="originalColor">duration 経過後に戻す元の色（RGBA）</param>
     void Update(float deltaTime, Tako::Object3d* target, const Tako::Vector4& originalColor);
 
-    bool IsActive() const { return isActive_; }
-
     void Stop() { isActive_ = false; timer_ = 0.0f; }
 
+    //====================
+    //Getter
+    //====================
+    bool IsActive() const { return isActive_; }
     float GetTimer() const { return timer_; }
 
-private:
-    bool isActive_ = false;
-    float timer_ = 0.0f;
-    float duration_ = 0.1f;
+private: //メンバー変数
+    bool          isActive_     = false;
+    float         timer_        = 0.0f;
+    float         duration_     = 0.1f;
     Tako::Vector4 flashColor_{};
 };

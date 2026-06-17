@@ -5,7 +5,7 @@
 /// 通常状態。BehaviorTree が行動を駆動する
 /// </summary>
 class BossNormalState : public BossState {
-public:
+public: //メンバー関数
 	BossNormalState();
 	~BossNormalState() override = default;
 

@@ -19,25 +19,40 @@ class Boss;
 /// 重ね、合計 12 力場で合成トルネードを作る。持続中は内側ほど強い DoT を与える。
 /// </summary>
 class BTBossVortexTempest : public AttackNode {
-public:
+public: //定数
     static constexpr int kVortexCount = 4;
-
     static constexpr int kFieldsPerVortex = 3;  ///< Attract + Dir + Vortex
 
+private: //定数
+    static constexpr float kDecalBaseAlpha = 0.5f;
+    static constexpr float kBlinkAlphaMin = 0.15f;
+    static constexpr float kBlinkAlphaAmplitude = 0.55f;
+
+public: //構造体
     enum FieldSlot {
         kSlotAttract = 0,
         kSlotDirectional = 1,
         kSlotVortex = 2,
     };
 
+private: //構造体
+    struct LoadedField {
+        Tako::ForceFieldData base{};
+        int32_t index = -1;
+    };
+
+public: //メンバー関数
     BTBossVortexTempest();
     virtual ~BTBossVortexTempest() = default;
 
+    //==========================================
+    //Getter
+    //==========================================
     [[nodiscard]] float GetTotalDuration() const {
         return warningTime_ + expandTime_ + sustainTime_ + decayTime_;
     }
 
-protected:
+protected: //メンバー関数
     /// <summary>
     /// 予兆→展開→持続→終息で 12 力場の強度をランプ制御し、内側ほど強い DoT を与える。
     /// </summary>
@@ -51,11 +66,12 @@ protected:
     void OnApplyParameters(const nlohmann::json& params) override;
 
     void OnExtractParameters(nlohmann::json& out) const override;
+
 #ifdef _DEBUG
     bool OnDrawImGui() override;
 #endif
 
-private:
+private: //非公開関数
     /// <summary>
     /// 渦点番号からエミッター名を生成する。
     /// </summary>
@@ -63,17 +79,18 @@ private:
     /// <returns>"vortexEmitterBaseName_\_i" 形式の名前</returns>
     [[nodiscard]] std::string MakeVortexEmitterName(int i) const;
 
-    //======================== パラメータ ========================
+private: //メンバー変数
+    //パラメータ
     float warningTime_ = 1.5f;
-    float expandTime_ = 0.5f;            ///< 強度ランプアップ
+    float expandTime_  = 0.5f;  ///< 強度ランプアップ
     float sustainTime_ = 4.5f;
-    float decayTime_ = 0.5f;             ///< ランプダウン + 硬直
+    float decayTime_   = 0.5f;  ///< ランプダウン + 硬直
 
-    float orbitRadius_ = 8.0f;           ///< 公転半径
-    float angularSpeed_ = 0.6f;          ///< rad/秒
+    float orbitRadius_  = 8.0f;  ///< 公転半径
+    float angularSpeed_ = 0.6f;  ///< rad/秒
 
-    float minDoT_ = 5.0f;                ///< 外周時の DoT（damage/秒）
-    float maxDoT_ = 15.0f;               ///< 中心時の DoT（damage/秒）
+    float minDoT_ = 5.0f;   ///< 外周時の DoT（damage/秒）
+    float maxDoT_ = 15.0f;  ///< 中心時の DoT（damage/秒）
 
     /// <summary>
     /// DoT 適用間隔（秒）。毎フレーム OnHit を呼ぶと HitFlash/Shake が連打されるため、
@@ -81,36 +98,27 @@ private:
     /// </summary>
     float damageTickInterval_ = 0.5f;
 
-    //======================== ForceField プリセット名 ========================
+    //ForceField プリセット名
     std::string attractPresetName_ = "boss_vortexattacck_attract";
-    std::string dirPresetName_ = "boss_vortexattacck_dir";
-    std::string vortexPresetName_ = "boss_vortexattack_vortex";
+    std::string dirPresetName_     = "boss_vortexattacck_dir";
+    std::string vortexPresetName_  = "boss_vortexattack_vortex";
 
-    //======================== エミッター名 ========================
+    //エミッター名
     std::string vortexEmitterBaseName_ = "boss_vortex";
-
-    //======================== デカール演出 ========================
-    static constexpr float kDecalBaseAlpha = 0.5f;
-    static constexpr float kBlinkAlphaMin = 0.15f;
-    static constexpr float kBlinkAlphaAmplitude = 0.55f;
 
     /// <summary>
     /// 予兆点滅周波数（Hz）
     /// </summary>
     float markerBlinkFrequency_ = 4.0f;
 
-    //======================== ランタイム状態 ========================
-    struct LoadedField {
-        Tako::ForceFieldData base{};
-        int32_t index = -1;
-    };
+    //ランタイム状態
     LoadedField loadedFields_[kVortexCount][kFieldsPerVortex];
 
-    float pendingDamage_ = 0.0f;        ///< DoT 累積バッファ
+    float pendingDamage_   = 0.0f;  ///< DoT 累積バッファ
     float damageTickTimer_ = 0.0f;
 
     std::array<std::unique_ptr<Tako::Decal>, kVortexCount> vortexDecals_{};  ///< 渦点ごとの地面マーカー
 
-    //======================== Reset 用キャッシュ ========================
+    //Reset 用キャッシュ
     Tako::ForceFieldManager* cachedForceFieldManager_ = nullptr;
 };

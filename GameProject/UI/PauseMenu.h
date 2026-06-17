@@ -14,7 +14,24 @@ struct Vector2;
 /// </summary>
 class PauseMenu
 {
-public:
+private: //定数
+    static constexpr int kButtonCount = 3;
+
+    // 選択時の色（白）
+    static constexpr float kSelectedColorR = 1.0f;
+    static constexpr float kSelectedColorG = 1.0f;
+    static constexpr float kSelectedColorB = 1.0f;
+
+    // 非選択時の色（グレー）
+    static constexpr float kUnselectedColorR = 0.5f;
+    static constexpr float kUnselectedColorG = 0.5f;
+    static constexpr float kUnselectedColorB = 0.5f;
+
+    // UI 設計時の想定解像度
+    static constexpr float kBaseWidth = 1920.0f;
+    static constexpr float kBaseHeight = 1080.0f;
+
+public: //構造体
     enum class Action {
         None,
         Resume,
@@ -22,6 +39,7 @@ public:
         ExitGame
     };
 
+public: //メンバー関数
     PauseMenu() = default;
     ~PauseMenu();
 
@@ -39,7 +57,7 @@ public:
 
     void DrawImGui();
 
-private:
+private: //非公開関数
     /// <summary>
     /// 選択中は白、それ以外はグレーに設定
     /// </summary>
@@ -50,49 +68,32 @@ private:
     /// </summary>
     void OnResize(const Tako::Vector2& newSize);
 
-private:
-
+private: //メンバー変数
     // ボタンスプライト（Resume, Title, Exit）
-    static constexpr int kButtonCount = 3;
     std::array<std::unique_ptr<Tako::Sprite>, kButtonCount> buttonSprites_;
 
     std::unique_ptr<Tako::Sprite> titleSprite_;
-
     std::unique_ptr<Tako::Sprite> overlaySprite_;
 
     // DPAD 操作ガイドスプライト
-    std::unique_ptr<Tako::Sprite> dpadGuideSprite_;   ///< 中立
+    std::unique_ptr<Tako::Sprite> dpadGuideSprite_;  ///< 中立
     std::unique_ptr<Tako::Sprite> dpadUpSprite_;
     std::unique_ptr<Tako::Sprite> dpadDownSprite_;
 
     std::unique_ptr<Tako::Sprite> aButtonUpSprite_;
     std::unique_ptr<Tako::Sprite> aButtonDownSprite_;
 
-    std::unique_ptr<Tako::Sprite> ketteiSprite_;      ///< 決定
-    std::unique_ptr<Tako::Sprite> sentakuSprite_;     ///< 選択
+    std::unique_ptr<Tako::Sprite> ketteiSprite_;   ///< 決定
+    std::unique_ptr<Tako::Sprite> sentakuSprite_;  ///< 選択
 
     // 入力状態（描画用）
-    bool isDPadUpPressed_ = false;
+    bool isDPadUpPressed_   = false;
     bool isDPadDownPressed_ = false;
-    bool isAPressed_ = false;
+    bool isAPressed_        = false;
 
     // 0:Resume, 1:Title, 2:Exit
     int selectedIndex_ = 0;
 
-    // 選択時の色（白）
-    static constexpr float kSelectedColorR = 1.0f;
-    static constexpr float kSelectedColorG = 1.0f;
-    static constexpr float kSelectedColorB = 1.0f;
-
-    // 非選択時の色（グレー）
-    static constexpr float kUnselectedColorR = 0.5f;
-    static constexpr float kUnselectedColorG = 0.5f;
-    static constexpr float kUnselectedColorB = 0.5f;
-
-    // UI 設計時の想定解像度
-    static constexpr float kBaseWidth = 1920.0f;
-    static constexpr float kBaseHeight = 1080.0f;
-
-    Tako::WinApp* winApp_ = nullptr;
-    uint32_t onResizeId_ = 0;          ///< 登録したコールバックの ID
+    Tako::WinApp* winApp_     = nullptr;
+    uint32_t      onResizeId_ = 0;        ///< 登録したコールバックの ID
 };

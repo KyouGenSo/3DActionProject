@@ -6,7 +6,7 @@
 /// 現在 HP を最大 HP に対するパーセンテージで閾値比較する条件ノード
 /// </summary>
 class BTBossHPCondition : public Tako::BTNode {
-public:
+public: //構造体
     enum class Comparison {
         Less = 0,
         LessOrEqual = 1,
@@ -14,6 +14,7 @@ public:
         GreaterOrEqual = 3
     };
 
+public: //メンバー関数
     BTBossHPCondition();
     virtual ~BTBossHPCondition() = default;
 
@@ -31,14 +32,19 @@ public:
     bool DrawImGui() override;
 #endif
 
-    // Getters/Setters
-    float GetThresholdPercent() const { return thresholdPercent_; }
+    //=====================================
+    //Setter
+    //=====================================
     void SetThresholdPercent(float percent) { thresholdPercent_ = percent; }
-
-    Comparison GetComparison() const { return comparison_; }
     void SetComparison(Comparison comp) { comparison_ = comp; }
 
-private:
+    //=====================================
+    //Getter
+    //=====================================
+    float GetThresholdPercent() const { return thresholdPercent_; }
+    Comparison GetComparison() const { return comparison_; }
+
+private: //非公開関数
     /// <summary>
     /// 現在 HP 割合と閾値を comparison_ に従って比較する
     /// </summary>
@@ -46,6 +52,7 @@ private:
     /// <returns>比較条件を満たせば true</returns>
     bool EvaluateCondition(float currentPercent) const;
 
-    float thresholdPercent_ = 50.0f;   ///< 閾値（パーセンテージ: 0〜100）
-    Comparison comparison_ = Comparison::LessOrEqual;
+private: //メンバー変数
+    float      thresholdPercent_ = 50.0f;                    ///< 閾値（パーセンテージ: 0〜100）
+    Comparison comparison_       = Comparison::LessOrEqual;
 };

@@ -18,9 +18,8 @@ namespace Tako
 /// プレイヤー弾・ボス弾・貫通弾の生成・更新・削除を管理する。
 /// </summary>
 class ProjectileManager {
-public:
+public: //メンバー関数
     explicit ProjectileManager(Tako::EmitterManager* emitterManager);
-
     ~ProjectileManager();
 
     /// <summary>
@@ -51,18 +50,20 @@ public:
     /// <param name="requests">弾ごとの発射位置と速度のリスト</param>
     void SpawnPenetratingBossBullets(const std::vector<BulletSpawnRequest>& requests);
 
+    //=========================================================
+    //Setter
+    //=========================================================
     /// <summary>
     /// 非所有。設定後に生成されるプレイヤー弾のみ力場の影響を受ける。ボス弾は対象外。
     /// </summary>
     /// <param name="manager">プレイヤー弾へ注入する力場マネージャ。非所有。nullptr 可</param>
     void SetForceFieldManager(Tako::ForceFieldManager* manager) { forceFieldManager_ = manager; }
 
-private:
-    Tako::EmitterManager* emitterManager_ = nullptr;
+private: //メンバー変数
+    Tako::EmitterManager*    emitterManager_    = nullptr;
+    Tako::ForceFieldManager* forceFieldManager_ = nullptr;  ///< 非所有 / null 許容
 
-    Tako::ForceFieldManager* forceFieldManager_ = nullptr; ///< 非所有 / null 許容
-
-    std::vector<std::unique_ptr<PlayerBullet>>           playerBullets_;
-    std::vector<std::unique_ptr<BossBullet>>             bossBullets_;
-    std::vector<std::unique_ptr<PenetratingBossBullet>>  penetratingBossBullets_;
+    std::vector<std::unique_ptr<PlayerBullet>>          playerBullets_;
+    std::vector<std::unique_ptr<BossBullet>>            bossBullets_;
+    std::vector<std::unique_ptr<PenetratingBossBullet>> penetratingBossBullets_;
 };

@@ -6,7 +6,7 @@
 /// </summary>
 class ShakeEffect
 {
-public:
+public: //メンバー関数
     ShakeEffect() = default;
     ~ShakeEffect() = default;
 
@@ -18,31 +18,35 @@ public:
     void Start(float intensity = 0.0f, float duration = 0.3f);
 
     void Update(float deltaTime);
-
     void Stop();
 
-    Tako::Vector3 GetOffset() const { return offset_; }
-
-    bool IsActive() const { return isActive_; }
-
+    //=======================================
+    //Setter
+    //=======================================
     void SetDefaultIntensity(float intensity) { defaultIntensity_ = intensity; }
-
     void SetDefaultDuration(float duration) { defaultDuration_ = duration; }
 
+    //=======================================
+    //Getter
+    //=======================================
+    Tako::Vector3 GetOffset() const { return offset_; }
+    bool IsActive() const { return isActive_; }
     float GetTimer() const { return timer_; }
-
     float GetDuration() const { return duration_; }
-
     float GetDefaultIntensity() const { return defaultIntensity_; }
-
     float GetDefaultDuration() const { return defaultDuration_; }
 
-private:
-    bool isActive_ = false;
-    float timer_ = 0.0f;
-    float duration_ = 0.3f;
+private: //メンバー変数
+    //状態
+    bool  isActive_  = false;
+    float timer_     = 0.0f;
+    float duration_  = 0.3f;
     float intensity_ = 0.2f;
+
+    //デフォルト値
     float defaultIntensity_ = 0.2f;
-    float defaultDuration_ = 0.3f;
+    float defaultDuration_  = 0.3f;
+
+    //出力
     Tako::Vector3 offset_{};
 };

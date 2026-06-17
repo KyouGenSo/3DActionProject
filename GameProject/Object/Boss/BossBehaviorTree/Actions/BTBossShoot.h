@@ -9,30 +9,33 @@ class Boss;
 /// プレイヤー方向へ扇状に複数弾を一斉発射する。
 /// </summary>
 class BTBossShoot : public AttackNode {
-private:
+private: //定数
     static constexpr float kDirectionEpsilon = 0.01f;
     static constexpr float kAngleEpsilon = 0.001f;
 
-public:
+public: //メンバー関数
     BTBossShoot();
     virtual ~BTBossShoot() = default;
 
-    [[nodiscard]] float GetChargeTime() const { return chargeTime_; }
+    //=========================================
+    //Setter
+    //=========================================
     void SetChargeTime(float time) { chargeTime_ = time; }
-
-    [[nodiscard]] float GetBulletSpeed() const { return bulletSpeed_; }
     void SetBulletSpeed(float speed) { bulletSpeed_ = speed; }
-
-    [[nodiscard]] float GetSpreadAngle() const { return spreadAngle_; }
     void SetSpreadAngle(float angle) { spreadAngle_ = angle; }
-
-    [[nodiscard]] float GetRecoveryTime() const { return recoveryTime_; }
     void SetRecoveryTime(float time) { recoveryTime_ = time; }
-
-    [[nodiscard]] int GetBulletCount() const { return bulletCount_; }
     void SetBulletCount(int count) { bulletCount_ = count; }
 
-protected:
+    //=========================================
+    //Getter
+    //=========================================
+    [[nodiscard]] float GetChargeTime() const { return chargeTime_; }
+    [[nodiscard]] float GetBulletSpeed() const { return bulletSpeed_; }
+    [[nodiscard]] float GetSpreadAngle() const { return spreadAngle_; }
+    [[nodiscard]] float GetRecoveryTime() const { return recoveryTime_; }
+    [[nodiscard]] int GetBulletCount() const { return bulletCount_; }
+
+protected: //メンバー関数
     /// <summary>
     /// チャージ後に一斉発射し硬直へ。総時間経過で終了。
     /// </summary>
@@ -49,7 +52,7 @@ protected:
     bool OnDrawImGui() override;
 #endif
 
-private:
+private: //非公開関数
     /// <summary>
     /// プレイヤー方向を中心に bulletCount_ 発を扇状に一斉発射する。
     /// </summary>
@@ -63,23 +66,18 @@ private:
     /// <returns>正規化された発射方向</returns>
     Tako::Vector3 CalculateBulletDirection(const Tako::Vector3& baseDirection, float angleOffset);
 
-    //=========================================================================================
-    // パラメータ
-    //=========================================================================================
-    float chargeTime_ = 0.9f;
-    float recoveryTime_ = 0.5f;
+private: //メンバー変数
+    //パラメータ
+    float chargeTime_    = 0.9f;
+    float recoveryTime_  = 0.5f;
     float totalDuration_ = 1.0f;     ///< OnInitialize で算出
-    float bulletSpeed_ = 20.0f;
-    float spreadAngle_ = 0.2618f;    ///< ラジアン、約 15 度
-    int   bulletCount_ = 3;
+    float bulletSpeed_   = 20.0f;
+    float spreadAngle_   = 0.2618f;  ///< ラジアン、約 15 度
+    int   bulletCount_   = 3;
 
-    //=========================================================================================
-    // ランタイム状態
-    //=========================================================================================
+    //ランタイム状態
     bool hasFired_ = false;
 
-    //=========================================================================================
-    // 演出
-    //=========================================================================================
+    //演出
     BulletSignEffect bulletSignEffect_;
 };

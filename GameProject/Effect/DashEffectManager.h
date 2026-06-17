@@ -11,15 +11,15 @@ namespace Tako {
 /// </summary>
 class DashEffectManager
 {
-public:
+public: //構造体
     struct Params {
         float lerpSpeed = 35.0f;                        ///< 指数減衰の係数
         float stopThreshold = 0.65f;                    ///< ダッシュ終了後に無効化する距離
         std::string emitterName = "player_dash";
     };
 
+public: //メンバー関数
     explicit DashEffectManager(Tako::EmitterManager* emitterManager);
-
     ~DashEffectManager() = default;
 
     /// <summary>
@@ -36,16 +36,21 @@ public:
     /// <param name="position">設定する初期位置</param>
     void InitializePosition(const Tako::Vector3& position);
 
-    bool IsActive() const { return isActive_; }
-
+    //==================================
+    //Setter
+    //==================================
     void SetParams(const Params& params) { params_ = params; }
 
+    //==================================
+    //Getter
+    //==================================
+    bool IsActive() const { return isActive_; }
     const Params& GetParams() const { return params_; }
 
-private:
+private: //メンバー変数
     Tako::EmitterManager* emitterManager_ = nullptr;
-    Tako::Vector3 emitterPosition_{};                  ///< 補間中のエミッター位置
-    bool previousIsDashing_ = false;
-    bool isActive_ = false;
-    Params params_;
+    Tako::Vector3         emitterPosition_{};            ///< 補間中のエミッター位置
+    bool                  previousIsDashing_ = false;
+    bool                  isActive_          = false;
+    Params                params_;
 };

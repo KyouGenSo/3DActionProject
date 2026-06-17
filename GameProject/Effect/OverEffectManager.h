@@ -9,7 +9,7 @@ class Player;
 /// </summary>
 class OverEffectManager : public TransitionEffectBase
 {
-public:
+public: //構造体
     enum class Phase {
         Idle,
         WaitEmit1,
@@ -25,8 +25,8 @@ public:
         float scaleDecreaseRate = 5.0f;  ///< /秒
     };
 
+public: //メンバー関数
     explicit OverEffectManager(Tako::EmitterManager* emitterManager);
-
     ~OverEffectManager() override = default;
 
     /// <summary>
@@ -45,18 +45,22 @@ public:
     /// </summary>
     void Reset() override;
 
+    //==================================
+    //Setter
+    //==================================
     void SetTarget(Player* player) { target_ = player; }
-
     void SetParams(const Params& params) { params_ = params; }
 
+    //==================================
+    //Getter
+    //==================================
     const Params& GetParams() const { return params_; }
-
     Phase GetPhase() const { return phase_; }
 
-private:
-    Player* target_ = nullptr;
-    Phase phase_ = Phase::Idle;
-    bool emit1Fired_ = false;
-    bool emit2Fired_ = false;
-    Params params_;
+private: //メンバー変数
+    Player* target_     = nullptr;
+    Phase   phase_      = Phase::Idle;
+    bool    emit1Fired_ = false;
+    bool    emit2Fired_ = false;
+    Params  params_;
 };

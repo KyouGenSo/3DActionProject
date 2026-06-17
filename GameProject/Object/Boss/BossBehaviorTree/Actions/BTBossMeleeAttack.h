@@ -9,11 +9,12 @@ class Boss;
 /// 武器ブロックを振る近接攻撃。コンボ抽選で 1 撃または 3 連撃。
 /// </summary>
 class BTBossMeleeAttack : public AttackNode {
-private:
+private: //定数
     static constexpr float kDirectionEpsilon = 0.01f;
     static constexpr float kBlockStartAngle = -std::numbers::pi_v<float> / 2.0f;
     static constexpr float kAngleEpsilon = 0.001f;
 
+private: //構造体
     enum class MeleePhase {
         Prepare,    ///< 準備（プレイヤー方向を向く、予兆表示）
         Execute,    ///< 攻撃実行（ブロック回転、ダメージ判定）
@@ -21,29 +22,35 @@ private:
         Recovery    ///< 硬直
     };
 
-public:
+public: //メンバー関数
     BTBossMeleeAttack();
     virtual ~BTBossMeleeAttack() = default;
 
-    // パラメータ取得・設定
-    float GetPrepareTime() const { return prepareTime_; }
+    //=====================================
+    //Setter
+    //=====================================
     void  SetPrepareTime(float time) { prepareTime_ = time; }
-    float GetAttackDuration() const { return attackDuration_; }
     void  SetAttackDuration(float duration) { attackDuration_ = duration; }
-    float GetRecoveryTime() const { return recoveryTime_; }
     void  SetRecoveryTime(float time) { recoveryTime_ = time; }
-    float GetBlockRadius() const { return blockRadius_; }
     void  SetBlockRadius(float radius) { blockRadius_ = radius; }
-    float GetBlockScale() const { return blockScale_; }
     void  SetBlockScale(float scale) { blockScale_ = scale; }
-    float GetSwingAngle() const { return swingAngle_; }
     void  SetSwingAngle(float angle) { swingAngle_ = angle; }
-    float GetRushDistance() const { return rushDistance_; }
     void  SetRushDistance(float distance) { rushDistance_ = distance; }
-    float GetStopDistance() const { return stopDistance_; }
     void  SetStopDistance(float distance) { stopDistance_ = distance; }
 
-protected:
+    //=====================================
+    //Getter
+    //=====================================
+    float GetPrepareTime() const { return prepareTime_; }
+    float GetAttackDuration() const { return attackDuration_; }
+    float GetRecoveryTime() const { return recoveryTime_; }
+    float GetBlockRadius() const { return blockRadius_; }
+    float GetBlockScale() const { return blockScale_; }
+    float GetSwingAngle() const { return swingAngle_; }
+    float GetRushDistance() const { return rushDistance_; }
+    float GetStopDistance() const { return stopDistance_; }
+
+protected: //非公開関数
     /// <summary>
     /// Prepare → Execute →（コンボ時 Interval）→ Recovery の状態機械を進行させる
     /// </summary>
@@ -64,7 +71,7 @@ protected:
     bool OnDrawImGui() override;
 #endif
 
-private:
+private: //非公開関数
     /// <summary>
     /// プレイヤー方向へ徐々に旋回
     /// </summary>
@@ -116,38 +123,35 @@ private:
     /// <param name="blackboard">boss / player ポインタを保持する共有ストレージ</param>
     void InitializeRush(Tako::BTBlackboard* blackboard);
 
-    //=========================================================================================
-    // パラメータ
-    //=========================================================================================
-    float prepareTime_ = 1.0f;
-    float attackDuration_ = 0.3f;
-    float recoveryTime_ = 0.3f;
-    float blockRadius_ = 8.0f;
-    float blockScale_ = 0.5f;
-    float swingAngle_ = static_cast<float>(std::numbers::pi);
-    float rushDistance_ = 20.0f;
-    float stopDistance_ = 5.0f;
-    float comboInterval_ = 0.5f;
+private: //メンバー変数
+    //パラメータ
+    float prepareTime_      = 1.0f;
+    float attackDuration_   = 0.3f;
+    float recoveryTime_     = 0.3f;
+    float blockRadius_      = 8.0f;
+    float blockScale_       = 0.5f;
+    float swingAngle_       = static_cast<float>(std::numbers::pi);
+    float rushDistance_     = 20.0f;
+    float stopDistance_     = 5.0f;
+    float comboInterval_    = 0.5f;
     float comboProbability_ = 0.5f;
 
-    //=========================================================================================
-    // ランタイム状態
-    //=========================================================================================
-    MeleePhase currentPhase_ = MeleePhase::Prepare;
-    float totalDuration_ = 1.6f;
-    float phaseTimer_ = 0.0f;
-    float blockAngle_ = 0.0f;
-    bool  colliderActivated_ = false;
+    //ランタイム状態
+    MeleePhase currentPhase_      = MeleePhase::Prepare;
+    float      totalDuration_     = 1.6f;
+    float      phaseTimer_        = 0.0f;
+    float      blockAngle_        = 0.0f;
+    bool       colliderActivated_ = false;
 
-    // 突進状態
+    //突進状態
     Tako::Vector3 startPosition_;
     Tako::Vector3 targetPosition_;
     Tako::Vector3 rushDirection_;
-    bool rushInitialized_ = false;
+    bool          rushInitialized_ = false;
 
-    // コンボ管理
-    bool  isComboMode_ = false;
-    int   comboMaxCount_ = 1;
-    int   comboIndex_ = 0;
+    //コンボ管理
+    bool  isComboMode_           = false;
+    int   comboMaxCount_         = 1;
+    int   comboIndex_            = 0;
     float currentSwingDirection_ = 1.0f;
 };

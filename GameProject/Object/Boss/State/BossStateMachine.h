@@ -10,7 +10,7 @@ class BossState;
 /// 外部イベント駆動の状態（スタン・離脱等）を管理。AI 意思決定は BehaviorTree が担う
 /// </summary>
 class BossStateMachine {
-public:
+public: //メンバー関数
 	BossStateMachine(Boss* boss);
 
 	~BossStateMachine();
@@ -30,8 +30,14 @@ public:
 	/// <param name="state">所有権を移すステート実体</param>
 	void RegisterState(const std::string& name, std::unique_ptr<BossState> state);
 
+	//=============================================
+	//Getter
+	//=============================================
 	BossState* GetCurrentState() const { return currentState_; }
 
+	/// <summary>
+	/// 現在ステートの登録名。ステート未設定なら空文字列を返す
+	/// </summary>
 	const std::string& GetCurrentStateName() const;
 
 	/// <summary>
@@ -41,10 +47,11 @@ public:
 	/// <returns>該当ステート。未登録なら nullptr</returns>
 	BossState* GetState(const std::string& name) const;
 
-private:
-	Boss* boss_;
-	BossState* currentState_ = nullptr;
-	std::unordered_map<std::string, std::unique_ptr<BossState>> states_;
-
+private: //定数
 	static const std::string kEmptyString;
+
+private: //メンバー変数
+	Boss*                                                      boss_;
+	BossState*                                                 currentState_ = nullptr;
+	std::unordered_map<std::string, std::unique_ptr<BossState>> states_;
 };

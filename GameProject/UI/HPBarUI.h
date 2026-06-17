@@ -11,7 +11,7 @@
 /// </summary>
 class HPBarUI
 {
-public:
+public: //メンバー関数
     HPBarUI() = default;
     ~HPBarUI() = default;
 
@@ -69,6 +69,9 @@ public:
 
     void Draw();
 
+    //=======================================================
+    //Setter
+    //=======================================================
     /// <param name="screenXRatio">画面幅に対する比率</param>
     /// <param name="screenYRatio">画面高さに対する比率</param>
     void SetPosition(float screenXRatio, float screenYRatio);
@@ -78,16 +81,20 @@ public:
     /// <param name="anchor">0,0:左上 1,1:右下</param>
     void SetAnchorPoint(const Tako::Vector2& anchor);
 
-private:
+private: //非公開関数
     Tako::Vector2 CalculateScreenPosition() const;
 
+private: //メンバー変数
+    //スプライト
     std::unique_ptr<Tako::Sprite> barSprite_;
-    std::unique_ptr<Tako::Sprite> bar2Sprite_;   ///< 2段目（Dual 用）
+    std::unique_ptr<Tako::Sprite> bar2Sprite_;  ///< 2段目（Dual 用）
     std::unique_ptr<Tako::Sprite> bgSprite_;
 
+    //表示位置・サイズ
     Tako::Vector2 baseSize_;
-    float screenXRatio_ = 0.5f;
-    float screenYRatio_ = 0.05f;
+    float         screenXRatio_ = 0.5f;
+    float         screenYRatio_ = 0.05f;
 
+    //状態
     bool isDualBar_ = false;
 };

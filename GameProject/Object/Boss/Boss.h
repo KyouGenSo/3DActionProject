@@ -35,16 +35,18 @@ class BossStunnedState;
 class Player;
 class BossMeleeAttackCollider;
 
+/// <summary>
+/// ボスキャラクター。HP・フェーズ・状態遷移・BehaviorTree・各種エフェクト/当たり判定を統括する
+/// </summary>
 class Boss
 {
-    // 定数
-private:
+private: //定数
     static constexpr float kMaxHp = 200.0f;
     static constexpr float kPhase2Threshold = 105.0f;
     static constexpr float kPhase2InitialHp = 100.0f;
     static constexpr float kPhaseTransitionStunThreshold = 105.0f;
 
-public:
+public: //メンバー関数
     Boss();
     ~Boss();
 
@@ -96,20 +98,6 @@ public:
     /// <returns>登録済みの貫通弾リクエスト一覧</returns>
     std::vector<BulletSpawnRequest> ConsumePendingPenetratingBullets();
 
-    //-----------------------------Getters/Setters------------------------------//
-    void SetTransform(const Tako::Transform& transform) { transform_ = transform; }
-    void SetTranslate(const Tako::Vector3& translate) { transform_.translate = translate; }
-    void SetRotate(const Tako::Vector3& rotate) { transform_.rotate = rotate; }
-    void SetScale(const Tako::Vector3& scale) { transform_.scale = scale; }
-    void SetHp(float hp) { hp_ = hp; }
-    void SetPhase(uint32_t phase) { phaseManager_.SetPhase(phase); }
-    void SetPlayer(Player* player);
-    void SetIsPause(bool isPause) { isPause_ = isPause; }
-
-    //-----------------------------ステートマシン------------------------------//
-    BossStateMachine* GetStateMachine() const { return stateMachine_.get(); }
-    Tako::BehaviorTree* GetBehaviorTree() const { return behaviorTree_.get(); }
-
     /// <summary>
     /// 近接攻撃ヒット時の統合処理。現在のステートに応じてダメージ・スタン・離脱を判定する。
     /// ダッシュ中は無効。スタン中/フェーズ移行スタン中/硬直中または強制脆弱時のみダメージが入る
@@ -125,6 +113,80 @@ public:
     void ResetActionState();
 
     /// <summary>
+    /// ヒットフラッシュを開始してスタン中の色変化として使う
+    /// </summary>
+    /// <param name="color">フラッシュ色（RGBA）</param>
+    /// <param name="duration">フラッシュ継続時間（秒）</param>
+    void StartStunFlash(const Tako::Vector4& color, float duration);
+
+    void EnterRecovery();
+    void ExitRecovery();
+
+    /// <summary>
+    /// 反発衝撃波スフィアの半径を設定（ForceField の radius と同期）
+    /// </summary>
+    /// <param name="radius">スフィア半径。XYZ スケールに同値で適用</param>
+    void SetRepelShockwaveSphereScale(float radius);
+
+    /// <summary>
+    /// 射撃予兆エフェクトのスケール範囲 X を設定（min=max=value）
+    /// </summary>
+    /// <param name="value">X スケールの最小・最大に同値で設定する値（Y は 1.0 固定）</param>
+    void SetBulletSignEmitterScaleRangeX(float value);
+
+    /// <summary>
+    /// ボスモデルをスポーン形状とする MeshEmitter "boss_aura" を初期化
+    /// </summary>
+    void InitializeAuraEmitter();
+
+    /// <summary>
+    /// ボスモデルをスポーン形状とする MeshEmitter "boss_particle_body" を初期化
+    /// </summary>
+    void InitializeBodyParticleEmitter();
+
+    //=================================================================
+    //Setter
+    //=================================================================
+    void SetTransform(const Tako::Transform& transform) { transform_ = transform; }
+    void SetTranslate(const Tako::Vector3& translate) { transform_.translate = translate; }
+    void SetRotate(const Tako::Vector3& rotate) { transform_.rotate = rotate; }
+    void SetScale(const Tako::Vector3& scale) { transform_.scale = scale; }
+    void SetHp(float hp) { hp_ = hp; }
+    void SetPhase(uint32_t phase) { phaseManager_.SetPhase(phase); }
+    void SetPlayer(Player* player);
+    void SetIsPause(bool isPause) { isPause_ = isPause; }
+    void SetCanAttackSignEmitterActive(bool active);
+    void SetCanAttackSignEmitterPosition(const Tako::Vector3& position);
+
+    /// <summary>
+    /// 強制脆弱化フラグを設定（true の間は硬直外でもスタン誘発を許可）
+    /// </summary>
+    void SetForceVulnerable(bool v) { forceVulnerable_ = v; }
+
+    /// <summary>
+    /// テレポート中フラグを設定（true の間は aura を無効化）
+    /// </summary>
+    void SetTeleporting(bool teleporting) { isTeleporting_ = teleporting; }
+
+    void SetDashing(bool dashing);
+    void SetMeleeAttackBlockVisible(bool visible) { meleeAttackBlockVisible_ = visible; }
+    void SetRepelShockwaveSphereVisible(bool visible) { repelShockwaveSphereVisible_ = visible; }
+    void SetAttackSignEmitterActive(bool active);
+    void SetAttackSignEmitterPosition(const Tako::Vector3& position);
+    void SetBulletSignEmitterActive(bool active);
+    void SetBulletSignEmitterPosition(const Tako::Vector3& position);
+    void SetEmitterManager(Tako::EmitterManager* emitterManager) { emitterManager_ = emitterManager; }
+    void SetForceFieldManager(Tako::ForceFieldManager* manager) { forceFieldManager_ = manager; }
+    void SetAuraEmitterActive(bool active);
+    void SetBodyParticleEmitterActive(bool active);
+
+    //=================================================================
+    //Getter
+    //=================================================================
+    BossStateMachine* GetStateMachine() const { return stateMachine_.get(); }
+    Tako::BehaviorTree* GetBehaviorTree() const { return behaviorTree_.get(); }
+
+    /// <summary>
     /// スタンまたはフェーズ移行スタン中か
     /// </summary>
     /// <returns>現在ステートが "Stunned" または "PhaseTransitionStun" なら true</returns>
@@ -136,43 +198,12 @@ public:
     /// <returns>現在ステートが "PhaseTransitionStun" なら true</returns>
     bool IsInPhaseTransitionStun() const;
 
-    /// <summary>
-    /// ヒットフラッシュを開始してスタン中の色変化として使う
-    /// </summary>
-    /// <param name="color">フラッシュ色（RGBA）</param>
-    /// <param name="duration">フラッシュ継続時間（秒）</param>
-    void StartStunFlash(const Tako::Vector4& color, float duration);
-
-    void SetCanAttackSignEmitterActive(bool active);
-    void SetCanAttackSignEmitterPosition(const Tako::Vector3& position);
-
     const Tako::Vector3& GetPendingStunDirection() const { return pendingStunDirection_; }
     bool GetPendingStunWithKnockback() const { return pendingStunWithKnockback_; }
-
-    //-----------------------------硬直状態システム------------------------------//
-    void EnterRecovery();
-    void ExitRecovery();
     bool IsInRecovery() const { return isInRecovery_; }
-
-    /// <summary>
-    /// 強制脆弱化フラグを設定（true の間は硬直外でもスタン誘発を許可）
-    /// </summary>
-    void SetForceVulnerable(bool v) { forceVulnerable_ = v; }
-
     bool IsForceVulnerable() const { return forceVulnerable_; }
-
-    /// <summary>
-    /// テレポート中フラグを設定（true の間は aura を無効化）
-    /// </summary>
-    void SetTeleporting(bool teleporting) { isTeleporting_ = teleporting; }
-
     bool IsTeleporting() const { return isTeleporting_; }
-
-    //-----------------------------ダッシュ状態システム------------------------------//
-    void SetDashing(bool dashing);
     bool IsDashing() const { return isDashing_; }
-
-    //-----------------------------離脱（互換性スタブ）------------------------------//
     const Tako::Transform& GetTransform() const { return transform_; }
     Tako::Transform& GetWorldTransform() { return transform_; }
     Tako::Transform* GetTransformPtr() { return &transform_; }
@@ -185,47 +216,11 @@ public:
     bool IsDead() const { return phaseManager_.IsDead(); }
     BossPhaseManager& GetPhaseManager() { return phaseManager_; }
     Tako::OBBCollider* GetCollider() const { return bodyCollider_.get(); }
-
-    //-----------------------------近接攻撃関連------------------------------//
     Tako::Object3d* GetMeleeAttackBlock() const { return meleeAttackBlock_.get(); }
-    void SetMeleeAttackBlockVisible(bool visible) { meleeAttackBlockVisible_ = visible; }
     bool IsMeleeAttackBlockVisible() const { return meleeAttackBlockVisible_; }
-
-    void SetRepelShockwaveSphereVisible(bool visible) { repelShockwaveSphereVisible_ = visible; }
-
-    /// <summary>
-    /// 反発衝撃波スフィアの半径を設定（ForceField の radius と同期）
-    /// </summary>
-    /// <param name="radius">スフィア半径。XYZ スケールに同値で適用</param>
-    void SetRepelShockwaveSphereScale(float radius);
-
     BossMeleeAttackCollider* GetMeleeAttackCollider() const { return meleeAttackCollider_.get(); }
-
-    void SetAttackSignEmitterActive(bool active);
-    void SetAttackSignEmitterPosition(const Tako::Vector3& position);
-
-    //-----------------------------射撃予兆エフェクト------------------------------//
-    void SetBulletSignEmitterActive(bool active);
-    void SetBulletSignEmitterPosition(const Tako::Vector3& position);
-
-    /// <summary>
-    /// 射撃予兆エフェクトのスケール範囲 X を設定（min=max=value）
-    /// </summary>
-    /// <param name="value">X スケールの最小・最大に同値で設定する値（Y は 1.0 固定）</param>
-    void SetBulletSignEmitterScaleRangeX(float value);
-
-    void SetEmitterManager(Tako::EmitterManager* emitterManager) { emitterManager_ = emitterManager; }
     Tako::EmitterManager* GetEmitterManager() const { return emitterManager_; }
-
-    void SetForceFieldManager(Tako::ForceFieldManager* manager) { forceFieldManager_ = manager; }
     Tako::ForceFieldManager* GetForceFieldManager() const { return forceFieldManager_; }
-
-    /// <summary>
-    /// ボスモデルをスポーン形状とする MeshEmitter "boss_aura" を初期化
-    /// </summary>
-    void InitializeAuraEmitter();
-
-    void SetAuraEmitterActive(bool active);
     const std::string& GetAuraEmitterName() const { return auraEmitterName_; }
 
     /// <summary>
@@ -234,15 +229,9 @@ public:
     /// <returns>ボス本体の Object3d。未初期化なら nullptr</returns>
     Tako::Object3d* GetModel() const { return model_.get(); }
 
-    /// <summary>
-    /// ボスモデルをスポーン形状とする MeshEmitter "boss_particle_body" を初期化
-    /// </summary>
-    void InitializeBodyParticleEmitter();
-
-    void SetBodyParticleEmitterActive(bool active);
     const std::string& GetBodyParticleEmitterName() const { return bodyParticleEmitterName_; }
 
-private:
+private: //非公開関数
     void InitializeModel();
     void InitializeHealth();
     void InitializeColliders();
@@ -260,67 +249,67 @@ private:
     /// </summary>
     void CompletePhaseTransition();
 
-private:
+private: //メンバー変数
     std::unique_ptr<Tako::Object3d> model_;
-    Tako::Transform transform_{};
+    Tako::Transform                 transform_{};
 
-    std::unique_ptr<BossStateMachine> stateMachine_;
+    std::unique_ptr<BossStateMachine>   stateMachine_;
     std::unique_ptr<Tako::BehaviorTree> behaviorTree_;
 
 #ifdef _DEBUG
     std::unique_ptr<Tako::BehaviorTreeEditor> nodeEditor_;
-    bool showNodeEditor_ = false;
+    bool                                      showNodeEditor_ = false;
 #endif
 
-    Player* player_ = nullptr;
-    float hp_ = kMaxHp;
+    Player*          player_       = nullptr;
+    float            hp_           = kMaxHp;
     BossPhaseManager phaseManager_;
-    bool isPause_ = false;
+    bool             isPause_      = false;
 
-    // ===== ステートマシン遷移用データ =====
+    //ステートマシン遷移用データ
     Tako::Vector3 pendingStunDirection_;
-    bool pendingStunWithKnockback_ = true;
+    bool          pendingStunWithKnockback_ = true;
 
-    // ===== フェーズ移行スタン =====
-    bool hasTriggeredPhaseTransitionStun_ = false;  ///< 一度きりのトリガーフラグ
-    std::string canAttackSignEmitterName_ = "can_attack_sign";
+    //フェーズ移行スタン
+    bool        hasTriggeredPhaseTransitionStun_ = false;              ///< 一度きりのトリガーフラグ
+    std::string canAttackSignEmitterName_        = "can_attack_sign";
 
-    // ===== BT 内サブ状態フラグ（ステートマシンの責務外） =====
-    bool isInRecovery_ = false;
-    bool isDashing_ = false;
-    bool forceVulnerable_ = false;                ///< true の間は硬直外でもスタン誘発を許可
-    bool isTeleporting_ = false;                  ///< true の間は aura を無効化
+    //BT 内サブ状態フラグ（ステートマシンの責務外）
+    bool isInRecovery_    = false;
+    bool isDashing_       = false;
+    bool forceVulnerable_ = false;  ///< true の間は硬直外でもスタン誘発を許可
+    bool isTeleporting_   = false;  ///< true の間は aura を無効化
 
     std::unique_ptr<Tako::OBBCollider> bodyCollider_;
 
-    //-----------------------------近接攻撃関連------------------------------//
+    //近接攻撃関連
     std::unique_ptr<Tako::Object3d> meleeAttackBlock_;
-    bool meleeAttackBlockVisible_ = false;
+    bool                            meleeAttackBlockVisible_ = false;
 
     std::unique_ptr<Tako::Object3d> repelShockwaveSphere_;
-    bool repelShockwaveSphereVisible_ = false;
+    bool                            repelShockwaveSphereVisible_ = false;
 
     std::unique_ptr<BossMeleeAttackCollider> meleeAttackCollider_;
 
     Tako::EmitterManager* emitterManager_ = nullptr;
 
-    // 非所有 / null 許容
+    //非所有 / null 許容
     Tako::ForceFieldManager* forceFieldManager_ = nullptr;
 
     std::string attackSignEmitterName_ = "boss_melee_attack_sign";
     std::string bulletSignEmitterName_ = "boss_bullet_sign";
 
-    std::string auraEmitterName_ = "boss_aura";
+    std::string auraEmitterName_     = "boss_aura";
     std::string darkAuraEmitterName_ = "boss_dark_aura";
 
     std::string bodyParticleEmitterName_ = "boss_particle_body";
 
-    // ===== エフェクト関連 =====
+    //エフェクト関連
     HitFlashEffect hitFlashEffect_;
-    ShakeEffect shakeEffect_;
+    ShakeEffect    shakeEffect_;
 
     BulletSpawner bulletSpawner_;
-    BulletSpawner penetratingBulletSpawner_;   ///< 貫通弾用
+    BulletSpawner penetratingBulletSpawner_;  ///< 貫通弾用
 
     HPBarUI hpBar_;
 

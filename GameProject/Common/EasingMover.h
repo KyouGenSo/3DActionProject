@@ -6,13 +6,14 @@
 /// </summary>
 class EasingMover
 {
-public:
+public: //構造体
     enum class EasingType {
         Linear,
         SmoothStep,  ///< デフォルト
         EaseOut
     };
 
+public: //メンバー関数
     EasingMover() = default;
     ~EasingMover() = default;
 
@@ -41,8 +42,15 @@ public:
 
     void Reset();
 
-    bool HasReached() const;
+    //=============================================
+    //Setter
+    //=============================================
+    void SetEasingType(EasingType type);
 
+    //=============================================
+    //Getter
+    //=============================================
+    bool HasReached() const;
     bool IsInitialized() const;
 
     /// <summary>
@@ -50,24 +58,20 @@ public:
     /// </summary>
     float GetProgress() const;
 
-    void SetEasingType(EasingType type);
-
     const Tako::Vector3& GetTargetPosition() const;
-
     const Tako::Vector3& GetStartPosition() const;
 
-private:
+private: //非公開関数
     /// <summary>
     /// 正規化時間 t(0.0〜1.0) にイージングを適用
     /// </summary>
     float ApplyEasing(float t) const;
 
-private:
-
+private: //メンバー変数
     Tako::Vector3 startPosition_;
     Tako::Vector3 targetPosition_;
-    float elapsedTime_ = 0.0f;
-    float duration_ = 0.0f;
-    bool isInitialized_ = false;
-    EasingType easingType_ = EasingType::SmoothStep;
+    float         elapsedTime_    = 0.0f;
+    float         duration_       = 0.0f;
+    bool          isInitialized_  = false;
+    EasingType    easingType_     = EasingType::SmoothStep;
 };

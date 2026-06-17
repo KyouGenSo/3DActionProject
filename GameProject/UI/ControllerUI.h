@@ -15,18 +15,23 @@ namespace Tako { class WinApp; }
 /// </summary>
 class ControllerUI
 {
-public:
+private: //定数
+    // UI 設計時の想定解像度
+    static constexpr float kBaseWidth = 1920.0f;
+    static constexpr float kBaseHeight = 1080.0f;
+
+public: //メンバー関数
     ControllerUI() = default;
     ~ControllerUI();
 
     void Initialize();
-
     void Update();
-
     void Draw();
-
     void DrawImGui();
 
+    //=============================
+    //Setter
+    //=============================
     /// <summary>
     /// フェーズ判定用にボス参照を設定
     /// </summary>
@@ -34,7 +39,7 @@ public:
 
     void SetIsPaused(bool isPaused) { isPaused_ = isPaused; }
 
-private:
+private: //非公開関数
     /// <summary>
     /// スティック入力を8方向のインデックスへ量子化する
     /// </summary>
@@ -47,14 +52,9 @@ private:
     /// </summary>
     void OnResize(const Tako::Vector2& newSize);
 
-private:
-
-    // UI 設計時の想定解像度
-    static constexpr float kBaseWidth = 1920.0f;
-    static constexpr float kBaseHeight = 1080.0f;
-
-    Tako::WinApp* winApp_ = nullptr;
-    uint32_t onResizeId_ = 0;          ///< 登録したコールバックの ID
+private: //メンバー変数
+    Tako::WinApp* winApp_     = nullptr;
+    uint32_t      onResizeId_ = 0;        ///< 登録したコールバックの ID
 
     // ボタンスプライト（Up/Down 各4ボタン）
     std::unique_ptr<Tako::Sprite> aButtonUpSprite_;
@@ -78,20 +78,20 @@ private:
     std::unique_ptr<Tako::Sprite> idouSprite_;
 
     // ポーズ操作ヒントスプライト
-    std::unique_ptr<Tako::Sprite> pauseHintIconSprite_;   ///< Menu ボタンアイコン
-    std::unique_ptr<Tako::Sprite> pauseHintTextSprite_;   ///< PAUSE テキスト
+    std::unique_ptr<Tako::Sprite> pauseHintIconSprite_;  ///< Menu ボタンアイコン
+    std::unique_ptr<Tako::Sprite> pauseHintTextSprite_;  ///< PAUSE テキスト
 
     // 現在の表示状態
-    bool isAPressed_ = false;
-    bool isBPressed_ = false;
-    bool isXPressed_ = false;
-    bool isYPressed_ = false;
-    int leftStickDir_ = 0;   ///< 0-7
-    int rightStickDir_ = 0;  ///< 0-7
+    bool isAPressed_    = false;
+    bool isBPressed_    = false;
+    bool isXPressed_    = false;
+    bool isYPressed_    = false;
+    int  leftStickDir_  = 0;      ///< 0-7
+    int  rightStickDir_ = 0;      ///< 0-7
 
     // スティック入力がこの値未満なら無視
     float stickDeadzone_ = 0.3f;
 
-    Boss* boss_ = nullptr;  ///< フェーズ判定用
-    bool isPaused_ = false;
+    Boss* boss_     = nullptr;  ///< フェーズ判定用
+    bool  isPaused_ = false;
 };

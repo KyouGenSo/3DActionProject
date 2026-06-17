@@ -6,7 +6,7 @@
 /// プレイヤーとの水平距離が指定範囲内かを判定する条件ノード
 /// </summary>
 class BTBossDistanceCondition : public Tako::BTNode {
-public:
+public: //メンバー関数
     BTBossDistanceCondition();
     virtual ~BTBossDistanceCondition() = default;
 
@@ -24,14 +24,19 @@ public:
     bool DrawImGui() override;
 #endif
 
-    // Getters/Setters
-    float GetMinDistance() const { return minDistance_; }
+    //=============================
+    //Setter
+    //=============================
     void SetMinDistance(float dist) { minDistance_ = dist; }
-
-    float GetMaxDistance() const { return maxDistance_; }
     void SetMaxDistance(float dist) { maxDistance_ = dist; }
 
-private:
+    //=============================
+    //Getter
+    //=============================
+    float GetMinDistance() const { return minDistance_; }
+    float GetMaxDistance() const { return maxDistance_; }
+
+private: //メンバー変数
     float minDistance_ = 0.0f;
     float maxDistance_ = 15.0f;
 };

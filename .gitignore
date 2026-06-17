@@ -342,6 +342,7 @@ nul
 *.ini
 
 Docs/
+tools/
 
 GameProject/imgui.ini
 GameProject/EngineResources/

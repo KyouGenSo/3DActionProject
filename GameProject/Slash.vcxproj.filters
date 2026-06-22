@@ -66,6 +66,12 @@
     <Filter Include="CameraSystem\CameraAnimation">
       <UniqueIdentifier>{91d85fa5-151f-4004-88ba-6c651e6f09b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Object\Boss\BossBehaviorTree\Actions\Move">
+      <UniqueIdentifier>{314a5d58-46e8-49d4-b2b1-70184acdb4b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object\Boss\BossBehaviorTree\Actions\Attack">
+      <UniqueIdentifier>{c0bb8d4c-7774-4e03-8475-e4f8e5fa7fe5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MyGame\MyGame.cpp">
@@ -159,25 +165,10 @@
     <ClCompile Include="Collision\BulletCollider.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRepelShockwave.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossDistanceCondition.cpp">
@@ -200,15 +191,6 @@
     </ClCompile>
     <ClCompile Include="Collision\BossMeleeAttackCollider.cpp">
       <Filter>Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeleeAttack.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossApproach.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRetreat.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
     <ClCompile Include="Common\CooldownTimer.cpp">
       <Filter>Common</Filter>
@@ -252,17 +234,11 @@
     <ClCompile Include="Object\Projectile\ProjectileManager.cpp">
       <Filter>Object\Projectile</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="Effect\ShakeEffect.cpp">
       <Filter>Effect</Filter>
     </ClCompile>
     <ClCompile Include="Effect\HitFlashEffect.cpp">
       <Filter>Effect</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossBarrage.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
     <ClCompile Include="UI\PauseMenu.cpp">
       <Filter>UI</Filter>
@@ -285,29 +261,59 @@
     <ClCompile Include="Object\Boss\State\BossStunnedState.cpp">
       <Filter>Object\Boss\State</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="Collision\BossAreaAttackCollider.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
     <ClCompile Include="Collision\MeteorImpactCollider.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Boss\Movement\BossAreaBounds.cpp">
       <Filter>Object\Boss\Movement</Filter>
     </ClCompile>
     <ClCompile Include="Object\Boss\Movement\BossRetreatExecutor.cpp">
       <Filter>Object\Boss\Movement</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossApproach.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRetreat.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossBarrage.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeleeAttack.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -410,25 +416,10 @@
     <ClInclude Include="Collision\BulletCollider.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRepelShockwave.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossDistanceCondition.h">
@@ -460,15 +451,6 @@
     </ClInclude>
     <ClInclude Include="Collision\BossMeleeAttackCollider.h">
       <Filter>Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeleeAttack.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossApproach.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRetreat.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
     <ClInclude Include="Common\BulletSpawnRequest.h">
       <Filter>Common</Filter>
@@ -518,17 +500,11 @@
     <ClInclude Include="Object\Projectile\ProjectileManager.h">
       <Filter>Object\Projectile</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="Effect\ShakeEffect.h">
       <Filter>Effect</Filter>
     </ClInclude>
     <ClInclude Include="Effect\HitFlashEffect.h">
       <Filter>Effect</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossBarrage.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
     <ClInclude Include="UI\PauseMenu.h">
       <Filter>UI</Filter>
@@ -554,9 +530,6 @@
     <ClInclude Include="Object\Boss\State\BossStunnedState.h">
       <Filter>Object\Boss\State</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="Collision\BossAreaAttackCollider.h">
       <Filter>Collision</Filter>
     </ClInclude>
@@ -566,20 +539,53 @@
     <ClInclude Include="Collision\PlayerHitResolver.h">
       <Filter>Collision</Filter>
     </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClInclude>
     <ClInclude Include="Object\Boss\Movement\BossAreaBounds.h">
       <Filter>Object\Boss\Movement</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\Movement\BossRetreatExecutor.h">
       <Filter>Object\Boss\Movement</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossApproach.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossDash.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossIdle.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRetreat.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossAreaAttack.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossBarrage.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeleeAttack.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossMeteorRain.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRapidFire.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossShoot.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

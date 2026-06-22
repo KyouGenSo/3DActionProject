@@ -80,6 +80,10 @@ public: //メンバー関数
     void UpdatePause();
 
 private: //メンバー変数
+    //エミッター・フォースフィールド
+    std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;
+    std::unique_ptr<Tako::EmitterManager>    emitterManager_;
+
     //シーンオブジェクト
     std::unique_ptr<Tako::SkyBox>   skyBox_;
     std::unique_ptr<Tako::Object3d> ground_;
@@ -96,10 +100,6 @@ private: //メンバー変数
 
     //地面UV
     Tako::Transform groundUvTransform_{};
-
-    //エミッター・フォースフィールド
-    std::unique_ptr<Tako::EmitterManager>    emitterManager_;
-    std::unique_ptr<Tako::ForceFieldManager> forceFieldManager_;
 
     //弾管理
     std::unique_ptr<ProjectileManager> projectileManager_;

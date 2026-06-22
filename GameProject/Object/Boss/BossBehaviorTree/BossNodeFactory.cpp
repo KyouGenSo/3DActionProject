@@ -4,7 +4,7 @@
 #include "BTNodeMeta.h"
 #include <memory>
 
-// Action ノード (14 種)
+// Action ノード
 #include "Actions/BTBossIdle.h"
 #include "Actions/BTBossDash.h"
 #include "Actions/BTBossShoot.h"
@@ -20,6 +20,7 @@
 #include "Actions/BTBossRepelShockwave.h"
 #include "Actions/BTBossVortexTempest.h"
 #include "Actions/BTBossTeleport.h"
+#include "Actions/BTBossTrackingLaser.h"
 
 // Condition ノード (3 種)
 #include "Conditions/BTBossPhaseCondition.h"
@@ -94,6 +95,10 @@ void BossNodeFactory::RegisterAll() {
   reg->RegisterNode<BTBossTeleport>("BTBossTeleport", Tako::NodeMeta{
     "Teleport", Tako::NodeCategory::Action,
     Tako::NodeColor(0.5f, 0.9f, 0.9f, 1.0f), false  // 水色
+  });
+  reg->RegisterNode<BTBossTrackingLaser>("BTBossTrackingLaser", Tako::NodeMeta{
+    "Tracking Laser", Tako::NodeCategory::Action,
+    Tako::NodeColor(0.9f, 0.6f, 0.1f, 1.0f), false  // オレンジ
   });
 
   // ========================================================================

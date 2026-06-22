@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": 30000,
+      "sourceNodeId": 10000,
+      "sourcePinId": 20001,
+      "targetNodeId": 10001,
+      "targetPinId": 20002
+    },
+    {
+      "id": 30002,
+      "sourceNodeId": 10000,
+      "sourcePinId": 20001,
+      "targetNodeId": 10003,
+      "targetPinId": 20004
+    },
+    {
+      "id": 30003,
+      "sourceNodeId": 10003,
+      "sourcePinId": 20005,
+      "targetNodeId": 10004,
+      "targetPinId": 20006
+    },
+    {
+      "id": 30004,
+      "sourceNodeId": 10003,
+      "sourcePinId": 20005,
+      "targetNodeId": 10002,
+      "targetPinId": 20003
+    }
+  ],
+  "metadata": {
+    "created": "2026-06-22T21:43:43",
+    "modified": "2026-06-22T21:43:43",
+    "name": "Behavior Tree"
+  },
+  "nodes": [
+    {
+      "displayName": "Sequence",
+      "id": 10000,
+      "parameters": null,
+      "position": {
+        "x": 8.0,
+        "y": -157.0
+      },
+      "type": "BTSequence"
+    },
+    {
+      "displayName": "Idle",
+      "id": 10001,
+      "parameters": {
+        "idleDuration": 1.0
+      },
+      "position": {
+        "x": -169.0,
+        "y": 175.0
+      },
+      "type": "BTBossIdle"
+    },
+    {
+      "displayName": "Tracking Laser",
+      "id": 10002,
+      "parameters": {
+        "aimDuration": 1.0,
+        "attackDuration": 0.25,
+        "beamHeight": 1.0,
+        "beamWidth": 2.0,
+        "blinkDuration": 0.6000000238418579,
+        "blinkFrequency": 10.0,
+        "colliderHeight": 3.0,
+        "damage": 15.0,
+        "endOffset": 3.0,
+        "isBypassRecoveryGuard": false,
+        "laserEmitDuration": 0.05000000074505806,
+        "recoveryTime": 0.5
+      },
+      "position": {
+        "x": 104.0,
+        "y": 303.0
+      },
+      "type": "BTBossTrackingLaser"
+    },
+    {
+      "displayName": "Sequence",
+      "id": 10003,
+      "parameters": null,
+      "position": {
+        "x": 91.0,
+        "y": 47.0
+      },
+      "type": "BTSequence"
+    },
+    {
+      "displayName": "Repel Shockwave",
+      "id": 10004,
+      "parameters": {
+        "affectMask": 3,
+        "expandTime": 0.20000000298023224,
+        "falloff": 0.0,
+        "isBypassRecoveryGuard": false,
+        "maxRadius": 50.0,
+        "strength": 2000.0,
+        "sustainTime": 0.5,
+        "warningTime": 0.5
+      },
+      "position": {
+        "x": 104.0,
+        "y": 207.0
+      },
+      "type": "BTBossRepelShockwave"
+    }
+  ],
+  "version": "1.0"
+}

@@ -989,8 +989,8 @@
     }
   ],
   "metadata": {
-    "created": "2026-06-24T23:23:25",
-    "modified": "2026-06-24T23:23:25",
+    "created": "2026-06-24T23:44:34",
+    "modified": "2026-06-24T23:44:34",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -1448,7 +1448,7 @@
         "maxQuadrants": 3,
         "minQuadrants": 3,
         "recoveryTime": 0.800000011920929,
-        "warningDuration": 1.2000000476837158
+        "warningDuration": 1.0
       },
       "position": {
         "x": 1643.0,
@@ -2795,7 +2795,7 @@
       "displayName": "Dash",
       "id": 10120,
       "parameters": {
-        "dashDuration": 0.07530064135789871,
+        "dashDuration": 0.15706582367420197,
         "dashSpeed": 100.0
       },
       "position": {

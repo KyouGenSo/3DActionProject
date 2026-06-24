@@ -30,9 +30,10 @@ Tako::BTNodeStatus BTBossAreaAttack::OnExecute(Tako::BTBlackboard* /*blackboard*
     const float blinkEnd = warningEnd + blinkDuration_;
     const float attackEnd = blinkEnd + attackDuration_;
 
-    // Warning フェーズは OnInitialize の固定アルファのまま表示
+    if (elapsedTime_ < warningEnd) {
 
-    if (elapsedTime_ < blinkEnd) {
+    }
+    else if (elapsedTime_ < blinkEnd) {
         UpdateBlinkingPhase(elapsedTime_ - warningEnd);
     }
     else if (elapsedTime_ < attackEnd) {
@@ -191,7 +192,7 @@ Vector3 BTBossAreaAttack::GetQuadrantCenter(int quadrantIndex, const Vector3& bo
 }
 
 void BTBossAreaAttack::UpdateBlinkingPhase(float phaseElapsed) {
-    float sinValue = std::abs(std::sin(phaseElapsed * blinkFrequency_ * 3.14159265f));
+    float sinValue = std::abs(std::sin(phaseElapsed * blinkFrequency_ * std::numbers::pi_v<float>));
     float alpha = kBlinkAlphaMin + kBlinkAlphaAmplitude * sinValue;
 
     for (int i = 0; i < kQuadrantCount; ++i) {

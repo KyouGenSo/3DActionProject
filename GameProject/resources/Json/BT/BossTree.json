@@ -295,693 +295,693 @@
       "targetPinId": 20083
     },
     {
-      "id": 30043,
+      "id": 30042,
       "sourceNodeId": 10051,
       "sourcePinId": 20070,
       "targetNodeId": 10064,
       "targetPinId": 20086
     },
     {
-      "id": 30044,
+      "id": 30043,
       "sourceNodeId": 10051,
       "sourcePinId": 20070,
       "targetNodeId": 10065,
       "targetPinId": 20087
     },
     {
-      "id": 30045,
+      "id": 30044,
       "sourceNodeId": 10039,
       "sourcePinId": 20055,
       "targetNodeId": 10040,
       "targetPinId": 20056
     },
     {
-      "id": 30046,
+      "id": 30045,
       "sourceNodeId": 10039,
       "sourcePinId": 20055,
       "targetNodeId": 10041,
       "targetPinId": 20057
     },
     {
-      "id": 30047,
+      "id": 30046,
       "sourceNodeId": 10039,
       "sourcePinId": 20055,
       "targetNodeId": 10042,
       "targetPinId": 20058
     },
     {
-      "id": 30048,
+      "id": 30047,
       "sourceNodeId": 10039,
       "sourcePinId": 20055,
       "targetNodeId": 10043,
       "targetPinId": 20059
     },
     {
-      "id": 30049,
+      "id": 30048,
       "sourceNodeId": 10039,
       "sourcePinId": 20055,
       "targetNodeId": 10066,
       "targetPinId": 20088
     },
     {
-      "id": 30050,
+      "id": 30049,
       "sourceNodeId": 10039,
       "sourcePinId": 20055,
       "targetNodeId": 10044,
       "targetPinId": 20060
     },
     {
-      "id": 30051,
+      "id": 30050,
       "sourceNodeId": 10039,
       "sourcePinId": 20055,
       "targetNodeId": 10067,
       "targetPinId": 20089
     },
     {
-      "id": 30052,
+      "id": 30051,
       "sourceNodeId": 10039,
       "sourcePinId": 20055,
       "targetNodeId": 10068,
       "targetPinId": 20090
     },
     {
-      "id": 30053,
+      "id": 30052,
       "sourceNodeId": 10007,
       "sourcePinId": 20012,
       "targetNodeId": 10069,
       "targetPinId": 20091
     },
     {
-      "id": 30054,
+      "id": 30053,
       "sourceNodeId": 10071,
       "sourcePinId": 20094,
       "targetNodeId": 10072,
       "targetPinId": 20095
     },
     {
-      "id": 30055,
+      "id": 30054,
       "sourceNodeId": 10071,
       "sourcePinId": 20094,
       "targetNodeId": 10070,
       "targetPinId": 20092
     },
     {
-      "id": 30056,
+      "id": 30055,
       "sourceNodeId": 10015,
       "sourcePinId": 20025,
       "targetNodeId": 10071,
       "targetPinId": 20093
     },
     {
-      "id": 30057,
+      "id": 30056,
       "sourceNodeId": 10049,
       "sourcePinId": 20067,
       "targetNodeId": 10073,
       "targetPinId": 20096
     },
     {
-      "id": 30058,
+      "id": 30057,
       "sourceNodeId": 10086,
       "sourcePinId": 20112,
       "targetNodeId": 10087,
       "targetPinId": 20113
     },
     {
-      "id": 30059,
+      "id": 30058,
       "sourceNodeId": 10086,
       "sourcePinId": 20112,
       "targetNodeId": 10049,
       "targetPinId": 20066
     },
     {
-      "id": 30060,
+      "id": 30059,
       "sourceNodeId": 10089,
       "sourcePinId": 20116,
       "targetNodeId": 10088,
       "targetPinId": 20114
     },
     {
-      "id": 30061,
+      "id": 30060,
       "sourceNodeId": 10089,
       "sourcePinId": 20116,
       "targetNodeId": 10038,
       "targetPinId": 20052
     },
     {
-      "id": 30062,
+      "id": 30061,
       "sourceNodeId": 10009,
       "sourcePinId": 20015,
       "targetNodeId": 10090,
       "targetPinId": 20117
     },
     {
-      "id": 30064,
+      "id": 30062,
       "sourceNodeId": 10093,
       "sourcePinId": 20121,
       "targetNodeId": 10092,
       "targetPinId": 20119
     },
     {
-      "id": 30065,
+      "id": 30063,
       "sourceNodeId": 10093,
       "sourcePinId": 20121,
       "targetNodeId": 10081,
       "targetPinId": 20105
     },
     {
-      "id": 30066,
+      "id": 30064,
       "sourceNodeId": 10015,
       "sourcePinId": 20025,
       "targetNodeId": 10093,
       "targetPinId": 20120
     },
     {
-      "id": 30067,
+      "id": 30065,
       "sourceNodeId": 10094,
       "sourcePinId": 20123,
       "targetNodeId": 10095,
       "targetPinId": 20124
     },
     {
-      "id": 30068,
+      "id": 30066,
       "sourceNodeId": 10024,
       "sourcePinId": 20037,
       "targetNodeId": 10097,
       "targetPinId": 20126
     },
     {
-      "id": 30069,
+      "id": 30067,
       "sourceNodeId": 10094,
       "sourcePinId": 20123,
       "targetNodeId": 10083,
       "targetPinId": 20107
     },
     {
-      "id": 30070,
+      "id": 30068,
       "sourceNodeId": 10097,
       "sourcePinId": 20127,
       "targetNodeId": 10094,
       "targetPinId": 20122
     },
     {
-      "id": 30071,
+      "id": 30069,
       "sourceNodeId": 10023,
       "sourcePinId": 20035,
       "targetNodeId": 10098,
       "targetPinId": 20128
     },
     {
-      "id": 30072,
+      "id": 30070,
       "sourceNodeId": 10098,
       "sourcePinId": 20129,
       "targetNodeId": 10100,
       "targetPinId": 20132
     },
     {
-      "id": 30073,
+      "id": 30071,
       "sourceNodeId": 10100,
       "sourcePinId": 20133,
       "targetNodeId": 10102,
       "targetPinId": 20136
     },
     {
-      "id": 30074,
+      "id": 30072,
       "sourceNodeId": 10100,
       "sourcePinId": 20133,
       "targetNodeId": 10082,
       "targetPinId": 20106
     },
     {
-      "id": 30075,
+      "id": 30073,
       "sourceNodeId": 10099,
       "sourcePinId": 20131,
       "targetNodeId": 10101,
       "targetPinId": 20134
     },
     {
-      "id": 30076,
+      "id": 30074,
       "sourceNodeId": 10101,
       "sourcePinId": 20135,
       "targetNodeId": 10103,
       "targetPinId": 20137
     },
     {
-      "id": 30077,
+      "id": 30075,
       "sourceNodeId": 10101,
       "sourcePinId": 20135,
       "targetNodeId": 10104,
       "targetPinId": 20138
     },
     {
-      "id": 30078,
+      "id": 30076,
       "sourceNodeId": 10007,
       "sourcePinId": 20012,
       "targetNodeId": 10106,
       "targetPinId": 20140
     },
     {
-      "id": 30079,
+      "id": 30077,
       "sourceNodeId": 10106,
       "sourcePinId": 20141,
       "targetNodeId": 10107,
       "targetPinId": 20142
     },
     {
-      "id": 30080,
+      "id": 30078,
       "sourceNodeId": 10106,
       "sourcePinId": 20141,
       "targetNodeId": 10001,
       "targetPinId": 20002
     },
     {
-      "id": 30081,
+      "id": 30079,
       "sourceNodeId": 10007,
       "sourcePinId": 20012,
       "targetNodeId": 10020,
       "targetPinId": 20030
     },
     {
-      "id": 30082,
+      "id": 30080,
       "sourceNodeId": 10020,
       "sourcePinId": 20031,
       "targetNodeId": 10084,
       "targetPinId": 20108
     },
     {
-      "id": 30083,
+      "id": 30081,
       "sourceNodeId": 10020,
       "sourcePinId": 20031,
       "targetNodeId": 10019,
       "targetPinId": 20029
     },
     {
-      "id": 30084,
+      "id": 30082,
       "sourceNodeId": 10084,
       "sourcePinId": 20109,
       "targetNodeId": 10085,
       "targetPinId": 20110
     },
     {
-      "id": 30085,
+      "id": 30083,
       "sourceNodeId": 10084,
       "sourcePinId": 20109,
       "targetNodeId": 10018,
       "targetPinId": 20028
     },
     {
-      "id": 30086,
+      "id": 30084,
       "sourceNodeId": 10098,
       "sourcePinId": 20129,
       "targetNodeId": 10111,
       "targetPinId": 20147
     },
     {
-      "id": 30087,
+      "id": 30085,
       "sourceNodeId": 10111,
       "sourcePinId": 20148,
       "targetNodeId": 10109,
       "targetPinId": 20144
     },
     {
-      "id": 30088,
+      "id": 30086,
       "sourceNodeId": 10111,
       "sourcePinId": 20148,
       "targetNodeId": 10105,
       "targetPinId": 20139
     },
     {
-      "id": 30089,
+      "id": 30087,
       "sourceNodeId": 10097,
       "sourcePinId": 20127,
       "targetNodeId": 10110,
       "targetPinId": 20145
     },
     {
-      "id": 30090,
+      "id": 30088,
       "sourceNodeId": 10110,
       "sourcePinId": 20146,
       "targetNodeId": 10108,
       "targetPinId": 20143
     },
     {
-      "id": 30091,
+      "id": 30089,
       "sourceNodeId": 10110,
       "sourcePinId": 20146,
       "targetNodeId": 10096,
       "targetPinId": 20125
     },
     {
-      "id": 30092,
+      "id": 30090,
       "sourceNodeId": 10099,
       "sourcePinId": 20131,
       "targetNodeId": 10112,
       "targetPinId": 20149
     },
     {
-      "id": 30093,
+      "id": 30091,
       "sourceNodeId": 10112,
       "sourcePinId": 20150,
       "targetNodeId": 10113,
       "targetPinId": 20151
     },
     {
-      "id": 30094,
+      "id": 30092,
       "sourceNodeId": 10112,
       "sourcePinId": 20150,
       "targetNodeId": 10029,
       "targetPinId": 20042
     },
     {
-      "id": 30095,
+      "id": 30093,
       "sourceNodeId": 10030,
       "sourcePinId": 20044,
       "targetNodeId": 10114,
       "targetPinId": 20152
     },
     {
-      "id": 30096,
+      "id": 30094,
       "sourceNodeId": 10114,
       "sourcePinId": 20153,
       "targetNodeId": 10115,
       "targetPinId": 20154
     },
     {
-      "id": 30097,
+      "id": 30095,
       "sourceNodeId": 10114,
       "sourcePinId": 20153,
       "targetNodeId": 10099,
       "targetPinId": 20130
     },
     {
-      "id": 30098,
+      "id": 30096,
       "sourceNodeId": 10116,
       "sourcePinId": 20156,
       "targetNodeId": 10022,
       "targetPinId": 20033
     },
     {
-      "id": 30099,
+      "id": 30097,
       "sourceNodeId": 10116,
       "sourcePinId": 20156,
       "targetNodeId": 10120,
       "targetPinId": 20161
     },
     {
-      "id": 30100,
+      "id": 30098,
       "sourceNodeId": 10116,
       "sourcePinId": 20156,
       "targetNodeId": 10118,
       "targetPinId": 20158
     },
     {
-      "id": 30101,
+      "id": 30099,
       "sourceNodeId": 10118,
       "sourcePinId": 20159,
       "targetNodeId": 10119,
       "targetPinId": 20160
     },
     {
-      "id": 30102,
+      "id": 30100,
       "sourceNodeId": 10118,
       "sourcePinId": 20159,
       "targetNodeId": 10117,
       "targetPinId": 20157
     },
     {
-      "id": 30103,
+      "id": 30101,
       "sourceNodeId": 10073,
       "sourcePinId": 20097,
       "targetNodeId": 10122,
       "targetPinId": 20164
     },
     {
-      "id": 30104,
+      "id": 30102,
       "sourceNodeId": 10122,
       "sourcePinId": 20165,
       "targetNodeId": 10078,
       "targetPinId": 20102
     },
     {
-      "id": 30105,
+      "id": 30103,
       "sourceNodeId": 10122,
       "sourcePinId": 20165,
       "targetNodeId": 10125,
       "targetPinId": 20170
     },
     {
-      "id": 30106,
+      "id": 30104,
       "sourceNodeId": 10122,
       "sourcePinId": 20165,
       "targetNodeId": 10126,
       "targetPinId": 20171
     },
     {
-      "id": 30107,
+      "id": 30105,
       "sourceNodeId": 10073,
       "sourcePinId": 20097,
       "targetNodeId": 10076,
       "targetPinId": 20100
     },
     {
-      "id": 30108,
+      "id": 30106,
       "sourceNodeId": 10073,
       "sourcePinId": 20097,
       "targetNodeId": 10121,
       "targetPinId": 20162
     },
     {
-      "id": 30109,
+      "id": 30107,
       "sourceNodeId": 10121,
       "sourcePinId": 20163,
       "targetNodeId": 10128,
       "targetPinId": 20173
     },
     {
-      "id": 30110,
+      "id": 30108,
       "sourceNodeId": 10121,
       "sourcePinId": 20163,
       "targetNodeId": 10080,
       "targetPinId": 20104
     },
     {
-      "id": 30111,
+      "id": 30109,
       "sourceNodeId": 10121,
       "sourcePinId": 20163,
       "targetNodeId": 10127,
       "targetPinId": 20172
     },
     {
-      "id": 30112,
+      "id": 30110,
       "sourceNodeId": 10073,
       "sourcePinId": 20097,
       "targetNodeId": 10074,
       "targetPinId": 20098
     },
     {
-      "id": 30113,
+      "id": 30111,
       "sourceNodeId": 10073,
       "sourcePinId": 20097,
       "targetNodeId": 10124,
       "targetPinId": 20168
     },
     {
-      "id": 30114,
+      "id": 30112,
       "sourceNodeId": 10124,
       "sourcePinId": 20169,
       "targetNodeId": 10129,
       "targetPinId": 20174
     },
     {
-      "id": 30115,
+      "id": 30113,
       "sourceNodeId": 10124,
       "sourcePinId": 20169,
       "targetNodeId": 10079,
       "targetPinId": 20103
     },
     {
-      "id": 30116,
+      "id": 30114,
       "sourceNodeId": 10124,
       "sourcePinId": 20169,
       "targetNodeId": 10130,
       "targetPinId": 20175
     },
     {
-      "id": 30117,
+      "id": 30115,
       "sourceNodeId": 10073,
       "sourcePinId": 20097,
       "targetNodeId": 10075,
       "targetPinId": 20099
     },
     {
-      "id": 30118,
+      "id": 30116,
       "sourceNodeId": 10073,
       "sourcePinId": 20097,
       "targetNodeId": 10123,
       "targetPinId": 20166
     },
     {
-      "id": 30119,
+      "id": 30117,
       "sourceNodeId": 10123,
       "sourcePinId": 20167,
       "targetNodeId": 10132,
       "targetPinId": 20177
     },
     {
-      "id": 30120,
+      "id": 30118,
       "sourceNodeId": 10123,
       "sourcePinId": 20167,
       "targetNodeId": 10077,
       "targetPinId": 20101
     },
     {
-      "id": 30121,
+      "id": 30119,
       "sourceNodeId": 10123,
       "sourcePinId": 20167,
       "targetNodeId": 10131,
       "targetPinId": 20176
     },
     {
-      "id": 30122,
+      "id": 30120,
       "sourceNodeId": 10012,
       "sourcePinId": 20021,
       "targetNodeId": 10007,
       "targetPinId": 20011
     },
     {
-      "id": 30123,
+      "id": 30121,
       "sourceNodeId": 10007,
       "sourcePinId": 20012,
       "targetNodeId": 10089,
       "targetPinId": 20115
     },
     {
-      "id": 30124,
+      "id": 30122,
       "sourceNodeId": 10140,
       "sourcePinId": 20191,
       "targetNodeId": 10141,
       "targetPinId": 20192
     },
     {
-      "id": 30125,
+      "id": 30123,
       "sourceNodeId": 10003,
       "sourcePinId": 20005,
       "targetNodeId": 10139,
       "targetPinId": 20188
     },
     {
-      "id": 30126,
+      "id": 30124,
       "sourceNodeId": 10139,
       "sourcePinId": 20189,
       "targetNodeId": 10140,
       "targetPinId": 20190
     },
     {
-      "id": 30127,
+      "id": 30125,
       "sourceNodeId": 10139,
       "sourcePinId": 20189,
       "targetNodeId": 10009,
       "targetPinId": 20014
     },
     {
-      "id": 30128,
+      "id": 30126,
       "sourceNodeId": 10135,
       "sourcePinId": 20183,
       "targetNodeId": 10136,
       "targetPinId": 20184
     },
     {
-      "id": 30129,
+      "id": 30127,
       "sourceNodeId": 10136,
       "sourcePinId": 20185,
       "targetNodeId": 10137,
       "targetPinId": 20186
     },
     {
-      "id": 30130,
+      "id": 30128,
       "sourceNodeId": 10136,
       "sourcePinId": 20185,
       "targetNodeId": 10138,
       "targetPinId": 20187
     },
     {
-      "id": 30131,
+      "id": 30129,
       "sourceNodeId": 10133,
       "sourcePinId": 20179,
       "targetNodeId": 10086,
       "targetPinId": 20111
     },
     {
-      "id": 30132,
+      "id": 30130,
       "sourceNodeId": 10134,
       "sourcePinId": 20181,
       "targetNodeId": 10135,
       "targetPinId": 20182
     },
     {
-      "id": 30133,
+      "id": 30131,
       "sourceNodeId": 10134,
       "sourcePinId": 20181,
       "targetNodeId": 10000,
       "targetPinId": 20000
     },
     {
-      "id": 30134,
+      "id": 30132,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
       "targetNodeId": 10116,
       "targetPinId": 20155
     },
     {
-      "id": 30135,
+      "id": 30133,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
       "targetNodeId": 10006,
       "targetPinId": 20009
     },
     {
-      "id": 30136,
+      "id": 30134,
       "sourceNodeId": 10006,
       "sourcePinId": 20010,
       "targetNodeId": 10004,
       "targetPinId": 20006
     },
     {
-      "id": 30137,
+      "id": 30135,
       "sourceNodeId": 10006,
       "sourcePinId": 20010,
       "targetNodeId": 10003,
       "targetPinId": 20004
     },
     {
-      "id": 30138,
+      "id": 30136,
       "sourceNodeId": 10010,
       "sourcePinId": 20017,
       "targetNodeId": 10133,
       "targetPinId": 20178
     },
     {
-      "id": 30139,
+      "id": 30137,
       "sourceNodeId": 10010,
       "sourcePinId": 20017,
       "targetNodeId": 10012,
       "targetPinId": 20020
     },
     {
-      "id": 30140,
+      "id": 30138,
       "sourceNodeId": 10010,
       "sourcePinId": 20017,
       "targetNodeId": 10011,
       "targetPinId": 20018
     },
     {
-      "id": 30141,
+      "id": 30139,
       "sourceNodeId": 10015,
       "sourcePinId": 20025,
       "targetNodeId": 10051,
       "targetPinId": 20069
     },
     {
-      "id": 30142,
+      "id": 30140,
       "sourceNodeId": 10051,
       "sourcePinId": 20070,
       "targetNodeId": 10091,
@@ -989,8 +989,8 @@
     }
   ],
   "metadata": {
-    "created": "2026-06-24T22:38:34",
-    "modified": "2026-06-24T22:38:34",
+    "created": "2026-06-24T23:23:25",
+    "modified": "2026-06-24T23:23:25",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -1440,8 +1440,8 @@
       "displayName": "Area Attack",
       "id": 10032,
       "parameters": {
-        "attackDuration": 0.5,
-        "blinkDuration": 0.6000000238418579,
+        "attackDuration": 0.4000000059604645,
+        "blinkDuration": 0.5,
         "blinkFrequency": 10.0,
         "damage": 15.0,
         "isBypassRecoveryGuard": false,
@@ -2753,11 +2753,11 @@
         "fadeInDuration": 0.30000001192092896,
         "fadeOutDuration": 0.30000001192092896,
         "isBypassRecoveryGuard": false,
-        "mode": 2,
+        "mode": 1,
         "playerRandomMaxDistance": 100.0,
         "playerRandomMinDistance": 8.0,
-        "randomMaxDistance": 30.0,
-        "randomMinDistance": 10.0,
+        "randomMaxDistance": 100.0,
+        "randomMinDistance": 8.0,
         "targetPositionX": 0.0,
         "targetPositionY": 0.0,
         "targetPositionZ": 0.0
@@ -2795,7 +2795,7 @@
       "displayName": "Dash",
       "id": 10120,
       "parameters": {
-        "dashDuration": 0.30108681321144104,
+        "dashDuration": 0.07530064135789871,
         "dashSpeed": 100.0
       },
       "position": {

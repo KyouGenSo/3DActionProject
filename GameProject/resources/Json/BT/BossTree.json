@@ -989,8 +989,8 @@
     }
   ],
   "metadata": {
-    "created": "2026-06-24T23:44:34",
-    "modified": "2026-06-24T23:44:34",
+    "created": "2026-06-25T00:51:08",
+    "modified": "2026-06-25T00:51:08",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -1419,15 +1419,15 @@
       "id": 10031,
       "parameters": {
         "chargeTime": 0.800000011920929,
-        "fireInterval": 0.07999999821186066,
-        "firingDuration": 8.0,
+        "fireInterval": 0.05000000074505806,
+        "firingDuration": 9.0,
         "isBypassRecoveryGuard": false,
         "moveDuration": 0.5,
         "normalBulletSpeedMax": 200.0,
         "normalBulletSpeedMin": 150.0,
         "penetratingBulletSpeedMax": 80.0,
-        "penetratingBulletSpeedMin": 50.0,
-        "penetratingRatio": 0.30799999833106995,
+        "penetratingBulletSpeedMin": 60.0,
+        "penetratingRatio": 1.0,
         "recoveryTime": 3.0
       },
       "position": {
@@ -2175,7 +2175,7 @@
       "displayName": "Idle",
       "id": 10074,
       "parameters": {
-        "idleDuration": 1.0
+        "idleDuration": 1.2000000476837158
       },
       "position": {
         "x": -2233.0,
@@ -2187,7 +2187,7 @@
       "displayName": "Idle",
       "id": 10075,
       "parameters": {
-        "idleDuration": 1.0
+        "idleDuration": 1.2000000476837158
       },
       "position": {
         "x": -2233.0,
@@ -2199,7 +2199,7 @@
       "displayName": "Idle",
       "id": 10076,
       "parameters": {
-        "idleDuration": 1.0
+        "idleDuration": 1.2000000476837158
       },
       "position": {
         "x": -2233.0,
@@ -2795,7 +2795,7 @@
       "displayName": "Dash",
       "id": 10120,
       "parameters": {
-        "dashDuration": 0.15706582367420197,
+        "dashDuration": 0.4351051449775696,
         "dashSpeed": 100.0
       },
       "position": {

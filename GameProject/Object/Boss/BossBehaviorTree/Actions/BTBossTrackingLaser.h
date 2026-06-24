@@ -97,14 +97,21 @@ private: //非公開関数
     void UpdateBlinkingPhase(float phaseElapsed);
 
     /// <summary>
-    /// ビームを凍結し OBB とレーザーエミッターを起動する
+    /// ビームを凍結し OBB とレーザーエミッターを起動する。
+    /// 同時にチャージエフェクトを停止する。
     /// </summary>
-    void BeginAttackPhase(Boss* boss);
+    void BeginAttackPhase();
 
     /// <summary>
-    /// OBB 無効化とエミッター停止
+    /// OBB 無効化とレーザーエミッター停止
     /// </summary>
-    void EndAttackPhase(Boss* boss);
+    void EndAttackPhase();
+
+    /// <summary>
+    /// チャージエフェクトをボス正面へ配置する。
+    /// chargeOffset_ をボスの yaw で回転しワールド座標へ変換する。
+    /// </summary>
+    void UpdateChargeEffect(Boss* boss);
 
 private: //メンバー変数
     //パラメータ
@@ -138,4 +145,6 @@ private: //メンバー変数
     bool                                     particleInitialized_ = false;
     std::string                              emitterName_;
     Tako::Vector3                            presetBoxSize_{};
+    std::string                              chargeEmitterName_;
+    Tako::Vector3                            chargeOffset_{ 0.0f, 3.5f, 3.0f };
 };

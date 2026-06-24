@@ -508,6 +508,12 @@ void GameScene::InitializeEmitterManger()
         emitterManager_->SetEmitterActive(emitterName, false);
     }
 
+    // ===== 追従レーザー用エミッター（本体＋チャージ）=====
+    emitterManager_->LoadPreset("boss_razer_trail", "boss_tracking_laser");
+    emitterManager_->SetEmitterActive("boss_tracking_laser", false);
+    emitterManager_->LoadPreset("boss_charge_effect", "boss_tracking_laser_charge");
+    emitterManager_->SetEmitterActive("boss_tracking_laser_charge", false);
+
     boss_->SetEmitterManager(emitterManager_.get());
 
     // ボスモデルをスポーン形状とする MeshEmitter

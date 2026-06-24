@@ -40,7 +40,7 @@ private: //定数
     static constexpr float kMoveEasingCoeffA = 3.0f;
     static constexpr float kMoveEasingCoeffB = 2.0f;
     static constexpr float kDirectionEpsilon = 0.01f;
-    static constexpr float kMaxHp = 100.0f;
+    static constexpr float kMaxHp = 150.0f;
 
 public: //メンバー関数
     Player();
@@ -251,7 +251,7 @@ private: //メンバー変数
     Tako::ForceFieldManager*        forceFieldManager_  = nullptr;  ///< 非所有
     float                           speed_              = 0.5f;
     float                           targetAngle_        = 0.f;
-    float                           hp_                 = 100.f;
+    float                           hp_                 = kMaxHp;
     bool                            isDead_             = false;
 
     //フラグ

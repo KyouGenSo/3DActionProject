@@ -8,30 +8,86 @@
       "targetPinId": 20002
     },
     {
-      "id": 30002,
+      "id": 30001,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
+      "targetNodeId": 10005,
+      "targetPinId": 20006
+    },
+    {
+      "id": 30002,
+      "sourceNodeId": 10005,
+      "sourcePinId": 20007,
+      "targetNodeId": 10004,
+      "targetPinId": 20005
+    },
+    {
+      "id": 30003,
+      "sourceNodeId": 10005,
+      "sourcePinId": 20007,
       "targetNodeId": 10003,
       "targetPinId": 20004
     },
     {
-      "id": 30003,
-      "sourceNodeId": 10003,
-      "sourcePinId": 20005,
-      "targetNodeId": 10004,
-      "targetPinId": 20006
+      "id": 30011,
+      "sourceNodeId": 10005,
+      "sourcePinId": 20007,
+      "targetNodeId": 10012,
+      "targetPinId": 20014
     },
     {
-      "id": 30004,
-      "sourceNodeId": 10003,
-      "sourcePinId": 20005,
+      "id": 30012,
+      "sourceNodeId": 10012,
+      "sourcePinId": 20015,
       "targetNodeId": 10002,
       "targetPinId": 20003
+    },
+    {
+      "id": 30013,
+      "sourceNodeId": 10012,
+      "sourcePinId": 20015,
+      "targetNodeId": 10009,
+      "targetPinId": 20011
+    },
+    {
+      "id": 30014,
+      "sourceNodeId": 10012,
+      "sourcePinId": 20015,
+      "targetNodeId": 10007,
+      "targetPinId": 20009
+    },
+    {
+      "id": 30015,
+      "sourceNodeId": 10012,
+      "sourcePinId": 20015,
+      "targetNodeId": 10010,
+      "targetPinId": 20012
+    },
+    {
+      "id": 30016,
+      "sourceNodeId": 10012,
+      "sourcePinId": 20015,
+      "targetNodeId": 10008,
+      "targetPinId": 20010
+    },
+    {
+      "id": 30017,
+      "sourceNodeId": 10012,
+      "sourcePinId": 20015,
+      "targetNodeId": 10011,
+      "targetPinId": 20013
+    },
+    {
+      "id": 30018,
+      "sourceNodeId": 10012,
+      "sourcePinId": 20015,
+      "targetNodeId": 10006,
+      "targetPinId": 20008
     }
   ],
   "metadata": {
-    "created": "2026-06-22T21:43:43",
-    "modified": "2026-06-22T21:43:43",
+    "created": "2026-06-24T15:52:51",
+    "modified": "2026-06-24T15:52:51",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -40,8 +96,8 @@
       "id": 10000,
       "parameters": null,
       "position": {
-        "x": 8.0,
-        "y": -157.0
+        "x": -21.0,
+        "y": -146.0
       },
       "type": "BTSequence"
     },
@@ -52,62 +108,177 @@
         "idleDuration": 1.0
       },
       "position": {
-        "x": -169.0,
-        "y": 175.0
+        "x": -137.0,
+        "y": 63.0
       },
       "type": "BTBossIdle"
     },
     {
-      "displayName": "Tracking Laser",
+      "displayName": "Shoot",
       "id": 10002,
       "parameters": {
-        "aimDuration": 1.0,
-        "attackDuration": 0.25,
-        "beamHeight": 1.0,
-        "beamWidth": 2.0,
-        "blinkDuration": 0.6000000238418579,
-        "blinkFrequency": 10.0,
-        "colliderHeight": 3.0,
-        "damage": 15.0,
-        "endOffset": 3.0,
+        "bulletCount": 10,
+        "bulletSpeed": 20.0,
+        "chargeTime": 0.8999999761581421,
         "isBypassRecoveryGuard": false,
-        "laserEmitDuration": 0.05000000074505806,
-        "recoveryTime": 0.5
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": 104.0,
-        "y": 303.0
+        "x": 440.0,
+        "y": 335.0
       },
-      "type": "BTBossTrackingLaser"
-    },
-    {
-      "displayName": "Sequence",
-      "id": 10003,
-      "parameters": null,
-      "position": {
-        "x": 91.0,
-        "y": 47.0
-      },
-      "type": "BTSequence"
+      "type": "BTBossShoot"
     },
     {
       "displayName": "Repel Shockwave",
-      "id": 10004,
+      "id": 10003,
       "parameters": {
         "affectMask": 3,
-        "expandTime": 0.20000000298023224,
+        "expandTime": 0.4000000059604645,
         "falloff": 0.0,
         "isBypassRecoveryGuard": false,
-        "maxRadius": 50.0,
+        "maxRadius": 30.0,
         "strength": 2000.0,
-        "sustainTime": 0.5,
+        "sustainTime": 10.0,
         "warningTime": 0.5
       },
       "position": {
-        "x": 104.0,
-        "y": 207.0
+        "x": 184.0,
+        "y": 271.0
       },
       "type": "BTBossRepelShockwave"
+    },
+    {
+      "displayName": "Barrage",
+      "id": 10004,
+      "parameters": {
+        "chargeTime": 0.800000011920929,
+        "fireInterval": 0.05000000074505806,
+        "firingDuration": 5.0,
+        "isBypassRecoveryGuard": false,
+        "moveDuration": 0.5,
+        "normalBulletSpeedMax": 150.0,
+        "normalBulletSpeedMin": 100.0,
+        "penetratingBulletSpeedMax": 80.0,
+        "penetratingBulletSpeedMin": 50.0,
+        "penetratingRatio": 0.30000001192092896,
+        "recoveryTime": 1.5
+      },
+      "position": {
+        "x": 184.0,
+        "y": 175.0
+      },
+      "type": "BTBossBarrage"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10005,
+      "parameters": {
+        "policy": "MainChild"
+      },
+      "position": {
+        "x": 184.0,
+        "y": 41.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10006,
+      "parameters": {
+        "bulletCount": 10,
+        "bulletSpeed": 60.0,
+        "chargeTime": 0.8999999761581421,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": 440.0,
+        "y": 911.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10007,
+      "parameters": {
+        "bulletCount": 10,
+        "bulletSpeed": 30.0,
+        "chargeTime": 0.8999999761581421,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": 440.0,
+        "y": 527.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10008,
+      "parameters": {
+        "bulletCount": 10,
+        "bulletSpeed": 40.0,
+        "chargeTime": 0.8999999761581421,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": 440.0,
+        "y": 719.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Idle",
+      "id": 10009,
+      "parameters": {
+        "idleDuration": 2.0
+      },
+      "position": {
+        "x": 440.0,
+        "y": 431.0
+      },
+      "type": "BTBossIdle"
+    },
+    {
+      "displayName": "Idle",
+      "id": 10010,
+      "parameters": {
+        "idleDuration": 2.0
+      },
+      "position": {
+        "x": 440.0,
+        "y": 623.0
+      },
+      "type": "BTBossIdle"
+    },
+    {
+      "displayName": "Idle",
+      "id": 10011,
+      "parameters": {
+        "idleDuration": 2.0
+      },
+      "position": {
+        "x": 440.0,
+        "y": 815.0
+      },
+      "type": "BTBossIdle"
+    },
+    {
+      "displayName": "Sequence",
+      "id": 10012,
+      "parameters": null,
+      "position": {
+        "x": 440.0,
+        "y": 207.0
+      },
+      "type": "BTSequence"
     }
   ],
   "version": "1.0"

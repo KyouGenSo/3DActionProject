@@ -165,9 +165,6 @@
     <ClCompile Include="Collision\BulletCollider.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
-    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.cpp">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
-    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRepelShockwave.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClCompile>
@@ -318,6 +315,9 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collision\CollisionTypeIdDef.h">
@@ -418,9 +418,6 @@
     </ClInclude>
     <ClInclude Include="Collision\BulletCollider.h">
       <Filter>Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.h">
-      <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRepelShockwave.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
@@ -591,6 +588,9 @@
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\AttackNode.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClInclude>
   </ItemGroup>

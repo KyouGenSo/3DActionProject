@@ -1,0 +1,84 @@
+{
+  "billboard": true,
+  "blendMode": 0,
+  "collisionRestitution": 0.5,
+  "convergeDamping": 1.5,
+  "convergeStiffness": 20.0,
+  "convergeToTarget": true,
+  "damping": 0.9900000095367432,
+  "endColor": [
+    0.9473935961723328,
+    0.6664829850196838,
+    0.6664829850196838,
+    1.0
+  ],
+  "endScaleDefault": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "frequency": 0.07000000029802322,
+  "frequencyTime": 0.04419799521565437,
+  "isActive": true,
+  "isEmitting": false,
+  "isNormalize": false,
+  "isRandomRotateZ": false,
+  "isTemporary": false,
+  "lifeTimeRange": [
+    0.699999988079071,
+    0.699999988079071
+  ],
+  "lockDamping": 3.0,
+  "lockStiffness": 20.0,
+  "noiseScale": 0.05000000074505806,
+  "noiseStrength": 0.0010000000474974513,
+  "particleCount": 100,
+  "particleRadius": 0.5,
+  "position": [
+    0.0,
+    3.5,
+    3.5
+  ],
+  "radius": 7.5,
+  "randomFlags": 63,
+  "scaleRangeX": [
+    0.699999988079071,
+    0.699999988079071
+  ],
+  "scaleRangeY": [
+    0.699999988079071,
+    0.699999988079071
+  ],
+  "spawnLocation": 1,
+  "spawnLock": false,
+  "startColor": [
+    0.9186992049217224,
+    0.1673957109451294,
+    0.1673957109451294,
+    1.0
+  ],
+  "targetPosition": [
+    0.0,
+    3.5,
+    3.5
+  ],
+  "texturePath": "EngineResources/Texture/spark.dds",
+  "type": 0,
+  "useAlphaFade": true,
+  "useCurlNoise": false,
+  "useDepthCollision": false,
+  "useForceField": true,
+  "useScaleFade": false,
+  "velRangeX": [
+    0.0,
+    0.0
+  ],
+  "velRangeY": [
+    0.0,
+    0.0
+  ],
+  "velRangeZ": [
+    0.0,
+    0.0
+  ]
+}

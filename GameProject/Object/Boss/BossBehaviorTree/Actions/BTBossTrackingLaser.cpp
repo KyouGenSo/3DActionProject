@@ -41,6 +41,7 @@ Tako::BTNodeStatus BTBossTrackingLaser::OnExecute(Tako::BTBlackboard* blackboard
             firedYawRad_ = yawRad;
             firedLength_ = length;
             ApplyBeamToDecal(center, yawRad, length);
+            UpdateChargeEffect(boss);
         }
 
         if (elapsedTime_ >= aimEnd) {
@@ -49,7 +50,7 @@ Tako::BTNodeStatus BTBossTrackingLaser::OnExecute(Tako::BTBlackboard* blackboard
     }
     else if (elapsedTime_ < attackEnd) {
         if (!hasBegunAttack_) {
-            BeginAttackPhase(boss);
+            BeginAttackPhase();
             hasBegunAttack_ = true;
         }
         // 発生の一瞬だけエミッターを有効化し、その後トレイルの残光に任せる
@@ -62,7 +63,7 @@ Tako::BTNodeStatus BTBossTrackingLaser::OnExecute(Tako::BTBlackboard* blackboard
     }
     else {
         if (!hasEndedAttack_) {
-            EndAttackPhase(boss);
+            EndAttackPhase();
             hasEndedAttack_ = true;
         }
         EnterAttackRecovery(boss);
@@ -115,16 +116,16 @@ void BTBossTrackingLaser::OnInitialize(Tako::BTBlackboard* blackboard, Boss* bos
     beamCollider_->SetActive(false);
     CollisionManager::GetInstance()->AddCollider(beamCollider_.get());
 
-    EmitterManager* emitterMgr = boss->GetEmitterManager();
-    if (emitterMgr && !particleInitialized_) {
-        emitterName_ = "boss_tracking_laser";
-        emitterMgr->LoadPreset("boss_razer_trail", emitterName_);
-        emitterMgr->SetEmitterActive(emitterName_, false);
-        if (auto emitter = emitterMgr->GetEmitterByName(emitterName_)) {
+    emitterName_       = "boss_tracking_laser";
+    chargeEmitterName_ = "boss_tracking_laser_charge";
+    if (cachedEmitterManager_) {
+        if (auto emitter = cachedEmitterManager_->GetEmitterByName(emitterName_)) {
             if (auto box = dynamic_cast<BoxEmitter*>(emitter.get())) {
                 presetBoxSize_ = box->GetSize();
             }
         }
+        UpdateChargeEffect(boss);
+        cachedEmitterManager_->SetEmitterActive(chargeEmitterName_, true);
         particleInitialized_ = true;
     }
 }
@@ -169,7 +170,7 @@ void BTBossTrackingLaser::UpdateBlinkingPhase(float phaseElapsed) {
     }
 }
 
-void BTBossTrackingLaser::BeginAttackPhase(Boss* boss) {
+void BTBossTrackingLaser::BeginAttackPhase() {
     if (beamDecal_) beamDecal_->SetVisible(false);
 
     colliderTransform_.translate = Vector3(firedCenter_.x, beamHeight_, firedCenter_.z);
@@ -179,32 +180,53 @@ void BTBossTrackingLaser::BeginAttackPhase(Boss* boss) {
         beamCollider_->SetActive(true);
     }
 
-    EmitterManager* emitterMgr = boss->GetEmitterManager();
-    if (emitterMgr && particleInitialized_) {
-        if (auto emitter = emitterMgr->GetEmitterByName(emitterName_)) {
+    if (cachedEmitterManager_ && particleInitialized_) {
+        if (auto emitter = cachedEmitterManager_->GetEmitterByName(emitterName_)) {
             if (auto box = dynamic_cast<BoxEmitter*>(emitter.get())) {
                 box->SetPosition(Vector3(firedCenter_.x, beamHeight_, firedCenter_.z));
                 box->SetRotation(Vector3(0.0f, DirectX::XMConvertToDegrees(firedYawRad_), 0.0f));
                 box->SetSize(Vector3(presetBoxSize_.x, presetBoxSize_.y, firedLength_));
             }
         }
-        emitterMgr->SetEmitterActive(emitterName_, true);
+        cachedEmitterManager_->SetEmitterActive(emitterName_, true);
+        cachedEmitterManager_->SetEmitterActive(chargeEmitterName_, false);
     }
 }
 
-void BTBossTrackingLaser::EndAttackPhase(Boss* boss) {
+void BTBossTrackingLaser::EndAttackPhase() {
     if (beamCollider_) beamCollider_->SetActive(false);
 
-    EmitterManager* emitterMgr = boss->GetEmitterManager();
-    if (emitterMgr && particleInitialized_) {
-        emitterMgr->SetEmitterActive(emitterName_, false);
+    if (cachedEmitterManager_ && particleInitialized_) {
+        cachedEmitterManager_->SetEmitterActive(emitterName_, false);
+    }
+}
+
+void BTBossTrackingLaser::UpdateChargeEffect(Boss* boss) {
+    if (!cachedEmitterManager_ || !boss) return;
+
+    const Vector3 bossPos = boss->GetTransform().translate;
+    const float cy = cosf(firedYawRad_);
+    const float sy = sinf(firedYawRad_);
+    const Vector3 worldOffset(
+        chargeOffset_.x * cy + chargeOffset_.z * sy,
+        chargeOffset_.y,
+        -chargeOffset_.x * sy + chargeOffset_.z * cy);
+    const Vector3 pos = bossPos + worldOffset;
+
+    if (auto emitter = cachedEmitterManager_->GetEmitterByName(chargeEmitterName_)) {
+        emitter->SetPosition(pos);
+        emitter->SetTargetPosition(pos);
     }
 }
 
 void BTBossTrackingLaser::OnCleanup() {
-    // 発生中に中断された場合のみエミッタを停止する
+    // 発生中に中断された場合のみレーザーエミッタを停止する
     if (cachedEmitterManager_ && particleInitialized_ && hasBegunAttack_ && !hasEndedAttack_) {
         cachedEmitterManager_->SetEmitterActive(emitterName_, false);
+    }
+    // チャージは発生前の追従フェーズで出るため常に停止する
+    if (cachedEmitterManager_ && particleInitialized_) {
+        cachedEmitterManager_->SetEmitterActive(chargeEmitterName_, false);
     }
 
     beamDecal_.reset();
@@ -231,6 +253,10 @@ void BTBossTrackingLaser::OnApplyParameters(const nlohmann::json& params) {
     if (params.contains("laserEmitDuration")) laserEmitDuration_ = params["laserEmitDuration"];
     if (params.contains("damage"))            damage_ = params["damage"];
     if (params.contains("blinkFrequency"))    blinkFrequency_ = params["blinkFrequency"];
+    if (params.contains("chargeOffset")) {
+        const auto& p = params["chargeOffset"];
+        chargeOffset_ = Vector3(p[0].get<float>(), p[1].get<float>(), p[2].get<float>());
+    }
 }
 
 void BTBossTrackingLaser::OnExtractParameters(nlohmann::json& out) const {
@@ -245,6 +271,7 @@ void BTBossTrackingLaser::OnExtractParameters(nlohmann::json& out) const {
     out["laserEmitDuration"] = laserEmitDuration_;
     out["damage"]            = damage_;
     out["blinkFrequency"]    = blinkFrequency_;
+    out["chargeOffset"]      = { chargeOffset_.x, chargeOffset_.y, chargeOffset_.z };
 }
 
 #ifdef _DEBUG
@@ -263,6 +290,9 @@ bool BTBossTrackingLaser::OnDrawImGui() {
     if (ImGui::DragFloat("End Offset##laser", &endOffset_, 0.1f, 0.0f, 20.0f))             changed = true;
     if (ImGui::DragFloat("Beam Height##laser", &beamHeight_, 0.1f, 0.0f, 10.0f))           changed = true;
     if (ImGui::DragFloat("Collider Height##laser", &colliderHeight_, 0.1f, 0.5f, 10.0f))   changed = true;
+
+    ImGui::SeparatorText("Charge Effect");
+    if (ImGui::DragFloat3("Charge Offset##laser", &chargeOffset_.x, 0.1f))                 changed = true;
 
     ImGui::SeparatorText("Attack Parameters");
     if (ImGui::DragFloat("Damage##laser", &damage_, 0.5f, 1.0f, 50.0f))                    changed = true;

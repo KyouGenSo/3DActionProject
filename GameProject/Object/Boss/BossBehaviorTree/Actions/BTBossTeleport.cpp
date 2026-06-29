@@ -53,7 +53,7 @@ void BTBossTeleport::OnInitialize(Tako::BTBlackboard* blackboard, Boss* boss) {
     // 半透明モードへ切替 + 元のマテリアル状態をキャッシュ
     Object3d* model = boss->GetModel();
     if (model) {
-        originalMaterialColor_ = model->GetMaterialColor();
+        originalMaterialColor_ = boss->GetBaseColor();
         originalTransparentState_ = model->IsTransparent();
         model->SetTransparent(true);
         UpdateModelAlpha(model, 1.0f);

@@ -60,7 +60,7 @@ void Boss::InitializeModel()
     model_ = std::make_unique<Object3d>();
     model_->Initialize();
     model_->SetModel(EnginePaths::ModelPath("white_cube.gltf"));
-    model_->SetMaterialColor(Vector4(1.0f, 0.0f, 0.0f, 1.0f));
+    model_->SetMaterialColor(baseColor_);
 
     transform_.translate = Vector3(0.0f, initialY_, initialZ_);
     transform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
@@ -262,8 +262,7 @@ void Boss::Update(float deltaTime)
     // 硬直・スタン・フェーズ移行スタン・テレポートのいずれかで aura を無効
     SetAuraEmitterActive(!isInRecovery_ && !IsStunned() && !isTeleporting_);
 
-    static const Vector4 kOriginalColor = Vector4(1.0f, 0.0f, 0.0f, 1.0f);
-    hitFlashEffect_.Update(deltaTime, model_.get(), kOriginalColor);
+    hitFlashEffect_.Update(deltaTime, model_.get(), baseColor_);
 
     shakeEffect_.Update(deltaTime);
 

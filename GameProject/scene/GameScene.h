@@ -28,8 +28,6 @@ namespace Tako {
 }
 
 class CameraManager;
-class ThirdPersonController;
-class TopDownController;
 class CameraAnimationController;
 
 /// <summary>
@@ -49,6 +47,7 @@ public: //メンバー関数
 
     void DrawImGui() override;
 
+private: //非公開関数
     /// <summary>
     /// フェーズに応じてカメラモードと移動制限を切り替え
     /// </summary>
@@ -58,6 +57,23 @@ public: //メンバー関数
     /// アニメーション再生中・デバッグカメラ中は入力をリセット
     /// </summary>
     void UpdateInput();
+
+    /// <summary>
+    /// 開始演出の終了処理とクリア・オーバーの判定、各演出の開始
+    /// </summary>
+    void UpdateGameFlow();
+
+    void UpdateObjects();
+
+    /// <summary>
+    /// 弾リクエストをProjectileManagerに渡して生成・更新
+    /// </summary>
+    void UpdateProjectiles();
+
+    /// <summary>
+    /// 各種エフェクトの更新と演出完了時のシーン遷移
+    /// </summary>
+    void UpdateEffects();
 
     void InitializeDebugOption();
 
@@ -69,7 +85,7 @@ public: //メンバー関数
 
     void SetCollisionMask();
 
-    void InitializeEmitterManger();
+    void InitializeEmitterManager();
 
     void InitializeEffectManager();
 
@@ -92,11 +108,9 @@ private: //メンバー変数
     std::unique_ptr<InputHandler>   inputHandler_;
 
     //カメラ
-    CameraManager*             cameraManager_         = nullptr;
-    ThirdPersonController*     thirdPersonController_ = nullptr;
-    TopDownController*         topDownController_     = nullptr;
-    CameraAnimationController* animationController_   = nullptr;
-    bool                       cameraMode_            = false;    ///< true: ThirdPerson, false: TopDown
+    CameraManager*             cameraManager_       = nullptr;
+    CameraAnimationController* animationController_ = nullptr;
+    bool                       cameraMode_          = false;    ///< true: ThirdPerson, false: TopDown
 
     //地面UV
     Tako::Transform groundUvTransform_{};
@@ -106,7 +120,6 @@ private: //メンバー変数
 
     //状態
     bool isStart_ = false;
-    bool isDebug_ = false;
 
     //エフェクト管理
     std::unique_ptr<OverEffectManager>         overEffectManager_;

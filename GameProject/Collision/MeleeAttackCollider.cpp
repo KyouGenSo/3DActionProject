@@ -25,7 +25,7 @@ void MeleeAttackCollider::OnCollisionStay(Collider* other) {
         Boss* enemy = static_cast<Boss*>(other->GetOwner());
         if (enemy && !detectedEnemy_) {
             detectedEnemy_ = enemy;
-            if (canDamage) {
+            if (canDamage_) {
                 // ノックバック方向（プレイヤー→ボス）。水平面のみ
                 Tako::Vector3 knockbackDir = enemy->GetTransform().translate - player_->GetTransform().translate;
                 knockbackDir.y = 0.0f;
@@ -33,7 +33,7 @@ void MeleeAttackCollider::OnCollisionStay(Collider* other) {
                     knockbackDir = knockbackDir.Normalize();
                 }
                 enemy->OnMeleeAttackHit(attackDamage_, knockbackDir, knockbackEnabled_);
-                canDamage = false;
+                canDamage_ = false;
             }
         }
     }
@@ -48,5 +48,5 @@ void MeleeAttackCollider::Reset() {
 
 void MeleeAttackCollider::Damage()
 {
-    canDamage = true;
+    canDamage_ = true;
 }

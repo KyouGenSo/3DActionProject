@@ -5,6 +5,7 @@
 #include "SpriteBasic.h"
 #include "ModelManager.h"
 #include "Input.h"
+#include "FrameTimer.h"
 #include "Draw2D.h"
 #include "GPUParticle.h"
 #include "EnginePaths.h"
@@ -20,6 +21,14 @@
 #endif
 
 using namespace Tako;
+
+namespace {
+    constexpr float kFadeDuration    = 0.2f;
+    constexpr int   kTitleTextCount  = 10;
+    constexpr float kBlinkTimerLimit = 1000.0f;
+    constexpr BYTE  kStartKey        = DIK_SPACE;
+    constexpr WORD  kStartButton     = GamepadButton::A;
+}
 
 void TitleScene::Initialize()
 {
@@ -125,7 +134,6 @@ void TitleScene::DrawWithoutEffect()
 
     //------------------前景 Sprite の描画------------------//
     SpriteBasic::GetInstance()->SetCommonRenderSetting();
-
 
     startButtonText_->Draw();
 
@@ -329,7 +337,7 @@ void TitleScene::InitializeDebugUI()
     DebugUIManager::GetInstance()->RegisterGameObject("BackGround",
         [this]() { if (titleBG_) titleBG_->DrawImGui(); });
 
-    for (int i = 0; i < 10; ++i) {
+    for (int i = 0; i < kTitleTextCount; ++i) {
         DebugUIManager::GetInstance()->RegisterGameObject(std::format("TitleText{}", i + 1),
             [this, i]() {
                 titleTextSprites_[i]->DrawImGui();
@@ -347,7 +355,7 @@ void TitleScene::InitializeDebugUI()
 void TitleScene::InitializeCamera()
 {
     (*Object3dBasic::GetInstance()->GetCamera())->SetRotate(Vector3(0.2f, 0.0f, 0.0f));
-    (*Object3dBasic::GetInstance()->GetCamera())->SetTranslate(Vector3(0.0f, cameraY_ + offsetY, cameraZ_));
+    (*Object3dBasic::GetInstance()->GetCamera())->SetTranslate(Vector3(0.0f, cameraY_ + offsetY_, cameraZ_));
 }
 
 void TitleScene::InitializePostEffects()
@@ -375,8 +383,8 @@ void TitleScene::InitializeSprites()
     titleBG_->SetSize(Vector2(static_cast<float>(WinApp::clientWidth), static_cast<float>(WinApp::clientHeight)));
 
     // 10枚のアニメーション用画像
-    titleTextSprites_.reserve(10);
-    for (int i = 0; i < 10; ++i) {
+    titleTextSprites_.reserve(kTitleTextCount);
+    for (int i = 0; i < kTitleTextCount; ++i) {
         std::string texturePath = std::format("title_text/title_text_{}.dds", i + 1);
         auto sprite = make_unique<Sprite>();
         sprite->Initialize(texturePath);
@@ -427,8 +435,8 @@ void TitleScene::UpdateStartButtonBlink()
 {
     if (!isButtonBlinking_) return;
 
-    blinkTimer_ += 1.0f / 60.0f;
-    if (blinkTimer_ > 1000.f) blinkTimer_ = 0.f; // オーバーフロー防止
+    blinkTimer_ += FrameTimer::GetInstance()->GetDeltaTime();
+    if (blinkTimer_ > kBlinkTimerLimit) blinkTimer_ = 0.f; // オーバーフロー防止
 
     // sin の結果(-1〜1)を0〜1に正規化し、min〜max にマッピング
     float sineValue = std::sin(blinkTimer_ * blinkSpeed_ * std::numbers::pi_v<float>);
@@ -475,12 +483,12 @@ void TitleScene::UpdateSlashParticleAnimation()
 {
     if (!isSlashEmitterAnimating_) return;
 
-    slashEmitterAnimTimer_ += 1.0f / 60.0f;
+    slashEmitterAnimTimer_ += FrameTimer::GetInstance()->GetDeltaTime();
 
     float progress = slashEmitterAnimTimer_ / slashEmitterAnimDuration_;
 
     if (progress >= sceneTransitionProgress_) {
-        SceneManager::GetInstance()->ChangeScene("game", "Fade", 0.2f);
+        SceneManager::GetInstance()->ChangeScene("game", "Fade", kFadeDuration);
     }
 
     if (progress >= 1.0f) {
@@ -507,7 +515,7 @@ void TitleScene::UpdateTitleEffectAnimation()
 {
     if (!isEffectPlaying_) return;
 
-    effectTimer_ += 1.0f / 60.0f;
+    effectTimer_ += FrameTimer::GetInstance()->GetDeltaTime();
 
     float progress = effectTimer_ / effectDuration_;
 
@@ -536,8 +544,8 @@ void TitleScene::UpdateTitleEffectAnimation()
 
 void TitleScene::UpdateInput()
 {
-    if (Input::GetInstance()->TriggerKey(DIK_SPACE) ||
-        Input::GetInstance()->TriggerButton(GamepadButton::A)) {
+    if (Input::GetInstance()->TriggerKey(kStartKey) ||
+        Input::GetInstance()->TriggerButton(kStartButton)) {
         if (!isPlaying_ && !isSlashEmitterAnimating_) {
             PlayTitleAnimation();
         }

@@ -243,11 +243,6 @@ void CameraAnimationEditor::DrawMenuBar() {
         ImGui::EndMenu();
     }
 
-    //if (ImGui::BeginMenu("View")) {
-    //    // TODO: View メニューの機能拡張
-    //    ImGui::EndMenu();
-    //}
-
     if (ImGui::BeginMenu("Animation")) {
         if (ImGui::MenuItem("Add Keyframe", "A", false, camera_ && animation_)) {
             if (camera_ && animation_) {

@@ -13,7 +13,7 @@ public: //メンバー関数
     virtual ~MeleeAttackCollider() = default;
 
     /// <summary>
-    /// ボス検出時、canDamage が立っていればダメージとノックバックを1回適用
+    /// ボス検出時、canDamage_ が立っていればダメージとノックバックを1回適用
     /// </summary>
     /// <param name="other">衝突相手のコライダー</param>
     void OnCollisionStay(Collider* other) override;
@@ -24,7 +24,7 @@ public: //メンバー関数
     void Reset();
 
     /// <summary>
-    /// canDamage フラグを立てるだけ。実ダメージは次の OnCollisionStay のヒット時に適用される
+    /// canDamage_ フラグを立てるだけ。実ダメージは次の OnCollisionStay のヒット時に適用される
     /// </summary>
     void Damage();
 
@@ -50,7 +50,7 @@ public: //メンバー関数
 private: //メンバー変数
     Player* player_           = nullptr;
     Boss*   detectedEnemy_    = nullptr;
-    bool    canDamage         = false;
+    bool    canDamage_        = false;
     float   attackDamage_{};
     bool    knockbackEnabled_ = true;     ///< 4コンボ目のみ true
 

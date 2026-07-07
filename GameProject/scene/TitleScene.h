@@ -101,7 +101,7 @@ private: //メンバー変数
     Tako::RGBSplitParam rgbSplitParam_{};
     Tako::VignetteParam vignetteParam_{};
 
-    float offsetY = CameraConfig::HIDDEN_Y;
+    float offsetY_ = CameraConfig::HIDDEN_Y;
 
     //カメラ位置用変数
     float cameraY_ = 9.0f;

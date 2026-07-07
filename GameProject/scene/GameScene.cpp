@@ -42,6 +42,13 @@
 
 using namespace Tako;
 
+namespace {
+    constexpr BYTE  kCameraModeToggleKey = DIK_P;
+    constexpr float kFadeDuration        = 0.3f;
+    constexpr float kGroundUvScale       = 100.0f;
+    constexpr int   kVortexEmitterCount  = 4;
+}
+
 void GameScene::Initialize()
 {
     /// ================================== ///
@@ -82,7 +89,7 @@ void GameScene::Initialize()
 
     InitializeCameraSystem();
 
-    InitializeEmitterManger();
+    InitializeEmitterManager();
 
     InitializeEffectManager();
 
@@ -131,7 +138,7 @@ void GameScene::Update()
 
 #ifdef _DEBUG
     // P キーでカメラモード切り替え
-    if (Input::GetInstance()->TriggerKey(DIK_P)) {
+    if (Input::GetInstance()->TriggerKey(kCameraModeToggleKey)) {
         cameraMode_ = !cameraMode_;
     }
 
@@ -147,6 +154,23 @@ void GameScene::Update()
         return;
     }
 
+    UpdateGameFlow();
+
+    UpdateCameraMode();
+
+    UpdateInput();
+
+    UpdateObjects();
+
+    UpdateProjectiles();
+
+    UpdateEffects();
+
+    CollisionManager::GetInstance()->CheckAllCollisions();
+}
+
+void GameScene::UpdateGameFlow()
+{
     // 開始演出が終わったらボスの一時停止を解除
     if (animationController_->GetPlayState() != CameraAnimation::PlayState::PLAYING && !isStart_) {
         isStart_ = true;
@@ -173,25 +197,31 @@ void GameScene::Update()
         boss_->SetIsPause(true);
         overEffectManager_->Start();
     }
+}
 
-    UpdateCameraMode();
-
-    UpdateInput();
-
+void GameScene::UpdateObjects()
+{
     skyBox_->Update();
     ground_->Update();
     player_->Update();
     boss_->Update(FrameTimer::GetInstance()->GetDeltaTime());
     controllerUI_->Update();
     cameraManager_->Update(FrameTimer::GetInstance()->GetDeltaTime());
+}
 
+void GameScene::UpdateProjectiles()
+{
     // ボス・プレイヤーが貯めた弾リクエストを ProjectileManager に渡して生成
     projectileManager_->SpawnBossBullets(boss_->ConsumePendingBullets());
     projectileManager_->SpawnPenetratingBossBullets(boss_->ConsumePendingPenetratingBullets());
     projectileManager_->SpawnPlayerBullets(player_->ConsumePendingBullets());
 
+    projectileManager_->Update(FrameTimer::GetInstance()->GetDeltaTime());
+}
+
+void GameScene::UpdateEffects()
+{
     float deltaTime = FrameTimer::GetInstance()->GetDeltaTime();
-    projectileManager_->Update(deltaTime);
 
     bool isDashing = false;
     if (player_ && player_->GetStateMachine() && player_->GetStateMachine()->GetCurrentState()) {
@@ -205,15 +235,13 @@ void GameScene::Update()
 
     overEffectManager_->Update(deltaTime);
     if (overEffectManager_->IsComplete()) {
-        SceneManager::GetInstance()->ChangeScene("over", "Fade", 0.3f);
+        SceneManager::GetInstance()->ChangeScene("over", "Fade", kFadeDuration);
     }
 
     clearEffectManager_->Update(deltaTime);
     if (clearEffectManager_->IsComplete()) {
-        SceneManager::GetInstance()->ChangeScene("clear", "Fade", 0.3f);
+        SceneManager::GetInstance()->ChangeScene("clear", "Fade", kFadeDuration);
     }
-
-    CollisionManager::GetInstance()->CheckAllCollisions();
 }
 
 void GameScene::Draw()
@@ -392,7 +420,7 @@ void GameScene::InitializeObject3d()
 
     groundUvTransform_.translate = Vector3(0.0f, 0.0f, 0.0f);
     groundUvTransform_.rotate = Vector3(0.0f, 0.0f, 0.0f);
-    groundUvTransform_.scale = Vector3(100.0f, 100.0f, 100.0f);
+    groundUvTransform_.scale = Vector3(kGroundUvScale, kGroundUvScale, kGroundUvScale);
     ground_ = std::make_unique<Object3d>();
     ground_->Initialize();
     ground_->SetModel("ground_black.gltf");
@@ -423,19 +451,17 @@ void GameScene::InitializeCameraSystem()
 
     // ThirdPersonController を登録
     auto tpController = std::make_unique<ThirdPersonController>();
-    thirdPersonController_ = tpController.get();
-    thirdPersonController_->SetTarget(&player_->GetTransform());
+    tpController->SetTarget(&player_->GetTransform());
     // ボスをセカンダリターゲットにして注視を有効化
-    thirdPersonController_->SetSecondaryTarget(&boss_->GetTransform());
-    thirdPersonController_->EnableLookAtTarget(true);
+    tpController->SetSecondaryTarget(&boss_->GetTransform());
+    tpController->EnableLookAtTarget(true);
     cameraManager_->RegisterController("ThirdPerson", std::move(tpController));
 
     // TopDownController を登録
     auto tdController = std::make_unique<TopDownController>();
-    topDownController_ = tdController.get();
-    topDownController_->SetTarget(&player_->GetTransform());
+    tdController->SetTarget(&player_->GetTransform());
     std::vector<const Transform*> additionalTargets = { &boss_->GetTransform() };
-    topDownController_->SetAdditionalTargets(additionalTargets);
+    tdController->SetAdditionalTargets(additionalTargets);
     cameraManager_->RegisterController("TopDown", std::move(tdController));
 
     // CameraAnimationController を登録
@@ -479,7 +505,7 @@ void GameScene::SetCollisionMask()
     );
 }
 
-void GameScene::InitializeEmitterManger()
+void GameScene::InitializeEmitterManager()
 {
     emitterManager_->LoadScenePreset("gamescene_preset");
 
@@ -502,7 +528,7 @@ void GameScene::InitializeEmitterManger()
     emitterManager_->SetEmitterActive("boss_repel_flash", false);
 
     // ===== Phase2 ヴォルテックス・テンペスト用エミッター =====
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < kVortexEmitterCount; ++i) {
         const std::string emitterName = "boss_vortex_" + std::to_string(i);
         emitterManager_->LoadPreset("boss_vortex", emitterName);
         emitterManager_->SetEmitterActive(emitterName, false);
@@ -603,7 +629,7 @@ void GameScene::UpdatePause()
         boss_->SetIsPause(false);
         break;
     case PauseMenu::Action::ToTitle:
-        SceneManager::GetInstance()->ChangeScene("title", "Fade", 0.3f);
+        SceneManager::GetInstance()->ChangeScene("title", "Fade", kFadeDuration);
         break;
     case PauseMenu::Action::ExitGame:
         PostQuitMessage(0);

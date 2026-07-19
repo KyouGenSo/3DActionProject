@@ -30,6 +30,7 @@ namespace Tako {
 class CameraManager;
 class CameraAnimationController;
 
+
 /// <summary>
 /// ゲームメインシーン。プレイヤーとボスの戦闘を管理
 /// </summary>

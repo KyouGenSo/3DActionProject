@@ -237,6 +237,9 @@ void MyGame::RegisterShootStateVariables()
     gv->AddItem("ShootState", "FireRate", 0.2f);
     gv->AddItem("ShootState", "MoveSpeedMultiplier", 0.5f);
     gv->AddItem("ShootState", "AimRotationLerp", 0.3f);
+    gv->AddItem("ShootState", "AimAssistEnabled", true);
+    gv->AddItem("ShootState", "AimAssistAngle", 30.0f);
+    gv->AddItem("ShootState", "AimAssistStrength", 1.0f);
 }
 
 void MyGame::LoadTextures()

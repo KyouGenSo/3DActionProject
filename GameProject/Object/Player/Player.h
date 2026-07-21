@@ -156,6 +156,7 @@ public: //メンバー関数
     //======================================================================================
     float GetSpeed() const { return speed_; }
     Tako::Camera* GetCamera() const { return camera_; }
+    Boss* GetTargetEnemy() const { return targetEnemy_; }
 
     /// <summary>
     /// true: ThirdPerson, false: TopDown

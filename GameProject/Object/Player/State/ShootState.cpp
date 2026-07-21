@@ -1,14 +1,16 @@
 #include "ShootState.h"
 #include "PlayerStateMachine.h"
 #include "../Player.h"
+#include "Object/Boss/Boss.h"
 #include "Input/InputHandler.h"
 #include "Camera.h"
 #include "Matrix4x4.h"
 #include "Mat4x4Func.h"
 #include "Vec3Func.h"
 #include "GlobalVariables.h"
-#include <algorithm>  // for std::max
+#include <algorithm>
 #include <cmath>
+#include <numbers>
 
 #ifdef _DEBUG
 #include "ImGuiManager.h"
@@ -29,6 +31,9 @@ void ShootState::Update(Player* player, float deltaTime)
 	GlobalVariables* gv = GlobalVariables::GetInstance();
 	fireRate_ = gv->GetValueFloat("ShootState", "FireRate");
 	moveSpeedMultiplier_ = gv->GetValueFloat("ShootState", "MoveSpeedMultiplier");
+	aimAssistEnabled_ = gv->GetValueBool("ShootState", "AimAssistEnabled");
+	aimAssistAngle_ = gv->GetValueFloat("ShootState", "AimAssistAngle");
+	aimAssistStrength_ = gv->GetValueFloat("ShootState", "AimAssistStrength");
 
 	// 射撃無効時（フェーズ2など）は撃たずに離脱
 	if (!player->IsShootingEnabled()) {
@@ -95,6 +100,7 @@ void ShootState::CalculateAimDirection(Player* player)
 		// スティック入力なし → プレイヤー前方
 		float yaw = player->GetRotate().y;
 		aimDirection_ = Vector3(std::sin(yaw), 0.0f, std::cos(yaw));
+		ApplyAimAssist(player);
 		return;
 	}
 
@@ -112,6 +118,8 @@ void ShootState::CalculateAimDirection(Player* player)
 
     aimDirection_ = aimDirection_.Normalize();
 
+    ApplyAimAssist(player);
+
     // 発射方向にプレイヤーを向ける
     if (aimDirection_.Length() > 0.01f) {
         float targetAngle = std::atan2(aimDirection_.x, aimDirection_.z);
@@ -122,6 +130,28 @@ void ShootState::CalculateAimDirection(Player* player)
         Transform* transform = player->GetTransformPtr();
         transform->rotate.y = Vec3::LerpShortAngle(transform->rotate.y, targetAngle, aimRotationLerp);
     }
+}
+
+void ShootState::ApplyAimAssist(Player* player)
+{
+	if (!aimAssistEnabled_ || aimAssistStrength_ <= 0.0f) return;
+
+	Boss* boss = player->GetTargetEnemy();
+	if (!boss || boss->IsDead()) return;
+
+	// XZ平面上の敵方向
+	Vector3 toEnemy = boss->GetTranslate() - player->GetTranslate();
+	toEnemy.y = 0.0f;
+	if (toEnemy.LengthSquared() < 0.0001f) return;
+	toEnemy = toEnemy.Normalize();
+
+	float dot = std::clamp(aimDirection_.Dot(toEnemy), -1.0f, 1.0f);
+	float angle = std::acos(dot);
+
+	float threshold = aimAssistAngle_ * (std::numbers::pi_v<float> / 180.0f);
+	if (angle > threshold) return;
+
+	aimDirection_ = Vec3::Slerp(aimDirection_, toEnemy, aimAssistStrength_).Normalize();
 }
 
 void ShootState::Fire(Player* player)
@@ -173,6 +203,32 @@ void ShootState::DrawImGui(Player* player)
 		ImGui::SameLine();
 		if (ImGui::Button("Slow")) {
 			SetFireRate(0.5f);
+		}
+
+		ImGui::TreePop();
+	}
+
+	if (ImGui::TreeNode("Aim Assist")) {
+		// Update() が毎フレーム GlobalVariables から読むため、メンバではなく SetValue で書き戻す
+		GlobalVariables* gv = GlobalVariables::GetInstance();
+
+		bool enabled = aimAssistEnabled_;
+		if (ImGui::Checkbox("Enabled", &enabled)) gv->SetValue("ShootState", "AimAssistEnabled", enabled);
+
+		float angle = aimAssistAngle_;
+		if (ImGui::SliderFloat("Assist Angle", &angle, 0.0f, 90.0f, "%.1f deg")) gv->SetValue("ShootState", "AimAssistAngle", angle);
+
+		float strength = aimAssistStrength_;
+		if (ImGui::SliderFloat("Strength", &strength, 0.0f, 1.0f, "%.2f")) gv->SetValue("ShootState", "AimAssistStrength", strength);
+
+		Boss* boss = player->GetTargetEnemy();
+		Tako::Vector3 toEnemy = boss ? boss->GetTranslate() - player->GetTranslate() : Tako::Vector3();
+		toEnemy.y = 0.0f;
+		if (boss && !boss->IsDead() && toEnemy.LengthSquared() >= 0.0001f) {
+			float dot = std::clamp(GetAimDirection().Dot(toEnemy.Normalize()), -1.0f, 1.0f);
+			ImGui::Text("Angle To Enemy: %.1f deg", std::acos(dot) * (180.0f / std::numbers::pi_v<float>));
+		} else {
+			ImGui::Text("Angle To Enemy: --");
 		}
 
 		ImGui::TreePop();

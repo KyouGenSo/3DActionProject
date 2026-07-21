@@ -41,10 +41,20 @@ private: //非公開関数
     /// <param name="player">発射元プレイヤー</param>
     void Fire(Player* player);
 
+    /// <summary>
+    /// 照準方向が敵方向から猶予角以内なら、強度に応じて敵方向へ引き寄せる（XZ平面のみ）
+    /// </summary>
+    /// <param name="player">対象プレイヤー（ターゲット取得元）</param>
+    void ApplyAimAssist(Player* player);
+
 private: //メンバー変数
     float fireRate_            = 0.2f;    ///< 秒間隔
     float fireRateTimer_       = 0.0f;
     float moveSpeedMultiplier_ = 0.5f;    ///< 射撃中の移動速度倍率
+
+    bool  aimAssistEnabled_    = true;
+    float aimAssistAngle_      = 30.0f;   ///< 猶予角（度数法）
+    float aimAssistStrength_   = 1.0f;    ///< 0=補正なし〜1=完全スナップ
 
     Tako::Vector3 aimDirection_;
 };

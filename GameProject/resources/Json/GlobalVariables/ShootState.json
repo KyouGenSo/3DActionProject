@@ -1,5 +1,8 @@
 {
     "ShootState": {
+        "AimAssistAngle": 25.0,
+        "AimAssistEnabled": true,
+        "AimAssistStrength": 0.699999988079071,
         "AimRotationLerp": 1.0,
         "FireRate": 0.20000000298023224,
         "MoveSpeedMultiplier": 0.6000000238418579

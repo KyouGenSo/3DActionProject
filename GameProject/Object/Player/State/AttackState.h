@@ -6,7 +6,7 @@
 class Boss;
 
 /// <summary>
-/// 攻撃状態クラス（ターゲット検索→移動→攻撃、コンボ管理、先行入力対応）
+/// 攻撃状態クラス（ボス吸着/前方ステップ→攻撃、コンボ管理、先行入力対応）
 /// </summary>
 class AttackState : public PlayerState
 {
@@ -38,7 +38,6 @@ private: //構造体
     /// 攻撃フェーズ
     /// </summary>
     enum AttackPhase {
-        SearchTarget,
         MoveToTarget,
         ExecuteAttack,
         Recovery         ///< コンボ完走時のみ
@@ -79,7 +78,11 @@ private: //非公開関数
     /// </summary>
     void TransitionToPhase(AttackPhase newPhase);
 
+    /// <summary>
+    /// 前方範囲内かつ発動距離内のボスを targetEnemy_ に設定（判定外は nullptr）
+    /// </summary>
     void SearchForTarget(Player* player);
+
     void ProcessMoveToTarget(Player* player, float deltaTime);
     void ProcessExecuteAttack(Player* player, float deltaTime);
 
@@ -97,12 +100,16 @@ private: //非公開関数
 
 private: //メンバー変数
     //フェーズ
-    AttackPhase phase_         = SearchTarget;
-    class Boss* targetEnemy_   = nullptr;
-    float       phaseTimer_    = 0.0f;          ///< 各フェーズ共用
-    float       maxSearchTime_ = 0.1f;
-    float       maxMoveTime_   = 0.1f;
-    float       recoveryTime_  = 0.5f;          ///< コンボ完走時の硬直
+    AttackPhase phase_        = MoveToTarget;
+    class Boss* targetEnemy_  = nullptr;
+    float       phaseTimer_   = 0.0f;          ///< 各フェーズ共用
+    float       maxMoveTime_  = 0.1f;
+    float       recoveryTime_ = 0.5f;          ///< コンボ完走時の硬直
+
+    //踏み込み判定
+    float lungeAngle_       = 60.0f;  ///< 前方範囲の片側角（度）
+    float lungeMaxDistance_ = 20.0f;  ///< 前方範囲の最大距離
+    float stepDistance_     = 5.0f;   ///< 判定外時の前方ステップ距離
 
     //コンボ
     int  comboIndex_       = 0;      ///< 0-3

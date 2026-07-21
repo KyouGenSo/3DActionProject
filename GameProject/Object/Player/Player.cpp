@@ -230,22 +230,19 @@ void Player::Move(float speedMultiplier, bool isApplyDirCalulate)
     }
 }
 
-void Player::MoveToTarget(Boss* target, float deltaTime)
+void Player::MoveToTarget(const Vector3& targetPos, float deltaTime, float stopDistance)
 {
-    if (!target) return;
-
     if (!attackMover_.IsInitialized()) {
         Vector3 startPos = transform_.translate;
-        Vector3 targetPos = target->GetTransform().translate;
         Vector3 toTarget = targetPos - startPos;
         toTarget.y = 0.0f;
         float distance = toTarget.Length();
 
-        if (distance > attackMinDist_ && distance > kDirectionEpsilon) {
+        if (distance > stopDistance && distance > kDirectionEpsilon) {
             Vector3 direction = toTarget.Normalize();
 
-            // 目標位置 = ターゲットから attackMinDist_ 手前
-            float moveDistance = distance - attackMinDist_;
+            // 目標位置 = targetPos から stopDistance 手前
+            float moveDistance = distance - stopDistance;
             Vector3 moveTargetPos = startPos + direction * moveDistance;
             moveTargetPos.y = startPos.y;
 

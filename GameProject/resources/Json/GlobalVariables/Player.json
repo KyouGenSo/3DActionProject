@@ -1,7 +1,7 @@
 {
     "Player": {
-        "AttackMoveRotationLerp": 0.30000001192092896,
-        "AttackMoveSpeed": 100.0,
+        "AttackMoveRotationLerp": 0.5,
+        "AttackMoveSpeed": 50.0,
         "AttackStartDistance": 5.5,
         "BodyColliderSize": 3.200000047683716,
         "BossLookatLerp": 1.149999976158142,

@@ -60,11 +60,12 @@ public: //メンバー関数
     void Move(float speedMultiplier = 1.0f, bool isApplyDirCalulate = true);
 
     /// <summary>
-    /// ターゲットの attackMinDist_ 手前までイージング移動（初回呼び出しで移動経路を確定）
+    /// targetPos の stopDistance 手前までイージング移動
     /// </summary>
-    /// <param name="target">移動先のボス。nullptr なら何もしない</param>
+    /// <param name="targetPos">移動先のワールド座標</param>
     /// <param name="deltaTime">経過時間（秒）</param>
-    void MoveToTarget(Boss* target, float deltaTime);
+    /// <param name="stopDistance">目標手前で停止する距離</param>
+    void MoveToTarget(const Tako::Vector3& targetPos, float deltaTime, float stopDistance = 0.0f);
 
     void ResetMoveToTarget();
     void DrawImGui();

@@ -114,7 +114,7 @@ void MyGame::RegisterPlayerVariables()
     gv->AddItem("Player", "AttackStartDistance", 5.0f);
     gv->AddItem("Player", "AttackMoveRotationLerp", 0.3f);
     gv->AddItem("Player", "BossLookatLerp", 1.15f);
-    gv->AddItem("Player", "AttackMoveSpeed", 50.0f);
+    gv->AddItem("Player", "AttackMoveSpeed", 30.0f);
 }
 
 void MyGame::RegisterBossVariables()
@@ -169,8 +169,10 @@ void MyGame::RegisterAttackStateVariables()
     GlobalVariables* gv = GlobalVariables::GetInstance();
 
     gv->CreateGroup("AttackState");
-    gv->AddItem("AttackState", "SearchTime", 0.1f);
-    gv->AddItem("AttackState", "MoveTime", 0.1f);
+    gv->AddItem("AttackState", "MoveTime", 0.8f);
+    gv->AddItem("AttackState", "LungeAngle", 60.0f);
+    gv->AddItem("AttackState", "LungeMaxDistance", 20.0f);
+    gv->AddItem("AttackState", "StepDistance", 5.0f);
     gv->AddItem("AttackState", "BlockRadius", 4.0f);
     gv->AddItem("AttackState", "BlockScale", 0.5f);
     gv->AddItem("AttackState", "RecoveryTime", 0.5f);

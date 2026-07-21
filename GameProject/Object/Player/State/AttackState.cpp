@@ -8,6 +8,8 @@
 #include "Object3d.h"
 #include "GlobalVariables.h"
 
+#include <algorithm>
+#include <cmath>
 #include <format>
 #include <numbers>
 
@@ -25,8 +27,10 @@ void AttackState::LoadComboData()
 {
     GlobalVariables* gv = GlobalVariables::GetInstance();
 
-    maxSearchTime_ = gv->GetValueFloat("AttackState", "SearchTime");
     maxMoveTime_ = gv->GetValueFloat("AttackState", "MoveTime");
+    lungeAngle_ = gv->GetValueFloat("AttackState", "LungeAngle");
+    lungeMaxDistance_ = gv->GetValueFloat("AttackState", "LungeMaxDistance");
+    stepDistance_ = gv->GetValueFloat("AttackState", "StepDistance");
     blockRadius_ = gv->GetValueFloat("AttackState", "BlockRadius");
     blockScale_ = gv->GetValueFloat("AttackState", "BlockScale");
     recoveryTime_ = gv->GetValueFloat("AttackState", "RecoveryTime");
@@ -56,8 +60,8 @@ void AttackState::Enter(Player* player)
 
     phaseTimer_ = 0.0f;
     hasBufferedInput_ = false;
-    phase_ = SearchTarget;
-    targetEnemy_ = nullptr;
+    SearchForTarget(player);
+    phase_ = MoveToTarget;
 
     InitializeComboAttack(player);
 
@@ -119,21 +123,6 @@ void AttackState::Update(Player* player, float deltaTime)
     LoadComboData();
 
     switch (phase_) {
-    case SearchTarget:
-        phaseTimer_ += deltaTime;
-
-        SearchForTarget(player);
-
-        if (phaseTimer_ >= maxSearchTime_) {
-            if (targetEnemy_) {
-                TransitionToPhase(MoveToTarget);
-            }
-            else {
-                TransitionToPhase(ExecuteAttack);
-            }
-        }
-        break;
-
     case MoveToTarget:
         ProcessMoveToTarget(player, deltaTime);
         break;
@@ -166,31 +155,33 @@ void AttackState::HandleInput(Player* player)
 
 void AttackState::SearchForTarget(Player* player)
 {
-    if (!player->GetMeleeAttackCollider()) return;
+    targetEnemy_ = nullptr;
 
-    targetEnemy_ = player->GetMeleeAttackCollider()->GetDetectedEnemy();
+    Boss* boss = player->GetTargetEnemy();
+    if (!boss || boss->IsDead()) return;
+
+    Vector3 toBoss = boss->GetTranslate() - player->GetTranslate();
+    toBoss.y = 0.0f;
+    float distance = toBoss.Length();
+    if (distance > lungeMaxDistance_ || distance < 0.01f) return;
+
+    float yaw = player->GetRotate().y;
+    Vector3 forward = { std::sin(yaw), 0.0f, std::cos(yaw) };
+    float dot = std::clamp(forward.Dot(toBoss.Normalize()), -1.0f, 1.0f);
+    if (std::acos(dot) > lungeAngle_ * (std::numbers::pi_v<float> / 180.0f)) return;
+
+    targetEnemy_ = boss;
 }
 
 void AttackState::ProcessMoveToTarget(Player* player, float deltaTime)
 {
-    if (!targetEnemy_) {
-        TransitionToPhase(ExecuteAttack);
-        return;
-    }
-
     phaseTimer_ += deltaTime;
 
-    player->MoveToTarget(targetEnemy_, deltaTime);
-
-    Vector3 toTarget = targetEnemy_->GetTransform().translate - player->GetTransform().translate;
-    toTarget.y = 0.0f;  // 水平距離のみ
-    float currentDistance = toTarget.Length();
-
-    // ターゲットが攻撃範囲外へ離れたら追わずその場で攻撃
-    if (currentDistance > player->GetAttackMinDistance()) {
-        player->ResetMoveToTarget();
-        TransitionToPhase(ExecuteAttack);
-        return;
+    if (targetEnemy_) {
+        player->MoveToTarget(targetEnemy_->GetTranslate(), deltaTime, player->GetAttackMinDistance());
+    }
+    else {
+        player->MoveToTarget(player->GetFrontPosition(stepDistance_), deltaTime);
     }
 
     // 到達 or 最大移動時間超過で攻撃へ
@@ -224,7 +215,9 @@ void AttackState::OnExecuteAttackComplete(Player* player)
     if (hasBufferedInput_ && comboIndex_ < maxCombo_ - 1) {
         comboIndex_++;
         hasBufferedInput_ = false;
-        TransitionToPhase(SearchTarget);
+        player->ResetMoveToTarget();
+        SearchForTarget(player);
+        TransitionToPhase(MoveToTarget);
         InitializeComboAttack(player);
         return;
     }
@@ -316,7 +309,7 @@ void AttackState::DrawImGui(Player* player)
     ImGui::Text("=== Attack State Details ===");
     ImGui::Separator();
 
-    const char* phaseNames[] = { "SearchTarget", "MoveToTarget", "ExecuteAttack", "Recovery" };
+    const char* phaseNames[] = { "MoveToTarget", "ExecuteAttack", "Recovery" };
     ImGui::TextColored(ImVec4(1.0f, 1.0f, 0.0f, 1.0f), "Phase: %s", phaseNames[GetPhase()]);
 
     if (ImGui::TreeNode("Combo System")) {
@@ -360,10 +353,6 @@ void AttackState::DrawImGui(Player* player)
 
     if (ImGui::TreeNode("Timers")) {
         switch (GetPhase()) {
-        case SearchTarget:
-            ImGui::Text("Search Timer: %.2f / %.2f", GetPhaseTimer(), maxSearchTime_);
-            ImGui::ProgressBar(GetPhaseTimer() / maxSearchTime_);
-            break;
         case MoveToTarget:
             ImGui::Text("Move Timer: %.2f / %.2f", GetPhaseTimer(), GetMaxMoveTime());
             ImGui::ProgressBar(GetPhaseTimer() / GetMaxMoveTime());
@@ -387,6 +376,21 @@ void AttackState::DrawImGui(Player* player)
         }
         else {
             ImGui::TextColored(ImVec4(1.0f, 0.0f, 0.0f, 1.0f), "Target: NONE");
+        }
+
+        if (Boss* boss = player->GetTargetEnemy()) {
+            Vector3 toBoss = boss->GetTranslate() - player->GetTranslate();
+            toBoss.y = 0.0f;
+            float distance = toBoss.Length();
+            ImGui::Text("Distance: %.1f / %.1f", distance, lungeMaxDistance_);
+
+            if (distance > 0.01f) {
+                float yaw = player->GetRotate().y;
+                Vector3 forward = { std::sin(yaw), 0.0f, std::cos(yaw) };
+                float dot = std::clamp(forward.Dot(toBoss.Normalize()), -1.0f, 1.0f);
+                ImGui::Text("Angle: %.1f / %.1f deg",
+                    std::acos(dot) * 180.0f / std::numbers::pi_v<float>, lungeAngle_);
+            }
         }
 
         ImGui::TreePop();

@@ -18,10 +18,10 @@
     0.0
   ],
   "frequency": 0.05000000074505806,
-  "frequencyTime": 0.018065761774778366,
+  "frequencyTime": 0.02237972803413868,
   "isActive": true,
   "isEmitting": false,
-  "isNormalize": false,
+  "isNormalize": true,
   "isRandomRotateZ": false,
   "isTemporary": false,
   "lifeTimeRange": [
@@ -42,7 +42,7 @@
   ],
   "noiseScale": 0.3889999985694885,
   "noiseStrength": 0.0026000000070780516,
-  "particleCount": 30,
+  "particleCount": 40,
   "particleRadius": 0.30000001192092896,
   "position": [
     0.0,
@@ -60,6 +60,10 @@
   ],
   "spawnLocation": 2,
   "spawnLock": false,
+  "speedRange": [
+    0.20000000298023224,
+    0.30000001192092896
+  ],
   "startColor": [
     0.0,
     0.0,

@@ -27,7 +27,7 @@
         "Combo3_SwingAngle": 6.283180236816406,
         "Combo3_SwingDirection": -1.0,
         "LungeAngle": 60.0,
-        "LungeMaxDistance": 25.0,
+        "LungeMaxDistance": 20.0,
         "MaxCombo": 4,
         "MoveTime": 0.800000011920929,
         "RecoveryTime": 0.5,

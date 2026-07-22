@@ -26,7 +26,7 @@ void MyGame::Initialize()
 {
     winApp_->SetWindowSize(1920, 1080);
 
-    winApp_->SetWindowTitle(L"LE4A_12_キョウ_ゲンソ_Slash");
+    winApp_->SetWindowTitle(L"Slash");
 
     TakoFramework::Initialize();
 

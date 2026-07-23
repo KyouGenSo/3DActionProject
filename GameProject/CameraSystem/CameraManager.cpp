@@ -10,7 +10,7 @@ std::unique_ptr<CameraManager> CameraManager::instance_ = nullptr;
 
 CameraManager* CameraManager::GetInstance() {
     if (!instance_) {
-        instance_ = std::unique_ptr<CameraManager>(new CameraManager());
+        instance_ = std::make_unique<CameraManager>(Token{});
     }
     return instance_.get();
 }

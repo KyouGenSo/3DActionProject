@@ -107,10 +107,14 @@ public: //メンバー関数
     std::string GetDebugInfo() const;
 
 private: //非公開関数
-    CameraManager() = default;
+    struct Token {};  ///< 外部からの直接生成を防ぐ生成キー
     ~CameraManager() = default;
     friend struct std::default_delete<CameraManager>;
 
+public:
+    explicit CameraManager(Token) {}
+
+private:
     void SortControllersByPriority();
 
     /// <summary>

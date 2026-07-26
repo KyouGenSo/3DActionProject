@@ -2,11 +2,29 @@
     "animation_name": "over",
     "blend_duration": 0.5,
     "duration": 5.0,
+    "global_bezier_p1": [
+        0.41999998688697815,
+        0.0
+    ],
+    "global_bezier_p2": [
+        0.5799999833106995,
+        1.0
+    ],
+    "global_easing": "LINEAR",
     "keyframes": [
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "TARGET_RELATIVE",
             "fov": 0.45378562808036804,
             "interpolation": "EASE_OUT",
+            "pathType": "LINEAR",
             "position": [
                 0.0,
                 5.0,
@@ -20,9 +38,18 @@
             "time": 0.0
         },
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "TARGET_RELATIVE",
             "fov": 0.45378562808036804,
             "interpolation": "LINEAR",
+            "pathType": "LINEAR",
             "position": [
                 -23.0,
                 2.5999999046325684,
@@ -36,9 +63,18 @@
             "time": 0.800000011920929
         },
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "TARGET_RELATIVE",
             "fov": 0.8726646304130554,
             "interpolation": "EASE_IN_OUT",
+            "pathType": "LINEAR",
             "position": [
                 0.0,
                 -0.699999988079071,
@@ -52,9 +88,18 @@
             "time": 1.5
         },
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "TARGET_RELATIVE",
             "fov": 0.8726646304130554,
             "interpolation": "LINEAR",
+            "pathType": "LINEAR",
             "position": [
                 0.0,
                 -0.699999988079071,
@@ -68,9 +113,18 @@
             "time": 5.0
         },
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "TARGET_RELATIVE",
             "fov": 0.45378562808036804,
             "interpolation": "EASE_OUT",
+            "pathType": "LINEAR",
             "position": [
                 -23.0,
                 2.5999999046325684,
@@ -84,9 +138,18 @@
             "time": 5.0
         },
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "TARGET_RELATIVE",
             "fov": 0.45378562808036804,
             "interpolation": "EASE_OUT",
+            "pathType": "LINEAR",
             "position": [
                 -23.0,
                 2.5999999046325684,
@@ -102,5 +165,6 @@
     ],
     "loop": false,
     "play_speed": 1.0,
-    "start_mode": 1
+    "start_mode": 1,
+    "timing_mode": "UNIFIED_WARP"
 }

@@ -17,6 +17,9 @@ class CameraAnimationHistory;
 /// タイムライン・カーブ・インスペクターを統合したカメラアニメーション編集 UI
 /// </summary>
 class CameraAnimationEditor {
+private: //定数
+    static constexpr int kPathDivision = 24;    ///< 経路線の描画で1区間を何本の線分に分けるか
+
 public: //メンバー関数
     CameraAnimationEditor();
     ~CameraAnimationEditor();
@@ -60,6 +63,11 @@ private: //非公開関数
     void DrawPlaybackControls();
 
     /// <summary>
+    /// 編集中アニメーションの位置経路を Draw2D で3D空間へ描画
+    /// </summary>
+    void DrawPathVisualization();
+
+    /// <summary>
     /// 時刻をグリッド間隔へ丸める
     /// </summary>
     /// <param name="time">入力時刻（秒）</param>
@@ -73,7 +81,8 @@ private: //非公開関数
     void Redo();
 
 private: //メンバー変数
-    bool isOpen_ = false;
+    bool isOpen_   = false;
+    bool showPath_ = true;    ///< カメラ経路を3D空間に線で表示するか
 
     //編集対象
     CameraAnimation*                 animation_  = nullptr;

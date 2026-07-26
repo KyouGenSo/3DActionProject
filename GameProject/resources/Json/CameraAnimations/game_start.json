@@ -2,11 +2,29 @@
     "animation_name": "game_start",
     "blend_duration": 0.5,
     "duration": 3.0,
+    "global_bezier_p1": [
+        0.41999998688697815,
+        0.0
+    ],
+    "global_bezier_p2": [
+        0.5799999833106995,
+        1.0
+    ],
+    "global_easing": "LINEAR",
     "keyframes": [
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "WORLD",
             "fov": 0.1745329350233078,
             "interpolation": "EASE_OUT",
+            "pathType": "LINEAR",
             "position": [
                 0.0,
                 0.4000000059604645,
@@ -20,9 +38,18 @@
             "time": 0.0
         },
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "WORLD",
             "fov": 0.44999998807907104,
             "interpolation": "EASE_IN",
+            "pathType": "LINEAR",
             "position": [
                 0.0,
                 6.5,
@@ -36,9 +63,18 @@
             "time": 1.5
         },
         {
+            "bezierP1": [
+                0.41999998688697815,
+                0.0
+            ],
+            "bezierP2": [
+                0.5799999833106995,
+                1.0
+            ],
             "coordinateType": "WORLD",
             "fov": 0.44999998807907104,
             "interpolation": "EASE_OUT",
+            "pathType": "LINEAR",
             "position": [
                 0.0,
                 87.99998474121094,
@@ -54,5 +90,6 @@
     ],
     "loop": false,
     "play_speed": 1.0,
-    "start_mode": 0
+    "start_mode": 0,
+    "timing_mode": "UNIFIED_WARP"
 }

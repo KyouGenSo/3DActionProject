@@ -8,6 +8,7 @@
 #include "../Controller/CameraAnimationController.h"
 #include "Vec3Func.h"
 #include "ImGuiManager.h"
+#include "Draw2D.h"
 #include <algorithm>
 #include <numbers>
 #include <sstream>
@@ -72,6 +73,8 @@ void CameraAnimationEditor::Draw() {
 
     DrawMenuBar();
 
+    DrawPathVisualization();
+
     if (controller_) {
         DrawAnimationSelector();
     }
@@ -113,6 +116,38 @@ void CameraAnimationEditor::Draw() {
     DrawStatusBar();
 
     ImGui::End();
+}
+
+void CameraAnimationEditor::DrawPathVisualization() {
+    if (!showPath_ || !animation_ || animation_->GetKeyframeCount() < 2) {
+        return;
+    }
+
+    auto* draw2D = Draw2D::GetInstance();
+    const Vector4 pathColor = { 0.2f, 0.9f, 0.9f, 1.0f };
+    const Vector4 keyframeColor = { 1.0f, 0.8f, 0.2f, 1.0f };
+    const Vector4 selectedColor = { 1.0f, 0.2f, 0.2f, 1.0f };
+
+    // 実際の再生と同じ関数で位置を計算して線を引く（表示と再生のズレを防ぐ）
+    for (size_t i = 0; i + 1 < animation_->GetKeyframeCount(); ++i) {
+        float t1 = animation_->GetKeyframe(i).time;
+        float t2 = animation_->GetKeyframe(i + 1).time;
+
+        Vector3 prevPos = animation_->EvaluateWorldPositionAtTime(t1);
+        for (int step = 1; step <= kPathDivision; ++step) {
+            float time = t1 + (t2 - t1) * static_cast<float>(step) / kPathDivision;
+            Vector3 pos = animation_->EvaluateWorldPositionAtTime(time);
+            draw2D->DrawLine(prevPos, pos, pathColor);
+            prevPos = pos;
+        }
+    }
+
+    for (size_t i = 0; i < animation_->GetKeyframeCount(); ++i) {
+        bool isSelected = std::find(selectedKeyframes_.begin(), selectedKeyframes_.end(),
+            static_cast<int>(i)) != selectedKeyframes_.end();
+        Vector3 pos = animation_->EvaluateWorldPositionAtTime(animation_->GetKeyframe(i).time);
+        draw2D->DrawSphere(pos, 0.15f, isSelected ? selectedColor : keyframeColor, 8);
+    }
 }
 
 void CameraAnimationEditor::Update(float deltaTime) {
@@ -261,6 +296,10 @@ void CameraAnimationEditor::DrawMenuBar() {
             }
         }
 
+        ImGui::MenuItem("Show Path", nullptr, &showPath_);
+
+        ImGui::Separator();
+
         if (ImGui::MenuItem("Delete Selected", "Delete", false, !selectedKeyframes_.empty())) {
             DeleteSelectedKeyframes();
         }
@@ -395,6 +434,35 @@ void CameraAnimationEditor::DrawPlaybackControls() {
     }
 
     ImGui::PopStyleVar();
+
+    ImGui::SetNextItemWidth(140);
+    int timingMode = static_cast<int>(animation_->GetTimingMode());
+    if (ImGui::Combo("Timing", &timingMode, "Per Segment\0Unified Warp\0Constant Speed\0")) {
+        animation_->SetTimingMode(static_cast<CameraAnimation::TimingMode>(timingMode));
+    }
+
+    if (animation_->GetTimingMode() != CameraAnimation::TimingMode::PER_SEGMENT) {
+        ImGui::SameLine();
+        ImGui::SetNextItemWidth(120);
+        int globalEasing = static_cast<int>(animation_->GetGlobalEasing());
+        if (ImGui::Combo("Global Easing", &globalEasing, "Linear\0Ease In\0Ease Out\0Ease In-Out\0Cubic Bezier\0")) {
+            animation_->SetGlobalEasing(static_cast<CameraKeyframe::InterpolationType>(globalEasing));
+        }
+
+        if (animation_->GetGlobalEasing() == CameraKeyframe::InterpolationType::CUBIC_BEZIER) {
+            Vector2 p1 = animation_->GetGlobalBezierP1();
+            Vector2 p2 = animation_->GetGlobalBezierP2();
+            ImGui::SetNextItemWidth(120);
+            if (ImGui::DragFloat2("Global P1", &p1.x, 0.01f)) {
+                animation_->SetGlobalBezierP1(p1);
+            }
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(120);
+            if (ImGui::DragFloat2("Global P2", &p2.x, 0.01f)) {
+                animation_->SetGlobalBezierP2(p2);
+            }
+        }
+    }
 
     // スクラブ用タイムラインスライダー
     float displayTime = animation_->GetPlaybackTime();
@@ -676,11 +744,41 @@ void CameraAnimationEditor::DrawInspectorPanel() {
                     changed = true;
                 }
 
-                const char* interpTypes[] = { "Linear", "Ease In", "Ease Out", "Ease In-Out" };
+                const char* interpTypes[] = { "Linear", "Ease In", "Ease Out", "Ease In-Out", "Cubic Bezier" };
                 int currentType = static_cast<int>(kf.interpolation);
-                if (ImGui::Combo("Interpolation", &currentType, interpTypes, 4)) {
+                if (ImGui::Combo("Interpolation", &currentType, interpTypes, 5)) {
                     kf.interpolation = static_cast<CameraKeyframe::InterpolationType>(currentType);
                     changed = true;
+                }
+
+                if (animation_->GetTimingMode() != CameraAnimation::TimingMode::PER_SEGMENT) {
+                    ImGui::TextDisabled("Interpolation is ignored in current timing mode");
+                }
+
+                if (kf.interpolation == CameraKeyframe::InterpolationType::CUBIC_BEZIER) {
+                    if (ImGui::DragFloat2("Bezier P1", &kf.bezierP1.x, 0.01f)) {
+                        kf.bezierP1.x = std::clamp(kf.bezierP1.x, 0.0f, 1.0f);
+                        changed = true;
+                    }
+                    if (ImGui::DragFloat2("Bezier P2", &kf.bezierP2.x, 0.01f)) {
+                        kf.bezierP2.x = std::clamp(kf.bezierP2.x, 0.0f, 1.0f);
+                        changed = true;
+                    }
+                }
+
+                const char* pathTypes[] = { "Linear", "Catmull-Rom" };
+                int currentPathType = static_cast<int>(kf.pathType);
+                if (ImGui::Combo("Path Type", &currentPathType, pathTypes, 2)) {
+                    kf.pathType = static_cast<CameraKeyframe::PathType>(currentPathType);
+                    changed = true;
+                }
+
+                if (ImGui::Button("Apply Path to All Keyframes")) {
+                    for (size_t i = 0; i < animation_->GetKeyframeCount(); ++i) {
+                        CameraKeyframe pathKf = animation_->GetKeyframe(i);
+                        pathKf.pathType = kf.pathType;
+                        animation_->EditKeyframe(i, pathKf);
+                    }
                 }
 
                 if (changed) {

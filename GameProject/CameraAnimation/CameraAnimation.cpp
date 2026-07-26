@@ -49,7 +49,7 @@ void CameraAnimation::Update(float deltaTime) {
         // 現在のカメラ状態から最初のキーフレームまで補間
         if (!keyframes_.empty()) {
             const CameraKeyframe& firstKf = keyframes_[0];
-            float t = ApplyEasing(blendProgress_, CameraKeyframe::InterpolationType::EASE_IN_OUT);
+            float t = Ease::InOutQuad(blendProgress_);
 
             Vector3 targetPosition = firstKf.position;
             if (firstKf.coordinateType == CameraKeyframe::CoordinateType::TARGET_RELATIVE && targetTransform_) {
@@ -111,22 +111,7 @@ void CameraAnimation::Update(float deltaTime) {
         }
     }
 
-    size_t prevIndex = 0, nextIndex = 0;
-    if (FindKeyframeIndices(currentTime_, prevIndex, nextIndex)) {
-        const CameraKeyframe& prev = keyframes_[prevIndex];
-        const CameraKeyframe& next = keyframes_[nextIndex];
-
-        float timeDiff = next.time - prev.time;
-        float t = 0.0f;
-        if (timeDiff > 0.0f) {
-            t = (currentTime_ - prev.time) / timeDiff;
-            t = std::clamp(t, 0.0f, 1.0f);
-
-            t = ApplyEasing(t, prev.interpolation);
-        }
-
-        InterpolateKeyframes(prev, next, t);
-    }
+    ApplyAnimationAtTime(currentTime_);
 }
 
 void CameraAnimation::AddKeyframe(const CameraKeyframe& keyframe) {
@@ -192,6 +177,7 @@ void CameraAnimation::ClearKeyframes() {
     duration_ = 0.0f;
     currentTime_ = 0.0f;
     playState_ = PlayState::STOPPED;
+    arcLengthDirty_ = true;
 }
 
 void CameraAnimation::Play() {
@@ -265,22 +251,15 @@ void CameraAnimation::SetCurrentTime(float time) {
         return;
     }
 
-    size_t prevIndex = 0, nextIndex = 0;
-    if (FindKeyframeIndices(currentTime_, prevIndex, nextIndex)) {
-        const CameraKeyframe& prev = keyframes_[prevIndex];
-        const CameraKeyframe& next = keyframes_[nextIndex];
+    ApplyAnimationAtTime(currentTime_);
+}
 
-        float timeDiff = next.time - prev.time;
-        float t = 0.0f;
-        if (timeDiff > 0.0f) {
-            t = (currentTime_ - prev.time) / timeDiff;
-            t = std::clamp(t, 0.0f, 1.0f);
+void CameraAnimation::SetGlobalBezierP1(const Tako::Vector2& p1) {
+    globalBezierP1_ = { std::clamp(p1.x, 0.0f, 1.0f), p1.y };
+}
 
-            t = ApplyEasing(t, prev.interpolation);
-        }
-
-        InterpolateKeyframes(prev, next, t);
-    }
+void CameraAnimation::SetGlobalBezierP2(const Tako::Vector2& p2) {
+    globalBezierP2_ = { std::clamp(p2.x, 0.0f, 1.0f), p2.y };
 }
 
 void CameraAnimation::SortKeyframes() {
@@ -291,6 +270,9 @@ void CameraAnimation::SortKeyframes() {
 }
 
 void CameraAnimation::UpdateDuration() {
+    // キーフレームが変わると必ずここを通るので、弧長テーブルの作り直しフラグもここで立てる
+    arcLengthDirty_ = true;
+
     if (keyframes_.empty()) {
         duration_ = 0.0f;
         return;
@@ -330,12 +312,119 @@ bool CameraAnimation::FindKeyframeIndices(float time, size_t& prevIndex, size_t&
     return true;
 }
 
-void CameraAnimation::InterpolateKeyframes(const CameraKeyframe& prev, const CameraKeyframe& next, float t) {
+void CameraAnimation::ApplyAnimationAtTime(float time) {
+    size_t prevIndex = 0, nextIndex = 0;
+    float t = 0.0f;
+    if (!ResolveSegmentAtTime(time, prevIndex, nextIndex, t)) {
+        return;
+    }
+
+    InterpolateKeyframes(prevIndex, nextIndex, t);
+}
+
+bool CameraAnimation::ResolveSegmentAtTime(float time, size_t& prevIndex, size_t& nextIndex, float& t) const {
+    if (keyframes_.size() < 2) {
+        return false;
+    }
+
+    switch (timingMode_) {
+    case TimingMode::UNIFIED_WARP:
+    case TimingMode::CONSTANT_SPEED: {
+        float progress = (duration_ > 0.0f) ? std::clamp(time / duration_, 0.0f, 1.0f) : 0.0f;
+        progress = ApplyEasing(progress, globalEasing_, globalBezierP1_, globalBezierP2_);
+
+        if (timingMode_ == TimingMode::CONSTANT_SPEED) {
+            EnsureArcLengthTable();
+            if (totalArcLength_ > 0.0f) {
+                // 「スタートから何 m 進んだ地点か」を先に決め、累積距離表からその地点が属する区間と区間内の進み具合を逆引きする
+                float targetLength = progress * totalArcLength_;
+                auto it = std::lower_bound(arcLengths_.begin(), arcLengths_.end(), targetLength);
+                size_t k = static_cast<size_t>(it - arcLengths_.begin());
+                if (k >= arcLengths_.size()) {
+                    k = arcLengths_.size() - 1;
+                }
+
+                float prevLength = (k > 0) ? arcLengths_[k - 1] : 0.0f;
+                float spanLength = arcLengths_[k] - prevLength;
+                float frac = (spanLength > 0.0f) ? (targetLength - prevLength) / spanLength : 0.0f;
+
+                prevIndex = k / kArcSamplesPerSegment;
+                nextIndex = prevIndex + 1;
+                t = (static_cast<float>(k % kArcSamplesPerSegment) + frac) / static_cast<float>(kArcSamplesPerSegment);
+                t = std::clamp(t, 0.0f, 1.0f);
+                return true;
+            }
+            // 経路の長さが 0（全キーフレームが同位置）だと距離で割れないため、時刻ベースの補間で代用
+        }
+
+        // イージングはアニメ全体の進行度にだけ掛けて時刻を変換する。
+        // 区間ごとには掛けないので、キーフレームの境目で速度が 0 にならない
+        float warpedTime = progress * duration_;
+        if (!FindKeyframeIndices(warpedTime, prevIndex, nextIndex)) {
+            return false;
+        }
+        const CameraKeyframe& prev = keyframes_[prevIndex];
+        const CameraKeyframe& next = keyframes_[nextIndex];
+        float timeDiff = next.time - prev.time;
+        t = (timeDiff > 0.0f) ? std::clamp((warpedTime - prev.time) / timeDiff, 0.0f, 1.0f) : 0.0f;
+        return true;
+    }
+
+    case TimingMode::PER_SEGMENT:
+    default: {
+        if (!FindKeyframeIndices(time, prevIndex, nextIndex)) {
+            return false;
+        }
+        const CameraKeyframe& prev = keyframes_[prevIndex];
+        const CameraKeyframe& next = keyframes_[nextIndex];
+        float timeDiff = next.time - prev.time;
+        t = 0.0f;
+        if (timeDiff > 0.0f) {
+            t = std::clamp((time - prev.time) / timeDiff, 0.0f, 1.0f);
+            t = ApplyEasing(t, prev);
+        }
+        return true;
+    }
+    }
+}
+
+void CameraAnimation::EnsureArcLengthTable() const {
+    if (!arcLengthDirty_) {
+        return;
+    }
+    arcLengthDirty_ = false;
+    arcLengths_.clear();
+    totalArcLength_ = 0.0f;
+
+    if (keyframes_.size() < 2) {
+        return;
+    }
+
+    // 各区間を細かい直線に分割し、長さを足し込んで累積距離表を作る
+    arcLengths_.reserve((keyframes_.size() - 1) * kArcSamplesPerSegment);
+    float accumulated = 0.0f;
+    for (size_t i = 0; i + 1 < keyframes_.size(); ++i) {
+        Vector3 prevPos = EvaluateSegmentPosition(i, i + 1, 0.0f);
+        for (int j = 1; j <= kArcSamplesPerSegment; ++j) {
+            float sampleT = static_cast<float>(j) / kArcSamplesPerSegment;
+            Vector3 pos = EvaluateSegmentPosition(i, i + 1, sampleT);
+            accumulated += static_cast<float>(Vec3::Length(Vec3::Subtract(pos, prevPos)));
+            arcLengths_.push_back(accumulated);
+            prevPos = pos;
+        }
+    }
+    totalArcLength_ = accumulated;
+}
+
+void CameraAnimation::InterpolateKeyframes(size_t prevIndex, size_t nextIndex, float t) {
     if (!camera_) {
         return;
     }
 
-    Vector3 position = Vec3::Lerp(prev.position, next.position, t);
+    const CameraKeyframe& prev = keyframes_[prevIndex];
+    const CameraKeyframe& next = keyframes_[nextIndex];
+
+    Vector3 position = EvaluateSegmentPosition(prevIndex, nextIndex, t);
 
     // 座標系が混在する場合は prev 側を優先
     CameraKeyframe::CoordinateType coordinateType = prev.coordinateType;
@@ -358,7 +447,51 @@ void CameraAnimation::InterpolateKeyframes(const CameraKeyframe& prev, const Cam
     camera_->SetFovY(fov);
 }
 
-float CameraAnimation::ApplyEasing(float t, CameraKeyframe::InterpolationType type) const {
+Vector3 CameraAnimation::EvaluateSegmentPosition(size_t prevIndex, size_t nextIndex, float easedT) const {
+    const CameraKeyframe& prev = keyframes_[prevIndex];
+    const CameraKeyframe& next = keyframes_[nextIndex];
+
+    if (prev.pathType != CameraKeyframe::PathType::CATMULL_ROM || prevIndex == nextIndex) {
+        return Vec3::Lerp(prev.position, next.position, easedT);
+    }
+
+    // 曲線の形を決めるには区間の外側の点 p0/p3 も必要。
+    // 隣が無い・座標系が違うときは端の点で代用する
+    Vector3 p0 = (prevIndex >= 1 && keyframes_[prevIndex - 1].coordinateType == prev.coordinateType)
+        ? keyframes_[prevIndex - 1].position : prev.position;
+    Vector3 p3 = (nextIndex + 1 < keyframes_.size() && keyframes_[nextIndex + 1].coordinateType == prev.coordinateType)
+        ? keyframes_[nextIndex + 1].position : next.position;
+
+    return Vec3::CatmullRom(p0, prev.position, next.position, p3, easedT);
+}
+
+Vector3 CameraAnimation::EvaluateWorldPositionAtTime(float time) const {
+    if (keyframes_.empty()) {
+        return Vector3(0.0f, 0.0f, 0.0f);
+    }
+
+    Vector3 position = keyframes_[0].position;
+    CameraKeyframe::CoordinateType coordinateType = keyframes_[0].coordinateType;
+
+    size_t prevIndex = 0, nextIndex = 0;
+    float t = 0.0f;
+    if (ResolveSegmentAtTime(time, prevIndex, nextIndex, t)) {
+        position = EvaluateSegmentPosition(prevIndex, nextIndex, t);
+        coordinateType = keyframes_[prevIndex].coordinateType;
+    }
+
+    if (coordinateType == CameraKeyframe::CoordinateType::TARGET_RELATIVE && targetTransform_) {
+        position = Vec3::Add(targetTransform_->translate, position);
+    }
+
+    return position;
+}
+
+float CameraAnimation::ApplyEasing(float t, const CameraKeyframe& kf) {
+    return ApplyEasing(t, kf.interpolation, kf.bezierP1, kf.bezierP2);
+}
+
+float CameraAnimation::ApplyEasing(float t, CameraKeyframe::InterpolationType type, const Tako::Vector2& p1, const Tako::Vector2& p2) {
     switch (type) {
     case CameraKeyframe::InterpolationType::LINEAR:
         return Ease::Linear(t);
@@ -373,8 +506,7 @@ float CameraAnimation::ApplyEasing(float t, CameraKeyframe::InterpolationType ty
         return Ease::InOutQuad(t);
 
     case CameraKeyframe::InterpolationType::CUBIC_BEZIER:
-        // TODO: カスタムベジェカーブ実装。現在は線形にフォールバック
-        return t;
+        return Ease::CubicBezier(t, p1.x, p1.y, p2.x, p2.y);
 
     default:
         return t;
@@ -514,6 +646,40 @@ bool CameraAnimation::LoadFromJson(const std::string& filepath) {
         startMode_ = static_cast<StartMode>(startModeInt);
         blendDuration_ = json.value("blend_duration", CameraConfig::Animation::DEFAULT_BLEND_DURATION);
 
+        std::string timingModeStr = json.value("timing_mode", "PER_SEGMENT");
+        if (timingModeStr == "UNIFIED_WARP") {
+            timingMode_ = TimingMode::UNIFIED_WARP;
+        }
+        else if (timingModeStr == "CONSTANT_SPEED") {
+            timingMode_ = TimingMode::CONSTANT_SPEED;
+        }
+        else {
+            timingMode_ = TimingMode::PER_SEGMENT;
+        }
+
+        if (json.contains("global_easing")) {
+            globalEasing_ = json.at("global_easing").get<CameraKeyframe::InterpolationType>();
+        }
+        else {
+            globalEasing_ = CameraKeyframe::InterpolationType::LINEAR;
+        }
+
+        if (json.contains("global_bezier_p1")) {
+            auto p1 = json.at("global_bezier_p1");
+            globalBezierP1_ = { p1[0].get<float>(), p1[1].get<float>() };
+        }
+        else {
+            globalBezierP1_ = { 0.42f, 0.0f };
+        }
+
+        if (json.contains("global_bezier_p2")) {
+            auto p2 = json.at("global_bezier_p2");
+            globalBezierP2_ = { p2[0].get<float>(), p2[1].get<float>() };
+        }
+        else {
+            globalBezierP2_ = { 0.58f, 1.0f };
+        }
+
         keyframes_.clear();
 
         if (json.contains("keyframes")) {
@@ -551,6 +717,18 @@ bool CameraAnimation::SaveToJson(const std::string& filepath) const {
 
         json["start_mode"] = static_cast<int>(startMode_);
         json["blend_duration"] = blendDuration_;
+
+        const char* timingModeStr = "PER_SEGMENT";
+        if (timingMode_ == TimingMode::UNIFIED_WARP) {
+            timingModeStr = "UNIFIED_WARP";
+        }
+        else if (timingMode_ == TimingMode::CONSTANT_SPEED) {
+            timingModeStr = "CONSTANT_SPEED";
+        }
+        json["timing_mode"] = timingModeStr;
+        json["global_easing"] = globalEasing_;
+        json["global_bezier_p1"] = { globalBezierP1_.x, globalBezierP1_.y };
+        json["global_bezier_p2"] = { globalBezierP2_.x, globalBezierP2_.y };
 
         json["keyframes"] = nlohmann::json::array();
         for (const auto& kf : keyframes_) {
@@ -629,6 +807,28 @@ void CameraAnimation::DrawImGui() {
         CameraConfig::Animation::MIN_PLAY_SPEED,
         CameraConfig::Animation::MAX_PLAY_SPEED, "%.2f");
 
+    int timingMode = static_cast<int>(timingMode_);
+    if (ImGui::Combo("Timing Mode", &timingMode,
+        "PER_SEGMENT\0UNIFIED_WARP\0CONSTANT_SPEED\0")) {
+        timingMode_ = static_cast<TimingMode>(timingMode);
+    }
+
+    if (timingMode_ != TimingMode::PER_SEGMENT) {
+        int globalEasing = static_cast<int>(globalEasing_);
+        if (ImGui::Combo("Global Easing", &globalEasing,
+            "LINEAR\0EASE_IN\0EASE_OUT\0EASE_IN_OUT\0CUBIC_BEZIER\0")) {
+            globalEasing_ = static_cast<CameraKeyframe::InterpolationType>(globalEasing);
+        }
+        if (globalEasing_ == CameraKeyframe::InterpolationType::CUBIC_BEZIER) {
+            if (ImGui::DragFloat2("Global Bezier P1", &globalBezierP1_.x, 0.01f)) {
+                globalBezierP1_.x = std::clamp(globalBezierP1_.x, 0.0f, 1.0f);
+            }
+            if (ImGui::DragFloat2("Global Bezier P2", &globalBezierP2_.x, 0.01f)) {
+                globalBezierP2_.x = std::clamp(globalBezierP2_.x, 0.0f, 1.0f);
+            }
+        }
+    }
+
     ImGui::Separator();
 
     if (ImGui::CollapsingHeader("Keyframe Management")) {
@@ -647,7 +847,7 @@ void CameraAnimation::DrawImGui() {
             ImGui::DragFloat("New Keyframe Time", &newKeyTime,
                 CameraConfig::Animation::KEYFRAME_DRAG_STEP, 0.0f, FLT_MAX);
             ImGui::Combo("Interpolation", &interpType,
-                "LINEAR\0EASE_IN\0EASE_OUT\0EASE_IN_OUT\0");
+                "LINEAR\0EASE_IN\0EASE_OUT\0EASE_IN_OUT\0CUBIC_BEZIER\0");
             ImGui::Combo("Coordinate Type", &coordType,
                 "WORLD\0TARGET_RELATIVE\0");
 
@@ -796,8 +996,22 @@ void CameraAnimation::DrawImGui() {
 
             int interpType = static_cast<int>(tempKeyframe_.interpolation);
             if (ImGui::Combo("Interpolation Type", &interpType,
-                "LINEAR\0EASE_IN\0EASE_OUT\0EASE_IN_OUT\0")) {
+                "LINEAR\0EASE_IN\0EASE_OUT\0EASE_IN_OUT\0CUBIC_BEZIER\0")) {
                 tempKeyframe_.interpolation = static_cast<CameraKeyframe::InterpolationType>(interpType);
+            }
+
+            if (tempKeyframe_.interpolation == CameraKeyframe::InterpolationType::CUBIC_BEZIER) {
+                if (ImGui::DragFloat2("Bezier P1", &tempKeyframe_.bezierP1.x, 0.01f)) {
+                    tempKeyframe_.bezierP1.x = std::clamp(tempKeyframe_.bezierP1.x, 0.0f, 1.0f);
+                }
+                if (ImGui::DragFloat2("Bezier P2", &tempKeyframe_.bezierP2.x, 0.01f)) {
+                    tempKeyframe_.bezierP2.x = std::clamp(tempKeyframe_.bezierP2.x, 0.0f, 1.0f);
+                }
+            }
+
+            int pathType = static_cast<int>(tempKeyframe_.pathType);
+            if (ImGui::Combo("Path Type", &pathType, "LINEAR\0CATMULL_ROM\0")) {
+                tempKeyframe_.pathType = static_cast<CameraKeyframe::PathType>(pathType);
             }
 
             if (ImGui::Button("Apply Changes")) {

@@ -30,15 +30,6 @@ public: //構造体
         BOTH
     };
 
-private: //構造体
-    struct TangentData {
-        float leftLength = 0.3f;
-        float leftAngle = 0.0f;
-        float rightLength = 0.3f;
-        float rightAngle = 0.0f;
-        bool broken = false;                     ///< 左右タンジェントを分離
-    };
-
 public: //メンバー関数
     CameraAnimationCurveEditor();
     ~CameraAnimationCurveEditor();
@@ -59,7 +50,10 @@ private: //非公開関数
     void DrawAxes();
     void DrawCurve(CurveType curveType);
     void DrawKeyPoint(int index, float x, float y, bool isSelected);
-    void DrawTangentHandle(float centerX, float centerY, float handleX, float handleY, bool isLeft);
+    /// <summary>
+    /// 選択中キーフレームの区間が CUBIC_BEZIER のとき、タイミング曲線の制御点をドラッグ用ハンドルとして描画
+    /// </summary>
+    void DrawBezierHandles(CurveType curveType);
     void HandleMouseInput();
     void DrawCurveProperties();
     void DrawEasingPresets();
@@ -95,16 +89,6 @@ private: //非公開関数
     /// <param name="type">設定する成分（位置/回転の各軸または FOV）</param>
     /// <param name="value">設定値</param>
     void SetCurveValue(CameraKeyframe& kf, CurveType type, float value);
-
-    float CalculateBezier(float t, float p0, float p1, float p2, float p3) const;
-
-    /// <summary>
-    /// 補間係数 t にイージングを適用
-    /// </summary>
-    /// <param name="t">入力係数（0.0～1.0）</param>
-    /// <param name="type">補間方法</param>
-    /// <returns>イージング後の係数（通常0.0～1.0）</returns>
-    float ApplyEasing(float t, CameraKeyframe::InterpolationType type) const;
 
     /// <summary>
     /// 時間・値をグリッド間隔へ丸める
@@ -149,12 +133,9 @@ private: //メンバー変数
     //表示設定
     bool showGrid_        = true;
     bool showAxes_        = true;
-    bool showTangents_    = true;
+    bool showTangents_    = true;  ///< ベジェ制御点ハンドルの表示
     bool showValues_      = true;
     int  curveResolution_ = 50;    ///< 1区間あたりの分割数
-
-    //タンジェント設定（将来的にベジェカーブ実装用）
-    std::vector<TangentData> tangents_;
 };
 
 #endif // _DEBUG

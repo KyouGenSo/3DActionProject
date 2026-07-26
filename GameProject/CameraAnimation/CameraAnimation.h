@@ -12,6 +12,9 @@
 /// キーフレーム間補間でカメラを動かすアニメーション
 /// </summary>
 class CameraAnimation {
+private: //定数
+    static constexpr int kArcSamplesPerSegment = 32;    ///< 経路の長さを測るとき1区間を何分割するか
+
 public: //構造体
     enum class PlayState {
         STOPPED,
@@ -22,6 +25,12 @@ public: //構造体
     enum class StartMode {
         JUMP_CUT,        ///< 即座に最初のキーフレームへ
         SMOOTH_BLEND     ///< 現在位置から最初のキーフレームまで補間
+    };
+
+    enum class TimingMode {
+        PER_SEGMENT,     ///< キーフレーム区間ごとにイージングを掛ける（各キーフレームで減速・停止しやすい）
+        UNIFIED_WARP,    ///< 各キーフレームの到達時刻は守り、イージングはアニメ全体に1本だけ掛ける（区間の境目で止まらない）
+        CONSTANT_SPEED   ///< 経路上を常に一定速度で移動する。中間キーフレームの時刻は無視され、位置は経路の形にだけ使われる
     };
 
 public: //メンバー関数
@@ -80,6 +89,31 @@ public: //メンバー関数
     bool LoadFromJson(const std::string& filepath);
     bool SaveToJson(const std::string& filepath) const;
 
+    /// <summary>
+    /// 指定時刻にカメラが居るべきワールド座標を返す（TARGET_RELATIVE はターゲット位置を加算済み）
+    /// </summary>
+    /// <param name="time">対象時刻（秒）</param>
+    /// <returns>ワールド位置。キーフレームが無い場合はゼロベクトル</returns>
+    [[nodiscard]] Tako::Vector3 EvaluateWorldPositionAtTime(float time) const;
+
+    /// <summary>
+    /// 補間係数 t にキーフレームのイージングを適用（CUBIC_BEZIER は制御点で評価）
+    /// </summary>
+    /// <param name="t">入力係数（0.0～1.0）</param>
+    /// <param name="kf">補間方法と制御点の参照元キーフレーム</param>
+    /// <returns>イージング後の係数</returns>
+    static float ApplyEasing(float t, const CameraKeyframe& kf);
+
+    /// <summary>
+    /// 補間係数 t にイージングを適用（CUBIC_BEZIER は p1/p2 の制御点で評価）
+    /// </summary>
+    /// <param name="t">入力係数（0.0～1.0）</param>
+    /// <param name="type">補間方法</param>
+    /// <param name="p1">CUBIC_BEZIER 制御点1</param>
+    /// <param name="p2">CUBIC_BEZIER 制御点2</param>
+    /// <returns>イージング後の係数</returns>
+    static float ApplyEasing(float t, CameraKeyframe::InterpolationType type, const Tako::Vector2& p1, const Tako::Vector2& p2);
+
 #ifdef _DEBUG
     void DrawImGui();
 #endif
@@ -111,6 +145,19 @@ public: //メンバー関数
     void SetStartMode(StartMode mode) { startMode_ = mode; }
     void SetBlendDuration(float duration) { blendDuration_ = duration; }
 
+    void SetTimingMode(TimingMode mode) { timingMode_ = mode; }
+    void SetGlobalEasing(CameraKeyframe::InterpolationType type) { globalEasing_ = type; }
+
+    /// <summary>
+    /// 全体イージングのベジェ制御点1。x は [0,1] に clamp
+    /// </summary>
+    void SetGlobalBezierP1(const Tako::Vector2& p1);
+
+    /// <summary>
+    /// 全体イージングのベジェ制御点2。x は [0,1] に clamp
+    /// </summary>
+    void SetGlobalBezierP2(const Tako::Vector2& p2);
+
     //==========================================================================
     //Getter
     //==========================================================================
@@ -126,6 +173,10 @@ public: //メンバー関数
     [[nodiscard]] const Tako::Transform* GetTarget() const { return targetTransform_; }
     [[nodiscard]] StartMode GetStartMode() const { return startMode_; }
     [[nodiscard]] float GetBlendDuration() const { return blendDuration_; }
+    [[nodiscard]] TimingMode GetTimingMode() const { return timingMode_; }
+    [[nodiscard]] CameraKeyframe::InterpolationType GetGlobalEasing() const { return globalEasing_; }
+    [[nodiscard]] const Tako::Vector2& GetGlobalBezierP1() const { return globalBezierP1_; }
+    [[nodiscard]] const Tako::Vector2& GetGlobalBezierP2() const { return globalBezierP2_; }
     [[nodiscard]] bool IsBlending() const { return isBlending_; }
 
     /// <summary>
@@ -147,20 +198,43 @@ private: //非公開関数
     bool FindKeyframeIndices(float time, size_t& prevIndex, size_t& nextIndex) const;
 
     /// <summary>
-    /// prev/next を係数 t で補間しカメラに適用。座標系は prev 側を採用
+    /// 指定時刻の区間を求め、イージング適用済み係数で補間してカメラへ適用
     /// </summary>
-    /// <param name="prev">補間元キーフレーム</param>
-    /// <param name="next">補間先キーフレーム</param>
-    /// <param name="t">補間係数（0.0～1.0、イージング適用後）。位置/FOVは線形、回転は Slerp</param>
-    void InterpolateKeyframes(const CameraKeyframe& prev, const CameraKeyframe& next, float t);
+    /// <param name="time">対象時刻（秒）</param>
+    void ApplyAnimationAtTime(float time);
 
     /// <summary>
-    /// 補間係数 t にイージングを適用
+    /// prevIndex/nextIndex 区間を係数 t で補間しカメラに適用。座標系は prev 側を採用
     /// </summary>
-    /// <param name="t">入力係数（0.0～1.0）</param>
-    /// <param name="type">補間方法。CUBIC_BEZIER は線形にフォールバック</param>
-    /// <returns>イージング後の係数</returns>
-    float ApplyEasing(float t, CameraKeyframe::InterpolationType type) const;
+    /// <param name="prevIndex">補間元キーフレームの添字</param>
+    /// <param name="nextIndex">補間先キーフレームの添字</param>
+    /// <param name="t">補間係数（0.0～1.0、イージング適用後）。位置は pathType に従い、FOVは線形、回転は Slerp</param>
+    void InterpolateKeyframes(size_t prevIndex, size_t nextIndex, float t);
+
+    /// <summary>
+    /// 区間内の位置を pathType に従って計算する（LINEAR は直線、CATMULL_ROM は前後の点も使った曲線）。
+    /// TARGET_RELATIVE のオフセット→ワールド変換はまだ行わない
+    /// </summary>
+    /// <param name="prevIndex">補間元キーフレームの添字</param>
+    /// <param name="nextIndex">補間先キーフレームの添字</param>
+    /// <param name="easedT">イージング適用済み補間係数（0.0～1.0）</param>
+    /// <returns>セグメント空間の位置</returns>
+    Tako::Vector3 EvaluateSegmentPosition(size_t prevIndex, size_t nextIndex, float easedT) const;
+
+    /// <summary>
+    /// 再生時刻から「どの区間を・どこまで進んだか」を timingMode_ に従って求める（出力 t はイージング適用済み）
+    /// </summary>
+    /// <param name="time">対象時刻（秒）</param>
+    /// <param name="prevIndex">出力。補間元キーフレームの添字</param>
+    /// <param name="nextIndex">出力。補間先キーフレームの添字</param>
+    /// <param name="t">出力。補間係数（0.0～1.0）</param>
+    /// <returns>キーフレームが2個以上あれば true</returns>
+    bool ResolveSegmentAtTime(float time, size_t& prevIndex, size_t& nextIndex, float& t) const;
+
+    /// <summary>
+    /// CONSTANT_SPEED 用の累積距離テーブルを、キーフレーム変更後の初回アクセス時だけ作り直す
+    /// </summary>
+    void EnsureArcLengthTable() const;
 
     /// <summary>
     /// オイラー角からクォータニオンへ変換（回転順序 Y*X*Z）
@@ -199,6 +273,17 @@ private: //メンバー変数
     float     playSpeed_   = 1.0f;                ///< 1.0 が標準
     PlayState playState_   = PlayState::STOPPED;
     bool      isLooping_   = false;
+
+    //タイミングモード（UNIFIED_WARP/CONSTANT_SPEED では区間イージングの代わりに全体へ1本掛ける）
+    TimingMode                        timingMode_     = TimingMode::PER_SEGMENT;
+    CameraKeyframe::InterpolationType globalEasing_   = CameraKeyframe::InterpolationType::LINEAR;
+    Tako::Vector2                     globalBezierP1_ = { 0.42f, 0.0f };
+    Tako::Vector2                     globalBezierP2_ = { 0.58f, 1.0f };
+
+    //弧長キャッシュ（CONSTANT_SPEED 用。経路を細かく刻んだ累積距離表。キーフレーム変更で作り直す）
+    mutable std::vector<float> arcLengths_;                ///< 経路の始点から各サンプル点までの累積距離
+    mutable float              totalArcLength_ = 0.0f;
+    mutable bool               arcLengthDirty_ = true;
 
     //ブレンド
     StartMode startMode_     = StartMode::JUMP_CUT;

@@ -1,7 +1,6 @@
 #ifdef _DEBUG
 
 #include "CameraAnimationCurveEditor.h"
-#include "EaseFunc.h"
 #include <algorithm>
 #include <cmath>
 #include <format>
@@ -26,7 +25,6 @@ CameraAnimationCurveEditor::~CameraAnimationCurveEditor() {
 
 void CameraAnimationCurveEditor::Initialize(CameraAnimation* animation) {
     animation_ = animation;
-    tangents_.clear();
     selectedKeyPoint_ = -1;
 }
 
@@ -87,6 +85,10 @@ void CameraAnimationCurveEditor::DrawGraphArea() {
         if (curveVisible_[i]) {
             DrawCurve(static_cast<CurveType>(i));
         }
+    }
+
+    if (showTangents_) {
+        DrawBezierHandles(activeCurve_);
     }
 
     HandleMouseInput();
@@ -160,7 +162,7 @@ void CameraAnimationCurveEditor::DrawCurve(CurveType curveType) {
             float t = static_cast<float>(j) / curveResolution_;
             float time = kf1.time + (kf2.time - kf1.time) * t;
 
-            float easedT = ApplyEasing(t, kf1.interpolation);
+            float easedT = CameraAnimation::ApplyEasing(t, kf1);
             float value = v1 + (v2 - v1) * easedT;
 
             ImVec2 p = ValueToGraph(time, value);
@@ -210,14 +212,44 @@ void CameraAnimationCurveEditor::DrawKeyPoint(int index, float x, float y, bool 
     }
 }
 
+void CameraAnimationCurveEditor::DrawBezierHandles(CurveType curveType) {
+    if (!animation_ || selectedKeyPoint_ < 0 ||
+        selectedKeyPoint_ + 1 >= static_cast<int>(animation_->GetKeyframeCount())) {
+        return;
+    }
+
+    const CameraKeyframe& kf1 = animation_->GetKeyframe(selectedKeyPoint_);
+    if (kf1.interpolation != CameraKeyframe::InterpolationType::CUBIC_BEZIER) {
+        return;
+    }
+
+    const CameraKeyframe& kf2 = animation_->GetKeyframe(selectedKeyPoint_ + 1);
+    float v1 = GetCurveValue(kf1, curveType);
+    float v2 = GetCurveValue(kf2, curveType);
+    float dt = kf2.time - kf1.time;
+
+    ImVec2 anchor1 = ValueToGraph(kf1.time, v1);
+    ImVec2 anchor2 = ValueToGraph(kf2.time, v2);
+    ImVec2 h1 = ValueToGraph(kf1.time + kf1.bezierP1.x * dt, v1 + kf1.bezierP1.y * (v2 - v1));
+    ImVec2 h2 = ValueToGraph(kf1.time + kf1.bezierP2.x * dt, v1 + kf1.bezierP2.y * (v2 - v1));
+
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    drawList->AddLine(anchor1, h1, IM_COL32(200, 200, 200, 180), 1.0f);
+    drawList->AddLine(anchor2, h2, IM_COL32(200, 200, 200, 180), 1.0f);
+    drawList->AddCircleFilled(h1, 5.0f, IM_COL32(255, 150, 50, 255));
+    drawList->AddCircle(h1, 5.0f, IM_COL32(0, 0, 0, 255), 0, 2.0f);
+    drawList->AddCircleFilled(h2, 5.0f, IM_COL32(50, 150, 255, 255));
+    drawList->AddCircle(h2, 5.0f, IM_COL32(0, 0, 0, 255), 0, 2.0f);
+}
+
 void CameraAnimationCurveEditor::DrawEasingPresets() {
     ImGui::Text("Easing Presets:");
     ImGui::SameLine();
 
-    const char* easingNames[] = { "Linear", "Ease In", "Ease Out", "Ease In-Out" };
+    const char* easingNames[] = { "Linear", "Ease In", "Ease Out", "Ease In-Out", "Cubic Bezier" };
 
     ImGui::PushItemWidth(120.0f);
-    ImGui::Combo("##EasingPreset", &selectedEasingIndex_, easingNames, 4);
+    ImGui::Combo("##EasingPreset", &selectedEasingIndex_, easingNames, 5);
     ImGui::PopItemWidth();
 
     ImGui::SameLine();
@@ -239,6 +271,8 @@ void CameraAnimationCurveEditor::DrawCurveProperties() {
     ImGui::Checkbox("Show Axes", &showAxes_);
     ImGui::SameLine();
     ImGui::Checkbox("Show Values", &showValues_);
+    ImGui::SameLine();
+    ImGui::Checkbox("Show Handles", &showTangents_);
 
     ImGui::DragFloat("Zoom X", &zoomX_, 0.01f, 0.1f, 10.0f);
     ImGui::DragFloat("Zoom Y", &zoomY_, 0.01f, 0.1f, 10.0f);
@@ -256,28 +290,80 @@ void CameraAnimationCurveEditor::HandleMouseInput() {
     }
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
-        selectedKeyPoint_ = -1;
-        for (size_t i = 0; i < animation_->GetKeyframeCount(); ++i) {
-            const CameraKeyframe& kf = animation_->GetKeyframe(i);
-            float value = GetCurveValue(kf, activeCurve_);
-            ImVec2 p = ValueToGraph(kf.time, value);
+        selectedHandle_ = HandleType::NONE;
 
-            float dist = std::sqrt(
-                (mousePos.x - p.x) * (mousePos.x - p.x) +
-                (mousePos.y - p.y) * (mousePos.y - p.y));
+        // キーポイントと重なっていてもハンドルを掴めるよう、ハンドルの当たり判定を先に行う
+        if (showTangents_ && selectedKeyPoint_ >= 0 &&
+            selectedKeyPoint_ + 1 < static_cast<int>(animation_->GetKeyframeCount())) {
+            const CameraKeyframe& kf1 = animation_->GetKeyframe(selectedKeyPoint_);
+            if (kf1.interpolation == CameraKeyframe::InterpolationType::CUBIC_BEZIER) {
+                const CameraKeyframe& kf2 = animation_->GetKeyframe(selectedKeyPoint_ + 1);
+                float v1 = GetCurveValue(kf1, activeCurve_);
+                float v2 = GetCurveValue(kf2, activeCurve_);
+                float dt = kf2.time - kf1.time;
 
-            if (dist <= 6.0f) {
-                selectedKeyPoint_ = static_cast<int>(i);
-                isDragging_ = true;
-                dragStartPos_ = mousePos;
-                dragStartTime_ = kf.time;
-                dragStartValue_ = value;
-                break;
+                ImVec2 h1 = ValueToGraph(kf1.time + kf1.bezierP1.x * dt, v1 + kf1.bezierP1.y * (v2 - v1));
+                ImVec2 h2 = ValueToGraph(kf1.time + kf1.bezierP2.x * dt, v1 + kf1.bezierP2.y * (v2 - v1));
+
+                float dist1 = std::sqrt((mousePos.x - h1.x) * (mousePos.x - h1.x) + (mousePos.y - h1.y) * (mousePos.y - h1.y));
+                float dist2 = std::sqrt((mousePos.x - h2.x) * (mousePos.x - h2.x) + (mousePos.y - h2.y) * (mousePos.y - h2.y));
+
+                if (dist1 <= 6.0f) {
+                    selectedHandle_ = HandleType::LEFT;
+                }
+                else if (dist2 <= 6.0f) {
+                    selectedHandle_ = HandleType::RIGHT;
+                }
+            }
+        }
+
+        if (selectedHandle_ == HandleType::NONE) {
+            selectedKeyPoint_ = -1;
+            for (size_t i = 0; i < animation_->GetKeyframeCount(); ++i) {
+                const CameraKeyframe& kf = animation_->GetKeyframe(i);
+                float value = GetCurveValue(kf, activeCurve_);
+                ImVec2 p = ValueToGraph(kf.time, value);
+
+                float dist = std::sqrt(
+                    (mousePos.x - p.x) * (mousePos.x - p.x) +
+                    (mousePos.y - p.y) * (mousePos.y - p.y));
+
+                if (dist <= 6.0f) {
+                    selectedKeyPoint_ = static_cast<int>(i);
+                    isDragging_ = true;
+                    dragStartPos_ = mousePos;
+                    dragStartTime_ = kf.time;
+                    dragStartValue_ = value;
+                    break;
+                }
             }
         }
     }
 
-    if (isDragging_ && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+    if (selectedHandle_ != HandleType::NONE && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
+        if (selectedKeyPoint_ >= 0 && selectedKeyPoint_ + 1 < static_cast<int>(animation_->GetKeyframeCount())) {
+            float time, value;
+            GraphToValue(mousePos, time, value);
+
+            CameraKeyframe kf1 = animation_->GetKeyframe(selectedKeyPoint_);
+            const CameraKeyframe& kf2 = animation_->GetKeyframe(selectedKeyPoint_ + 1);
+            float v1 = GetCurveValue(kf1, activeCurve_);
+            float v2 = GetCurveValue(kf2, activeCurve_);
+            float dt = kf2.time - kf1.time;
+
+            Tako::Vector2& cp = (selectedHandle_ == HandleType::LEFT) ? kf1.bezierP1 : kf1.bezierP2;
+            if (dt > 0.0f) {
+                cp.x = std::clamp((time - kf1.time) / dt, 0.0f, 1.0f);
+            }
+            // 区間の両端で値が同じだと縦方向の割合が求められない（0 除算）ため、横方向だけ動かす
+            if (std::abs(v2 - v1) > 1e-5f) {
+                cp.y = (value - v1) / (v2 - v1);
+            }
+
+            animation_->EditKeyframe(selectedKeyPoint_, kf1);
+        }
+    }
+    else if (isDragging_ && ImGui::IsMouseDragging(ImGuiMouseButton_Left)) {
         if (selectedKeyPoint_ >= 0 && selectedKeyPoint_ < static_cast<int>(animation_->GetKeyframeCount())) {
             float time, value;
             GraphToValue(mousePos, time, value);
@@ -298,6 +384,7 @@ void CameraAnimationCurveEditor::HandleMouseInput() {
 
     if (ImGui::IsMouseReleased(ImGuiMouseButton_Left)) {
         isDragging_ = false;
+        selectedHandle_ = HandleType::NONE;
     }
 
     // ホイールで両軸同時ズーム
@@ -344,25 +431,6 @@ void CameraAnimationCurveEditor::SetCurveValue(CameraKeyframe& kf, CurveType typ
     case CurveType::ROTATION_Y: kf.rotation.y = value; break;
     case CurveType::ROTATION_Z: kf.rotation.z = value; break;
     case CurveType::FOV: kf.fov = value; break;
-    }
-}
-
-float CameraAnimationCurveEditor::ApplyEasing(float t, CameraKeyframe::InterpolationType type) const {
-    switch (type) {
-    case CameraKeyframe::InterpolationType::LINEAR:
-        return Tako::Ease::Linear(t);
-
-    case CameraKeyframe::InterpolationType::EASE_IN:
-        return Tako::Ease::InQuad(t);
-
-    case CameraKeyframe::InterpolationType::EASE_OUT:
-        return Tako::Ease::OutQuad(t);
-
-    case CameraKeyframe::InterpolationType::EASE_IN_OUT:
-        return Tako::Ease::InOutQuad(t);
-
-    default:
-        return t;
     }
 }
 

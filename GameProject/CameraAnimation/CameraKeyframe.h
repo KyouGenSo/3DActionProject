@@ -1,4 +1,5 @@
 #pragma once
+#include "Vector2.h"
 #include "Vector3.h"
 #include <json.hpp>
 
@@ -19,12 +20,20 @@ struct CameraKeyframe {
         TARGET_RELATIVE ///< ターゲットからのオフセット
     };
 
+    enum class PathType {
+        LINEAR,
+        CATMULL_ROM ///< 前後のキーフレームから接線を自動計算した滑らかな曲線（キーフレームは必ず通る）
+    };
+
     float             time           = 0.0f;                       ///< 秒
     Tako::Vector3     position       = { 0.0f, 0.0f, 0.0f };       ///< WORLD では位置、TARGET_RELATIVE ではオフセット
     Tako::Vector3     rotation       = { 0.0f, 0.0f, 0.0f };       ///< オイラー角、ラジアン
     float             fov            = 0.45f;                      ///< ラジアン
     InterpolationType interpolation  = InterpolationType::LINEAR;  ///< このキーフレームから次への補間方法
     CoordinateType    coordinateType = CoordinateType::WORLD;
+    PathType          pathType       = PathType::LINEAR;           ///< 次のキーフレームへ移動するときの経路の形（直線か曲線か）
+    Tako::Vector2     bezierP1       = { 0.42f, 0.0f };            ///< CUBIC_BEZIER 用のカーブ制御点1（x:時間の割合 0～1, y:進行度）
+    Tako::Vector2     bezierP2       = { 0.58f, 1.0f };            ///< CUBIC_BEZIER 用のカーブ制御点2
 
     CameraKeyframe() = default;
 
@@ -110,6 +119,30 @@ namespace nlohmann {
     };
 
     template <>
+    struct adl_serializer<CameraKeyframe::PathType> {
+        static void to_json(json& j, const CameraKeyframe::PathType& type) {
+            switch (type) {
+            case CameraKeyframe::PathType::LINEAR:
+                j = "LINEAR";
+                break;
+            case CameraKeyframe::PathType::CATMULL_ROM:
+                j = "CATMULL_ROM";
+                break;
+            }
+        }
+
+        static void from_json(const json& j, CameraKeyframe::PathType& type) {
+            std::string str = j.get<std::string>();
+            if (str == "CATMULL_ROM") {
+                type = CameraKeyframe::PathType::CATMULL_ROM;
+            }
+            else {
+                type = CameraKeyframe::PathType::LINEAR;
+            }
+        }
+    };
+
+    template <>
     struct adl_serializer<CameraKeyframe> {
         static void to_json(json& j, const CameraKeyframe& keyframe) {
             j = json{
@@ -118,7 +151,10 @@ namespace nlohmann {
                 {"rotation", {keyframe.rotation.x, keyframe.rotation.y, keyframe.rotation.z}},
                 {"fov", keyframe.fov},
                 {"interpolation", keyframe.interpolation},
-                {"coordinateType", keyframe.coordinateType}
+                {"coordinateType", keyframe.coordinateType},
+                {"pathType", keyframe.pathType},
+                {"bezierP1", {keyframe.bezierP1.x, keyframe.bezierP1.y}},
+                {"bezierP2", {keyframe.bezierP2.x, keyframe.bezierP2.y}}
             };
         }
 
@@ -144,6 +180,30 @@ namespace nlohmann {
             }
             else {
                 keyframe.coordinateType = CameraKeyframe::CoordinateType::WORLD;
+            }
+
+            // 旧フォーマット互換: pathType/ベジェ制御点の欠落時はデフォルト値
+            if (j.contains("pathType")) {
+                keyframe.pathType = j.at("pathType").get<CameraKeyframe::PathType>();
+            }
+            else {
+                keyframe.pathType = CameraKeyframe::PathType::LINEAR;
+            }
+
+            if (j.contains("bezierP1")) {
+                auto p1 = j.at("bezierP1");
+                keyframe.bezierP1 = { p1[0].get<float>(), p1[1].get<float>() };
+            }
+            else {
+                keyframe.bezierP1 = { 0.42f, 0.0f };
+            }
+
+            if (j.contains("bezierP2")) {
+                auto p2 = j.at("bezierP2");
+                keyframe.bezierP2 = { p2[0].get<float>(), p2[1].get<float>() };
+            }
+            else {
+                keyframe.bezierP2 = { 0.58f, 1.0f };
             }
         }
     };

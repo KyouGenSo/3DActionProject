@@ -8,7 +8,7 @@
 #include "../Controller/CameraAnimationController.h"
 #include "Vec3Func.h"
 #include "ImGuiManager.h"
-#include "Draw2D.h"
+#include "LineRenderer.h"
 #include <algorithm>
 #include <numbers>
 #include <sstream>
@@ -123,7 +123,7 @@ void CameraAnimationEditor::DrawPathVisualization() {
         return;
     }
 
-    auto* draw2D = Draw2D::GetInstance();
+    auto* lineRenderer = LineRenderer::GetInstance();
     const Vector4 pathColor = { 0.2f, 0.9f, 0.9f, 1.0f };
     const Vector4 keyframeColor = { 1.0f, 0.8f, 0.2f, 1.0f };
     const Vector4 selectedColor = { 1.0f, 0.2f, 0.2f, 1.0f };
@@ -137,7 +137,7 @@ void CameraAnimationEditor::DrawPathVisualization() {
         for (int step = 1; step <= kPathDivision; ++step) {
             float time = t1 + (t2 - t1) * static_cast<float>(step) / kPathDivision;
             Vector3 pos = animation_->EvaluateWorldPositionAtTime(time);
-            draw2D->DrawLine(prevPos, pos, pathColor);
+            lineRenderer->DrawLine(prevPos, pos, pathColor);
             prevPos = pos;
         }
     }
@@ -146,7 +146,7 @@ void CameraAnimationEditor::DrawPathVisualization() {
         bool isSelected = std::find(selectedKeyframes_.begin(), selectedKeyframes_.end(),
             static_cast<int>(i)) != selectedKeyframes_.end();
         Vector3 pos = animation_->EvaluateWorldPositionAtTime(animation_->GetKeyframe(i).time);
-        draw2D->DrawSphere(pos, 0.15f, isSelected ? selectedColor : keyframeColor, 8);
+        lineRenderer->DrawSphere(pos, 0.15f, isSelected ? selectedColor : keyframeColor, 8);
     }
 }
 

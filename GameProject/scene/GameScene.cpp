@@ -4,7 +4,7 @@
 #include "Object3dBasic.h"
 #include "SpriteBasic.h"
 #include "Input.h"
-#include "Draw2D.h"
+#include "LineRenderer.h"
 #include "FrameTimer.h"
 #include "GPUParticle.h"
 #include "SceneManager.h"
@@ -368,7 +368,7 @@ void GameScene::InitializeDebugOption()
 #ifdef _DEBUG
     DebugCamera::GetInstance()->Initialize();
     Object3dBasic::GetInstance()->SetDebug(false);
-    Draw2D::GetInstance()->SetDebug(false);
+    LineRenderer::GetInstance()->SetDebug(false);
     GPUParticle::GetInstance()->SetIsDebug(false);
 
     DebugUIManager::GetInstance()->SetSceneName("GameScene");

@@ -6,7 +6,7 @@
 #include "ModelManager.h"
 #include "Input.h"
 #include "FrameTimer.h"
-#include "Draw2D.h"
+#include "LineRenderer.h"
 #include "GPUParticle.h"
 #include "EnginePaths.h"
 #include "Vec3Func.h"
@@ -328,7 +328,7 @@ void TitleScene::InitializeDebugUI()
 #ifdef _DEBUG
     DebugCamera::GetInstance()->Initialize();
     Object3dBasic::GetInstance()->SetDebug(false);
-    Draw2D::GetInstance()->SetDebug(false);
+    LineRenderer::GetInstance()->SetDebug(false);
     GPUParticle::GetInstance()->SetIsDebug(false);
 
     DebugUIManager::GetInstance()->RegisterGameObject("TitleScene",
@@ -377,7 +377,7 @@ void TitleScene::InitializePostEffects()
 
 void TitleScene::InitializeSprites()
 {
-    titleBG_ = make_unique<Sprite>();
+    titleBG_ = std::make_unique<Sprite>();
     titleBG_->Initialize(EnginePaths::TexturePath("black.dds"));
     titleBG_->SetPos(Vector2(0.f, 0.f));
     titleBG_->SetSize(Vector2(static_cast<float>(WinApp::clientWidth), static_cast<float>(WinApp::clientHeight)));
@@ -386,21 +386,21 @@ void TitleScene::InitializeSprites()
     titleTextSprites_.reserve(kTitleTextCount);
     for (int i = 0; i < kTitleTextCount; ++i) {
         std::string texturePath = std::format("title_text/title_text_{}.dds", i + 1);
-        auto sprite = make_unique<Sprite>();
+        auto sprite = std::make_unique<Sprite>();
         sprite->Initialize(texturePath);
         sprite->SetSize(Vector2(titleTextWidth_, titleTextHeight_));
         sprite->SetPos(Vector2(WinApp::clientWidth / 2.f - titleTextWidth_ / 2.f, titleTextY_));
         titleTextSprites_.push_back(std::move(sprite));
     }
 
-    startButtonText_ = make_unique<Sprite>();
+    startButtonText_ = std::make_unique<Sprite>();
     startButtonText_->Initialize("titlescene_button.dds");
     startButtonText_->SetPos(Vector2(
         WinApp::clientWidth / 2.f - startButtonText_->GetSize().x / 2.f,
         WinApp::clientHeight - startButtonBottomOffset_));
 
     // 拡大フェードアウト用
-    titleTextEffect_ = make_unique<Sprite>();
+    titleTextEffect_ = std::make_unique<Sprite>();
     titleTextEffect_->Initialize("title_text/title_text_10.dds");
     titleTextEffect_->SetSize(Vector2(titleTextWidth_, titleTextHeight_));
     titleTextEffect_->SetPos(Vector2(WinApp::clientWidth / 2.f - titleTextWidth_ / 2.f, titleTextY_));

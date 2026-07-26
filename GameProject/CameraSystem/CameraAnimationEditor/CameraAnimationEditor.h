@@ -63,7 +63,7 @@ private: //非公開関数
     void DrawPlaybackControls();
 
     /// <summary>
-    /// 編集中アニメーションの位置経路を Draw2D で3D空間へ描画
+    /// 編集中アニメーションの位置経路を LineRenderer で3D空間へ描画
     /// </summary>
     void DrawPathVisualization();
 

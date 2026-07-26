@@ -5,7 +5,7 @@
 #include "scene/SceneFactory.h"
 #include "SceneManager.h"
 #include "TextureManager.h"
-#include "Draw2D.h"
+#include "LineRenderer.h"
 #include "PostEffectManager.h"
 #include "FrameTimer.h"
 #include "GlobalVariables.h"

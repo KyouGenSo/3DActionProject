@@ -94,6 +94,9 @@ void MyGame::RegisterGameSceneVariables()
     gv->CreateGroup("CameraShake");
     gv->AddItem("CameraShake", "Duration", 0.3f);
     gv->AddItem("CameraShake", "Intensity", 0.5f);
+
+    gv->CreateGroup("HitStop");
+    gv->AddItem("HitStop", "Duration", 0.08f);
 }
 
 void MyGame::RegisterPlayerVariables()

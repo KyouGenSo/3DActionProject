@@ -13,6 +13,7 @@
 #include "BossBehaviorTree/BossNodeFactory.h"
 #include "GlobalVariables.h"
 #include "EmitterManager.h"
+#include "FrameTimer.h"
 #include "State/BossStateMachine.h"
 #include "State/BossNormalState.h"
 #include "State/BossStunnedState.h"
@@ -602,12 +603,14 @@ void Boss::OnMeleeAttackHit(float damage, const Vector3& knockbackDir, bool isKn
             stunnedState->EnableKnockback(knockbackDir);
         }
         CameraManager::GetInstance()->StartShake(0.3f);
+        FrameTimer::GetInstance()->SetTimeScaleForDuration(0.0f, GlobalVariables::GetInstance()->GetValueFloat("HitStop", "Duration"));
         return;
     }
 
     if (currentState == "PhaseTransitionStun") {
         CompletePhaseTransition();
         CameraManager::GetInstance()->StartShake(0.3f);
+        FrameTimer::GetInstance()->SetTimeScaleForDuration(0.0f, GlobalVariables::GetInstance()->GetValueFloat("HitStop", "Duration"));
         return;
     }
 
@@ -616,6 +619,7 @@ void Boss::OnMeleeAttackHit(float damage, const Vector3& knockbackDir, bool isKn
         if (isInRecovery_ || forceVulnerable_) {
             OnHit(damage, 1.0f);
             CameraManager::GetInstance()->StartShake(0.3f);
+            FrameTimer::GetInstance()->SetTimeScaleForDuration(0.0f, GlobalVariables::GetInstance()->GetValueFloat("HitStop", "Duration"));
             pendingStunDirection_ = knockbackDir;
             pendingStunWithKnockback_ = isKnockbackCombo;
             stateMachine_->ChangeState("Stunned");

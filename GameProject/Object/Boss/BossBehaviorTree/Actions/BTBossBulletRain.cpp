@@ -219,7 +219,7 @@ Tako::Vector3 BTBossBulletRain::SampleImpactPosition(Player* player) {
         }
     }
 
-    // リトライ枯渇時は重なりを許容して採用（弾数は減らさない）
+    // リトライ回数制限オーバーした場合は重なりを許容して採用（弾数は減らさない）
     return candidate;
 }
 

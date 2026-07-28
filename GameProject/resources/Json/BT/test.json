@@ -8,44 +8,16 @@
       "targetPinId": 20002
     },
     {
-      "id": 30001,
+      "id": 30006,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
-      "targetNodeId": 10006,
-      "targetPinId": 20007
-    },
-    {
-      "id": 30002,
-      "sourceNodeId": 10006,
-      "sourcePinId": 20008,
-      "targetNodeId": 10002,
-      "targetPinId": 20003
-    },
-    {
-      "id": 30003,
-      "sourceNodeId": 10006,
-      "sourcePinId": 20008,
-      "targetNodeId": 10003,
-      "targetPinId": 20004
-    },
-    {
-      "id": 30004,
-      "sourceNodeId": 10006,
-      "sourcePinId": 20008,
-      "targetNodeId": 10004,
-      "targetPinId": 20005
-    },
-    {
-      "id": 30005,
-      "sourceNodeId": 10006,
-      "sourcePinId": 20008,
-      "targetNodeId": 10005,
-      "targetPinId": 20006
+      "targetNodeId": 10007,
+      "targetPinId": 20009
     }
   ],
   "metadata": {
-    "created": "2026-07-29T01:09:44",
-    "modified": "2026-07-29T01:09:44",
+    "created": "2026-07-29T03:42:14",
+    "modified": "2026-07-29T03:42:14",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -72,95 +44,33 @@
       "type": "BTBossIdle"
     },
     {
-      "displayName": "Ring Shockwave",
-      "id": 10002,
+      "displayName": "Big Explosion",
+      "id": 10007,
       "parameters": {
+        "attackRadius": 60.0,
+        "blinkDuration": 0.0,
         "blinkFrequency": 10.0,
-        "colliderScale": 0.10000000149011612,
-        "colliderY": -2.0,
-        "damage": 10.0,
-        "fadeTime": 0.30000001192092896,
-        "initialScale": 15.0,
+        "burstDuration": 0.20000000298023224,
+        "bwDuration": 0.20000000298023224,
+        "bwEnabled": true,
+        "bwThreshold": 0.019999999552965164,
+        "colliderActiveDuration": 0.20000000298023224,
+        "colliderY": 1.0,
+        "damage": 30.0,
+        "fallSpeed": 30.0,
+        "impactDuration": 0.800000011920929,
+        "impactYOffset": 10.0,
         "isBypassRecoveryGuard": false,
-        "maxDistance": 100.0,
-        "maxScale": 60.0,
-        "moveSpeed": 45.0,
         "recoveryTime": 1.0,
-        "segmentCount": 16,
-        "spawnHeight": 0.10000000149011612,
-        "spawnOffsetForward": 0.0,
-        "uvScrollU": 0.30000001192092896,
-        "uvScrollV": -1.350000023841858,
-        "warningTime": 1.0
+        "spawnHeight": 70.0,
+        "syncEmitterRadius": false,
+        "warningDuration": 0.0
       },
       "position": {
         "x": 88.0,
-        "y": 159.0
+        "y": 63.0
       },
-      "type": "BTBossRingShockwave"
-    },
-    {
-      "displayName": "Shoot",
-      "id": 10003,
-      "parameters": {
-        "bulletCount": 10,
-        "bulletSpeed": 50.0,
-        "chargeTime": 0.800000011920929,
-        "isBypassRecoveryGuard": false,
-        "recoveryTime": 0.5,
-        "spreadAngle": 0.3490658700466156
-      },
-      "position": {
-        "x": 88.0,
-        "y": 255.0
-      },
-      "type": "BTBossShoot"
-    },
-    {
-      "displayName": "Shoot",
-      "id": 10004,
-      "parameters": {
-        "bulletCount": 10,
-        "bulletSpeed": 45.0,
-        "chargeTime": 0.800000011920929,
-        "isBypassRecoveryGuard": false,
-        "recoveryTime": 0.5,
-        "spreadAngle": 0.3490658700466156
-      },
-      "position": {
-        "x": 88.0,
-        "y": 351.0
-      },
-      "type": "BTBossShoot"
-    },
-    {
-      "displayName": "Shoot",
-      "id": 10005,
-      "parameters": {
-        "bulletCount": 10,
-        "bulletSpeed": 40.0,
-        "chargeTime": 0.800000011920929,
-        "isBypassRecoveryGuard": false,
-        "recoveryTime": 0.5,
-        "spreadAngle": 0.3490658700466156
-      },
-      "position": {
-        "x": 88.0,
-        "y": 447.0
-      },
-      "type": "BTBossShoot"
-    },
-    {
-      "displayName": "Parallel",
-      "id": 10006,
-      "parameters": {
-        "policy": "MainChild"
-      },
-      "position": {
-        "x": 88.0,
-        "y": 31.0
-      },
-      "type": "BTParallel"
+      "type": "BTBossBigExplosion"
     }
   ],
   "version": "1.0"

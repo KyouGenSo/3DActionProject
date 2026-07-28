@@ -27,6 +27,7 @@
 #include "CameraSystem/Controller/CameraAnimationController.h"
 #include "Object/Player/State/PlayerState.h"
 #include "Object/Player/State/PlayerStateMachine.h"
+#include "Object/Boss/BossBehaviorTree/Actions/BTBossBigExplosion.h"
 #include "Common/GameConst.h"
 
 #include <algorithm>
@@ -539,6 +540,17 @@ void GameScene::InitializeEmitterManager()
     emitterManager_->SetEmitterActive("boss_tracking_laser", false);
     emitterManager_->LoadPreset("boss_charge_effect", "boss_tracking_laser_charge");
     emitterManager_->SetEmitterActive("boss_tracking_laser_charge", false);
+
+    // ===== 大爆発攻撃用エミッター =====
+    // エミッタ名=プリセット名にしてパーティクルエディタの Save でプリセットへ直接反映できる
+    emitterManager_->LoadPreset("boss_big_explosion_1", BTBossBigExplosion::kEmitterFallFlash);
+    emitterManager_->SetEmitterActive(BTBossBigExplosion::kEmitterFallFlash, false);
+    emitterManager_->LoadPreset("boss_big_explosion_2", BTBossBigExplosion::kEmitterImpactSpark);
+    emitterManager_->SetEmitterActive(BTBossBigExplosion::kEmitterImpactSpark, false);
+    emitterManager_->LoadPreset("boss_big_explosion_3", BTBossBigExplosion::kEmitterFallFire);
+    emitterManager_->SetEmitterActive(BTBossBigExplosion::kEmitterFallFire, false);
+    emitterManager_->LoadPreset("boss_big_explosion_4", BTBossBigExplosion::kEmitterImpactSmoke);
+    emitterManager_->SetEmitterActive(BTBossBigExplosion::kEmitterImpactSmoke, false);
 
     boss_->SetEmitterManager(emitterManager_.get());
 

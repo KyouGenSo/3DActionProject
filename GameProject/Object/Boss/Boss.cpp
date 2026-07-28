@@ -194,6 +194,22 @@ void Boss::SetBodyParticleEmitterActive(bool active)
     emitterManager_->SetEmitterActive(bodyParticleEmitterName_, active);
 }
 
+void Boss::InitializeRingShockwaveEmitter()
+{
+    if (!emitterManager_ || !ringShockwaveModel_) {
+        return;
+    }
+
+    // 二重登録防止
+    if (emitterManager_->HasEmitter(ringShockwaveEmitterName_)) {
+        emitterManager_->RemoveEmitter(ringShockwaveEmitterName_);
+    }
+
+    emitterManager_->LoadPreset(ringShockwaveEmitterName_, ringShockwaveEmitterName_, ringShockwaveModel_.get());
+
+    emitterManager_->SetEmitterActive(ringShockwaveEmitterName_, false);
+}
+
 void Boss::InitializeAI()
 {
     // BehaviorTree 生成前に Boss 専用ノード型を Registry に登録する必要がある

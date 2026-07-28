@@ -548,6 +548,9 @@ void GameScene::InitializeEmitterManager()
     // テレポート演出用 MeshEmitter
     boss_->InitializeBodyParticleEmitter();
 
+    // リング衝撃波用 MeshEmitter
+    boss_->InitializeRingShockwaveEmitter();
+
     boss_->SetForceFieldManager(forceFieldManager_.get());
 
     player_->SetForceFieldManager(forceFieldManager_.get());

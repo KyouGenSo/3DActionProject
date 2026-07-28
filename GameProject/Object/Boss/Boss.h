@@ -147,6 +147,11 @@ public: //メンバー関数
     /// </summary>
     void InitializeBodyParticleEmitter();
 
+    /// <summary>
+    /// リング衝撃波モデルをスポーン形状とする MeshEmitter "boss_ring_shockwave" を初期化
+    /// </summary>
+    void InitializeRingShockwaveEmitter();
+
     //=================================================================
     //Setter
     //=================================================================
@@ -241,6 +246,7 @@ public: //メンバー関数
     const Tako::Vector4& GetBaseColor() const { return baseColor_; }
 
     const std::string& GetBodyParticleEmitterName() const { return bodyParticleEmitterName_; }
+    const std::string& GetRingShockwaveEmitterName() const { return ringShockwaveEmitterName_; }
 
 private: //非公開関数
     void InitializeModel();
@@ -319,6 +325,8 @@ private: //メンバー変数
     std::string darkAuraEmitterName_ = "boss_dark_aura";
 
     std::string bodyParticleEmitterName_ = "boss_particle_body";
+
+    std::string ringShockwaveEmitterName_ = "boss_ring_shockwave";
 
     //エフェクト関連
     HitFlashEffect hitFlashEffect_;

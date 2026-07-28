@@ -3,6 +3,7 @@
 #include "../../../../Collision/RingColliderGroup.h"
 #include "Vector3.h"
 #include <numbers>
+#include <string>
 
 class Boss;
 
@@ -115,11 +116,12 @@ private: //メンバー変数
     float uvScrollV_          = -1.2f;  ///< テクスチャの径方向スクロール速度（UV/秒）
 
     //ランタイム状態
-    float totalDuration_  = 0.0f;
-    float travelDuration_ = 0.0f;
-    float traveled_       = 0.0f;
-    bool  hasLaunched_    = false;
-    bool  hasEnded_       = false;
+    float       totalDuration_  = 0.0f;
+    float       travelDuration_ = 0.0f;
+    float       traveled_       = 0.0f;
+    bool        hasLaunched_    = false;
+    bool        hasEnded_       = false;
+    std::string emitterName_;
 
     //発射時に固定する方向と原点
     Tako::Vector3 originPos_{};

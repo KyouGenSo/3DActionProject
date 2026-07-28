@@ -2,6 +2,7 @@
 #include "../../Boss.h"
 
 #include "Object3d.h"
+#include "EmitterManager.h"
 
 #include <algorithm>
 #include <cmath>
@@ -66,6 +67,9 @@ Tako::BTNodeStatus BTBossRingShockwave::OnExecute(Tako::BTBlackboard* blackboard
         }
         else {
             boss->SetRingShockwaveVisible(false);
+            if (cachedEmitterManager_) {
+                cachedEmitterManager_->SetEmitterActive(emitterName_, false);
+            }
         }
         EnterAttackRecovery(boss);
     }
@@ -98,6 +102,11 @@ void BTBossRingShockwave::OnInitialize(Tako::BTBlackboard* blackboard, Boss* bos
 
     boss->SetRingShockwaveVisible(true);
     UpdateRingVisual(boss, kRingBaseAlpha);
+
+    emitterName_ = boss->GetRingShockwaveEmitterName();
+    if (cachedEmitterManager_) {
+        cachedEmitterManager_->SetEmitterActive(emitterName_, true);
+    }
 }
 
 float BTBossRingShockwave::ComputeCurrentScale() const {
@@ -128,6 +137,10 @@ void BTBossRingShockwave::OnCleanup() {
 
     if (cachedBoss_) {
         cachedBoss_->SetRingShockwaveVisible(false);
+    }
+
+    if (cachedEmitterManager_ && !emitterName_.empty()) {
+        cachedEmitterManager_->SetEmitterActive(emitterName_, false);
     }
 
     hasLaunched_ = false;

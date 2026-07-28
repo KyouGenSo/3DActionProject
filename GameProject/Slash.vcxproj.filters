@@ -321,6 +321,9 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossBigExplosion.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossBulletRain.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClCompile>
@@ -606,6 +609,9 @@
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossBigExplosion.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossBulletRain.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.h">

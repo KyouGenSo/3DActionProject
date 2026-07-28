@@ -1051,30 +1051,240 @@
       "targetPinId": 20204
     },
     {
-      "id": 30151,
+      "id": 30150,
       "sourceNodeId": 10152,
       "sourcePinId": 20208,
       "targetNodeId": 10153,
       "targetPinId": 20209
     },
     {
-      "id": 30152,
+      "id": 30151,
       "sourceNodeId": 10152,
       "sourcePinId": 20208,
       "targetNodeId": 10147,
       "targetPinId": 20201
     },
     {
-      "id": 30153,
+      "id": 30152,
       "sourceNodeId": 10007,
       "sourcePinId": 20012,
       "targetNodeId": 10152,
       "targetPinId": 20207
+    },
+    {
+      "id": 30153,
+      "sourceNodeId": 10155,
+      "sourcePinId": 20213,
+      "targetNodeId": 10157,
+      "targetPinId": 20216
+    },
+    {
+      "id": 30154,
+      "sourceNodeId": 10182,
+      "sourcePinId": 20248,
+      "targetNodeId": 10155,
+      "targetPinId": 20212
+    },
+    {
+      "id": 30155,
+      "sourceNodeId": 10155,
+      "sourcePinId": 20213,
+      "targetNodeId": 10183,
+      "targetPinId": 20249
+    },
+    {
+      "id": 30156,
+      "sourceNodeId": 10155,
+      "sourcePinId": 20213,
+      "targetNodeId": 10169,
+      "targetPinId": 20229
+    },
+    {
+      "id": 30157,
+      "sourceNodeId": 10169,
+      "sourcePinId": 20230,
+      "targetNodeId": 10154,
+      "targetPinId": 20210
+    },
+    {
+      "id": 30158,
+      "sourceNodeId": 10169,
+      "sourcePinId": 20230,
+      "targetNodeId": 10158,
+      "targetPinId": 20217
+    },
+    {
+      "id": 30159,
+      "sourceNodeId": 10154,
+      "sourcePinId": 20211,
+      "targetNodeId": 10168,
+      "targetPinId": 20227
+    },
+    {
+      "id": 30160,
+      "sourceNodeId": 10154,
+      "sourcePinId": 20211,
+      "targetNodeId": 10159,
+      "targetPinId": 20218
+    },
+    {
+      "id": 30161,
+      "sourceNodeId": 10168,
+      "sourcePinId": 20228,
+      "targetNodeId": 10160,
+      "targetPinId": 20219
+    },
+    {
+      "id": 30162,
+      "sourceNodeId": 10168,
+      "sourcePinId": 20228,
+      "targetNodeId": 10156,
+      "targetPinId": 20214
+    },
+    {
+      "id": 30163,
+      "sourceNodeId": 10156,
+      "sourcePinId": 20215,
+      "targetNodeId": 10173,
+      "targetPinId": 20237
+    },
+    {
+      "id": 30164,
+      "sourceNodeId": 10173,
+      "sourcePinId": 20238,
+      "targetNodeId": 10165,
+      "targetPinId": 20224
+    },
+    {
+      "id": 30165,
+      "sourceNodeId": 10173,
+      "sourcePinId": 20238,
+      "targetNodeId": 10174,
+      "targetPinId": 20239
+    },
+    {
+      "id": 30166,
+      "sourceNodeId": 10173,
+      "sourcePinId": 20238,
+      "targetNodeId": 10175,
+      "targetPinId": 20240
+    },
+    {
+      "id": 30167,
+      "sourceNodeId": 10156,
+      "sourcePinId": 20215,
+      "targetNodeId": 10162,
+      "targetPinId": 20221
+    },
+    {
+      "id": 30168,
+      "sourceNodeId": 10156,
+      "sourcePinId": 20215,
+      "targetNodeId": 10172,
+      "targetPinId": 20235
+    },
+    {
+      "id": 30169,
+      "sourceNodeId": 10156,
+      "sourcePinId": 20215,
+      "targetNodeId": 10163,
+      "targetPinId": 20222
+    },
+    {
+      "id": 30170,
+      "sourceNodeId": 10172,
+      "sourcePinId": 20236,
+      "targetNodeId": 10176,
+      "targetPinId": 20241
+    },
+    {
+      "id": 30171,
+      "sourceNodeId": 10172,
+      "sourcePinId": 20236,
+      "targetNodeId": 10177,
+      "targetPinId": 20242
+    },
+    {
+      "id": 30172,
+      "sourceNodeId": 10172,
+      "sourcePinId": 20236,
+      "targetNodeId": 10181,
+      "targetPinId": 20246
+    },
+    {
+      "id": 30173,
+      "sourceNodeId": 10156,
+      "sourcePinId": 20215,
+      "targetNodeId": 10171,
+      "targetPinId": 20233
+    },
+    {
+      "id": 30174,
+      "sourceNodeId": 10156,
+      "sourcePinId": 20215,
+      "targetNodeId": 10161,
+      "targetPinId": 20220
+    },
+    {
+      "id": 30175,
+      "sourceNodeId": 10171,
+      "sourcePinId": 20234,
+      "targetNodeId": 10166,
+      "targetPinId": 20225
+    },
+    {
+      "id": 30176,
+      "sourceNodeId": 10171,
+      "sourcePinId": 20234,
+      "targetNodeId": 10167,
+      "targetPinId": 20226
+    },
+    {
+      "id": 30177,
+      "sourceNodeId": 10171,
+      "sourcePinId": 20234,
+      "targetNodeId": 10164,
+      "targetPinId": 20223
+    },
+    {
+      "id": 30178,
+      "sourceNodeId": 10156,
+      "sourcePinId": 20215,
+      "targetNodeId": 10170,
+      "targetPinId": 20231
+    },
+    {
+      "id": 30179,
+      "sourceNodeId": 10170,
+      "sourcePinId": 20232,
+      "targetNodeId": 10180,
+      "targetPinId": 20245
+    },
+    {
+      "id": 30180,
+      "sourceNodeId": 10170,
+      "sourcePinId": 20232,
+      "targetNodeId": 10179,
+      "targetPinId": 20244
+    },
+    {
+      "id": 30181,
+      "sourceNodeId": 10170,
+      "sourcePinId": 20232,
+      "targetNodeId": 10178,
+      "targetPinId": 20243
+    },
+    {
+      "id": 30182,
+      "sourceNodeId": 10010,
+      "sourcePinId": 20017,
+      "targetNodeId": 10182,
+      "targetPinId": 20247
     }
   ],
   "metadata": {
-    "created": "2026-07-29T01:45:40",
-    "modified": "2026-07-29T01:45:40",
+    "created": "2026-07-29T05:57:17",
+    "modified": "2026-07-29T05:57:17",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -1515,8 +1725,8 @@
         "recoveryTime": 3.0
       },
       "position": {
-        "x": -2813.0,
-        "y": 810.0
+        "x": -3661.0,
+        "y": 804.0
       },
       "type": "BTBossBarrage"
     },
@@ -1803,8 +2013,8 @@
         "policy": "MainChild"
       },
       "position": {
-        "x": -2729.0,
-        "y": 682.0
+        "x": -3577.0,
+        "y": 676.0
       },
       "type": "BTParallel"
     },
@@ -1822,8 +2032,8 @@
         "warningTime": 0.5
       },
       "position": {
-        "x": -2809.0,
-        "y": 912.0
+        "x": -3657.0,
+        "y": 906.0
       },
       "type": "BTBossRepelShockwave"
     },
@@ -2231,8 +2441,8 @@
       "id": 10072,
       "parameters": null,
       "position": {
-        "x": -2585.0,
-        "y": 810.0
+        "x": -3433.0,
+        "y": 804.0
       },
       "type": "BTSequence"
     },
@@ -2243,8 +2453,8 @@
         "idleDuration": 1.2000000476837158
       },
       "position": {
-        "x": -2585.0,
-        "y": 1498.0
+        "x": -3433.0,
+        "y": 1492.0
       },
       "type": "BTBossIdle"
     },
@@ -2255,8 +2465,8 @@
         "idleDuration": 1.2000000476837158
       },
       "position": {
-        "x": -2585.0,
-        "y": 1818.0
+        "x": -3433.0,
+        "y": 1812.0
       },
       "type": "BTBossIdle"
     },
@@ -2267,8 +2477,8 @@
         "idleDuration": 1.2000000476837158
       },
       "position": {
-        "x": -2585.0,
-        "y": 1178.0
+        "x": -3433.0,
+        "y": 1172.0
       },
       "type": "BTBossIdle"
     },
@@ -2284,8 +2494,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2585.0,
-        "y": 2042.0
+        "x": -3433.0,
+        "y": 2036.0
       },
       "type": "BTBossShoot"
     },
@@ -2301,8 +2511,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2585.0,
-        "y": 1082.0
+        "x": -3433.0,
+        "y": 1076.0
       },
       "type": "BTBossShoot"
     },
@@ -2318,8 +2528,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2585.0,
-        "y": 1722.0
+        "x": -3433.0,
+        "y": 1716.0
       },
       "type": "BTBossShoot"
     },
@@ -2335,8 +2545,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2585.0,
-        "y": 1402.0
+        "x": -3433.0,
+        "y": 1396.0
       },
       "type": "BTBossShoot"
     },
@@ -2443,8 +2653,8 @@
       "id": 10085,
       "parameters": null,
       "position": {
-        "x": -2885.0,
-        "y": 548.0
+        "x": -3733.0,
+        "y": 542.0
       },
       "type": "BTSequence"
     },
@@ -2453,11 +2663,11 @@
       "id": 10086,
       "parameters": {
         "comparison": 1,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 65.0
       },
       "position": {
-        "x": -2953.0,
-        "y": 687.0
+        "x": -3801.0,
+        "y": 681.0
       },
       "type": "BTBossHPCondition"
     },
@@ -2466,11 +2676,11 @@
       "id": 10087,
       "parameters": {
         "comparison": 1,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": -1385.0,
-        "y": 1253.0
+        "y": 1279.0
       },
       "type": "BTBossHPCondition"
     },
@@ -2508,7 +2718,7 @@
       "id": 10090,
       "parameters": {
         "comparison": 1,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": 2184.0,
@@ -2521,7 +2731,7 @@
       "id": 10091,
       "parameters": {
         "comparison": 1,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": 1288.0,
@@ -2554,7 +2764,7 @@
       "id": 10094,
       "parameters": {
         "comparison": 1,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": 578.0,
@@ -2630,7 +2840,7 @@
       "id": 10101,
       "parameters": {
         "comparison": 1,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": 120.0,
@@ -2643,10 +2853,10 @@
       "id": 10102,
       "parameters": {
         "comparison": 1,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
-        "x": -336.0,
+        "x": -329.0,
         "y": 1439.0
       },
       "type": "BTBossHPCondition"
@@ -2701,7 +2911,7 @@
       "id": 10106,
       "parameters": {
         "comparison": 3,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": -1017.0,
@@ -2714,7 +2924,7 @@
       "id": 10107,
       "parameters": {
         "comparison": 2,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": 808.0,
@@ -2727,7 +2937,7 @@
       "id": 10108,
       "parameters": {
         "comparison": 2,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": 344.0,
@@ -2770,7 +2980,7 @@
       "id": 10112,
       "parameters": {
         "comparison": 2,
-        "thresholdPercent": 75.0
+        "thresholdPercent": 80.0
       },
       "position": {
         "x": -105.0,
@@ -2860,7 +3070,7 @@
       "displayName": "Dash",
       "id": 10119,
       "parameters": {
-        "dashDuration": 0.2231886088848114,
+        "dashDuration": 0.12371416389942169,
         "dashSpeed": 100.0
       },
       "position": {
@@ -2876,8 +3086,8 @@
         "policy": "MainChild"
       },
       "position": {
-        "x": -2585.0,
-        "y": 1274.0
+        "x": -3433.0,
+        "y": 1268.0
       },
       "type": "BTParallel"
     },
@@ -2888,8 +3098,8 @@
         "policy": "MainChild"
       },
       "position": {
-        "x": -2581.0,
-        "y": 954.0
+        "x": -3429.0,
+        "y": 948.0
       },
       "type": "BTParallel"
     },
@@ -2900,8 +3110,8 @@
         "policy": "MainChild"
       },
       "position": {
-        "x": -2585.0,
-        "y": 1914.0
+        "x": -3433.0,
+        "y": 1908.0
       },
       "type": "BTParallel"
     },
@@ -2912,8 +3122,8 @@
         "policy": "MainChild"
       },
       "position": {
-        "x": -2585.0,
-        "y": 1594.0
+        "x": -3433.0,
+        "y": 1588.0
       },
       "type": "BTParallel"
     },
@@ -2929,8 +3139,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2809.0,
-        "y": 1082.0
+        "x": -3657.0,
+        "y": 1076.0
       },
       "type": "BTBossShoot"
     },
@@ -2946,8 +3156,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2361.0,
-        "y": 1082.0
+        "x": -3209.0,
+        "y": 1076.0
       },
       "type": "BTBossShoot"
     },
@@ -2963,8 +3173,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2361.0,
-        "y": 1402.0
+        "x": -3209.0,
+        "y": 1396.0
       },
       "type": "BTBossShoot"
     },
@@ -2980,8 +3190,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2809.0,
-        "y": 1402.0
+        "x": -3657.0,
+        "y": 1396.0
       },
       "type": "BTBossShoot"
     },
@@ -2997,8 +3207,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2809.0,
-        "y": 1722.0
+        "x": -3657.0,
+        "y": 1716.0
       },
       "type": "BTBossShoot"
     },
@@ -3014,8 +3224,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2361.0,
-        "y": 1722.0
+        "x": -3209.0,
+        "y": 1716.0
       },
       "type": "BTBossShoot"
     },
@@ -3031,8 +3241,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2361.0,
-        "y": 2042.0
+        "x": -3209.0,
+        "y": 2036.0
       },
       "type": "BTBossShoot"
     },
@@ -3048,8 +3258,8 @@
         "spreadAngle": 0.7853981852531433
       },
       "position": {
-        "x": -2809.0,
-        "y": 2042.0
+        "x": -3657.0,
+        "y": 2036.0
       },
       "type": "BTBossShoot"
     },
@@ -3060,8 +3270,8 @@
         "maxUses": 1
       },
       "position": {
-        "x": -2885.0,
-        "y": 399.0
+        "x": -3733.0,
+        "y": 393.0
       },
       "type": "BTOnce"
     },
@@ -3235,7 +3445,7 @@
       "parameters": null,
       "position": {
         "x": -329.0,
-        "y": 207.0
+        "y": 233.0
       },
       "type": "BTRandomSelector"
     },
@@ -3350,6 +3560,472 @@
       "position": {
         "x": -1833.0,
         "y": 1369.0
+      },
+      "type": "BTBossHPCondition"
+    },
+    {
+      "displayName": "Sequence",
+      "id": 10154,
+      "parameters": null,
+      "position": {
+        "x": -2485.0,
+        "y": 799.0
+      },
+      "type": "BTSequence"
+    },
+    {
+      "displayName": "Sequence",
+      "id": 10155,
+      "parameters": null,
+      "position": {
+        "x": -2501.0,
+        "y": 517.0
+      },
+      "type": "BTSequence"
+    },
+    {
+      "displayName": "Sequence",
+      "id": 10156,
+      "parameters": null,
+      "position": {
+        "x": -2517.0,
+        "y": 1077.0
+      },
+      "type": "BTSequence"
+    },
+    {
+      "displayName": "Teleport",
+      "id": 10157,
+      "parameters": {
+        "fadeInDuration": 0.30000001192092896,
+        "fadeOutDuration": 0.30000001192092896,
+        "isBypassRecoveryGuard": false,
+        "mode": 0,
+        "playerRandomMaxDistance": 30.0,
+        "playerRandomMinDistance": 10.0,
+        "randomMaxDistance": 30.0,
+        "randomMinDistance": 10.0,
+        "targetPositionX": 0.0,
+        "targetPositionY": 2.5,
+        "targetPositionZ": 20.0
+      },
+      "position": {
+        "x": -2601.0,
+        "y": 661.0
+      },
+      "type": "BTBossTeleport"
+    },
+    {
+      "displayName": "Repel Shockwave",
+      "id": 10158,
+      "parameters": {
+        "affectMask": 3,
+        "expandTime": 0.4000000059604645,
+        "falloff": 0.0,
+        "isBypassRecoveryGuard": false,
+        "maxRadius": 15.0,
+        "strength": 2000.0,
+        "sustainTime": 30.0,
+        "warningTime": 0.4000000059604645
+      },
+      "position": {
+        "x": -2249.0,
+        "y": 805.0
+      },
+      "type": "BTBossRepelShockwave"
+    },
+    {
+      "displayName": "Big Explosion",
+      "id": 10159,
+      "parameters": {
+        "attackRadius": 50.0,
+        "blinkDuration": 0.0,
+        "blinkFrequency": 10.0,
+        "burstDuration": 0.10000000149011612,
+        "bwDuration": 0.2199999988079071,
+        "bwEnabled": true,
+        "bwThreshold": 0.019999999552965164,
+        "colliderActiveDuration": 0.20000000298023224,
+        "colliderY": 1.0,
+        "damage": 30.0,
+        "fallSpeed": 30.0,
+        "impactDuration": 0.800000011920929,
+        "impactYOffset": 10.0,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 1.5,
+        "spawnHeight": 70.0,
+        "syncEmitterRadius": false,
+        "warningDuration": 0.0
+      },
+      "position": {
+        "x": -2377.0,
+        "y": 933.0
+      },
+      "type": "BTBossBigExplosion"
+    },
+    {
+      "displayName": "Bullet Rain",
+      "id": 10160,
+      "parameters": {
+        "blinkDuration": 0.5,
+        "blinkFrequency": 10.0,
+        "chargeTime": 0.0,
+        "colliderY": 1.0,
+        "damage": 10.0,
+        "fallHeight": 40.0,
+        "fallSpeed": 100.0,
+        "impactActiveDuration": 0.15000000596046448,
+        "impactRadius": 3.5,
+        "isBypassRecoveryGuard": false,
+        "minSeparation": 15.0,
+        "playerAimProbability": 0.10000000149011612,
+        "playerAimRadius": 10.0,
+        "rainDuration": 10.0,
+        "recoveryTime": 2.0,
+        "spawnInterval": 0.10000000149011612,
+        "stageMargin": 5.0,
+        "warningDuration": 0.5
+      },
+      "position": {
+        "x": -2745.0,
+        "y": 1077.0
+      },
+      "type": "BTBossBulletRain"
+    },
+    {
+      "displayName": "Idle",
+      "id": 10161,
+      "parameters": {
+        "idleDuration": 2.0
+      },
+      "position": {
+        "x": -2521.0,
+        "y": 2085.0
+      },
+      "type": "BTBossIdle"
+    },
+    {
+      "displayName": "Idle",
+      "id": 10162,
+      "parameters": {
+        "idleDuration": 2.0
+      },
+      "position": {
+        "x": -2521.0,
+        "y": 1445.0
+      },
+      "type": "BTBossIdle"
+    },
+    {
+      "displayName": "Idle",
+      "id": 10163,
+      "parameters": {
+        "idleDuration": 2.0
+      },
+      "position": {
+        "x": -2521.0,
+        "y": 1765.0
+      },
+      "type": "BTBossIdle"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10164,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 80.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2297.0,
+        "y": 1989.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10165,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 100.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2745.0,
+        "y": 1349.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10166,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 100.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2745.0,
+        "y": 1989.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10167,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 90.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2521.0,
+        "y": 1989.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10168,
+      "parameters": {
+        "policy": "MainChild"
+      },
+      "position": {
+        "x": -2617.0,
+        "y": 933.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10169,
+      "parameters": {
+        "policy": "MainChild"
+      },
+      "position": {
+        "x": -2361.0,
+        "y": 655.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10170,
+      "parameters": {
+        "policy": "MainChild"
+      },
+      "position": {
+        "x": -2517.0,
+        "y": 2175.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10171,
+      "parameters": {
+        "policy": "MainChild"
+      },
+      "position": {
+        "x": -2521.0,
+        "y": 1861.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10172,
+      "parameters": {
+        "policy": "MainChild"
+      },
+      "position": {
+        "x": -2521.0,
+        "y": 1541.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10173,
+      "parameters": {
+        "policy": "MainChild"
+      },
+      "position": {
+        "x": -2517.0,
+        "y": 1215.0
+      },
+      "type": "BTParallel"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10174,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 90.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2521.0,
+        "y": 1349.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10175,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 80.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2297.0,
+        "y": 1349.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10176,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 100.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2745.0,
+        "y": 1669.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10177,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 90.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2521.0,
+        "y": 1669.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10178,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 80.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2281.0,
+        "y": 2309.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10179,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 90.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2505.0,
+        "y": 2309.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10180,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 100.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2729.0,
+        "y": 2309.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10181,
+      "parameters": {
+        "bulletCount": 20,
+        "bulletSpeed": 80.0,
+        "chargeTime": 0.5,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.7853981852531433
+      },
+      "position": {
+        "x": -2297.0,
+        "y": 1669.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Once",
+      "id": 10182,
+      "parameters": {
+        "maxUses": 1
+      },
+      "position": {
+        "x": -2501.0,
+        "y": 383.0
+      },
+      "type": "BTOnce"
+    },
+    {
+      "displayName": "HP Condition",
+      "id": 10183,
+      "parameters": {
+        "comparison": 1,
+        "thresholdPercent": 80.0
+      },
+      "position": {
+        "x": -2825.0,
+        "y": 661.0
       },
       "type": "BTBossHPCondition"
     }

@@ -181,6 +181,11 @@ void BTBossMeteorRain::OnInitialize(Tako::BTBlackboard* /*blackboard*/, Boss* bo
 }
 
 void BTBossMeteorRain::OnCleanup() {
+    // チャージ中に中断された場合も予兆エミッターを残さない
+    if (bulletSignEffect_.IsActive() && cachedBoss_) {
+        bulletSignEffect_.End(cachedBoss_);
+    }
+
     impactDecals_.clear();
 
     for (auto& collider : impactColliders_) {

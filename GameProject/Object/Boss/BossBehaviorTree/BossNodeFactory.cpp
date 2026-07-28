@@ -23,6 +23,7 @@
 #include "Actions/BTBossTrackingLaser.h"
 #include "Actions/BTBossRingShockwave.h"
 #include "Actions/BTBossBigExplosion.h"
+#include "Actions/BTBossBulletRain.h"
 
 // Condition ノード
 #include "Conditions/BTBossPhaseCondition.h"
@@ -110,6 +111,10 @@ void BossNodeFactory::RegisterAll() {
   reg->RegisterNode<BTBossBigExplosion>("BTBossBigExplosion", Tako::NodeMeta{
     "Big Explosion", Tako::NodeCategory::Action,
     Tako::NodeColor(1.0f, 0.75f, 0.15f, 1.0f), false  // 金色
+  });
+  reg->RegisterNode<BTBossBulletRain>("BTBossBulletRain", Tako::NodeMeta{
+    "Bullet Rain", Tako::NodeCategory::Action,
+    Tako::NodeColor(0.3f, 0.55f, 0.95f, 1.0f), false  // 青
   });
 
   // ========================================================================

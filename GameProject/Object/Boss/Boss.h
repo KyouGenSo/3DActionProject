@@ -40,6 +40,9 @@ class BossMeleeAttackCollider;
 /// </summary>
 class Boss
 {
+public: //定数
+    static constexpr float kRingShockwaveWidthFraction = 0.15f;  ///< リング衝撃波メッシュの帯幅比（外半径 1 基準）
+
 private: //定数
     static constexpr float kMaxHp = 200.0f;
     static constexpr float kPhase2Threshold = 105.0f;
@@ -171,6 +174,7 @@ public: //メンバー関数
     void SetDashing(bool dashing);
     void SetMeleeAttackBlockVisible(bool visible) { meleeAttackBlockVisible_ = visible; }
     void SetRepelShockwaveSphereVisible(bool visible) { repelShockwaveSphereVisible_ = visible; }
+    void SetRingShockwaveVisible(bool visible) { ringShockwaveVisible_ = visible; }
     void SetAttackSignEmitterActive(bool active);
     void SetAttackSignEmitterPosition(const Tako::Vector3& position);
     void SetBulletSignEmitterActive(bool active);
@@ -218,6 +222,7 @@ public: //メンバー関数
     Tako::OBBCollider* GetCollider() const { return bodyCollider_.get(); }
     Tako::Object3d* GetMeleeAttackBlock() const { return meleeAttackBlock_.get(); }
     bool IsMeleeAttackBlockVisible() const { return meleeAttackBlockVisible_; }
+    Tako::Object3d* GetRingShockwaveModel() const { return ringShockwaveModel_.get(); }
     BossMeleeAttackCollider* GetMeleeAttackCollider() const { return meleeAttackCollider_.get(); }
     Tako::EmitterManager* GetEmitterManager() const { return emitterManager_; }
     Tako::ForceFieldManager* GetForceFieldManager() const { return forceFieldManager_; }
@@ -295,6 +300,10 @@ private: //メンバー変数
 
     std::unique_ptr<Tako::Object3d> repelShockwaveSphere_;
     bool                            repelShockwaveSphereVisible_ = false;
+
+    //リング衝撃波（BTBossRingShockwave が transform を駆動）
+    std::unique_ptr<Tako::Object3d> ringShockwaveModel_;
+    bool                            ringShockwaveVisible_ = false;
 
     std::unique_ptr<BossMeleeAttackCollider> meleeAttackCollider_;
 

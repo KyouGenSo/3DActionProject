@@ -267,6 +267,9 @@
     <ClCompile Include="Collision\MeteorImpactCollider.cpp">
       <Filter>Collision</Filter>
     </ClCompile>
+    <ClCompile Include="Collision\RingColliderGroup.cpp">
+      <Filter>Collision</Filter>
+    </ClCompile>
     <ClCompile Include="Object\Boss\Movement\BossAreaBounds.cpp">
       <Filter>Object\Boss\Movement</Filter>
     </ClCompile>
@@ -310,6 +313,9 @@
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossTrackingLaser.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRingShockwave.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.cpp">
@@ -542,6 +548,9 @@
     <ClInclude Include="Collision\MeteorImpactCollider.h">
       <Filter>Collision</Filter>
     </ClInclude>
+    <ClInclude Include="Collision\RingColliderGroup.h">
+      <Filter>Collision</Filter>
+    </ClInclude>
     <ClInclude Include="Collision\PlayerHitResolver.h">
       <Filter>Collision</Filter>
     </ClInclude>
@@ -588,6 +597,9 @@
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossTrackingLaser.h">
+      <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRingShockwave.h">
       <Filter>Object\Boss\BossBehaviorTree\Actions\Attack</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossVortexTempest.h">

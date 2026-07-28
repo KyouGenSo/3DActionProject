@@ -81,6 +81,22 @@ void Boss::InitializeModel()
     repelShockwaveSphere_->SetEnableLighting(false);
     repelShockwaveSphere_->SetScale({ 0.0f, 0.0f, 0.0f });
     repelShockwaveSphere_->SetTransparent(true);  // 両面描画 + 深度書き込み無効で球全体が透ける
+
+    // 外半径1の単位半円リング（弧中心=ローカル+Z）、SetScale で動的サイズ調整
+    ringShockwaveModel_ = std::make_unique<Object3d>();
+    ringShockwaveModel_->Initialize();
+    ringShockwaveModel_->SetModel(PrimitiveBuilder::CreateRing({
+        .innerRadius = 1.0f - kRingShockwaveWidthFraction,
+        .outerRadius = 1.0f,
+        .segments = 48,
+        .ringSeg = 1,
+        .startAngleDeg = 0.0f,
+        .sweepAngleDeg = 180.0f }));
+    ringShockwaveModel_->SetTexture("red_perlin_noise.png");
+    ringShockwaveModel_->SetMaterialColor(Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+    ringShockwaveModel_->SetEnableLighting(false);
+    ringShockwaveModel_->SetScale({ 0.0f, 0.0f, 0.0f });
+    ringShockwaveModel_->SetTransparent(true);
 }
 
 void Boss::InitializeHealth()
@@ -290,6 +306,10 @@ void Boss::Draw()
 
     if (repelShockwaveSphereVisible_ && repelShockwaveSphere_) {
         repelShockwaveSphere_->Draw();
+    }
+
+    if (ringShockwaveVisible_ && ringShockwaveModel_) {
+        ringShockwaveModel_->Draw();
     }
 }
 

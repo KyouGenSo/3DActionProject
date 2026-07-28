@@ -59,6 +59,7 @@
     <ClCompile Include="CameraSystem\Controller\TopDownController.cpp" />
     <ClCompile Include="Collision\BossAreaAttackCollider.cpp" />
     <ClCompile Include="Collision\MeteorImpactCollider.cpp" />
+    <ClCompile Include="Collision\RingColliderGroup.cpp" />
     <ClCompile Include="Collision\BossMeleeAttackCollider.cpp" />
     <ClCompile Include="Collision\BulletCollider.cpp" />
     <ClCompile Include="Common\CooldownTimer.cpp" />
@@ -83,6 +84,7 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossTrackingLaser.cpp" />
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossRingShockwave.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.cpp" />
     <ClCompile Include="Object\Boss\BossPhaseManager.cpp" />
     <ClCompile Include="Object\Boss\State\BossStateMachine.cpp" />
@@ -158,6 +160,7 @@
     <ClInclude Include="CameraSystem\Controller\TopDownController.h" />
     <ClInclude Include="Collision\BossAreaAttackCollider.h" />
     <ClInclude Include="Collision\MeteorImpactCollider.h" />
+    <ClInclude Include="Collision\RingColliderGroup.h" />
     <ClInclude Include="Collision\PlayerHitResolver.h" />
     <ClInclude Include="Collision\BossMeleeAttackCollider.h" />
     <ClInclude Include="Collision\CollisionTypeIdDef.h" />
@@ -187,6 +190,7 @@
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossSlashAttack.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossTeleport.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossTrackingLaser.h" />
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossRingShockwave.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Actions\BTBossWideShoot.h" />
     <ClInclude Include="Object\Boss\BossPhaseManager.h" />
     <ClInclude Include="Object\Boss\State\BossState.h" />

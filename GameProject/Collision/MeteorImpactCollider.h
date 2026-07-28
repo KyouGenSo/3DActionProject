@@ -22,12 +22,18 @@ public: //メンバー関数
     //==========================
     void SetDamage(float damage) { damage_ = damage; }
 
+    /// <summary>
+    /// 複数コライダーで 1 発だけ通す共有ガードを設定（nullptr で個別ヒットに戻る）
+    /// </summary>
+    void SetSharedHitGuard(bool* guard) { sharedHitGuard_ = guard; }
+
     //==========================
     //Getter
     //==========================
     float GetDamage() const { return damage_; }
 
 private: //メンバー変数
-    Boss* boss_   = nullptr;
-    float damage_ = 15.0f;
+    Boss* boss_           = nullptr;
+    float damage_         = 15.0f;
+    bool* sharedHitGuard_ = nullptr;  ///< 非所有。グループ全体で共有するヒット済みフラグ
 };

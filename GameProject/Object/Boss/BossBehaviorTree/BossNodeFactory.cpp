@@ -21,6 +21,7 @@
 #include "Actions/BTBossVortexTempest.h"
 #include "Actions/BTBossTeleport.h"
 #include "Actions/BTBossTrackingLaser.h"
+#include "Actions/BTBossRingShockwave.h"
 
 // Condition ノード
 #include "Conditions/BTBossPhaseCondition.h"
@@ -100,6 +101,10 @@ void BossNodeFactory::RegisterAll() {
   reg->RegisterNode<BTBossTrackingLaser>("BTBossTrackingLaser", Tako::NodeMeta{
     "Tracking Laser", Tako::NodeCategory::Action,
     Tako::NodeColor(0.9f, 0.6f, 0.1f, 1.0f), false  // オレンジ
+  });
+  reg->RegisterNode<BTBossRingShockwave>("BTBossRingShockwave", Tako::NodeMeta{
+    "Ring Shockwave", Tako::NodeCategory::Action,
+    Tako::NodeColor(1.0f, 0.35f, 0.35f, 1.0f), false  // 明るい赤
   });
 
   // ========================================================================

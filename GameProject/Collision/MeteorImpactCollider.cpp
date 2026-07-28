@@ -12,5 +12,10 @@ MeteorImpactCollider::MeteorImpactCollider(Boss* boss)
 }
 
 void MeteorImpactCollider::OnCollisionEnter(Collider* other) {
+    const bool isPlayer = other && other->GetTypeID() == static_cast<uint32_t>(CollisionTypeId::PLAYER);
+    if (sharedHitGuard_ && isPlayer) {
+        if (*sharedHitGuard_) return;
+        *sharedHitGuard_ = true;
+    }
     ResolvePlayerHit(other, damage_);
 }

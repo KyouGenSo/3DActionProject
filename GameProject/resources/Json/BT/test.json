@@ -8,30 +8,44 @@
       "targetPinId": 20002
     },
     {
+      "id": 30001,
+      "sourceNodeId": 10000,
+      "sourcePinId": 20001,
+      "targetNodeId": 10006,
+      "targetPinId": 20007
+    },
+    {
+      "id": 30002,
+      "sourceNodeId": 10006,
+      "sourcePinId": 20008,
+      "targetNodeId": 10002,
+      "targetPinId": 20003
+    },
+    {
+      "id": 30003,
+      "sourceNodeId": 10006,
+      "sourcePinId": 20008,
+      "targetNodeId": 10003,
+      "targetPinId": 20004
+    },
+    {
       "id": 30004,
       "sourceNodeId": 10006,
-      "sourcePinId": 20010,
-      "targetNodeId": 10007,
-      "targetPinId": 20011
+      "sourcePinId": 20008,
+      "targetNodeId": 10004,
+      "targetPinId": 20005
     },
     {
       "id": 30005,
       "sourceNodeId": 10006,
-      "sourcePinId": 20010,
-      "targetNodeId": 10008,
-      "targetPinId": 20012
-    },
-    {
-      "id": 30006,
-      "sourceNodeId": 10000,
-      "sourcePinId": 20001,
-      "targetNodeId": 10006,
-      "targetPinId": 20009
+      "sourcePinId": 20008,
+      "targetNodeId": 10005,
+      "targetPinId": 20006
     }
   ],
   "metadata": {
-    "created": "2026-07-28T13:55:50",
-    "modified": "2026-07-28T13:55:50",
+    "created": "2026-07-29T01:09:44",
+    "modified": "2026-07-29T01:09:44",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -58,45 +72,95 @@
       "type": "BTBossIdle"
     },
     {
-      "displayName": "Sequence",
-      "id": 10006,
-      "parameters": null,
-      "position": {
-        "x": 120.0,
-        "y": 63.0
-      },
-      "type": "BTSequence"
-    },
-    {
-      "displayName": "Player Shooting Condition",
-      "id": 10007,
+      "displayName": "Ring Shockwave",
+      "id": 10002,
       "parameters": {
-        "angleThreshold": 30.0
-      },
-      "position": {
-        "x": 8.0,
-        "y": 223.0
-      },
-      "type": "BTBossPlayerShootingCondition"
-    },
-    {
-      "displayName": "Repel Shockwave",
-      "id": 10008,
-      "parameters": {
-        "affectMask": 3,
-        "expandTime": 0.30000001192092896,
-        "falloff": 0.0,
+        "blinkFrequency": 10.0,
+        "colliderScale": 0.10000000149011612,
+        "colliderY": -2.0,
+        "damage": 10.0,
+        "fadeTime": 0.30000001192092896,
+        "initialScale": 15.0,
         "isBypassRecoveryGuard": false,
-        "maxRadius": 32.0,
-        "strength": 3000.0,
-        "sustainTime": 1.0,
-        "warningTime": 0.0
+        "maxDistance": 100.0,
+        "maxScale": 60.0,
+        "moveSpeed": 45.0,
+        "recoveryTime": 1.0,
+        "segmentCount": 16,
+        "spawnHeight": 0.10000000149011612,
+        "spawnOffsetForward": 0.0,
+        "uvScrollU": 0.30000001192092896,
+        "uvScrollV": -1.350000023841858,
+        "warningTime": 1.0
       },
       "position": {
-        "x": 264.0,
-        "y": 223.0
+        "x": 88.0,
+        "y": 159.0
       },
-      "type": "BTBossRepelShockwave"
+      "type": "BTBossRingShockwave"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10003,
+      "parameters": {
+        "bulletCount": 10,
+        "bulletSpeed": 50.0,
+        "chargeTime": 0.800000011920929,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.3490658700466156
+      },
+      "position": {
+        "x": 88.0,
+        "y": 255.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10004,
+      "parameters": {
+        "bulletCount": 10,
+        "bulletSpeed": 45.0,
+        "chargeTime": 0.800000011920929,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.3490658700466156
+      },
+      "position": {
+        "x": 88.0,
+        "y": 351.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Shoot",
+      "id": 10005,
+      "parameters": {
+        "bulletCount": 10,
+        "bulletSpeed": 40.0,
+        "chargeTime": 0.800000011920929,
+        "isBypassRecoveryGuard": false,
+        "recoveryTime": 0.5,
+        "spreadAngle": 0.3490658700466156
+      },
+      "position": {
+        "x": 88.0,
+        "y": 447.0
+      },
+      "type": "BTBossShoot"
+    },
+    {
+      "displayName": "Parallel",
+      "id": 10006,
+      "parameters": {
+        "policy": "MainChild"
+      },
+      "position": {
+        "x": 88.0,
+        "y": 31.0
+      },
+      "type": "BTParallel"
     }
   ],
   "version": "1.0"

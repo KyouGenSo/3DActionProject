@@ -174,6 +174,16 @@ public: //メンバー関数
     /// </summary>
     bool CanShoot() const;
 
+    /// <summary>
+    /// 現在射撃状態か
+    /// </summary>
+    bool IsShooting() const;
+
+    /// <summary>
+    /// 射撃ステートの照準方向を返す（非射撃中は最後の照準方向）
+    /// </summary>
+    Tako::Vector3 GetAimDirection() const;
+
     const Tako::Transform& GetTransform() const { return transform_; }
     Tako::Transform* GetTransformPtr() { return &transform_; }
     Tako::Vector3 GetTranslate() const { return transform_.translate; }

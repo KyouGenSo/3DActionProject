@@ -171,6 +171,9 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossDistanceCondition.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
     </ClCompile>
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPlayerShootingCondition.cpp">
+      <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
+    </ClCompile>
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossHPCondition.cpp">
       <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
     </ClCompile>
@@ -423,6 +426,9 @@
       <Filter>Object\Boss\BossBehaviorTree\Actions</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossDistanceCondition.h">
+      <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
+    </ClInclude>
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPlayerShootingCondition.h">
       <Filter>Object\Boss\BossBehaviorTree\Conditions</Filter>
     </ClInclude>
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossHPCondition.h">

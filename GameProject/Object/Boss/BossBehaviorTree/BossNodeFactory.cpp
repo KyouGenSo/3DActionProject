@@ -22,10 +22,11 @@
 #include "Actions/BTBossTeleport.h"
 #include "Actions/BTBossTrackingLaser.h"
 
-// Condition ノード (3 種)
+// Condition ノード
 #include "Conditions/BTBossPhaseCondition.h"
 #include "Conditions/BTBossHPCondition.h"
 #include "Conditions/BTBossDistanceCondition.h"
+#include "Conditions/BTBossPlayerShootingCondition.h"
 
 void BossNodeFactory::RegisterAll() {
   auto* reg = Tako::BTNodeRegistry::GetInstance();
@@ -115,5 +116,9 @@ void BossNodeFactory::RegisterAll() {
   reg->RegisterNode<BTBossDistanceCondition>("BTBossDistanceCondition", Tako::NodeMeta{
     "Distance Condition", Tako::NodeCategory::Condition,
     Tako::NodeColor(0.2f, 0.7f, 0.5f, 1.0f), false
+  });
+  reg->RegisterNode<BTBossPlayerShootingCondition>("BTBossPlayerShootingCondition", Tako::NodeMeta{
+    "Player Shooting Condition", Tako::NodeCategory::Condition,
+    Tako::NodeColor(0.9f, 0.3f, 0.5f, 1.0f), false  // ピンク
   });
 }

@@ -676,6 +676,19 @@ bool Player::IsParrying() const
     return stateMachine_->GetCurrentState()->GetName() == "Parry";
 }
 
+bool Player::IsShooting() const
+{
+    if (!stateMachine_ || !stateMachine_->GetCurrentState()) return false;
+    return stateMachine_->GetCurrentState()->GetName() == "Shoot";
+}
+
+Vector3 Player::GetAimDirection() const
+{
+    ShootState* shootState = stateMachine_ ? static_cast<ShootState*>(stateMachine_->GetState("Shoot")) : nullptr;
+    if (!shootState) return Vector3(0.0f, 0.0f, 0.0f);
+    return shootState->GetAimDirection();
+}
+
 bool Player::CanParry() const
 {
     return parryCooldown_.IsReady();

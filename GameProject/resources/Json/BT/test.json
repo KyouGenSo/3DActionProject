@@ -8,30 +8,30 @@
       "targetPinId": 20002
     },
     {
-      "id": 30002,
+      "id": 30004,
+      "sourceNodeId": 10006,
+      "sourcePinId": 20010,
+      "targetNodeId": 10007,
+      "targetPinId": 20011
+    },
+    {
+      "id": 30005,
+      "sourceNodeId": 10006,
+      "sourcePinId": 20010,
+      "targetNodeId": 10008,
+      "targetPinId": 20012
+    },
+    {
+      "id": 30006,
       "sourceNodeId": 10000,
       "sourcePinId": 20001,
-      "targetNodeId": 10003,
-      "targetPinId": 20004
-    },
-    {
-      "id": 30003,
-      "sourceNodeId": 10003,
-      "sourcePinId": 20005,
-      "targetNodeId": 10002,
-      "targetPinId": 20003
-    },
-    {
-      "id": 30004,
-      "sourceNodeId": 10003,
-      "sourcePinId": 20005,
-      "targetNodeId": 10004,
-      "targetPinId": 20006
+      "targetNodeId": 10006,
+      "targetPinId": 20009
     }
   ],
   "metadata": {
-    "created": "2026-06-30T11:16:23",
-    "modified": "2026-06-30T11:16:23",
+    "created": "2026-07-28T13:55:50",
+    "modified": "2026-07-28T13:55:50",
     "name": "Behavior Tree"
   },
   "nodes": [
@@ -58,56 +58,45 @@
       "type": "BTBossIdle"
     },
     {
-      "displayName": "Area Attack",
-      "id": 10002,
-      "parameters": {
-        "attackDuration": 0.5,
-        "blinkDuration": 1.0,
-        "blinkFrequency": 10.0,
-        "damage": 15.0,
-        "isBypassRecoveryGuard": false,
-        "maxQuadrants": 3,
-        "minQuadrants": 1,
-        "recoveryTime": 0.5,
-        "warningDuration": 1.5
-      },
-      "position": {
-        "x": 136.0,
-        "y": 223.0
-      },
-      "type": "BTBossAreaAttack"
-    },
-    {
-      "displayName": "Selector",
-      "id": 10003,
+      "displayName": "Sequence",
+      "id": 10006,
       "parameters": null,
       "position": {
-        "x": 107.0,
+        "x": 120.0,
         "y": 63.0
       },
-      "type": "BTSelector"
+      "type": "BTSequence"
     },
     {
-      "displayName": "Barrage",
-      "id": 10004,
+      "displayName": "Player Shooting Condition",
+      "id": 10007,
       "parameters": {
-        "chargeTime": 0.800000011920929,
-        "fireInterval": 0.07999999821186066,
-        "firingDuration": 3.0,
-        "isBypassRecoveryGuard": false,
-        "moveDuration": 0.5,
-        "normalBulletSpeedMax": 35.0,
-        "normalBulletSpeedMin": 20.0,
-        "penetratingBulletSpeedMax": 20.0,
-        "penetratingBulletSpeedMin": 10.0,
-        "penetratingRatio": 0.30000001192092896,
-        "recoveryTime": 0.5
+        "angleThreshold": 30.0
       },
       "position": {
-        "x": -105.0,
+        "x": 8.0,
         "y": 223.0
       },
-      "type": "BTBossBarrage"
+      "type": "BTBossPlayerShootingCondition"
+    },
+    {
+      "displayName": "Repel Shockwave",
+      "id": 10008,
+      "parameters": {
+        "affectMask": 3,
+        "expandTime": 0.30000001192092896,
+        "falloff": 0.0,
+        "isBypassRecoveryGuard": false,
+        "maxRadius": 32.0,
+        "strength": 3000.0,
+        "sustainTime": 1.0,
+        "warningTime": 0.0
+      },
+      "position": {
+        "x": 264.0,
+        "y": 223.0
+      },
+      "type": "BTBossRepelShockwave"
     }
   ],
   "version": "1.0"

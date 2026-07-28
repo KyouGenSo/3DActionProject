@@ -106,6 +106,7 @@
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPhaseCondition.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossHPCondition.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossDistanceCondition.cpp" />
+    <ClCompile Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPlayerShootingCondition.cpp" />
     <ClCompile Include="Object\Boss\BossBehaviorTree\BossNodeFactory.cpp" />
     <ClCompile Include="Collision\MeleeAttackCollider.cpp" />
     <ClCompile Include="Object\Player\Player.cpp" />
@@ -210,6 +211,7 @@
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPhaseCondition.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossHPCondition.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossDistanceCondition.h" />
+    <ClInclude Include="Object\Boss\BossBehaviorTree\Conditions\BTBossPlayerShootingCondition.h" />
     <ClInclude Include="Object\Boss\BossBehaviorTree\BossNodeFactory.h" />
     <ClInclude Include="Collision\MeleeAttackCollider.h" />
     <ClInclude Include="Object\Player\Player.h" />
